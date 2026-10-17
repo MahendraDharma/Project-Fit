@@ -62,6 +62,18 @@ jobs:
             build 2>&1 | tee xcodebuild.log | grep -E "error:|warning: .*sign|BUILD (SUCCEEDED|FAILED)" || true
           grep -q "BUILD SUCCEEDED" xcodebuild.log
 
+      # The failing command is usually far from the end of a 10k-line log:
+      # print every failed command with the lines before it, and the tail.
+      - name: Show why xcodebuild failed
+        if: failure()
+        working-directory: app/ios
+        run: |
+          grep -nE "(error|fatal):|Command .* failed|FAILED|requires a development team|Signing for" xcodebuild.log | head -60 || true
+          echo "----- context before each failed command -----"
+          grep -nB25 "Command .* failed with a nonzero exit code" xcodebuild.log | tail -150 || true
+          echo "----- tail -----"
+          tail -60 xcodebuild.log
+
       - name: Upload the xcodebuild log on failure
         if: failure()
         uses: actions/upload-artifact@v4
