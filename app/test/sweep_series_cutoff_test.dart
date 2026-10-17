@@ -5,8 +5,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/ai/briefing_engine.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
+import 'package:projectfit/ai/briefing_engine.dart';
+import 'package:projectfit/data/local_repository.dart';
 
 int _t(String date) => DateTime.parse('$date 12:00:00').millisecondsSinceEpoch ~/ 1000;
 

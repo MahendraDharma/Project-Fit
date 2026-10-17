@@ -13,11 +13,11 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
-import 'package:openstrap_edge/sync/background_sync.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/tap_router.dart';
+import 'package:projectfit/sync/background_sync.dart';
 
 const _kCooldown = 'last_staleness_notified_ms';
 
@@ -27,7 +27,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_bgsync_staleness_test.db';
+    LocalDb.dbName = 'projectfit_bgsync_staleness_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

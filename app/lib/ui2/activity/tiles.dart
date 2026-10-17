@@ -90,7 +90,7 @@ const _maxZoom = 17;
 /// The policy's first requirement. A generic Dart user-agent is the one thing
 /// guaranteed to get an app blocked.
 const _userAgent =
-    'OpenStrap/1.0 (+https://github.com/abdulsahil/openstrap; local-first '
+    'ProjectFit/1.0 (+https://github.com/abdulsahil/projectfit; local-first '
     'health app; one map per shared activity card)';
 
 /// A stitched basemap, and the route already projected onto it.

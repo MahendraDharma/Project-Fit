@@ -10,7 +10,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/sleep_profile_policy.dart';
+import 'package:projectfit/compute/sleep_profile_policy.dart';
 
 String _payload({List<String>? foldedDays, int nights = 0}) => jsonEncode({
       'nights': nights,

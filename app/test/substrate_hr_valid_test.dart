@@ -9,7 +9,7 @@
 // come from a band that reports the flag at all.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 Substrate _sub({
   required String? family,

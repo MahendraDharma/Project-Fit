@@ -16,8 +16,8 @@
 // that goes red for somebody else's outage.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/off_lookup.dart';
-import 'package:openstrap_edge/state/prefs.dart';
+import 'package:projectfit/data/off_lookup.dart';
+import 'package:projectfit/state/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // The store behind SharedPreferences, so a write can be made to FAIL. Pulled
 // in through shared_preferences rather than pinned here — a test-only import

@@ -11,8 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 // The cases are the GALLERY's cases. One list, so a component added to the
 // gallery is swept here too.
-import 'package:openstrap_edge/ui2/profile/gallery.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/profile/gallery.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// The component, not the page: the boundary the sweeps measure.
 final _shot = GlobalKey();

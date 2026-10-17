@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/start_card.dart';
-import 'package:openstrap_edge/ui2/theme.dart';
+import 'package:projectfit/ui2/screens/start_card.dart';
+import 'package:projectfit/ui2/theme.dart';
 
 /// This card was built blind and shipped three defects a rendered check would
 /// have caught immediately: a negative `Container.margin` (Flutter asserts

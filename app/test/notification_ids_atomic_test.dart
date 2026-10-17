@@ -27,10 +27,10 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_ids.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_ids.dart';
 
 final String kToday = todayLabel();
 
@@ -49,7 +49,7 @@ void main() {
   setUpAll(() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_notif_ids_atomic_test.db';
+    LocalDb.dbName = 'projectfit_notif_ids_atomic_test.db';
   });
 
   setUp(() async {

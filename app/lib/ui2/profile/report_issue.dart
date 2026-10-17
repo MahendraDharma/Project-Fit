@@ -151,7 +151,7 @@ class _ReportIssueScreenState extends State<ReportIssueScreen> {
           onStage: (st) => _setStep(_stageText(l, st)));
       _setStep(l.reportStageSharing);
       await Share.shareXFiles([XFile(r.zip.path)],
-          subject: 'OpenStrap issue report', sharePositionOrigin: origin);
+          subject: 'ProjectFit issue report', sharePositionOrigin: origin);
     } catch (e) {
       if (mounted) setState(() => _error = e is ReportSendError ? e.status : -2);
     } finally {

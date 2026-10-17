@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derive_prepare.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 Map<String, Object?> _row(int ts, Object? band) => {
       'counter': ts, 'rec_ts': ts, 'hr': 60, 'ax': 0.1, 'ay': 0.2, 'az': 0.95,

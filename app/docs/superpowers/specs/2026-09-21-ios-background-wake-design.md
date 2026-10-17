@@ -250,7 +250,7 @@ Engine rig tests (fake-link seam, as in `live_stream_ownership_test.dart`):
 Hardware verification (required by CONTRIBUTING for anything touching sync;
 recorded in the PR):
 1. iPhone + WHOOP 4.0, app backgrounded overnight. Share
-   `Documents/openstrap_sync.log` (visible in Files). Expect
+   `Documents/projectfit_sync.log` (visible in Files). Expect
    `HighFreq enter (ios_background)`, then `HighFreq prompt received` roughly
    every 15 min, each followed by a `Backlog drained` line; no
    `bouncing the link` or `Connection dropped` storm.

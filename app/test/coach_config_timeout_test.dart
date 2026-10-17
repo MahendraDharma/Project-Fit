@@ -10,7 +10,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_config.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));

@@ -8,8 +8,8 @@
 // 400 nmol/L would be the worst kind of fabrication this app can make.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/lab_catalogue.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/lab_catalogue.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -17,7 +17,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_lab_result_test.db';
+    LocalDb.dbName = 'projectfit_lab_result_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

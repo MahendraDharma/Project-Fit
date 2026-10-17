@@ -1,7 +1,7 @@
 // test/onehz/sleep_band_trim_test.dart
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 const int _t0 = 1700000000;
 final int _midnight = _t0 - (_t0 % 86400);

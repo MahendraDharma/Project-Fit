@@ -1,6 +1,6 @@
 // The app's shared-axis fade-through page transition, packaged as a
 // [PageTransitionsBuilder] so it plugs into ThemeData.pageTransitionsTheme
-// (see buildOpenStrapTheme).
+// (see buildProjectFitTheme).
 //
 // NAVIGATION CONTRACT — why this is a PageTransitionsBuilder and not a custom
 // PageRouteBuilder: routing the transition through the theme lets every push

@@ -17,8 +17,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/widgets.dart';
@@ -672,7 +672,7 @@ class AppState extends ChangeNotifier {
     return res.days;
   }
 
-  /// Another device's exported OpenStrap DB (.db) → merge into the local store.
+  /// Another device's exported ProjectFit DB (.db) → merge into the local store.
   /// Returns total rows copied across tables.
   /// Set when an import landed its rows but the rollup rebuild after it threw.
   /// The days are in the database and the summaries built from them are not, so
@@ -1700,7 +1700,7 @@ class AppState extends ChangeNotifier {
   /// A Siri/Shortcuts App Intent (e.g. "start breathing") may have set a
   /// pending route in the App Group before launching/foregrounding the app —
   /// see WidgetService.consumePendingRoute + StartBreathingIntent in
-  /// OpenStrapIntents.swift. Checked on cold launch (constructor, above) AND
+  /// ProjectFitIntents.swift. Checked on cold launch (constructor, above) AND
   /// on every foreground resume (app.dart's didChangeAppLifecycleState),
   /// since `openAppWhenRun = true` may just foreground an already-running
   /// process rather than trigger a fresh launch.
@@ -3011,7 +3011,7 @@ class AppState extends ChangeNotifier {
   }
 
   void _log(String line) {
-    debugPrint('[OpenStrap] $line');
+    debugPrint('[ProjectFit] $line');
     FileLog.write(line);
     logLines.insert(0, line);
     if (logLines.length > 200) logLines.removeLast();

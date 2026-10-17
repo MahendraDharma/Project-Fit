@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart' show kAlgoVersion;
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/compute/derivation_engine.dart' show kAlgoVersion;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/health/health_export.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -117,7 +117,7 @@ void main() {
         'every day timing out in turn', () async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_health_hung_store_test.db';
+      LocalDb.dbName = 'projectfit_health_hung_store_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await LocalDb.close();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));

@@ -16,7 +16,7 @@
 //      prevents from running. Self-sealing.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   group('superviseReconnect', () {

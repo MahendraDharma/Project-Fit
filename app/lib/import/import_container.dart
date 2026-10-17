@@ -444,7 +444,7 @@ Future<ResolvedNoopDatabase?> resolveNoopDatabase(String path) async {
       // what `gzip -k` leaves behind for anyone compressing an export by hand.
       // Inflate, then re-sniff: only a real SQLite file is claimed here, so a
       // gzipped CSV still falls through to the CSV path.
-      final tempDir = await Directory.systemTemp.createTemp('openstrap_gz_');
+      final tempDir = await Directory.systemTemp.createTemp('projectfit_gz_');
       try {
         final inflated = await inflateGzip(path, tempDir);
         if (inflated != null &&
@@ -492,7 +492,7 @@ Future<ResolvedNoopDatabase?> resolveNoopDatabase(String path) async {
         'not something we can import.',
       );
     }
-    final tempDir = await Directory.systemTemp.createTemp('openstrap_noopbak_');
+    final tempDir = await Directory.systemTemp.createTemp('projectfit_noopbak_');
     // Everything past this point owns `tempDir`. An IO failure here is a
     // hundreds-of-megabytes partial copy, so nothing may escape without
     // deleting it — the caller has no handle to clean up with, because the
@@ -602,7 +602,7 @@ Future<ResolvedImportFiles> resolveImportCsvPaths(
           out.add(path);
         case ImportContainer.zip:
           tempDir ??=
-              await Directory.systemTemp.createTemp('openstrap_import_');
+              await Directory.systemTemp.createTemp('projectfit_import_');
           // One subdirectory per archive: the multi-select WHOOP path can hand
           // us two exports that each contain `data.csv`, and a shared
           // destination made the second overwrite the first (and returned the
@@ -625,7 +625,7 @@ Future<ResolvedImportFiles> resolveImportCsvPaths(
           // when someone compresses a CSV, and it is the shape this app's own
           // auto-backups take.
           tempDir ??=
-              await Directory.systemTemp.createTemp('openstrap_import_');
+              await Directory.systemTemp.createTemp('projectfit_import_');
           final gzInto = Directory(p.join(tempDir.path, 'a${archiveIndex++}'));
           await gzInto.create(recursive: true);
           final inflated = await inflateGzip(path, gzInto);

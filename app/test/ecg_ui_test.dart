@@ -8,15 +8,15 @@ import 'dart:ui' show PictureRecorder;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/ecg/ecg_controller.dart';
-import 'package:openstrap_edge/ecg/ecg_guard_store.dart';
-import 'package:openstrap_edge/ecg/ecg_models.dart';
-import 'package:openstrap_edge/ecg/ecg_transport.dart';
-import 'package:openstrap_edge/ecg/ecg_waveform_buffer.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/ui2/screens/ecg.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/ecg/ecg_controller.dart';
+import 'package:projectfit/ecg/ecg_guard_store.dart';
+import 'package:projectfit/ecg/ecg_models.dart';
+import 'package:projectfit/ecg/ecg_transport.dart';
+import 'package:projectfit/ecg/ecg_waveform_buffer.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/ui2/screens/ecg.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -33,7 +33,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../data/db.dart';

@@ -4,10 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/ui2/screens/coach.dart';
-import 'package:openstrap_edge/ui2/screens/journal_compose.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/ui2/screens/coach.dart';
+import 'package:projectfit/ui2/screens/journal_compose.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Future<void> _mount(WidgetTester tester, CoachConfig config) async {
   tester.view.physicalSize = const Size(390 * 3, 844 * 3);

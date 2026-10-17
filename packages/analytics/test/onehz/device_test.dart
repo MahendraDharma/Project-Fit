@@ -1,4 +1,4 @@
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 void main() {

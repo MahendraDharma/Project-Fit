@@ -1,7 +1,7 @@
 // Item 3 — CLINICAL TIER-1. Synthetic, known-answer tests.
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 /// Respiratory sinus arrhythmia: NN sampled at its own beat times, so the
 /// breathing phase advances by the beat's real duration. Noise-free.

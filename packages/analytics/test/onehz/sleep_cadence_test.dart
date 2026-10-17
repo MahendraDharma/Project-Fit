@@ -12,7 +12,7 @@
 
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 /// A perfectly static wrist, sampled every [cadence] s over [spanSec].

@@ -1,4 +1,4 @@
-// OpenStrap theme — TWO type voices, ember-coral on paper (day) or char
+// ProjectFit theme — TWO type voices, ember-coral on paper (day) or char
 // (night). `AppText` is the type scale; every numeric/metric style carries
 // tabular figures so big numbers align and count-ups don't jitter. Text colours
 // resolve through the live `AppColors` getters, so the type scale follows the
@@ -22,7 +22,7 @@
 //    which fetches the family from fonts.gstatic.com on first launch — before
 //    the consent screen, and contrary to PRIVACY.md.
 //
-// `buildOpenStrapTheme(palette)` builds a full ThemeData from an explicit
+// `buildProjectFitTheme(palette)` builds a full ThemeData from an explicit
 // [Palette] (not the live getters) so the light + dark ThemeData objects are
 // each internally consistent regardless of which mode is currently active.
 
@@ -180,7 +180,7 @@ class AppText {
 
 /// Build the full theme from an explicit [Palette] so light/dark are each
 /// self-consistent. Call with [kLightPalette] / [kDarkPalette].
-ThemeData buildOpenStrapTheme(Palette p) {
+ThemeData buildProjectFitTheme(Palette p) {
   // Material's `primary` drives every routine/non-evaluative default (Switch,
   // ProgressIndicator, FilledButton, focus rings, splash) — that's brand
   // identity territory, not alert territory, so it seeds from `p.brand` (calm

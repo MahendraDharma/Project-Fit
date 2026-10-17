@@ -1,6 +1,6 @@
 # Installing the iOS build (no Mac, no Xcode)
 
-The iOS file on [Releases](https://github.com/OpenStrap/edge/releases) is an
+The iOS file on [Releases](https://github.com/MahendraDharma/Project-Fit/releases) is an
 **unsigned `.ipa`** — it's not on the App Store, so iOS won't just let you tap-install it
 like a normal app. You need a small sideloading tool first. This is a one-time setup, and
 it's the same process people use for any homebrew/sideloaded iOS app, not something
@@ -17,7 +17,7 @@ full widget/Live Activity support, which the sideload path below can't always gu
   that.
 - A USB cable, or Wi-Fi for some tools.
 - A free Apple ID (your normal iCloud one is fine).
-- The `.ipa` file from [the latest release](https://github.com/OpenStrap/edge/releases).
+- The `.ipa` file from [the latest release](https://github.com/MahendraDharma/Project-Fit/releases).
 
 ## Option A — Sideloadly (simplest, works anywhere)
 
@@ -52,11 +52,11 @@ Once it's installed this way, add this repo as an AltStore **source** and AltSto
 tell you when a new build is out instead of you having to check Releases yourself:
 
 ```
-https://github.com/OpenStrap/edge/releases/latest/download/apps.json
+https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json
 ```
 
 In AltStore, go to **Browse → sources (the "+" / list icon) → add source**, paste that
-URL, and OpenStrap Edge will show up with an "Update" button whenever a new release ships.
+URL, and ProjectFit will show up with an "Update" button whenever a new release ships.
 This only tracks version numbers — it still can't fix the free-account 7-day resign limit
 below, and updating still re-signs the app the same way a fresh install does.
 

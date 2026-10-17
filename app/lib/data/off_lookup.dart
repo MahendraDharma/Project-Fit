@@ -55,7 +55,7 @@ const kOffLicence = 'https://opendatacommons.org/licenses/odbl/1-0/';
 /// Their terms' first requirement. A generic Dart user-agent is the one thing
 /// guaranteed to get an app blocked.
 const _userAgent =
-    'OpenStrap/1.0 (+https://github.com/OpenStrap/edge; local-first health '
+    'ProjectFit/1.0 (+https://github.com/MahendraDharma/Project-Fit; local-first health '
     'app; one product lookup per barcode the user scans)';
 
 // ══════════════════ CONSENT ══════════════════

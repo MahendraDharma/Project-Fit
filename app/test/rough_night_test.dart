@@ -9,9 +9,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/grammar.dart';
-import 'package:openstrap_edge/ui2/screens/rough_night.dart';
-import 'package:openstrap_edge/ui2/theme.dart';
+import 'package:projectfit/ui2/grammar.dart';
+import 'package:projectfit/ui2/screens/rough_night.dart';
+import 'package:projectfit/ui2/theme.dart';
 
 /// The longest state the card can reach: every sign fired, every knowable
 /// known, the full chip vocabulary. The fixtures here are deliberately the

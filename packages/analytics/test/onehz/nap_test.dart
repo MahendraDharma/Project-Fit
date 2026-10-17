@@ -9,8 +9,8 @@
 import 'dart:math' as math;
 
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/sleep/nap.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/sleep/nap.dart';
 
 /// A synthetic day at 1 Hz. Timestamps are `i * 1000` ms, so absolute epoch
 /// seconds equal the array index — which keeps the `[startSec, endSec]` span

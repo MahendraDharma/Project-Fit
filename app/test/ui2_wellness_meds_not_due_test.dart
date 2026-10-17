@@ -16,12 +16,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/med_store.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/clock_format.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/med_store.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/clock_format.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

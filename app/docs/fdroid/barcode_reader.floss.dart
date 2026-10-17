@@ -1,5 +1,5 @@
 // F-Droid stand-in for lib/scan/barcode_reader.dart: same API, flutter_zxing
-// instead of mobile_scanner. Copied over the real one by wtf.openstrap.openstrap_edge.yml.
+// instead of mobile_scanner. Copied over the real one by io.github.mahendradharma.projectfit.yml.
 
 import 'package:camera/camera.dart';
 import 'package:flutter/widgets.dart';

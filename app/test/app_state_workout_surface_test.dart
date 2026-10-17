@@ -33,10 +33,10 @@
 //   debugFinalizeLivePedometer / debugFeedLiveAccel (pedometer, which stays).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/gps/gps_source.dart';
-import 'package:openstrap_edge/gps/route_tracker.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/stress/breath_phases.dart';
+import 'package:projectfit/gps/gps_source.dart';
+import 'package:projectfit/gps/route_tracker.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/stress/breath_phases.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

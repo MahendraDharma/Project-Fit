@@ -9,12 +9,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/state/workout_controller.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart' show activityByName;
-import 'package:openstrap_edge/ui2/activity/live.dart' show LiveDraft;
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/state/workout_controller.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart' show activityByName;
+import 'package:projectfit/ui2/activity/live.dart' show LiveDraft;
 
 import 'support/app_state_workout_harness.dart';
 

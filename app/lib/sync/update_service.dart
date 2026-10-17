@@ -90,7 +90,7 @@ class UpdateService {
       return Stream.value(const OtaProgress('error', message: 'OTA is Android-only'));
     }
     return OtaUpdate()
-        .execute(apkUrl, destinationFilename: 'openstrap-update.apk')
+        .execute(apkUrl, destinationFilename: 'projectfit-update.apk')
         .map((e) {
       switch (e.status) {
         case OtaStatus.DOWNLOADING:

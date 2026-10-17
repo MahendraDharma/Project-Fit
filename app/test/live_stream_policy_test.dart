@@ -3,7 +3,7 @@
 // the applied state towards the desired one. No engine, no band.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
+import 'package:projectfit/ble/ble_state.dart';
 
 const _off = LiveStreamIntent.off;
 const _hrOnly = LiveStreamIntent(hr: true, imu: false);

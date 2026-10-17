@@ -29,9 +29,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 Substrate _sub({
   required int n,

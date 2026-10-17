@@ -3,8 +3,8 @@
 // complete even though its first row is after midnight — it must still draw.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -16,7 +16,7 @@ void main() {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_device_chart_bounded_test.db';
+    LocalDb.dbName = 'projectfit_device_chart_bounded_test.db';
     dir = await databaseFactory.getDatabasesPath();
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));

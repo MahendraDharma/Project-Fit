@@ -10,7 +10,7 @@
 // minutes) and the properties that make repeated application safe.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/manual_session.dart';
+import 'package:projectfit/compute/manual_session.dart';
 
 ManualSessionStats _substrate({
   double? strain,

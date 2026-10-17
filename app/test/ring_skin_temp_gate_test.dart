@@ -5,7 +5,7 @@
 // a provisional settle band, and the day bundle says so.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 void main() {
   Map<String, dynamic> bundle(String family, int samples, int value,

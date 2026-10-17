@@ -15,8 +15,8 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:collection/collection.dart' show lowerBound;
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 
 import '../data/day_label.dart';
 import 'vendor_sleep.dart';

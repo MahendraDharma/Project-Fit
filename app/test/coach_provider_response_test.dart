@@ -17,8 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
 
 http.Client _json(Object body, {int status = 200}) => MockClient(
       (_) async => http.Response(

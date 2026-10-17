@@ -1,4 +1,4 @@
-// Importing a `.noopbak` full backup (OpenStrap/edge#160, #199).
+// Importing a `.noopbak` full backup (MahendraDharma/Project-Fit#160, #199).
 //
 // A `.noopbak` is a ZIP around NOOP's own GRDB SQLite database, and on iOS it is
 // the only export NOOP offers — so the CSV-only importer left every iOS migrant
@@ -15,12 +15,12 @@ import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/import/import_container.dart';
-import 'package:openstrap_edge/import/noop_backup_import.dart';
-import 'package:openstrap_edge/import/noop_import.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/import/import_container.dart';
+import 'package:projectfit/import/noop_backup_import.dart';
+import 'package:projectfit/import/noop_import.dart';
 
 /// 'YYYY-MM-DD' for an epoch second, in the LOCAL zone — the same day key the
 /// importer writes, so an assertion can scope itself to its own fixture.
@@ -60,7 +60,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_noopbak_test.db';
+    LocalDb.dbName = 'projectfit_noopbak_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     tmp = await Directory.systemTemp.createTemp('noopbak');
@@ -226,7 +226,7 @@ void main() {
         .listSync()
         .whereType<Directory>()
         .map((d) => p.basename(d.path))
-        .where((n) => n.startsWith('openstrap_noopbak_'))
+        .where((n) => n.startsWith('projectfit_noopbak_'))
         .toSet();
 
     final before = extractions();
@@ -605,7 +605,7 @@ void main() {
     );
   });
 
-  // OpenStrap/edge — a real `.noopbak` off a phone (NOOP 10.5.0, WHOOP 5.0/MG)
+  // MahendraDharma/Project-Fit — a real `.noopbak` off a phone (NOOP 10.5.0, WHOOP 5.0/MG)
   // failed to open at all: `PRAGMA quick_check` reported "invalid page
   // number" across most tables, on a zip whose own declared uncompressed size
   // also undercounted its content (see import_container_test.dart for that

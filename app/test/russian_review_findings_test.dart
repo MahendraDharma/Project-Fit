@@ -7,27 +7,27 @@ import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/l10n/display_text.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/locale_controller.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
-import 'package:openstrap_edge/ui2/activity/zones.dart';
-import 'package:openstrap_edge/ui2/pairing/device_picker.dart';
-import 'package:openstrap_edge/ui2/profile/devices.dart';
-import 'package:openstrap_edge/ui2/screens/coach.dart';
-import 'package:openstrap_edge/ui2/screens/coach_text.dart';
-import 'package:openstrap_edge/ui2/screens/metric_detail.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show axisDay;
-import 'package:openstrap_edge/ui2/screens/journal_compose.dart'
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/l10n/display_text.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/locale_controller.dart';
+import 'package:projectfit/sync/paired_device.dart';
+import 'package:projectfit/ui2/activity/zones.dart';
+import 'package:projectfit/ui2/pairing/device_picker.dart';
+import 'package:projectfit/ui2/profile/devices.dart';
+import 'package:projectfit/ui2/screens/coach.dart';
+import 'package:projectfit/ui2/screens/coach_text.dart';
+import 'package:projectfit/ui2/screens/metric_detail.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart' show axisDay;
+import 'package:projectfit/ui2/screens/journal_compose.dart'
     show OsTextField;
-import 'package:openstrap_edge/ui2/screens/readiness_detail.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/screens/readiness_detail.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Widget page(Widget child, {String locale = 'ru', double scale = 1}) =>
     MaterialApp(

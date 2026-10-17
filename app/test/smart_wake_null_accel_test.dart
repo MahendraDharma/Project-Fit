@@ -7,8 +7,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/smart_wake.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/smart_wake.dart';
 
 void main() {
   late Database db;
@@ -17,7 +17,7 @@ void main() {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_smart_wake_null_accel_test.db';
+    LocalDb.dbName = 'projectfit_smart_wake_null_accel_test.db';
     dir = await databaseFactory.getDatabasesPath();
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));

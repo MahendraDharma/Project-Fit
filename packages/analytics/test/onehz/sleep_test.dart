@@ -14,8 +14,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_analytics/onehz.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 void main() {
   _slp13Tests();

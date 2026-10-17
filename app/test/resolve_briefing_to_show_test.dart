@@ -8,7 +8,7 @@
 // briefing already sitting in cache (Sourcery finding on PR #447).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ai/briefing.dart';
+import 'package:projectfit/ai/briefing.dart';
 
 Briefing _briefing(BriefingPeriod period, String oneLiner) => Briefing(
       day: '2026-09-20',

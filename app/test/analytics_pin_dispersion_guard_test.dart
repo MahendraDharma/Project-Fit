@@ -14,7 +14,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart' show kAnalyticsPin;
+import 'package:projectfit/compute/derivation_engine.dart' show kAnalyticsPin;
 
 void main() {
   test('kAnalyticsPin SHA contains the baseline-dispersion-below-quantum '

@@ -13,7 +13,7 @@
 // that gate.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/models/payloads.dart';
+import 'package:projectfit/models/payloads.dart';
 
 TodayData _today({
   Object? readiness,

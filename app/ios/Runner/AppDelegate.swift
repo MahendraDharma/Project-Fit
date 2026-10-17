@@ -9,7 +9,7 @@ import CoreMotion
 @objc class AppDelegate: FlutterAppDelegate {
   // One isolate keeps the UI, background wakes, and Shortcuts under the same BLE ownership gate.
   lazy var sharedEngine: FlutterEngine = {
-    let engine = FlutterEngine(name: "openstrap", project: nil, allowHeadlessExecution: true)
+    let engine = FlutterEngine(name: "projectfit", project: nil, allowHeadlessExecution: true)
     engine.run()
     registerEngine(engine)
     return engine
@@ -137,14 +137,14 @@ import CoreMotion
 }
 
 enum ConfigBridge {
-  private static let channelName = "openstrap/ios_config"
+  private static let channelName = "projectfit/ios_config"
 
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
     channel.setMethodCallHandler { call, result in
       switch call.method {
       case "appGroupIdentifier":
-        result(Bundle.main.object(forInfoDictionaryKey: "OpenStrapAppGroupIdentifier") as? String ?? "")
+        result(Bundle.main.object(forInfoDictionaryKey: "ProjectFitAppGroupIdentifier") as? String ?? "")
       case "syncWatch":
         // Dart calls this right after writing the widget snapshot; mirror it to
         // the paired Apple Watch. Best-effort, never fails the Dart caller.
@@ -172,7 +172,7 @@ enum ConfigBridge {
 // first call CRASHES the app (Apple's words), which is why the plist edit ships with
 // this file, not after it.
 enum PedometerBridge {
-  private static let channelName = "openstrap/phone_steps"
+  private static let channelName = "projectfit/phone_steps"
   private static let pedometer = CMPedometer()
 
   /// Apple: "Only the past seven days worth of data is stored and available for you to
@@ -269,7 +269,7 @@ enum PedometerBridge {
 // no-risk action here today is "ring my phone" (system alert sound + vibrate). System
 // volume and call control aren't possible from a sandboxed iOS app and are omitted.
 enum ActionBridge {
-  private static let channelName = "openstrap/device_actions"
+  private static let channelName = "projectfit/device_actions"
 
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
@@ -316,7 +316,7 @@ enum ActionBridge {
 ///
 /// `setAlternateIconName` is the only public way to do this, and it comes with
 /// a cost the UI has to be honest about: iOS puts up its own "You have changed
-/// the icon for OpenStrap" alert on every change, and there is no way to
+/// the icon for ProjectFit" alert on every change, and there is no way to
 /// suppress it. The icons themselves are compiled into the asset catalog
 /// (AppIcon / AppIconBW) and named by ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES
 /// in the Runner target — nothing here can invent one that was not built in.
@@ -325,7 +325,7 @@ enum ActionBridge {
 /// managed/enterprise configurations, and a settings row that cannot work should
 /// not be drawn.
 enum AppIconBridge {
-  private static let channelName = "openstrap/app_icon"
+  private static let channelName = "projectfit/app_icon"
 
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)

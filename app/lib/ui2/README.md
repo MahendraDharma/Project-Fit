@@ -3,7 +3,7 @@
 Everything a screen needs, and nothing a screen may bypass. Import the barrel:
 
 ```dart
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/ui2.dart';
 ```
 
 Five files: `theme.dart` (tokens), `grammar.dart` (components), `charts.dart`

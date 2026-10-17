@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 const int _t0 = 1700000000;
 

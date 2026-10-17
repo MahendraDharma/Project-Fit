@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 
 class BreathingLiveActivity {
   static const MethodChannel _ch = MethodChannel(
-    'openstrap/breathing_live_activity',
+    'projectfit/breathing_live_activity',
   );
   static bool _active = false;
 

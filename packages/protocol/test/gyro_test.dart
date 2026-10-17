@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 // R10 gyro/accel decode, verified against a real 1920-byte live R10 record

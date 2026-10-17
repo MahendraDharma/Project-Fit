@@ -53,7 +53,7 @@ import '../data/db.dart';
 /// Apple-only bridge to `HKWorkoutRoute`. Implemented in
 /// ios/Runner/HealthRoutes.swift; absent on Android by design.
 const MethodChannel kHealthRoutesChannel = MethodChannel(
-  'openstrap/health_routes',
+  'projectfit/health_routes',
 );
 
 /// How far back an import reaches.

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/compute/manual_session.dart';
-import 'package:openstrap_edge/models/activity_suggestion.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/ui2/screens/detected_activities.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
-import 'package:openstrap_edge/theme/theme_controller.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/compute/manual_session.dart';
+import 'package:projectfit/models/activity_suggestion.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/ui2/screens/detected_activities.dart';
+import 'package:projectfit/ui2/ui2.dart';
+import 'package:projectfit/theme/theme_controller.dart';
 
 ActivitySuggestion proposal(
   String id,

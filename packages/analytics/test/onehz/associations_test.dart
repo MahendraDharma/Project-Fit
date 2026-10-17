@@ -13,7 +13,7 @@
 
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 /// [n] consecutive real calendar dates from a Monday.

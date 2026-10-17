@@ -12,9 +12,9 @@
 // element and left it there — and if that survivor was the `tool` half of a
 // pair, the very orphan the method exists to prevent was what got sent.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/data/local_repository.dart';
 
 class _FakeRepo extends LocalRepository {}
 

@@ -8,8 +8,8 @@
 // read during build decides once and then goes stale across midnight.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/clock_format.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart';
+import 'package:projectfit/state/clock_format.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart';
 
 void main() {
   const today = '2026-09-08';

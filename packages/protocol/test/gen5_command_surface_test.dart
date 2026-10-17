@@ -11,10 +11,10 @@
 
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/src/band.dart';
-import 'package:openstrap_protocol/src/commands.dart';
-import 'package:openstrap_protocol/src/constants.dart';
-import 'package:openstrap_protocol/src/framing.dart';
+import 'package:projectfit_protocol/src/band.dart';
+import 'package:projectfit_protocol/src/commands.dart';
+import 'package:projectfit_protocol/src/constants.dart';
+import 'package:projectfit_protocol/src/framing.dart';
 import 'package:test/test.dart';
 
 /// The command body (everything after `[type][seq][opcode]`), still carrying

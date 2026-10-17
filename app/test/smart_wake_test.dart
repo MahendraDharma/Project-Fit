@@ -6,7 +6,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/state/smart_wake.dart';
+import 'package:projectfit/state/smart_wake.dart';
 
 List<SmartWakeSample> _still(double hr, int n) =>
     List.generate(n, (_) => SmartWakeSample(hr, 0, 0, 1.0)); // resting, 1g

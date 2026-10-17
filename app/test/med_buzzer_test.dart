@@ -10,7 +10,7 @@
 //   • dispose() stops everything (the AppState teardown path).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/notify/med_buzzer.dart';
+import 'package:projectfit/notify/med_buzzer.dart';
 
 class _Harness {
   int buzzes = 0;

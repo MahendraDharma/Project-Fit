@@ -18,9 +18,9 @@
 // that a window around a session too short to bank has nothing to attach to.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/stress/breath_phases.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/stress/breath_phases.dart';
 
 import 'support/app_state_workout_harness.dart';
 

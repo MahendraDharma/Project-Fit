@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -103,7 +103,7 @@ void main() {
     });
 
     // Export reachability: these are resolved via the public
-    // package:openstrap_protocol/openstrap_protocol.dart import above.
+    // package:projectfit_protocol/projectfit_protocol.dart import above.
     test('cmdGetClock is exported and payloadless (opcode 0x0B)', () {
       final frame = parseFrame(cmdGetClock(0x05))!;
       expect(frame.valid, isTrue);

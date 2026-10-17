@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/high_freq_wake_window.dart';
+import 'package:projectfit/sync/high_freq_wake_window.dart';
 
 void main() {
   Map<String, dynamic> rowForWake(DateTime wake) => {

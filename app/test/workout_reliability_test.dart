@@ -8,10 +8,10 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derive_scheduler.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/gps/screen_wake.dart';
-import 'package:openstrap_edge/state/units_controller.dart';
+import 'package:projectfit/compute/derive_scheduler.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/gps/screen_wake.dart';
+import 'package:projectfit/state/units_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -39,7 +39,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_workout_reliability_test.db';
+    LocalDb.dbName = 'projectfit_workout_reliability_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });
@@ -298,8 +298,8 @@ void main() {
       // call-count and failure assertions below asserted nothing at all.
       ScreenWake.platformOverride = 'android';
       for (final ch in const [
-        MethodChannel('openstrap/edge_tracking'),
-        MethodChannel('openstrap/ios_config'),
+        MethodChannel('projectfit/edge_tracking'),
+        MethodChannel('projectfit/ios_config'),
       ]) {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(ch, (c) async {
@@ -329,7 +329,7 @@ void main() {
       var refuse = true;
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-        const MethodChannel('openstrap/edge_tracking'),
+        const MethodChannel('projectfit/edge_tracking'),
         (c) async {
           calls.add(c);
           return !refuse;
@@ -368,7 +368,7 @@ void main() {
       // stopping it was enough to hit this.
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-        const MethodChannel('openstrap/edge_tracking'),
+        const MethodChannel('projectfit/edge_tracking'),
         (c) async {
           calls.add(c);
           // A real channel hop is not instantaneous; this is the window the
@@ -396,8 +396,8 @@ void main() {
 
     test('a channel failure never throws into the workout path', () async {
       for (final ch in const [
-        MethodChannel('openstrap/edge_tracking'),
-        MethodChannel('openstrap/ios_config'),
+        MethodChannel('projectfit/edge_tracking'),
+        MethodChannel('projectfit/ios_config'),
       ]) {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(

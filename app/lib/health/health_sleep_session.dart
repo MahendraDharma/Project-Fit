@@ -277,7 +277,7 @@ abstract interface class HealthConnectSleepSessionWriter {
 class MethodChannelHealthConnectSleepSessionWriter
     implements HealthConnectSleepSessionWriter {
   MethodChannelHealthConnectSleepSessionWriter({
-    this.channel = const MethodChannel('openstrap/health_connect_sleep'),
+    this.channel = const MethodChannel('projectfit/health_connect_sleep'),
   });
 
   final MethodChannel channel;
@@ -371,7 +371,7 @@ abstract interface class HealthKitSleepSessionWriter {
 class MethodChannelHealthKitSleepSessionWriter
     implements HealthKitSleepSessionWriter {
   MethodChannelHealthKitSleepSessionWriter({
-    this.channel = const MethodChannel('openstrap/healthkit_sleep'),
+    this.channel = const MethodChannel('projectfit/healthkit_sleep'),
   });
 
   final MethodChannel channel;

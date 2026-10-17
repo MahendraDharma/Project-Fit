@@ -16,16 +16,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/ui2/profile/profile.dart' show ProfileAvatar;
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/ui2/profile/profile.dart' show ProfileAvatar;
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:provider/provider.dart';
 
 /// A [CoachConfig] that just answers the one question Home asks it, without a
@@ -627,7 +627,7 @@ void main() {
     test('names the EMPTY tables, not just the recovered count', () {
       final card = dbRebuiltCard((
         cause: 'database disk image is malformed',
-        quarantinePath: '/data/openstrap.corrupt.1755300000.db',
+        quarantinePath: '/data/projectfit.corrupt.1755300000.db',
         salvaged: const {'day_result': 412, 'food_entry': 0, 'med_dose': 0},
       ))!;
       // The reassuring half.
@@ -638,7 +638,7 @@ void main() {
       expect(card.why, contains('food_entry'));
       expect(card.why, contains('med_dose'));
       // And the original is still on disk — never imply a delete.
-      expect(card.why, contains('/data/openstrap.corrupt.1755300000.db'));
+      expect(card.why, contains('/data/projectfit.corrupt.1755300000.db'));
       expect(card.why, contains('nothing was '));
     });
 

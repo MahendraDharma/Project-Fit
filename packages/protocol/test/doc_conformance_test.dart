@@ -4,7 +4,7 @@
 // change what goes on the wire.
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 String hx(Uint8List b) =>
     b.map((x) => x.toRadixString(16).padLeft(2, '0')).join();

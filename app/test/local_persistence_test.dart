@@ -11,18 +11,18 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 
 void main() {
   // Route sqflite through the FFI factory so LocalDb.instance opens a real
   // schema (onCreate builds the v7 tables). Delete any leftover file from a
-  // prior run so each suite starts clean (LocalDb owns the openstrap.db path).
+  // prior run so each suite starts clean (LocalDb owns the projectfit.db path).
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_persistence_test.db';
+    LocalDb.dbName = 'projectfit_persistence_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });
@@ -388,7 +388,7 @@ void main() {
   );
   // ── resumable-sync cursor ──────────────────────────────────────────────────────
   // Kept in THIS file (not a separate suite) so it shares the single DB-test
-  // isolate — two test files both opening LocalDb's fixed openstrap.db path race
+  // isolate — two test files both opening LocalDb's fixed projectfit.db path race
   // on the on-disk sqlite file.
   test('sync cursor set/get round-trip + int parse', () async {
     expect(await LocalDb.getCursor('strap_trim'), isNull);

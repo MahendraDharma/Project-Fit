@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 PUBLIC_KEY_B64 = "BPMdcMa2jzNju8JAdSFLFwRuhvEDcaPPUmFbamtbKR2kb7SEml4HfuXf1nRg/SKZNFrG/TBbjx9Jai+/BLHbmhc="
-INFO = b"openstrap-report-v1"
+INFO = b"projectfit-report-v1"
 _RAW = serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
 
 

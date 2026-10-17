@@ -25,8 +25,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 /// The v33 `decoded_onehz` / `decoded_rr` shape — rec_ts-keyed, WITHOUT any of
 /// the band-computed columns. This is what an existing install's (million-row)
@@ -129,7 +129,7 @@ void main() {
   });
 
   test('a gen5 second round-trips every band-computed field', () async {
-    const name = 'openstrap_gen5_fields_test.db';
+    const name = 'projectfit_gen5_fields_test.db';
     created.add(name);
     await _useFreshDb(name);
 
@@ -215,7 +215,7 @@ void main() {
 
   test('derive read path selects band_sleep_state in both call shapes',
       () async {
-    const name = 'openstrap_band_sleep_state_test.db';
+    const name = 'projectfit_band_sleep_state_test.db';
     created.add(name);
     await _useFreshDb(name);
 
@@ -262,7 +262,7 @@ void main() {
 
   test('a gen4 second stores NULL — never a fabricated 0 — for all of them',
       () async {
-    const name = 'openstrap_gen4_null_fields_test.db';
+    const name = 'projectfit_gen4_null_fields_test.db';
     created.add(name);
     await _useFreshDb(name);
 
@@ -309,7 +309,7 @@ void main() {
   });
 
   test('upgrading a populated v33 database keeps its rows readable', () async {
-    const name = 'openstrap_v33_upgrade_fields_test.db';
+    const name = 'projectfit_v33_upgrade_fields_test.db';
     created.add(name);
     final path = await _dbPath(name);
     await LocalDb.close();
@@ -412,7 +412,7 @@ void main() {
   // cannot pick up a confident answer the data never supported.
   test('upgrading a v34 database retires the disproven values it banked',
       () async {
-    const name = 'openstrap_v34_retire_fields_test.db';
+    const name = 'projectfit_v34_retire_fields_test.db';
     created.add(name);
     final path = await _dbPath(name);
     await LocalDb.close();

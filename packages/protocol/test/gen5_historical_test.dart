@@ -10,7 +10,7 @@
 
 import 'dart:typed_data';
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 /// The 24 saturated i16 deltas carried by the real v26 fixture used below
 /// (inner[19:67], body 6).

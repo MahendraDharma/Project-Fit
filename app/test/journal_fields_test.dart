@@ -6,7 +6,7 @@
 // bottom of the dose range, which is where it does the most damage.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
+import 'package:projectfit/data/journal_fields.dart';
 
 void main() {
   group('the built-in table', () {

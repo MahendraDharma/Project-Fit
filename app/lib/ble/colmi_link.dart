@@ -19,7 +19,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' show kColmiCmdBigData;
+import 'package:projectfit_protocol/projectfit_protocol.dart' show kColmiCmdBigData;
 
 import '../data/db.dart';
 import '../data/models.dart' show ArchiveRecord;

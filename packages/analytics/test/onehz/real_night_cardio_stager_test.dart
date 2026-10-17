@@ -42,7 +42,7 @@
 
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 void main() {
   _windowEdgeTies();

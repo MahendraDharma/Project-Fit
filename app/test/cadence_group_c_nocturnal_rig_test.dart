@@ -9,7 +9,7 @@
 // `tsSec` supplied.
 //
 // Run:
-//   OPENSTRAP_TEST_DBS=~/Documents/openstrap/openstrap_export_1786730410696.db \
+//   PROJECTFIT_TEST_DBS=~/Documents/projectfit/projectfit_export_1786730410696.db \
 //     flutter test test/cadence_group_c_nocturnal_rig_test.dart --concurrency=1
 //
 // Skips cleanly with no export, and reads the night window the rig already
@@ -20,8 +20,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart';
-import 'package:openstrap_edge/compute/substrate.dart' show plausibleHrOrNull;
+import 'package:projectfit_analytics/onehz.dart';
+import 'package:projectfit/compute/substrate.dart' show plausibleHrOrNull;
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -31,14 +31,14 @@ void main() {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  final src = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final src = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .map((s) => s.trim())
       .where((s) => s.isNotEmpty)
       .toList();
 
   if (src.isEmpty) {
-    test('C1 real-data measurement', () {}, skip: 'set OPENSTRAP_TEST_DBS');
+    test('C1 real-data measurement', () {}, skip: 'set PROJECTFIT_TEST_DBS');
   }
 
   for (final path in src) {

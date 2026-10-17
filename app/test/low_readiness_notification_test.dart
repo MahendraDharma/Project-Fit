@@ -7,12 +7,12 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_ids.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_ids.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -26,7 +26,7 @@ void main() {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_low_readiness_notif_test.db';
+    LocalDb.dbName = 'projectfit_low_readiness_notif_test.db';
     dir = await databaseFactory.getDatabasesPath();
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));

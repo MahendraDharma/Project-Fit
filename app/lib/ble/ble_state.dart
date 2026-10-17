@@ -12,7 +12,7 @@ import 'dart:async';
 import 'dart:math';
 
 // Pure byte-layer package (zero deps, no I/O) — purity of this file holds.
-import 'package:openstrap_protocol/openstrap_protocol.dart'
+import 'package:projectfit_protocol/projectfit_protocol.dart'
     show alarmRev1Payload;
 
 import '../sync/sync_policy.dart'
@@ -250,10 +250,10 @@ BandStatus bandStatusFor({
       return const BandStatus(
         BandCondition.bluetoothDenied,
         'Bluetooth is switched off for this app',
-        'The phone is withholding the Bluetooth radio from OpenStrap, so '
+        'The phone is withholding the Bluetooth radio from ProjectFit, so '
             'nothing can be scanned or connected. This is not the band — '
             'walking closer to it will not help.',
-        fix: 'Open Settings → OpenStrap and allow Bluetooth',
+        fix: 'Open Settings → ProjectFit and allow Bluetooth',
       );
     case BleBlocker.adapterOff:
       return const BandStatus(
@@ -1225,7 +1225,7 @@ class AlarmPayloads {
   /// REV-1 9-byte SET_ALARM_TIME payload — the gen4 arm form, fires on
   /// fw 41.17.4 (class doc for the firmware split):
   /// `[0x01][u32 epoch-sec LE][u16 subsec LE][u16 haptic-mode LE]`.
-  /// The byte layout has exactly one home, `openstrap_protocol`'s
+  /// The byte layout has exactly one home, `projectfit_protocol`'s
   /// [alarmRev1Payload]; this is the app-side name for it. Haptic-mode stays
   /// at its default 0 (the strap's stock wake buzz); we never send anything
   /// else.

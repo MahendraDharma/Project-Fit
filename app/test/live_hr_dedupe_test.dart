@@ -3,12 +3,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart' show kBleHrs;
-import 'package:openstrap_edge/ble/hrs_link.dart';
-import 'package:openstrap_edge/data/db.dart' show LocalDb;
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/sync/paired_device.dart' show PairedDevice;
+import 'package:projectfit/ble/adapters/_registry.dart' show kBleHrs;
+import 'package:projectfit/ble/hrs_link.dart';
+import 'package:projectfit/data/db.dart' show LocalDb;
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/sync/paired_device.dart' show PairedDevice;
 
 DeviceState _state(int hr, int atMs) => DeviceState()
   ..connection = 'connected'

@@ -1,7 +1,7 @@
 // sport.dart — the HYBRID sport-classifier seam.
 //
 // The workout detector labels every bout "detected" without sport typing.
-// OpenStrap additionally has a motion-based HAR typer (Mannini 2013 +
+// ProjectFit additionally has a motion-based HAR typer (Mannini 2013 +
 // db10 wavelets), but that is currently TS-only and needs high-rate (~100 Hz)
 // accel features that the 1 Hz bundle does not carry. This seam leaves a clean,
 // typed drop-in point for the classifier the moment high-rate features are

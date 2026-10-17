@@ -27,8 +27,13 @@ import '../sync/file_log.dart';
 import '../telemetry/telemetry_service.dart';
 import 'report_crypto.dart';
 
-/// The report service. One constant; the Worker answers under /v1.
-const String kReportBaseUrl = 'https://reports.openstrap.site';
+/// The report service, set per build: `--dart-define=REPORT_URL=https://...`.
+/// The Worker answers under /v1.
+const String kReportBaseUrl = String.fromEnvironment('REPORT_URL');
+
+/// "Report an issue" needs both somewhere to send a report and a key to seal it
+/// for; without either the settings row is hidden.
+const bool kReportsConfigured = kReportBaseUrl != '' && kReportPublicKeyB64 != '';
 
 /// Server limits (bytes of the sealed blob). UPLOAD limits only: a local
 /// share has no size cap. 95 MB stays under the 100 MB request body the
@@ -204,7 +209,7 @@ Future<File> gzipFile(String path, String to) async {
 }
 
 String _tmp(String dir, String ext) =>
-    '$dir/openstrap_report_${DateTime.now().microsecondsSinceEpoch}$ext';
+    '$dir/projectfit_report_${DateTime.now().microsecondsSinceEpoch}$ext';
 
 /// Gather everything from the running app and write the archive to a temp
 /// file (the caller deletes it). Built on disk, so even the full database
@@ -421,9 +426,11 @@ class ReportSendError implements Exception {
 /// closure created inside a widget's State can capture the State itself,
 /// which cannot cross an isolate boundary, and Isolate.run then throws before
 /// anything is sent.
-Future<File> sealReport(File zip) async {
+Future<File> sealReport(File zip,
+    {String publicKeyB64 = kReportPublicKeyB64}) async {
   final inPath = zip.path, outPath = '${zip.path}.osr1';
-  await Isolate.run(() => osr1EncryptFile(inPath, outPath));
+  await Isolate.run(
+      () => osr1EncryptFile(inPath, outPath, publicKeyB64: publicKeyB64));
   return File(outPath);
 }
 

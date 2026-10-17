@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/csv_export.dart';
-import 'package:openstrap_edge/ui2/screens/day_timeline.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/csv_export.dart';
+import 'package:projectfit/ui2/screens/day_timeline.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 void main() {
   group('DayGraph.window', () {

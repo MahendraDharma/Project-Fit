@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit/health/health_export.dart';
 
 void main() {
   // 8 h night, RR drifting 800 -> 1200 ms, ±30 ms respiratory swing on top.

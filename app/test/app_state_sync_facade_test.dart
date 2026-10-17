@@ -4,10 +4,10 @@
 // tear-off of each member type-checks its signature.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/data/models.dart' show DeviceState;
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/sync/shortcut_sync_task.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/data/models.dart' show DeviceState;
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/sync/shortcut_sync_task.dart';
 
 import 'support/app_state_sync_harness.dart';
 

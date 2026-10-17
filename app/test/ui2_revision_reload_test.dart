@@ -21,13 +21,13 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/locale_controller.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/locale_controller.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// The rows an import would have written, behind the repo the screen reads.
 ///
@@ -87,7 +87,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_revision_reload_test.db';
+    LocalDb.dbName = 'projectfit_revision_reload_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

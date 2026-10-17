@@ -1,7 +1,7 @@
 // Item 3 — PLAUSIBILITY on real captures (no known-answer oracle).
 //
 // Decodes the 550 real type-24 records in ../whoop_hist.jsonl via the sibling
-// openstrap_protocol package, feeds HR / RR / accel through the foundations +
+// projectfit_protocol package, feeds HR / RR / accel through the foundations +
 // Tier-1 stack, and asserts the outputs are physiologically SANE and that the
 // pipeline never crashes.
 //
@@ -15,8 +15,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_analytics/onehz.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 void main() {
   final histFile = File('../whoop_hist.jsonl');

@@ -5,7 +5,7 @@
 import 'package:flutter/services.dart';
 
 class LiveActivity {
-  static const MethodChannel _ch = MethodChannel('openstrap/live_activity');
+  static const MethodChannel _ch = MethodChannel('projectfit/live_activity');
   static bool _active = false;
 
   static bool get isActive => _active;

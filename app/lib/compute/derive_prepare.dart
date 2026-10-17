@@ -1,7 +1,7 @@
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../ble/adapters/signals.dart';
 import '../data/coverage_resolver.dart';

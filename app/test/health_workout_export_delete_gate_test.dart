@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/health/health_export.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// A stand-in for the platform health store, driven over the `health` plugin's

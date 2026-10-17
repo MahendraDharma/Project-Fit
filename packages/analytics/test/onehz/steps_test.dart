@@ -17,9 +17,9 @@
 
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/motion/motion.dart';
-import 'package:openstrap_analytics/src/onehz/workout/calories.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/motion/motion.dart';
+import 'package:projectfit_analytics/src/onehz/workout/calories.dart';
 
 /// Synthetic 100 Hz walking: arm-swing fundamental at [stepHz] with a little
 /// impact harmonic, plus z-gravity. Amplitude [ampG]. Returns (x,y,z).

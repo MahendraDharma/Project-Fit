@@ -3,19 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart'
+import 'package:projectfit_analytics/onehz.dart'
     show quietHrrMinDays, readinessCompositeMinBaseline;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/onboarding/profile_setup.dart';
-import 'package:openstrap_edge/ui2/profile/profile.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart'
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/onboarding/profile_setup.dart';
+import 'package:projectfit/ui2/profile/profile.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart'
     show firstWeekCard;
-import 'package:openstrap_edge/ui2/screens/sleep_detail.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/screens/sleep_detail.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Widget _app(Widget child) => MaterialApp(
       theme: buildTheme(Brightness.light),

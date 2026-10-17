@@ -1,5 +1,5 @@
 // companion_client.dart — the ONLY network client for the slim companion backend
-// (openstrap-companion). Distinct from backend_client.dart, which is the one-shot
+// (projectfit-companion). Distinct from backend_client.dart, which is the one-shot
 // existing-user IMPORT client. This carries the OPT-IN, consent-gated channels:
 //   • POST /consent        — record a grant/revoke (called when a toggle flips)
 //   • POST /telemetry      — a batch of crash/error/device records

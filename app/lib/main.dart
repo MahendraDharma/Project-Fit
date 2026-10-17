@@ -122,7 +122,7 @@ Future<void> main() async {
   // native launch screen (blank/icon). Guard each so the UI always boots.
   // iOS: registers the CoreBluetooth-restoration wake handler (no-op on Android).
   await _safeInit('IosBleRestore', IosBleRestore.init);
-  // iOS: BGProcessingTask Dart handler (openstrap/bg_task channel). No-op on Android.
+  // iOS: BGProcessingTask Dart handler (projectfit/bg_task channel). No-op on Android.
   await _safeInit('IosBgTask', IosBgTask.init);
   // Android: headless auto-connect after reboot (no-op if a view is attached or iOS).
   await _safeInit('HeadlessBoot', maybeHeadlessBoot);
@@ -204,7 +204,7 @@ Future<void> main() async {
         ChangeNotifierProvider<LocaleController>.value(value: locale),
         ChangeNotifierProvider<CoachConfig>.value(value: coachConfig),
       ],
-      child: const OpenStrapApp(),
+      child: const ProjectFitApp(),
     ),
   );
 }

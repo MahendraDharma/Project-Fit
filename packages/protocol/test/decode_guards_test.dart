@@ -7,7 +7,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 /// Record 0 of the golden capture — a real, CRC-valid v24 historical record

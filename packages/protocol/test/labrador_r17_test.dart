@@ -4,7 +4,7 @@
 
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 /// A physical-shaped inner: 228 bytes (the observed fixed inner size), with

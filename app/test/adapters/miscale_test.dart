@@ -4,11 +4,11 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/miscale.dart';
-import 'package:openstrap_edge/data/observation.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/miscale.dart';
+import 'package:projectfit/data/observation.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 final int _nowSec = DateTime.utc(2026, 10, 4, 8).millisecondsSinceEpoch ~/ 1000;
 

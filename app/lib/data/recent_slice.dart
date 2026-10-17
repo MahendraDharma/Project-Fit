@@ -141,7 +141,7 @@ Future<String> exportRecentSlice({DateTime? now, int rawDays = kSliceDays}) asyn
   final cutoffDay =
       dayLabelOf(DateTime(t.year, t.month, t.day - kSliceDays));
   final dest = p.join((await getTemporaryDirectory()).path,
-      'openstrap_slice_${DateTime.now().microsecondsSinceEpoch}.db');
+      'projectfit_slice_${DateTime.now().microsecondsSinceEpoch}.db');
   await deleteDatabase(dest);
   final out = await openDatabase(dest, singleInstance: false);
   try {

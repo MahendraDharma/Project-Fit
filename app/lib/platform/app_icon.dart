@@ -1,4 +1,4 @@
-// app_icon.dart — the Dart side of the `openstrap/app_icon` method channel:
+// app_icon.dart — the Dart side of the `projectfit/app_icon` method channel:
 // which icon the home screen shows.
 //
 // iOS only, deliberately. `setAlternateIconName` is a supported API that costs
@@ -43,7 +43,7 @@ enum AppIconChoice {
 }
 
 class AppIcon {
-  static const _ch = MethodChannel('openstrap/app_icon');
+  static const _ch = MethodChannel('projectfit/app_icon');
 
   /// Whether this device can change its home-screen icon at all. False off
   /// iOS, and false on the managed configurations where iOS refuses.

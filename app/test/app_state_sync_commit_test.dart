@@ -11,14 +11,14 @@ import 'dart:async';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_blue_plus_platform_interface/flutter_blue_plus_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/sync/ios_bg_task.dart';
-import 'package:openstrap_edge/sync/ios_shortcut_sync.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
-import 'package:openstrap_edge/sync/shortcut_sync_task.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/sync/ios_bg_task.dart';
+import 'package:projectfit/sync/ios_shortcut_sync.dart';
+import 'package:projectfit/sync/paired_device.dart';
+import 'package:projectfit/sync/reset_gate.dart';
+import 'package:projectfit/sync/shortcut_sync_task.dart';
 
 import 'support/app_state_sync_harness.dart';
 

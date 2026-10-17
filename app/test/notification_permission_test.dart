@@ -16,7 +16,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/notify/notification_service.dart';
+import 'package:projectfit/notify/notification_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

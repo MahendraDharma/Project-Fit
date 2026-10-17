@@ -16,12 +16,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/hr_max.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/app_state.dart' show LiveWorkoutState;
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/hr_max.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/app_state.dart' show LiveWorkoutState;
 
 RawRecord _raw(int ts, int counter) => RawRecord(
       counter: counter,
@@ -204,7 +204,7 @@ void main() {
     setUpAll(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_max_hr_spike_test.db';
+      LocalDb.dbName = 'projectfit_max_hr_spike_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
       repo = LocalRepositoryImpl(getProfileMap: () => {'age': 30}); // maxHr 190

@@ -1,6 +1,6 @@
 // Two reads out of the phone's health store, behind one row on Your data.
 //
-// They are on the same screen because they are the same promise: OpenStrap did
+// They are on the same screen because they are the same promise: ProjectFit did
 // not measure any of this. What differs is what each one is ALLOWED to become.
 //
 // THE OTHER TWO READS ARE NOT HERE, and that is the point. Height and weight
@@ -31,7 +31,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../../data/db.dart';
 import '../../health/health_import_state.dart';

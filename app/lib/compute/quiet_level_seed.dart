@@ -18,7 +18,7 @@
 
 import 'dart:isolate';
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../data/db.dart';
 import '../data/series_codec.dart';

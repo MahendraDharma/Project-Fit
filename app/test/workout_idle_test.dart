@@ -9,7 +9,7 @@
 // dropped ask (quiet hours) is retried rather than lost.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/workout_idle.dart';
+import 'package:projectfit/state/workout_idle.dart';
 
 void main() {
   final t0 = DateTime(2026, 8, 25, 18, 0);

@@ -3,8 +3,8 @@
 // whoop_hist.jsonl needed.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_edge/data/coverage_resolver.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit/data/coverage_resolver.dart';
 
 void main() {
   const from = 1756713600; // fixed constant, not `now`

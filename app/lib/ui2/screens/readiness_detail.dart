@@ -8,7 +8,7 @@ import '../../l10n/presentation_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart' show readinessCompositeMinBaseline;
+import 'package:projectfit_analytics/onehz.dart' show readinessCompositeMinBaseline;
 
 import '../../compute/onehz_pipeline.dart'
     show readinessInputShortfallNote, readinessUnstableBaselineNote;

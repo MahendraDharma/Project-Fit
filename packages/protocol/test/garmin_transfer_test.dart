@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/src/garmin.dart';
-import 'package:openstrap_protocol/src/garmin_transfer.dart';
+import 'package:projectfit_protocol/src/garmin.dart';
+import 'package:projectfit_protocol/src/garmin_transfer.dart';
 import 'package:test/test.dart';
 
 GarminGfdiFrame frame(Uint8List built) => garminParseGfdiFrame(built)!;

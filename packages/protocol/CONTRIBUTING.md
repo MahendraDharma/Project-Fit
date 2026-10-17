@@ -9,8 +9,8 @@ feature, not an accident. It runs on-device inside the app.
 | Your change | Repo |
 |---|---|
 | A record type, opcode, event, CRC/framing, GATT constant | **here** |
-| A metric, or how a number is computed from records | [analytics](https://github.com/OpenStrap/analytics) |
-| Bluetooth reliability, storage, sync, UI | [edge](https://github.com/OpenStrap/edge) |
+| A metric, or how a number is computed from records | [analytics](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics) |
+| Bluetooth reliability, storage, sync, UI | [edge](https://github.com/MahendraDharma/Project-Fit) |
 
 Nothing in `lib/` may import `dart:io`, do network calls, or pull in a package.
 If you need those, your change belongs in edge.

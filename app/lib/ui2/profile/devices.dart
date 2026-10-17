@@ -1302,7 +1302,7 @@ Future<void> showRestartRequiredSheet(BuildContext c) async {
         child: Text(
           uiText(
             c,
-            'iOS shows the pairing sheet only before the app has used Bluetooth. Close OpenStrap completely, then reopen it to see the sheet.',
+            'iOS shows the pairing sheet only before the app has used Bluetooth. Close ProjectFit completely, then reopen it to see the sheet.',
           ),
           style: F.body.copyWith(color: p.ink),
         ),

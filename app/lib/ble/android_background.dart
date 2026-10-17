@@ -39,7 +39,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class AndroidBackground {
-  static const _ch = MethodChannel('openstrap/android_background');
+  static const _ch = MethodChannel('projectfit/android_background');
 
   /// Fire-and-forget CDM association for the paired band ([mac] is the
   /// flutter_blue_plus remoteId, which on Android IS the MAC address). Shows

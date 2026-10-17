@@ -15,8 +15,8 @@
 // the saturation → abstain behaviour and prove a clean derive is unaffected.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit_analytics/onehz.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 void main() {
   // A near-constant but strictly-increasing baseline: tiny NON-zero MAD, exactly

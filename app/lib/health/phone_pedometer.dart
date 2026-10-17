@@ -14,7 +14,7 @@ typedef StepIntervalReader = Future<int?> Function(DateTime from, DateTime to);
 /// Implementations: `ios/Runner/AppDelegate.swift` (PedometerBridge) and
 /// `android/app/src/main/kotlin/.../PhoneStepCounter.kt`.
 @visibleForTesting
-const MethodChannel phoneStepsChannel = MethodChannel('openstrap/phone_steps');
+const MethodChannel phoneStepsChannel = MethodChannel('projectfit/phone_steps');
 
 /// REAL step counts, read from the phone's own step sensor.
 ///

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 class _Repo extends LocalRepository {
   @override

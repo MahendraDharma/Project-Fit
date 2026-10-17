@@ -24,12 +24,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/gps/route_types.dart';
-import 'package:openstrap_edge/gps/screen_wake.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/gps/route_types.dart';
+import 'package:projectfit/gps/screen_wake.dart';
+import 'package:projectfit/state/app_state.dart';
 
 Future<void> settleMs([int ms = 150]) =>
     Future<void>.delayed(Duration(milliseconds: ms));
@@ -153,12 +153,12 @@ class PlatformSpies {
     });
   }
 
-  static const _live = MethodChannel('openstrap/live_activity');
-  static const _breath = MethodChannel('openstrap/breathing_live_activity');
-  static const _tracking = MethodChannel('openstrap/edge_tracking');
+  static const _live = MethodChannel('projectfit/live_activity');
+  static const _breath = MethodChannel('projectfit/breathing_live_activity');
+  static const _tracking = MethodChannel('projectfit/edge_tracking');
   static const _geo = MethodChannel('flutter.baseflow.com/geolocator');
   static const _home = MethodChannel('home_widget');
-  static const _ios = MethodChannel('openstrap/ios_config');
+  static const _ios = MethodChannel('projectfit/ios_config');
   static const _geoUpdates = EventChannel('flutter.baseflow.com/geolocator_updates');
   static const _health = MethodChannel('flutter_health');
 

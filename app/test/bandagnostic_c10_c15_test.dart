@@ -2,9 +2,9 @@
 // gen4 constant standing in for evidence. One group per item; every case is
 // pure (no DB, no BLE), because every rule under test is.
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/live_coverage_policy.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/live_coverage_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Substrate _sub({

@@ -53,7 +53,7 @@ import '../../l10n/display_text.dart';
 import '../../l10n/decimal_text.dart';
 import '../../state/locale_controller.dart';
 import 'package:intl/intl.dart';
-import 'package:openstrap_analytics/onehz.dart'
+import 'package:projectfit_analytics/onehz.dart'
     show quietHrrMinDays, readinessCompositeMinBaseline;
 import '../../models/metric.dart';
 import '../../models/payloads.dart' show todayHeadlineOf;
@@ -1987,7 +1987,6 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
 
         const SizedBox(height: S.x3),
         const DetectedActivitiesCard(),
-        const CommunityNudge(),
 
         // ── the rollup was withheld, not absent ──
         if (stale != null) ...[const SizedBox(height: S.x3), stale],

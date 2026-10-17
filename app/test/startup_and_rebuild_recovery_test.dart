@@ -23,9 +23,9 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show dbRebuiltCard;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart' show dbRebuiltCard;
 
 Future<String> _dbPath(String name) async =>
     p.join(await databaseFactory.getDatabasesPath(), name);

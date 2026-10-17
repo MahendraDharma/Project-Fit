@@ -6,9 +6,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/sync/sync_policy.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 class _Rig {
   final logs = <String>[];

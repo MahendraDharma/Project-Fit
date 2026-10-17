@@ -5,13 +5,13 @@ Thanks for looking. This is a small project and PRs genuinely get read.
 ## Which repo does my change go in?
 
 This is the one thing worth getting right before you start, because it decides
-where the code lives. OpenStrap is three packages and the split is strict:
+where the code lives. ProjectFit is three packages and the split is strict:
 
 | Your change | Repo |
 |---|---|
-| A new record type, opcode, event, or anything about the bytes on the wire | [**protocol**](https://github.com/OpenStrap/protocol) |
-| A new metric, or a change to how an existing number is computed | [**analytics**](https://github.com/OpenStrap/analytics) |
-| Bluetooth reliability, storage, background sync, UI, anything app-shaped | [**edge**](https://github.com/OpenStrap/edge) (here) |
+| A new record type, opcode, event, or anything about the bytes on the wire | [**protocol**](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol) |
+| A new metric, or a change to how an existing number is computed | [**analytics**](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics) |
+| Bluetooth reliability, storage, background sync, UI, anything app-shaped | [**edge**](https://github.com/MahendraDharma/Project-Fit) (here) |
 
 If you're not sure, open an issue first and ask — it's cheaper than moving code
 between repos afterwards.
@@ -84,7 +84,7 @@ files by ownership. Build steps and how the pieces fit together are in
 ## Running it
 
 ```bash
-git clone https://github.com/OpenStrap/edge.git
+git clone https://github.com/MahendraDharma/Project-Fit.git
 cd edge
 cp .env.example .env
 flutter pub get
@@ -99,9 +99,9 @@ For local work across all three packages at once, create a `pubspec_overrides.ya
 
 ```yaml
 dependency_overrides:
-  openstrap_protocol:
+  projectfit_protocol:
     path: ../protocol
-  openstrap_analytics:
+  projectfit_analytics:
     path: ../analytics
 ```
 
@@ -147,7 +147,7 @@ shows up in the picker. Open a PR.
 
 If you've worked out a field, an opcode, or an event we don't decode yet, that's
 one of the most valuable things you can contribute. Open an issue in
-[protocol](https://github.com/OpenStrap/protocol/issues) with the raw bytes, what
+[protocol](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol/issues) with the raw bytes, what
 you think the field is, and how you convinced yourself. A lot of the current
 event table is empirical guesswork by one person — more eyes genuinely helps.
 
@@ -161,8 +161,8 @@ Facts about a protocol are fine. Someone else's source code is not.
 
 ## License
 
-OpenStrap is licensed under AGPL-3.0 (see [LICENSE](LICENSE)). By contributing, you
+ProjectFit is licensed under AGPL-3.0 (see [LICENSE](LICENSE)). By contributing, you
 agree that your contributions are licensed under the same AGPL-3.0 terms. You keep the
 copyright in your work.
 
-The OpenStrap name and logo are covered separately by [TRADEMARKS.md](TRADEMARKS.md).
+The ProjectFit name and logo are covered separately by [TRADEMARKS.md](TRADEMARKS.md).

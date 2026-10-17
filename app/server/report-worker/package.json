@@ -1,5 +1,5 @@
 {
-  "name": "openstrap-report-worker",
+  "name": "projectfit-report-worker",
   "private": true,
   "type": "module",
   "scripts": {

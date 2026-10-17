@@ -11,7 +11,7 @@
 // implicit cross-join whose SECOND member (on-device GPS coordinates) was
 // never examined at all.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_db.dart';
+import 'package:projectfit/coach/coach_db.dart';
 
 void main() {
   group('CoachDb.guardAndPrepare — allow-list', () {

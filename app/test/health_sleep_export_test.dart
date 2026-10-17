@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health/health.dart';
-import 'package:openstrap_edge/health/health_export.dart';
-import 'package:openstrap_edge/health/health_sleep_session.dart';
+import 'package:projectfit/health/health_export.dart';
+import 'package:projectfit/health/health_sleep_session.dart';
 
 int _seconds(DateTime value) => value.millisecondsSinceEpoch ~/ 1000;
 
@@ -482,7 +482,7 @@ void main() {
     );
 
     test('one channel call carries one parent and every stage', () async {
-      const channel = MethodChannel('openstrap/test_health_connect_sleep');
+      const channel = MethodChannel('projectfit/test_health_connect_sleep');
       final calls = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
@@ -517,7 +517,7 @@ void main() {
       'an empty normalized hypnogram is a benign no-op — it never replaces '
       'native data, and it must not fail the whole day\'s export',
       () async {
-        const channel = MethodChannel('openstrap/test_health_connect_empty');
+        const channel = MethodChannel('projectfit/test_health_connect_empty');
         var calls = 0;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (call) async {
@@ -554,7 +554,7 @@ void main() {
       'an IMPORTED-shaped day (sleep window, no series at all) is a no-op, '
       'not a failure — this is the case that never exported',
       () async {
-        const channel = MethodChannel('openstrap/test_health_connect_imported');
+        const channel = MethodChannel('projectfit/test_health_connect_imported');
         var calls = 0;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (call) async {
@@ -584,7 +584,7 @@ void main() {
       'a day with NO sleep window and a day with a window but no stages agree '
       '— both are "nothing to write", so both report the same way',
       () async {
-        const channel = MethodChannel('openstrap/test_health_connect_symmetry');
+        const channel = MethodChannel('projectfit/test_health_connect_symmetry');
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (call) async => true);
         addTearDown(() {
@@ -613,7 +613,7 @@ void main() {
     test(
       'a day whose night is gone (rejected) clears the night exported earlier',
       () async {
-        const channel = MethodChannel('openstrap/test_health_connect_clear');
+        const channel = MethodChannel('projectfit/test_health_connect_clear');
         final calls = <MethodCall>[];
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (call) async {
@@ -684,7 +684,7 @@ void main() {
     test(
       're-export uses the replace operation and a false result propagates',
       () async {
-        const channel = MethodChannel('openstrap/test_health_connect_replace');
+        const channel = MethodChannel('projectfit/test_health_connect_replace');
         final storedParents = <Map<String, Object?>>[];
         var writes = 0;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -717,7 +717,7 @@ void main() {
       'overlapping exports never enter the native replace concurrently',
       () async {
         const channel = MethodChannel(
-          'openstrap/test_health_connect_concurrency',
+          'projectfit/test_health_connect_concurrency',
         );
         final firstEntered = Completer<void>();
         final releaseFirst = Completer<bool>();
@@ -890,7 +890,7 @@ void main() {
     });
 
     test('Apple replace sends in-bed even when stages are empty', () async {
-      const channel = MethodChannel('openstrap/test_healthkit_sleep');
+      const channel = MethodChannel('projectfit/test_healthkit_sleep');
       final calls = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
@@ -929,7 +929,7 @@ void main() {
     test(
       'Apple replace carries Core stages and noon-to-noon cleanup',
       () async {
-        const channel = MethodChannel('openstrap/test_healthkit_sleep_full');
+        const channel = MethodChannel('projectfit/test_healthkit_sleep_full');
         final calls = <MethodCall>[];
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (call) async {

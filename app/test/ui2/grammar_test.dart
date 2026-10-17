@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/grammar.dart';
+import 'package:projectfit/ui2/grammar.dart';
 
 void main() {
   group('Typed.of', () {

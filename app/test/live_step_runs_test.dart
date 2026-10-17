@@ -23,10 +23,10 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/ble/live_step_runs.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/ble/live_step_runs.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/app_state.dart';
 
 /// One 100 Hz frame of walking-shaped |a|(g): a ~2 Hz gait oscillation riding
 /// the 1 g gravity baseline, which is what the AN-2554 counter expects. Indexed
@@ -48,7 +48,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_live_step_runs_test.db';
+    LocalDb.dbName = 'projectfit_live_step_runs_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

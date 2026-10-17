@@ -18,8 +18,8 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/derive_prepare.dart';
 
 /// Drive the real prepare worker over a caller-supplied page sequence and
 /// return whichever came first: a result payload, or an error. Mirrors

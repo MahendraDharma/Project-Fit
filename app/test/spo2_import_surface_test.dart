@@ -2,15 +2,15 @@
 // WHOOP provenance, and the metric screen loads and charts it.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/substrate.dart' show localDateLabel;
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/import/whoop_import.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/ui2/screens/metric_detail.dart'
+import 'package:projectfit/compute/substrate.dart' show localDateLabel;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/import/whoop_import.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/ui2/screens/metric_detail.dart'
     show MetricData, specOf;
-import 'package:openstrap_edge/ui2/screens/screens.dart'
+import 'package:projectfit/ui2/screens/screens.dart'
     show ExploreData, HealthData, HealthScreen;
-import 'package:openstrap_edge/ui2/ui2.dart' show buildTheme;
+import 'package:projectfit/ui2/ui2.dart' show buildTheme;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
 import 'dart:convert';

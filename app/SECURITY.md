@@ -5,7 +5,7 @@
 Please **don't** open a public issue for a security problem.
 
 Use GitHub's private reporting instead:
-[**Report a vulnerability →**](https://github.com/OpenStrap/edge/security/advisories/new)
+[**Report a vulnerability →**](https://github.com/MahendraDharma/Project-Fit/security/advisories/new)
 
 That goes straight to the maintainer and stays private until there's a fix.
 
@@ -25,7 +25,7 @@ company with an on-call rota:
 - Local data-at-rest problems: the database, exports, the App Group container,
   widget snapshots.
 - The optional companion worker in
-  [backend](https://github.com/OpenStrap/backend): auth, the import endpoints,
+  [backend](https://github.com/MahendraDharma/Project-Fit/backend): auth, the import endpoints,
   the opt-in telemetry and health-upload paths.
 - Anything that causes the app to send data anywhere the user did not agree to.
 
@@ -41,7 +41,7 @@ company with an on-call rota:
 
 ## Where your data actually is
 
-Worth knowing before you go looking: OpenStrap computes and stores your health
+Worth knowing before you go looking: ProjectFit computes and stores your health
 data on-device, and there's no account or server holding it. Two qualifications,
 so the boundary is exact:
 

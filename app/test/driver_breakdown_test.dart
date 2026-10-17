@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/driver_breakdown.dart';
+import 'package:projectfit/ui2/screens/driver_breakdown.dart';
 
 /// The bug this pins: "What charged and drained you" printed two bare words —
 /// "hrv", "rhr" — because it read `readiness_glassbox.drivers`, which is

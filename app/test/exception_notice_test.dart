@@ -7,7 +7,7 @@
 // label so a DST transition cannot gate out a current night.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/findings.dart';
+import 'package:projectfit/compute/findings.dart';
 
 void main() {
   Map<String, dynamic> cdWith({

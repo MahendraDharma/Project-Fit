@@ -17,12 +17,12 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/cloud/cloud_import.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart' show kAlgoVersion;
-import 'package:openstrap_edge/compute/substrate.dart' show localDateLabel;
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/import/noop_import.dart';
-import 'package:openstrap_edge/import/whoop_import.dart';
+import 'package:projectfit/cloud/cloud_import.dart';
+import 'package:projectfit/compute/derivation_engine.dart' show kAlgoVersion;
+import 'package:projectfit/compute/substrate.dart' show localDateLabel;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/import/noop_import.dart';
+import 'package:projectfit/import/whoop_import.dart';
 
 /// Local-time wall clock → the day label the importer will file it under.
 const _wake = '2026-03-05 08:30:00';
@@ -56,10 +56,10 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_import_safety_test.db';
+    LocalDb.dbName = 'projectfit_import_safety_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
-    tmp = Directory.systemTemp.createTempSync('openstrap_import_test');
+    tmp = Directory.systemTemp.createTempSync('projectfit_import_test');
   });
 
   tearDownAll(() async {

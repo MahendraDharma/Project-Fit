@@ -6,9 +6,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// Deterministic, so a failure is never noise.
 List<double> _series(int n, double base, double amp) => List<double>.generate(

@@ -1,4 +1,4 @@
-# AGENTS.md — OpenStrap `edge`
+# AGENTS.md — ProjectFit `app`
 
 Reviewer context. This doc drifts from code between edits — check
 `kAlgoVersion` (`lib/compute/derivation_engine.dart`), `schemaVersion`
@@ -18,14 +18,15 @@ local-first**: BLE offload → SQLite → on-device analytics → UI. No backend
 user data. Network use is limited to OTA update pointers, opt-in
 telemetry/Crashlytics, and BYOK LLM calls.
 
-Three sibling repos, strict separation — push work to the right one:
-- `OpenStrap/protocol` — bytes: GATT, framing, CRC, opcodes, record decode.
-- `OpenStrap/analytics` — metrics: HRV, sleep staging, readiness, strain.
-- `OpenStrap/edge` (**this repo**) — flows, BLE link management, storage, UI.
+One repository (a fork of OpenStrap's three), three packages, strict separation —
+put work in the right one:
+- `packages/protocol/` — bytes: GATT, framing, CRC, opcodes, record decode.
+- `packages/analytics/` — metrics: HRV, sleep staging, readiness, strain.
+- `app/` (**this package**) — flows, BLE link management, storage, UI.
 
 New opcode/record → protocol. New metric → analytics. New screen/flow/table →
-edge. A PR implementing a metric inside `edge/lib/compute` is in the wrong repo
-unless it is pure orchestration.
+app. A change implementing a metric inside `app/lib/compute` is in the wrong
+package unless it is pure orchestration.
 
 ## 2. Architecture map (`lib/`, well over 200 files — these five are the biggest by far)
 
@@ -106,15 +107,16 @@ a hotspot.
    imputation, no substituted defaults, no deriving one metric from another as a
    fallback. Most-violated rule in the repo (§4.1).
 4. **Bump `kAlgoVersion`** (`compute/derivation_engine.dart`) whenever any
-   analytics *output* changes, including via a sibling re-pin. Rows are immutable
+   analytics *output* changes, including any edit under `packages/`. Rows are immutable
    per version; without a bump nothing recomputes. Add a changelog entry above
    the constant.
-5. **A bump citing a sibling change must be backed by the pin.** Verify the SHA
-   in `pubspec.yaml` actually contains the cited change. v43's changelog
-   described an analytics fix its pin never contained; the bug stayed live three
-   releases and only shipped at v46.
-6. **Siblings pinned to full commit SHAs, never branch refs.** `ref: main` on
-   analytics shipped main-thread ANRs into 0.9.13/0.9.14.
+5. **A bump citing a package change must land with that change.** Upstream, v43's
+   changelog described an analytics fix its pin never contained; the bug stayed
+   live three releases. Here the packages are in-tree, so the bump and the
+   `packages/` edit go in the same commit.
+6. **The app depends on `packages/` by path, never by git URL.**
+   `test/db_serve_version_and_reads_test.dart` enforces it, in `pubspec.yaml` and
+   in `pubspec.lock`.
 7. **Day labels are LOCAL.** Always `todayLabel()` / `dayLabelOf()` from
    `data/day_label.dart`; never `DateTime.now().toUtc()...substring(0,10)`. Epoch
    timestamps (rec_ts, session bounds, prune cutoffs) are absolute — do not
@@ -231,11 +233,8 @@ rode analytics v42 into 0.9.13; a PR bumped `kAlgoVersion` while the lock still
 pinned the pre-fix analytics commit, requiring a manual merge-order gate; and
 `0.9.17+1` shipped versionCode 1 → `INSTALL_FAILED_VERSION_DOWNGRADE`, making
 the release uninstallable.
-`pubspec_overrides.yaml` redirects siblings to `../analytics` / `../protocol` and
-is gitignored — committing a path override fails CI `flutter pub get` (exit 66).
-The tracked `pubspec.lock` records `source: git` + `resolved-ref` for both
-siblings, and `.github/scripts/check_sibling_pins.sh` fails CI if it ever
-records `path`. `pubspec.yaml` stays the source of truth. `version:` must
+(Those were upstream's multi-repo pins. In this monorepo the packages resolve by
+path; see invariant 6.) `version:` must
 always keep its `+BUILD` suffix, and the iOS widget/watch
 `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` are bumped manually and drift.
 
@@ -254,10 +253,10 @@ visual bugs — check whether removed wrapper widgets were load-bearing.
 
 ## 5. How to review this repo
 
-**CI does run on PRs.** `.github/workflows/test.yml` runs `flutter analyze` +
-`flutter test` on every pull request and on push to `main`.
-`.github/workflows/build.yml` (the APK/IPA release) is the one gated to
-`push: tags: ['v*']` — it doesn't touch PRs. `test/` is large and not flat
+**CI does run on PRs.** The repository's `.github/workflows/test.yml` runs
+analyze + tests for `packages/protocol`, `packages/analytics` and `app` on every
+pull request and on push to `main`. There is no release workflow yet. `test/` is
+large and not flat
 (it has `adapters/`, `support/`, and other subdirectories alongside the
 top-level test files). Several regression tests are named for the bug they pin
 (`readiness_flash_test`, `readiness_freeze_test`, `readiness_saturation_test`,

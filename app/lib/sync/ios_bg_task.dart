@@ -1,6 +1,6 @@
 // ios_bg_task.dart — iOS BGProcessingTask + BGAppRefreshTask Dart handler.
 //
-// Native (BgSyncScheduler.swift) calls the `openstrap/bg_task` channel method
+// Native (BgSyncScheduler.swift) calls the `projectfit/bg_task` channel method
 // `run` when iOS opportunistically wakes the app for a background task.
 //   - BGProcessingTask (no arguments): FULL profile — runHeadlessSync()
 //     (connect → flash offload → local store → disconnect → light derive)
@@ -39,7 +39,7 @@ import 'background_sync.dart';
 import 'headless_gate.dart';
 
 class IosBgTask {
-  static const _ch = MethodChannel('openstrap/bg_task');
+  static const _ch = MethodChannel('projectfit/bg_task');
   static const _kProfileKey = 'local_profile_json'; // matches AppState._kProfile
 
   /// When the FOREGROUND app owns the band, a BG-task wake must not open a
@@ -140,7 +140,7 @@ class IosBgTask {
 
   /// Push a fresh Today snapshot to the App Group after a headless derive so
   /// the home/lock-screen widget AND the Siri/Shortcuts query intents
-  /// (RecoveryIntent/StrainIntent/SleepIntent — see OpenStrapIntents.swift,
+  /// (RecoveryIntent/StrainIntent/SleepIntent — see ProjectFitIntents.swift,
   /// which read this same App Group) don't go stale just because the user
   /// hasn't opened the Today screen. Previously WidgetService.push() was only
   /// ever called from today_screen.dart's fetch() — a real gap: "ask Siri

@@ -20,7 +20,7 @@
 // to declare a cached artifact reusable.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
 
 void main() {
   Map<String, dynamic> envelope(String? builtFor, {int? algoVersion}) =>

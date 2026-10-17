@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// The type the app ships. Without it the harness measures its fallback
 /// glyphs, and a width assertion against the wrong font is a width assertion

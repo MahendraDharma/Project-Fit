@@ -4,11 +4,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/live_coverage_policy.dart';
-import 'package:openstrap_edge/data/step_calibration.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/live_coverage_policy.dart';
+import 'package:projectfit/data/step_calibration.dart';
 
 void main() {
   setUpAll(() async {

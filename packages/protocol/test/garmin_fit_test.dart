@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/src/garmin_fit.dart';
+import 'package:projectfit_protocol/src/garmin_fit.dart';
 import 'package:test/test.dart';
 
 /// A tiny FIT writer for tests: definitions + data records, little-endian.

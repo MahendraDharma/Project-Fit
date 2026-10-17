@@ -97,7 +97,7 @@ async function createIssue(env: Env, id: string, m: Meta): Promise<string | null
       method: "POST",
       headers: {
         authorization: `Bearer ${env.GITHUB_TOKEN}`, accept: "application/vnd.github+json",
-        "user-agent": "openstrap-reports", "content-type": "application/json",
+        "user-agent": "projectfit-reports", "content-type": "application/json",
       },
       body: JSON.stringify({ title: `[${id}] ${m.category}: ${m.title}`, body, labels: [m.category, "report"] }),
       signal: AbortSignal.timeout(5000),

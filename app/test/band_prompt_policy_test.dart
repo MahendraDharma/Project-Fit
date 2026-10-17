@@ -3,7 +3,7 @@
 // background lease is renewed. No BLE, no DB.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   final now = DateTime(2026, 9, 21, 23, 0);

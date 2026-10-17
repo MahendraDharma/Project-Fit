@@ -1,4 +1,4 @@
-name: openstrap_analytics
+name: projectfit_analytics
 description: >-
   Recovery, strain, sleep and more, computed from a WHOOP 4.0's 1 Hz sensor
   stream using published, cited methods only. Pure Dart, zero runtime
@@ -9,7 +9,7 @@ publish_to: none
 environment:
   sdk: ^3.5.0
 
-# NOTE: no runtime dependencies, by design. openstrap_protocol is a DEV-only
+# NOTE: no runtime dependencies, by design. projectfit_protocol is a DEV-only
 # dependency — the tests replay real records through it, but nothing under lib/
 # imports it. That is what keeps this package pure Dart with zero runtime deps.
 dev_dependencies:
@@ -17,8 +17,8 @@ dev_dependencies:
   lints: ^4.0.0
   # Pinned to a commit SHA, not a floating branch ref, so a given analytics
   # commit always tests against exactly one protocol revision. (This used to be
-  # `path: ../openstrap-protocol-dart`, which only resolved on the author's
+  # `path: ../projectfit-protocol-dart`, which only resolved on the author's
   # machine — a fresh clone could not `pub get` at all.) Local development still
   # builds against ../protocol via a gitignored pubspec_overrides.yaml.
-  openstrap_protocol:
+  projectfit_protocol:
     path: ../protocol

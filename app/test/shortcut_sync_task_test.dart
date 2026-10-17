@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/headless_gate.dart';
-import 'package:openstrap_edge/sync/shortcut_sync_task.dart';
+import 'package:projectfit/sync/headless_gate.dart';
+import 'package:projectfit/sync/shortcut_sync_task.dart';
 
 void main() {
   setUp(HeadlessSyncGate.resetForTest);

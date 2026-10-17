@@ -21,7 +21,7 @@ import 'package:flutter/services.dart';
 import 'adapters/_registry.dart' show plistUuid;
 
 class AccessorySetup {
-  static const _ch = MethodChannel('openstrap/accessory_setup');
+  static const _ch = MethodChannel('projectfit/accessory_setup');
 
   /// True only on iOS 18+ (where ASK exists). False on Android and older iOS.
   static Future<bool> isSupported() async {

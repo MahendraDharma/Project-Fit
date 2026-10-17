@@ -14,10 +14,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/compute/findings.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show readinessBand;
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/compute/findings.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart' show readinessBand;
 
 void main() {
   test('the illness sentence claims no signal the detector does not read', () {

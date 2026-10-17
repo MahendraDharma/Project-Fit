@@ -6,12 +6,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' show BluetoothDevice;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/hrs_link.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/ui2/pairing/device_picker.dart';
-import 'package:openstrap_edge/ui2/profile/devices.dart' show kPairableSensors;
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/hrs_link.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/ui2/pairing/device_picker.dart';
+import 'package:projectfit/ui2/profile/devices.dart' show kPairableSensors;
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 BandCandidate _cand(String id, String entryId, {String? label, int rssi = -60}) =>

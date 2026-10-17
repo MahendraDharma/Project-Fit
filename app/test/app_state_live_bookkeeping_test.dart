@@ -6,10 +6,10 @@
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/ble/ble_state.dart' show LiveStreamOwners;
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/ble/ble_state.dart' show LiveStreamOwners;
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/app_state_live_harness.dart';

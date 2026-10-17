@@ -22,11 +22,11 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/vendor_sleep.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
+import 'package:projectfit/compute/vendor_sleep.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/sync/paired_device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The pre-v3 raw_records shape: keyed by frame hex, NO rec_ts column.

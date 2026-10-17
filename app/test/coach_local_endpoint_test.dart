@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_config.dart';
 
 /// A local model wants no API key, so `configured` requiring one made Ollama
 /// and LM Studio impossible to finish setting up — Save closed the form and the

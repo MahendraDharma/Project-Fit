@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/db.dart';
 
 Future<String> _dbPath(String name) async =>
     p.join(await databaseFactory.getDatabasesPath(), name);
@@ -61,7 +61,7 @@ void main() {
   test(
       'upgrade from v49 reaches the current schemaVersion and creates '
       'alarm_schedule keyed on weekday', () async {
-    const name = 'openstrap_alarm_schedule_migration_test.db';
+    const name = 'projectfit_alarm_schedule_migration_test.db';
     created.add(name);
     await _seedEmptyV49Db(name);
     final version = await _openThroughLocalDb(name);
@@ -85,7 +85,7 @@ void main() {
   });
 
   test('a fresh install (onCreate) also has alarm_schedule', () async {
-    const name = 'openstrap_alarm_schedule_fresh_test.db';
+    const name = 'projectfit_alarm_schedule_fresh_test.db';
     created.add(name);
     await databaseFactory.deleteDatabase(await _dbPath(name));
     await LocalDb.close();
@@ -100,7 +100,7 @@ void main() {
       'setAlarmScheduleDay / alarmScheduleRows / clearAlarmSchedule round-trip '
       'through the real table, upserting rather than duplicating a weekday',
       () async {
-    const name = 'openstrap_alarm_schedule_crud_test.db';
+    const name = 'projectfit_alarm_schedule_crud_test.db';
     created.add(name);
     await databaseFactory.deleteDatabase(await _dbPath(name));
     await LocalDb.close();
@@ -134,7 +134,7 @@ void main() {
       'v52 rung: an existing row from before smart_window_minutes existed '
       'defaults to 0 (off) — existing fixed-time alarms are unaffected',
       () async {
-    const name = 'openstrap_alarm_schedule_v51_upgrade_test.db';
+    const name = 'projectfit_alarm_schedule_v51_upgrade_test.db';
     created.add(name);
     final path = await _dbPath(name);
     await databaseFactory.deleteDatabase(path);

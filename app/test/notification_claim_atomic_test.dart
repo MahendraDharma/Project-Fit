@@ -19,11 +19,11 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/notify/fired_keys.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/notify/fired_keys.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
 
 NotificationEvent _ev(String dedupeKey) => NotificationEvent(
       dedupeKey: dedupeKey,
@@ -45,7 +45,7 @@ void main() {
   setUpAll(() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_notif_claim_test.db';
+    LocalDb.dbName = 'projectfit_notif_claim_test.db';
   });
 
   setUp(() async {

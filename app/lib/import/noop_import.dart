@@ -10,7 +10,7 @@
 // CSV reader and routes a backup to [NoopBackupImporter]; the day model, step
 // banking and out-of-order contract live in noop_ingest.dart.
 //
-// CSV SCHEMA AS SHIPPED (observed 2026-08, NOOP 9.1/9.2 — OpenStrap/edge#160):
+// CSV SCHEMA AS SHIPPED (observed 2026-08, NOOP 9.1/9.2 — MahendraDharma/Project-Fit#160):
 //   unix_s,iso_utc,stream,hr_bpm,rr_ms,grav_x,grav_y,grav_z,step_counter,
 //   ppg_bpm,ppg_conf,spo2_red,spo2_ir,skintemp_raw,resp_raw,band_sleep_state,
 //   event_kind,event_payload

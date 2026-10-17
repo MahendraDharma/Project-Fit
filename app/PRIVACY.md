@@ -1,4 +1,8 @@
-# Privacy Policy — Edge / OpenStrap
+> **Draft inherited from the upstream project (OpenStrap); not yet reviewed for
+> ProjectFit.** ProjectFit runs no servers today: crash telemetry, issue reports,
+> update checks and health-data contribution stay off until a build configures them.
+
+# Privacy Policy — Edge / ProjectFit
 
 _Last updated: October 11, 2026_
 

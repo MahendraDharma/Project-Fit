@@ -5,18 +5,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart';
-import 'package:openstrap_edge/compute/inputs/colmi_inputs.dart';
-import 'package:openstrap_edge/compute/inputs/garmin_inputs.dart';
-import 'package:openstrap_edge/compute/inputs/miband_inputs.dart';
-import 'package:openstrap_edge/compute/inputs/pebble_inputs.dart';
-import 'package:openstrap_edge/compute/inputs/ultrahuman_inputs.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/profile/pair_sensor.dart';
-import 'package:openstrap_edge/ui2/profile/settings.dart';
-import 'package:openstrap_edge/ui2/profile/wearable_numbers.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/compute/inputs/canonical.dart';
+import 'package:projectfit/compute/inputs/colmi_inputs.dart';
+import 'package:projectfit/compute/inputs/garmin_inputs.dart';
+import 'package:projectfit/compute/inputs/miband_inputs.dart';
+import 'package:projectfit/compute/inputs/pebble_inputs.dart';
+import 'package:projectfit/compute/inputs/ultrahuman_inputs.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/profile/pair_sensor.dart';
+import 'package:projectfit/ui2/profile/settings.dart';
+import 'package:projectfit/ui2/profile/wearable_numbers.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String _device = 'Garmin watch';

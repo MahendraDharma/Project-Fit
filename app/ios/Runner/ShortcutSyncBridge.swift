@@ -10,12 +10,12 @@ struct ShortcutSyncFailure: LocalizedError {
     switch code {
     case "bluetoothUnavailable": return "Bluetooth is unavailable."
     case "bandUnreachable": return "The paired band could not be reached."
-    case "permissionDenied": return "Allow Edge to use Bluetooth in Settings."
-    case "notPaired": return "Open Edge and pair your band first."
-    case "setupRequired": return "Finish accessory setup in Edge before syncing."
-    case "timedOut": return "Edge did not finish the sync before its execution deadline."
+    case "permissionDenied": return "Allow ProjectFit to use Bluetooth in Settings."
+    case "notPaired": return "Open ProjectFit and pair your band first."
+    case "setupRequired": return "Finish accessory setup in ProjectFit before syncing."
+    case "timedOut": return "ProjectFit did not finish the sync before its execution deadline."
     case "cancelled": return "Sync was cancelled."
-    default: return "Edge could not complete the sync. Open Edge to check the connection and storage."
+    default: return "ProjectFit could not complete the sync. Open ProjectFit to check the connection and storage."
     }
   }
 }
@@ -40,7 +40,7 @@ struct ShortcutSyncReply {
   var message: String {
     switch status {
     case "complete": return "Band data synchronized."
-    case "partial": return "Sync is incomplete. Saved data is retained; run Sync Data again or open Edge to catch up."
+    case "partial": return "Sync is incomplete. Saved data is retained; run Sync Data again or open ProjectFit to catch up."
     default: return "A sync request is already active; no second sync was started."
     }
   }
@@ -77,7 +77,7 @@ final class ShortcutSyncBridge {
   init(send: Sender? = nil) { self.send = send }
 
   func attach(messenger: FlutterBinaryMessenger) {
-    let channel = FlutterMethodChannel(name: "openstrap/shortcut_sync", binaryMessenger: messenger)
+    let channel = FlutterMethodChannel(name: "projectfit/shortcut_sync", binaryMessenger: messenger)
     self.channel = channel
     send = { method, arguments, reply in
       channel.invokeMethod(method, arguments: arguments, result: reply)

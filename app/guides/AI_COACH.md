@@ -1,12 +1,12 @@
 # AI Coach — bring your own key
 
-The AI features in OpenStrap Edge (the Coach chat, the morning and evening
+The AI features in ProjectFit (the Coach chat, the morning and evening
 briefings, and the pre-sleep journal) are all powered by a model **you**
-provide. There's no OpenStrap AI service: you paste in an API key for any
+provide. There's no ProjectFit AI service: you paste in an API key for any
 OpenAI-compatible provider and the app talks to that provider directly.
 
 Your key is stored in the device keychain/keystore and is only ever sent to
-the base URL you configure — never to OpenStrap.
+the base URL you configure — never to ProjectFit.
 
 The same goes for your data: your chat messages, and the health metrics the
 coach's tools pull from the on-device database to answer them, are sent to

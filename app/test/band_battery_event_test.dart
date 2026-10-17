@@ -12,8 +12,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 
 proto.EventInfo _event(String hex) => proto.parseEvent(proto.hexToBytes(hex))!;
 

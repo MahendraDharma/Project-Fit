@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/band_ownership.dart';
+import 'package:projectfit/sync/band_ownership.dart';
 
 void main() {
   setUp(BandOwnership.resetForTest);

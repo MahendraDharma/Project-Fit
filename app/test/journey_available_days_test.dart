@@ -10,16 +10,16 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/data/models.dart';
 
 void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_available_days_test.db';
+    LocalDb.dbName = 'projectfit_available_days_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });
@@ -135,7 +135,7 @@ void main() {
   test('empty DB (no derived days) yields an empty range', () async {
     await LocalDb.close();
     final dir = await databaseFactory.getDatabasesPath();
-    LocalDb.dbName = 'openstrap_available_days_empty_test.db';
+    LocalDb.dbName = 'projectfit_available_days_empty_test.db';
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
 
     // Raw seconds alone (no derived day_result) must NOT make a day available.
@@ -145,6 +145,6 @@ void main() {
 
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
-    LocalDb.dbName = 'openstrap_available_days_test.db';
+    LocalDb.dbName = 'projectfit_available_days_test.db';
   });
 }

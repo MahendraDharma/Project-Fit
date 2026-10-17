@@ -30,7 +30,7 @@
 // quietly become a second, differently-worded copy of the same six sentences.
 
 import 'package:flutter/foundation.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../data/day_label.dart' show dayLabelBefore;
 

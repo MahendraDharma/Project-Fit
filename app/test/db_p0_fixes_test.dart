@@ -27,8 +27,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 /// path_provider has no plugin in a unit test; exportDaysDb needs a temp dir.
 class _FakePathProvider extends PathProviderPlatform {
@@ -75,9 +75,9 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    tmp = await Directory.systemTemp.createTemp('openstrap_p0_');
+    tmp = await Directory.systemTemp.createTemp('projectfit_p0_');
     PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-    LocalDb.dbName = 'openstrap_p0_fixes_test.db';
+    LocalDb.dbName = 'projectfit_p0_fixes_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

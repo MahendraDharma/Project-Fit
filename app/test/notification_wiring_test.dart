@@ -10,11 +10,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
-import 'package:openstrap_edge/state/clock_format.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/notify/tap_router.dart';
+import 'package:projectfit/state/clock_format.dart';
 
 NotificationEvent _ev(NotifCategory c, NotifPriority p, String route) =>
     NotificationEvent(

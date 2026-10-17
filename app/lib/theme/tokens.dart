@@ -1,4 +1,4 @@
-// Design tokens — OpenStrap "Ember on Paper" (day) / "Ember on Char" (night).
+// Design tokens — ProjectFit "Ember on Paper" (day) / "Ember on Char" (night).
 // Day: warm off-white surfaces, near-black ink, a single confident coral accent.
 // Night: the paper burns down to warm charcoal — same ember, never cold black.
 // The accent stays coral across both modes; warmth is the constant, not lightness.

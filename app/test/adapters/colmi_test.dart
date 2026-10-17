@@ -9,12 +9,12 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/colmi.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_edge/data/observation.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/colmi.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit/data/observation.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 final DateTime _now = DateTime(2026, 10, 4, 12, 0);
 final int _nowSec = _now.millisecondsSinceEpoch ~/ 1000;

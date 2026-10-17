@@ -3,10 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/sync/paired_device.dart' show PairedDevice;
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/sync/paired_device.dart' show PairedDevice;
+import 'package:projectfit/ui2/ui2.dart';
 
 void main() {
   testWidgets(

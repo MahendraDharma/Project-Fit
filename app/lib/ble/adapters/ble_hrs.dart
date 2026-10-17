@@ -13,7 +13,7 @@
 // `test/hrs_link_test.dart`, and by the compiler. It ships EXPERIMENTAL
 // (ASSUMPTIONS R6) until he owns one and cross-confirms it.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '_registry.dart';
 import 'adapter.dart';

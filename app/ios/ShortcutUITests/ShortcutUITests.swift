@@ -38,7 +38,7 @@ final class ShortcutUITests: XCTestCase {
       _ = try await definitions.intents["OpenEdgeAndSyncIntent"].makeIntent().run()
       XCTFail("The interactive action must not invent a successful sync")
     } catch {
-      XCTAssertTrue(String(describing: error).contains("Open Edge and pair your band first."), "\(error)")
+      XCTAssertTrue(String(describing: error).contains("Open ProjectFit and pair your band first."), "\(error)")
     }
     XCTAssertEqual(app.state, .runningForeground)
   }
@@ -51,14 +51,14 @@ final class ShortcutUITests: XCTestCase {
       _ = try await intent.run()
       XCTFail("A clean simulator cannot successfully sync an unpaired band")
     } catch {
-      XCTAssertTrue(String(describing: error).contains("Open Edge and pair your band first."), "\(error)")
+      XCTAssertTrue(String(describing: error).contains("Open ProjectFit and pair your band first."), "\(error)")
     }
     XCTAssertNotEqual(app.state, .runningForeground)
     app.activate()
     XCTAssertTrue(app.buttons.firstMatch.waitForExistence(timeout: 15),
                   "The foreground scene must render after a headless engine launch")
     let screenshot = XCTAttachment(screenshot: app.screenshot())
-    screenshot.name = "Edge after background Shortcut launch"
+    screenshot.name = "ProjectFit after background Shortcut launch"
     screenshot.lifetime = .keepAlways
     add(screenshot)
   }
@@ -79,7 +79,7 @@ final class ShortcutUITests: XCTestCase {
         .makeIntent(ignoreConnectivityErrors: true).run()
       XCTFail("Missing pairing is not an ignorable connectivity failure")
     } catch {
-      XCTAssertTrue(String(describing: error).contains("Open Edge and pair your band first."), "\(error)")
+      XCTAssertTrue(String(describing: error).contains("Open ProjectFit and pair your band first."), "\(error)")
     }
   }
 }

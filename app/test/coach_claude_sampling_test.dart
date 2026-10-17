@@ -9,7 +9,7 @@
 
 import 'package:test/test.dart';
 
-import 'package:openstrap_edge/coach/coach_engine.dart';
+import 'package:projectfit/coach/coach_engine.dart';
 
 void main() {
   group('claudeRejectsSampling — models that reject sampling params', () {

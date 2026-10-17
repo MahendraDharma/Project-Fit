@@ -6,13 +6,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/activity/share.dart' show ShareSheet;
-import 'package:openstrap_edge/ui2/activity/summary.dart'
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/activity/share.dart' show ShareSheet;
+import 'package:projectfit/ui2/activity/summary.dart'
     show Arch, ActivitySummary;
-import 'package:openstrap_edge/ui2/profile/gallery.dart';
-import 'package:openstrap_edge/ui2/profile/settings.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/profile/gallery.dart';
+import 'package:projectfit/ui2/profile/settings.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget _wrap(Widget child) => MaterialApp(

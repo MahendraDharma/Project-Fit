@@ -29,7 +29,7 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 List<int> _hex(String s) => [
       for (var i = 0; i + 1 < s.length; i += 2)

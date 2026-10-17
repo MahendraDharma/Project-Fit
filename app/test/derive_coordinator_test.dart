@@ -4,8 +4,8 @@ import 'package:fake_async/fake_async.dart';
 import 'package:flutter/foundation.dart' show FlutterError;
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/state/derive_coordinator.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/state/derive_coordinator.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -7,9 +7,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/gps/route_models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/gps/route_models.dart';
 
 RawRecord _raw(int ts, int counter) => RawRecord(
       counter: counter,
@@ -36,7 +36,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_route_test.db';
+    LocalDb.dbName = 'projectfit_route_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

@@ -1,4 +1,4 @@
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 List<int> u16(int v) => [v & 0xff, v >> 8];

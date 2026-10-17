@@ -103,7 +103,7 @@ enum BackupCadence {
 
 /// Folder name. Spelled out so it is obvious what it is when someone finds it
 /// in Files or a file manager.
-const kBackupDirName = 'OpenStrap Backups';
+const kBackupDirName = 'ProjectFit Backups';
 
 /// How many backups are kept. Enough to survive noticing a problem a few days
 /// late, few enough that the folder does not grow without bound — each file is
@@ -141,15 +141,15 @@ const kBackupExtension = '.db.gz';
 /// on one name and the second would overwrite the first.
 String backupFileName(DateTime when) {
   String two(int v) => v.toString().padLeft(2, '0');
-  return 'openstrap-${when.year}${two(when.month)}${two(when.day)}'
+  return 'projectfit-${when.year}${two(when.month)}${two(when.day)}'
       '-${two(when.hour)}${two(when.minute)}${two(when.second)}$kBackupExtension';
 }
 
 /// EXACTLY the shapes this file has ever emitted, and nothing else.
 ///
 /// Retention DELETES what this matches, and it runs in a directory the user
-/// can put files into. A loose `openstrap-*.db` glob would happily eat
-/// someone's `openstrap-notes.db`.
+/// can put files into. A loose `projectfit-*.db` glob would happily eat
+/// someone's `projectfit-notes.db`.
 ///
 /// Covers THREE shapes deliberately:
 ///   • `.db.gz` — what is written now.
@@ -161,7 +161,7 @@ String backupFileName(DateTime when) {
 ///   • a `-N` collision suffix — [_uniqueName] emits these when two runs
 ///     land in the same second, and the pattern never matched them, so they
 ///     leaked for the same reason.
-final _backupNamePattern = RegExp(r'^openstrap-\d{8}-\d{6}(-\d+)?\.db(\.gz)?$');
+final _backupNamePattern = RegExp(r'^projectfit-\d{8}-\d{6}(-\d+)?\.db(\.gz)?$');
 
 /// Appended while a backup is still being written. Chosen so
 /// [_backupNamePattern] does NOT match it: a partial file must be invisible to
@@ -177,7 +177,7 @@ const kBackupStagingSuffix = '.partial';
 /// `.partial` is exactly what a half-finished Nextcloud or iCloud download is
 /// called. Deleting on the suffix alone reached outside this feature's own
 /// files, for the same reason [_backupNamePattern] is strict rather than a
-/// loose `openstrap-*` glob.
+/// loose `projectfit-*` glob.
 bool _isOurStagingFile(String basename) {
   if (!basename.endsWith(kBackupStagingSuffix)) return false;
   final published = basename.substring(
@@ -213,7 +213,7 @@ Future<void> pruneStagingFiles(Directory dir) async {
 (String, int) _backupSortKey(String basename) {
   final m = _backupNamePattern.firstMatch(basename);
   if (m == null) return ('', 0);
-  final stamp = basename.substring(0, 'openstrap-00000000-000000'.length);
+  final stamp = basename.substring(0, 'projectfit-00000000-000000'.length);
   final collision = m.group(1);
   return (stamp, collision == null ? 1 : (int.tryParse(collision.substring(1)) ?? 1));
 }

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/live_stream_controller.dart';
+import 'package:projectfit/state/live_stream_controller.dart';
 
 void main() {
   late bool background;

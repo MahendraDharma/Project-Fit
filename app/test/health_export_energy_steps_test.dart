@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/health/health_export.dart';
 
 void main() {
   test('health connect workouts carry no energy record', () {

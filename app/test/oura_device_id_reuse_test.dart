@@ -8,8 +8,8 @@
 // Seen on a real device — a ring row `oura-a4487268` beside 96,521 archived
 // frames and all four cursors under `oura-7e117c66`.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/oura_link.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/ble/oura_link.dart';
+import 'package:projectfit/data/db.dart';
 
 void main() {
   group('ouraReusableDeviceId', () {

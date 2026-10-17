@@ -27,7 +27,7 @@ import AccessorySetupKit
 /// user picks the band we just return that UUID to Dart; flutter_blue_plus connects to it
 /// exactly as before. No second GATT owner, no conflict.
 ///
-/// Dart MethodChannel `openstrap/accessory_setup`:
+/// Dart MethodChannel `projectfit/accessory_setup`:
 ///   - `isSupported`        -> Bool   (true only on iOS 18+)
 ///   - `provisionedIds`     -> [String] (every ASK-provisioned accessory's uppercased UUID)
 ///   - `provisionedId`      -> String?(uppercased UUID of an already-provisioned band, or nil)
@@ -40,7 +40,7 @@ import AccessorySetupKit
 /// descriptor criterion anyway, and which is generated from `kBandRegistry` by
 /// `tool/gen_ios_ask_plist.dart`.
 enum AccessorySetup {
-  private static let channelName = "openstrap/accessory_setup"
+  private static let channelName = "projectfit/accessory_setup"
 
   // Extra gen5-only fallback match criterion, layered on top of the
   // registry-driven items below. We do not yet know (no nRF Connect capture)

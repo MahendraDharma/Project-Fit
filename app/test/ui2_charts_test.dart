@@ -12,10 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/charts.dart';
-import 'package:openstrap_edge/ui2/grammar.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show metricValue;
-import 'package:openstrap_edge/ui2/theme.dart';
+import 'package:projectfit/ui2/charts.dart';
+import 'package:projectfit/ui2/grammar.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart' show metricValue;
+import 'package:projectfit/ui2/theme.dart';
 
 /// Captures what a painter actually drew, so an axis claim can be checked
 /// against geometry instead of against a screenshot.

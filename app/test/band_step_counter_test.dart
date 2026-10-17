@@ -11,8 +11,8 @@
 // count steps at all.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 /// A substrate of consecutive 1 Hz seconds carrying [counters] (`-1` = absent).
 Substrate _sub(List<int> counters, {int startTs = 1_700_000_000, int step = 1}) {

@@ -8,7 +8,7 @@
 // honest absent envelopes (never a thrown exception, never a fabricated number).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/crossday_pipeline.dart';
+import 'package:projectfit/compute/crossday_pipeline.dart';
 
 /// Build a synthetic oldest-first day series anchored on a fixed calendar date
 /// so the free/work weekday split is deterministic.

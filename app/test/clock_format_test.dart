@@ -7,8 +7,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/state/clock_format.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/state/clock_format.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

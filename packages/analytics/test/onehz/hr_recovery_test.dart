@@ -2,8 +2,8 @@
 import 'dart:math' as math;
 
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/workout/hr_recovery.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/workout/hr_recovery.dart';
 
 void main() {
   group('hrRecovery', () {

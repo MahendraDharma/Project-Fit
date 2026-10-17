@@ -21,7 +21,7 @@
 // separately-tracked state can.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_config.dart';
 
 void main() {
   test('a non-empty field is always the value to save, regardless of state',

@@ -5,7 +5,7 @@
 
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 /// A gen4 historical record inner: `[0x2f][version][…][counter@3][ts@7]`.

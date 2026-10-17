@@ -23,22 +23,22 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/miband234.dart'
+import 'package:projectfit/ble/adapters/miband234.dart'
     show miBand234AuthResponse;
-import 'package:openstrap_edge/ble/colmi_link.dart';
-import 'package:openstrap_edge/ble/garmin_link.dart';
-import 'package:openstrap_edge/ble/miband_link.dart';
-import 'package:openstrap_edge/ble/pebble_link.dart';
-import 'package:openstrap_edge/ble/ultrahuman_link.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart';
-import 'package:openstrap_edge/compute/inputs/garmin_inputs.dart' show at;
-import 'package:openstrap_edge/compute/inputs/pebble_inputs.dart'
+import 'package:projectfit/ble/colmi_link.dart';
+import 'package:projectfit/ble/garmin_link.dart';
+import 'package:projectfit/ble/miband_link.dart';
+import 'package:projectfit/ble/pebble_link.dart';
+import 'package:projectfit/ble/ultrahuman_link.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/inputs/canonical.dart';
+import 'package:projectfit/compute/inputs/garmin_inputs.dart' show at;
+import 'package:projectfit/compute/inputs/pebble_inputs.dart'
     show rhrOnlyReadiness;
-import 'package:openstrap_edge/compute/inputs/validation_bands.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart' show RawRecord, Sample;
+import 'package:projectfit/compute/inputs/validation_bands.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart' show RawRecord, Sample;
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

@@ -4,7 +4,7 @@
 // None of this touches BLE/DB.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   const wall = 1750000000; // a plausible "now" (2025-06)

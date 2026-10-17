@@ -8,7 +8,7 @@
 
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 /// A night: [hours] of HR at [baseline], with a [troughMin]-minute block of

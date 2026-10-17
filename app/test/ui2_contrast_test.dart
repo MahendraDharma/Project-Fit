@@ -15,8 +15,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/charts.dart';
-import 'package:openstrap_edge/ui2/theme.dart';
+import 'package:projectfit/ui2/charts.dart';
+import 'package:projectfit/ui2/theme.dart';
 
 /// WCAG 2.1 AA for body text. The same constant the tokens solve against.
 const _aa = 4.5;

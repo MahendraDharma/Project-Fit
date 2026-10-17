@@ -10,9 +10,9 @@
 // must sanitize to null rather than steer the route.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/step_calibration.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/step_calibration.dart';
+import 'package:projectfit/sync/paired_device.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -27,7 +27,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_paired_device_test.db';
+    LocalDb.dbName = 'projectfit_paired_device_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

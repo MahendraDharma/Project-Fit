@@ -54,18 +54,18 @@ cp ios/Config/Signing.xcconfig.example ios/Config/Signing.xcconfig
 Edit `ios/Config/Signing.xcconfig`:
 
 ```text
-APP_BUNDLE_IDENTIFIER = com.yourname.openstrapEdge
-APP_WIDGET_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER).OpenStrapWidget
-APP_GROUP_IDENTIFIER = group.com.yourname.openstrap
+APP_BUNDLE_IDENTIFIER = com.yourname.projectfitEdge
+APP_WIDGET_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER).ProjectFitWidget
+APP_GROUP_IDENTIFIER = group.com.yourname.projectfit
 APPLE_DEVELOPMENT_TEAM = YOURTEAMID
 ```
 
 Default committed values live in `ios/Config/Signing.defaults.xcconfig`:
 
 ```text
-APP_BUNDLE_IDENTIFIER = com.example.openstrapEdge
-APP_WIDGET_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER).OpenStrapWidget
-APP_GROUP_IDENTIFIER = group.com.example.openstrap
+APP_BUNDLE_IDENTIFIER = io.github.mahendradharma.projectfit
+APP_WIDGET_BUNDLE_IDENTIFIER = $(APP_BUNDLE_IDENTIFIER).ProjectFitWidget
+APP_GROUP_IDENTIFIER = group.io.github.mahendradharma.projectfit
 APPLE_DEVELOPMENT_TEAM =
 ```
 
@@ -83,7 +83,7 @@ Create matching identifiers in Apple Developer:
 
 The entitlement files use `$(APP_GROUP_IDENTIFIER)`, and the native widget reads
 the same value from its generated Info.plist. Dart reads the App Group value from
-iOS at runtime through `openstrap/ios_config`, so Xcode builds do not need a
+iOS at runtime through `projectfit/ios_config`, so Xcode builds do not need a
 separate `--dart-define` to keep the widget bridge aligned.
 
 ## Xcode Setup
@@ -98,7 +98,7 @@ In Xcode:
 
 1. Select the `Runner` project.
 2. Verify signing for the `Runner` target.
-3. Verify signing for the `OpenStrapWidget` target.
+3. Verify signing for the `ProjectFitWidget` target.
 4. Confirm both targets show the same App Group capability.
 5. Select your physical iPhone as the run destination.
 
@@ -136,7 +136,7 @@ flutter run --release -d <device-id> --dart-define-from-file=.env
 it does not set a `MARKETING_VERSION` build setting at all — the marketing
 version comes solely from the `Info.plist` key above.
 
-The **`OpenStrapWidget`/`OpenStrapWidgetExtension`** and **`OpenStrapWatch Watch
+The **`ProjectFitWidget`/`ProjectFitWidgetExtension`** and **`ProjectFitWatch Watch
 App`** targets are NOT wired to that mechanism — they don't include
 `Generated.xcconfig`, so those Flutter variables aren't available to them, and
 `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` are hardcoded per-target in

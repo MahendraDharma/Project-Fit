@@ -7,11 +7,11 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/garmin.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/garmin.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '../support/garmin_watch.dart';
 

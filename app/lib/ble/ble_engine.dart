@@ -1,7 +1,7 @@
 // BLE engine — the WHOOP 4.0 (Harvard) BLE transport, on flutter_blue_plus.
 //
 // REWRITTEN TRANSPORT (feat/ble-rewrite). The protocol/byte layer is unchanged:
-// everything still goes through `package:openstrap_protocol` (framing/CRC, INIT,
+// everything still goes through `package:projectfit_protocol` (framing/CRC, INIT,
 // buildCommand, buildBatchAck, parseMetadata, decodeRecord/parseR24, constants,
 // dangerousCmds). What changed is HOW we manage the link:
 //
@@ -41,7 +41,7 @@ import 'dart:io';
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '../data/db.dart';
 import '../data/models.dart';
@@ -179,7 +179,7 @@ typedef _EcgMember = (
 typedef DataStoredSink = void Function();
 
 // ── WHOOP 5.0 / MG discovery (not wire-format) ──────────────────────────────
-// Transport/framing lives in package:openstrap_protocol (BandProfile / GattProfile).
+// Transport/framing lives in package:projectfit_protocol (BandProfile / GattProfile).
 // Edge only decides what to *look for*. The 128-bit vendor service is already
 // on main; what is still unsettled on hardware is whether a real band puts it
 // in the primary advertisement or only the scan response (#238 close note).
@@ -2403,7 +2403,7 @@ class BleEngine {
   // doc). Re-seeded from the durable counter_hw cursor on each connect, same
   // pattern as _recordGate's frontierTs seed below.
   CounterRegressionDetector _counterRegression = CounterRegressionDetector();
-  // Firmware-aware R24 decoder (see openstrap_protocol's
+  // Firmware-aware R24 decoder (see projectfit_protocol's
   // FirmwareAwareR24Decoder doc): tries the original hardware-validated
   // decoder first, falls back to newer-firmware layouts only if that fails,
   // and remembers per-version which one actually worked so a long offload
@@ -8072,7 +8072,7 @@ class BleEngine {
       // including one answering setClock()'s read-back or the keep-alive poll.
       // Telling them apart needs the echoed request seq, which the pinned
       // protocol does not surface — see the pin note in pubspec.yaml and
-      // OpenStrap/protocol#28. The reply that lands is still a real strap read
+      // ProjectFit/protocol#28. The reply that lands is still a real strap read
       // from this session, so the verdict is fresh; it may just answer a
       // request a few hundred ms older than ours.
       if (_phoneClockSuspect != wasSuspect) {
@@ -8444,7 +8444,7 @@ class BleEngine {
     // the raw epoch when we have no correlation yet (e.g. just after a
     // reconnect, before this session's GET_CLOCK reply). Frame conversion +
     // generation dispatch live in the pure [AlarmPayloads]; the gen4 rev-1
-    // byte layout itself is sourced from `openstrap_protocol`.
+    // byte layout itself is sourced from `projectfit_protocol`.
     final ref = _clockRef;
     final driftSec = ref?.driftSec ?? 0;
     final armWhen = AlarmPayloads.toStrapFrame(when, driftSec);

@@ -4,11 +4,11 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/gps/screen_wake.dart';
+import 'package:projectfit/gps/screen_wake.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const channel = MethodChannel('openstrap/edge_tracking');
+  const channel = MethodChannel('projectfit/edge_tracking');
   final calls = <bool>[];
   bool answer = true;
 

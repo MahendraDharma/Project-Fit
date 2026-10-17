@@ -2,7 +2,7 @@
 // kRouteBreathing entry (Siri/Shortcuts "start breathing" App Intent).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
+import 'package:projectfit/notify/tap_router.dart';
 
 void main() {
   test('tab routes land on their index with no sub-screen', () {

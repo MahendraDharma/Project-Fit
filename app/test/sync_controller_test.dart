@@ -14,15 +14,15 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/compute/derive_scheduler.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/sync_controller.dart';
-import 'package:openstrap_edge/sync/band_ownership.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
-import 'package:openstrap_edge/sync/shortcut_sync_task.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/compute/derive_scheduler.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/sync_controller.dart';
+import 'package:projectfit/sync/band_ownership.dart';
+import 'package:projectfit/sync/paired_device.dart';
+import 'package:projectfit/sync/reset_gate.dart';
+import 'package:projectfit/sync/shortcut_sync_task.dart';
 
 import 'support/app_state_derive_harness.dart'
     show deriveDbSetUp, deriveDbTearDown, until;

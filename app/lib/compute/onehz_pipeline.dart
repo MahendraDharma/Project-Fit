@@ -24,7 +24,7 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 // Pure value helper only — no DB, no IO, no Flutter binding — so importing it
 // does not compromise this file's isolate safety. It is here so the sex

@@ -9,7 +9,7 @@
 // budget calibrated for an un-throttled core.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derive_pacing.dart';
+import 'package:projectfit/compute/derive_pacing.dart';
 
 void main() {
   const fg = DerivePacing(background: false);

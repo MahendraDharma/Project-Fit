@@ -5,7 +5,7 @@
 // against the database, so a session and the day it sits in are priced on one
 // level.
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../data/db.dart';
 

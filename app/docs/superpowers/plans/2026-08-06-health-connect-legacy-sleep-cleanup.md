@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Remove legacy OpenStrap sleep fragments that begin before a recomputed parent session, then write exactly one Android `SleepSessionRecord` for the night.
+**Goal:** Remove legacy ProjectFit sleep fragments that begin before a recomputed parent session, then write exactly one Android `SleepSessionRecord` for the night.
 
 **Architecture:** Keep the typed Dart sleep-session API and normalized parent payload unchanged. Add a pure Kotlin helper that derives a DST-safe local noon-to-noon cleanup interval containing the parent; the Android writer uses that broader interval only for deletion and still inserts the exact normalized parent.
 
@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Only OpenStrap-owned `SleepSessionRecord` values may be deleted; Health Connect enforces calling-package ownership.
+- Only ProjectFit-owned `SleepSessionRecord` values may be deleted; Health Connect enforces calling-package ownership.
 - Preserve the exact parent boundaries and every normalized awake, REM, light, and deep stage.
 - Preserve Apple Health behavior unchanged.
 - Use local calendar noon boundaries through `ZoneId`, never a fixed 24-hour duration, so DST transitions remain correct.
@@ -23,8 +23,8 @@
 
 **Files:**
 - Modify: `android/app/build.gradle.kts`
-- Modify: `android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectSleepWriter.kt`
-- Create: `android/app/src/test/kotlin/wtf/openstrap/openstrap_edge/HealthConnectSleepWriterTest.kt`
+- Modify: `android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectSleepWriter.kt`
+- Create: `android/app/src/test/kotlin/io/github/mahendradharma/projectfit/HealthConnectSleepWriterTest.kt`
 
 **Interfaces:**
 - Consumes: `SleepSessionRecord.startTime`, `SleepSessionRecord.endTime`, and `ZoneId.systemDefault()`.
@@ -67,7 +67,7 @@ Run:
 
 ```powershell
 Set-Location android
-.\gradlew.bat :app:testDebugUnitTest --tests "wtf.openstrap.openstrap_edge.HealthConnectSleepWriterTest.cleanupRangeIncludesLegacyFragmentThatStartsBeforeRecomputedSession"
+.\gradlew.bat :app:testDebugUnitTest --tests "io.github.mahendradharma.projectfit.HealthConnectSleepWriterTest.cleanupRangeIncludesLegacyFragmentThatStartsBeforeRecomputedSession"
 ```
 
 Expected: compilation fails because `sleepCleanupRange` and `SleepCleanupRange` do not exist.
@@ -94,7 +94,7 @@ Run:
 
 ```powershell
 Set-Location android
-.\gradlew.bat :app:testDebugUnitTest --tests "wtf.openstrap.openstrap_edge.HealthConnectSleepWriterTest.cleanupRangeUsesLocalNoonAcrossDstTransition"
+.\gradlew.bat :app:testDebugUnitTest --tests "io.github.mahendradharma.projectfit.HealthConnectSleepWriterTest.cleanupRangeUsesLocalNoonAcrossDstTransition"
 ```
 
 Expected: compilation fails because the cleanup helper does not exist.
@@ -147,7 +147,7 @@ Run:
 
 ```powershell
 Set-Location android
-.\gradlew.bat :app:testDebugUnitTest --tests "wtf.openstrap.openstrap_edge.HealthConnectSleepWriterTest"
+.\gradlew.bat :app:testDebugUnitTest --tests "io.github.mahendradharma.projectfit.HealthConnectSleepWriterTest"
 Set-Location ..
 & 'C:\Users\felix\.cache\flutter-sdk-3.41.6\flutter\bin\flutter.bat' test test/health_sleep_export_test.dart
 ```
@@ -161,7 +161,7 @@ Run:
 ```powershell
 & 'C:\Users\felix\.cache\flutter-sdk-3.41.6\flutter\bin\dart.bat' format lib test
 git diff --check
-git add android/app/build.gradle.kts android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectSleepWriter.kt android/app/src/test/kotlin/wtf/openstrap/openstrap_edge/HealthConnectSleepWriterTest.kt
+git add android/app/build.gradle.kts android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectSleepWriter.kt android/app/src/test/kotlin/io/github/mahendradharma/projectfit/HealthConnectSleepWriterTest.kt
 git commit -m "fix(health): remove legacy sleep fragments"
 ```
 
@@ -198,8 +198,8 @@ Expected: no new health failures. Record any pre-existing Windows DST or timing-
 
 ```powershell
 & 'C:\Users\felix\.cache\flutter-sdk-3.41.6\flutter\bin\flutter.bat' build apk --release
-Copy-Item -Force 'build\app\outputs\flutter-apk\app-release.apk' 'C:\Users\felix\Desktop\OpenStrap-Edge-fix-193.apk'
-Get-FileHash 'C:\Users\felix\Desktop\OpenStrap-Edge-fix-193.apk' -Algorithm SHA256
+Copy-Item -Force 'build\app\outputs\flutter-apk\app-release.apk' 'C:\Users\felix\Desktop\ProjectFit-Edge-fix-193.apk'
+Get-FileHash 'C:\Users\felix\Desktop\ProjectFit-Edge-fix-193.apk' -Algorithm SHA256
 ```
 
 Expected: build exits 0, the desktop APK exists, and a SHA-256 hash is recorded.
@@ -207,20 +207,20 @@ Expected: build exits 0, the desktop APK exists, and a SHA-256 hash is recorded.
 - [ ] **Step 4: Install without deleting app data and trigger export**
 
 ```powershell
-adb install -r 'C:\Users\felix\Desktop\OpenStrap-Edge-fix-193.apk'
-adb shell am start -n wtf.openstrap.openstrap_edge/.MainActivity
+adb install -r 'C:\Users\felix\Desktop\ProjectFit-Edge-fix-193.apk'
+adb shell am start -n io.github.mahendradharma.projectfit/.MainActivity
 ```
 
 Expected: installation reports `Success`; the existing package, database, and WHOOP pairing remain in place.
 
 - [ ] **Step 5: Verify Health Connect and Google Health**
 
-Use the existing OpenStrap profile `Sync now` action. Confirm:
+Use the existing ProjectFit profile `Sync now` action. Confirm:
 
-- OpenStrap reports at least one synchronized day.
-- Logcat has no `OpenStrapSleepExport` error or `API call quota exceeded` message.
-- Health Connect has one OpenStrap parent for `01:36–08:20` with all stages.
-- The stale `23:34–02:55` OpenStrap fragments are absent.
+- ProjectFit reports at least one synchronized day.
+- Logcat has no `ProjectFitSleepExport` error or `API call quota exceeded` message.
+- Health Connect has one ProjectFit parent for `01:36–08:20` with all stages.
+- The stale `23:34–02:55` ProjectFit fragments are absent.
 - Google Health no longer reports the stale `2 h 19 min` night after its Health Connect sync completes.
 
 - [ ] **Step 6: Push and update PR #196**

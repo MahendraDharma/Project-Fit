@@ -12,9 +12,9 @@ import HealthKit
 // this file does not re-derive local noon.
 
 enum HealthKitSleepWriter {
-  private static let channelName = "openstrap/healthkit_sleep"
+  private static let channelName = "projectfit/healthkit_sleep"
   private static let store = HKHealthStore()
-  private static let queue = DispatchQueue(label: "wtf.openstrap.healthkit.sleep")
+  private static let queue = DispatchQueue(label: "wtf.projectfit.healthkit.sleep")
 
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)

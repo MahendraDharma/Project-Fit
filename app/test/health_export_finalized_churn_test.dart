@@ -2,8 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/health/health_export.dart';
 
 /// Three finalized days, the oldest of which keeps failing to write. The two
 /// newer days export fine but stay above the cursor while it retries; they
@@ -12,7 +12,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const channel = MethodChannel('flutter_health');
   // Only reached on an Apple host; the native sleep writer has nothing to do.
-  const appleSleep = MethodChannel('openstrap/healthkit_sleep');
+  const appleSleep = MethodChannel('projectfit/healthkit_sleep');
   const days = ['2026-08-01', '2026-08-02', '2026-08-03'];
   var failFirstDay = true;
   final writes = <String, int>{};
@@ -26,7 +26,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_health_churn_test.db';
+    LocalDb.dbName = 'projectfit_health_churn_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

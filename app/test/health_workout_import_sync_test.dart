@@ -15,8 +15,8 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/health/health_workout_import.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/health/health_workout_import.dart';
 
 HealthDataPoint _w(
   String uuid, {
@@ -86,7 +86,7 @@ void main() {
 
   setUp(() async {
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_workout_import_sync_test.db';
+    LocalDb.dbName = 'projectfit_workout_import_sync_test.db';
     dir = Directory(await databaseFactory.getDatabasesPath());
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir.path, LocalDb.dbName));
@@ -142,9 +142,9 @@ void main() {
   });
 
   test('our own exported workouts are not imported back', () async {
-    const app = 'wtf.openstrap.openstrap_edge';
+    const app = 'io.github.mahendradharma.projectfit';
     PackageInfo.setMockInitialValues(
-      appName: 'OpenStrap',
+      appName: 'ProjectFit',
       packageName: app,
       version: '1.0.0',
       buildNumber: '1',
@@ -157,12 +157,12 @@ void main() {
         'start_ts': 1,
         'end_ts': 2,
         'kind': 'RUNNING',
-        'source': 'OpenStrap',
+        'source': 'ProjectFit',
       },
     ]);
     final importer = HealthWorkoutImporter(
       health: _FakeHealth([
-        _w('ours-ios', sourceId: app, sourceName: 'OpenStrap'),
+        _w('ours-ios', sourceId: app, sourceName: 'ProjectFit'),
         _w('ours-android', sourceId: '', sourceName: app),
         _w('strava'),
       ]),
@@ -202,7 +202,7 @@ void main() {
       () async {
     PackageInfo.setMockInitialValues(
       appName: 'Edge',
-      packageName: 'site.openstrap.edge',
+      packageName: 'site.projectfit.edge',
       version: '1',
       buildNumber: '1',
       buildSignature: '',
@@ -219,7 +219,7 @@ void main() {
     ]);
     final importer = HealthWorkoutImporter(
       health: _FakeHealth([
-        _w('ours', sourceId: 'site.openstrap.edge', sourceName: 'Edge'),
+        _w('ours', sourceId: 'site.projectfit.edge', sourceName: 'Edge'),
         _w('theirs'),
       ]),
       isApple: false,

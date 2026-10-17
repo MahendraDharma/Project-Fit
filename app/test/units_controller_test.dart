@@ -7,7 +7,7 @@
 // the callers now drop the stat instead of drawing a placeholder.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/units_controller.dart';
+import 'package:projectfit/state/units_controller.dart';
 
 void main() {
   group('UnitsController pace sanity ceiling', () {

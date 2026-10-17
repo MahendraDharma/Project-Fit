@@ -20,7 +20,7 @@
 //      collapses on a quiet day and passes everything, the mirror image of the
 //      absolute-constant failure.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 /// Per-minute rows carrying DELIBERATELY MISLEADING ENMO: every sedentary
 /// minute sits at 0.055 g, just above the absolute 0.05 g floor the old

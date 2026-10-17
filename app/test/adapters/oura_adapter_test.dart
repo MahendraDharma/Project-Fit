@@ -21,11 +21,11 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/oura.dart';
-import 'package:openstrap_edge/data/observation.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/oura.dart';
+import 'package:projectfit/data/observation.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 /// Short enough that a deliberately-unanswered wait does not stall CI. The
 /// shipped values are 5 s and 30 s; only their length is being shortened here,

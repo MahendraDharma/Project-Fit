@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 class AndroidBootSignal {
   AndroidBootSignal._();
 
-  static const MethodChannel _ch = MethodChannel('openstrap/edge_tracking');
+  static const MethodChannel _ch = MethodChannel('projectfit/edge_tracking');
 
   static Future<bool> consumePendingHeadlessBoot() async {
     if (!Platform.isAndroid) return false;

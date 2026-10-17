@@ -25,7 +25,7 @@
 // changes is that a persistently failing remedy becomes visible.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   test('a refusal streak below the threshold does not run the remedy', () {

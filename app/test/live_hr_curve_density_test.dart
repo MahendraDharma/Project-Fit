@@ -8,7 +8,7 @@
 // Two paths, one session, two different pictures.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/app_state.dart' show LiveWorkoutState;
+import 'package:projectfit/state/app_state.dart' show LiveWorkoutState;
 
 LiveWorkoutState _session() =>
     LiveWorkoutState(startTime: DateTime.now(), targetKcal: 300, age: 30);

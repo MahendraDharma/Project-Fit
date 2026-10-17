@@ -65,7 +65,7 @@ enum LongSyncProgress {
     progress.totalUnitCount = -1
     progress.completedUnitCount = 0
     progress.localizedDescription = "Syncing band data"
-    progress.localizedAdditionalDescription = "Starting Edge"
+    progress.localizedAdditionalDescription = "Starting ProjectFit"
   }
 
   static func update(_ progress: Progress, with update: [String: Any]) {
@@ -73,8 +73,8 @@ enum LongSyncProgress {
     let batches = max(0, update["batches"] as? Int ?? 0)
     progress.completedUnitCount = max(progress.completedUnitCount, Int64(batches))
     switch phase {
-    case "starting": progress.localizedAdditionalDescription = "Starting Edge"
-    case "waiting": progress.localizedAdditionalDescription = "Waiting for Edge"
+    case "starting": progress.localizedAdditionalDescription = "Starting ProjectFit"
+    case "waiting": progress.localizedAdditionalDescription = "Waiting for ProjectFit"
     case "connecting": progress.localizedAdditionalDescription = "Connecting to band"
     case "initializing": progress.localizedAdditionalDescription = "Preparing band connection"
     case "syncing": progress.localizedAdditionalDescription = "Saving band data (\(batches) batches)"

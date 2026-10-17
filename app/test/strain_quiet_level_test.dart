@@ -10,10 +10,10 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 // A fixed epoch second on a minute boundary, so N minutes of samples are N
 // per-minute buckets.

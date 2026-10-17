@@ -24,7 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/db.dart';
 
 /// The page size used by both paged readers in db.dart. The tests deliberately
 /// straddle it rather than assuming any particular value is "big enough".
@@ -54,9 +54,9 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    tmp = await Directory.systemTemp.createTemp('openstrap_paged_');
+    tmp = await Directory.systemTemp.createTemp('projectfit_paged_');
     PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-    LocalDb.dbName = 'openstrap_paged_test.db';
+    LocalDb.dbName = 'projectfit_paged_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

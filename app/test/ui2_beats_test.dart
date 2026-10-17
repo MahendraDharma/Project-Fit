@@ -19,10 +19,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/ui2/screens/beats.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show ChartPoint;
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/ui2/screens/beats.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart' show ChartPoint;
+import 'package:projectfit/ui2/ui2.dart';
 
 /// A plausible night of intervals. The physiology is not under test here — the
 /// rendering of a large cloud is — so this is shaped, not sampled.

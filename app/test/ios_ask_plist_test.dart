@@ -19,8 +19,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/accessory_setup.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/accessory_setup.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
 
 import '../tool/gen_ios_ask_plist.dart';
 
@@ -100,7 +100,7 @@ void main() {
     // and keys OSBandLabels by it; the 128-bit expansion of 0x180D would be
     // refused as undeclared.
     TestWidgetsFlutterBinding.ensureInitialized();
-    const channel = MethodChannel('openstrap/accessory_setup');
+    const channel = MethodChannel('projectfit/accessory_setup');
     final sent = <String>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {

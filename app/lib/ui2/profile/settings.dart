@@ -41,6 +41,7 @@ import 'data.dart';
 import 'gallery.dart';
 import 'gestures.dart';
 import 'profile.dart';
+import '../../support/issue_report.dart' show kReportsConfigured;
 import 'report_issue.dart';
 import 'wearable_numbers.dart' show WearableDisplay, wearableSettingsGroup;
 
@@ -754,6 +755,7 @@ class MoreSettingsView extends StatelessWidget {
                           'Nothing is sent until you say so',
                       value: telemetry ? on : off,
                       onTap: onToggleTelemetry),
+                  if (kReportsConfigured)
                   SetRow(LucideIcons.messageSquareWarning, C.orange,
                       l?.settingsReportIssueRowTitle ?? 'Report an issue',
                       sub: l?.settingsReportIssueRowSub ??
@@ -826,7 +828,7 @@ class MoreSettingsView extends StatelessWidget {
                           'Who this app is not, and whose data it uses',
                       onTap: () => launchUrl(
                           Uri.parse(
-                              'https://openstrap.github.io/edge/notice.html'),
+                              'https://github.com/MahendraDharma/Project-Fit/blob/main/NOTICE.md'),
                           mode: LaunchMode.externalApplication)),
                 ]),
                 if (devMode)
@@ -1790,7 +1792,7 @@ class _AutomationSettingsState extends State<AutomationSettings> {
                           if (android) ...[
                             const SizedBox(height: S.x3),
                             SelectableText(
-                              'wtf.openstrap.openstrap_edge.SYNC_COMPLETE',
+                              'io.github.mahendradharma.projectfit.SYNC_COMPLETE',
                               style: F.cap.copyWith(color: p.ink),
                             ),
                             const SizedBox(height: S.x1),
@@ -1825,7 +1827,7 @@ class _AutomationSettingsState extends State<AutomationSettings> {
                             android
                                 ? (l?.settingsBuzzFromShortcutAndroidBody ??
                                     'Send '
-                                        'wtf.openstrap.openstrap_edge.BUZZ_STRAP '
+                                        'io.github.mahendradharma.projectfit.BUZZ_STRAP '
                                         'with this token as the “token” string '
                                         'extra. Without it any app on the phone '
                                         'could buzz your band.')

@@ -9,12 +9,12 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/recent_slice.dart';
-import 'package:openstrap_edge/support/issue_report.dart';
-import 'package:openstrap_edge/support/report_crypto.dart';
-import 'package:openstrap_edge/ui2/profile/report_issue.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/recent_slice.dart';
+import 'package:projectfit/support/issue_report.dart';
+import 'package:projectfit/support/report_crypto.dart';
+import 'package:projectfit/ui2/profile/report_issue.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:pointycastle/export.dart';
@@ -68,14 +68,21 @@ Future<Uint8List> _zip(
 
 void main() {
   group('OSR1', () {
-    test('layout against the shipped public key', () {
+    test('reports are off unless a build configures them', () {
+      expect(kReportsConfigured, isFalse);
+    });
+
+    test('layout', () {
+      final pair = osr1TestKeyPair();
+      final pub = base64Encode((pair.publicKey as ECPublicKey).Q!.getEncoded(false));
       final plain = Uint8List.fromList(utf8.encode('hello report'));
-      final blob = osr1Encrypt(plain);
+      final blob = osr1Encrypt(plain, publicKeyB64: pub);
       expect(String.fromCharCodes(blob.sublist(0, 4)), 'OSR1');
       expect(blob[4], 0x04, reason: 'uncompressed P-256 point');
       expect(blob.length, 4 + 65 + 12 + plain.length + 16);
       // Fresh ephemeral key and nonce every time.
-      expect(osr1Encrypt(plain).sublist(4, 81), isNot(blob.sublist(4, 81)));
+      expect(osr1Encrypt(plain, publicKeyB64: pub).sublist(4, 81),
+          isNot(blob.sublist(4, 81)));
     });
 
     test('round trip with a test keypair; a flipped byte fails the tag', () async {
@@ -97,12 +104,12 @@ void main() {
     final plain =
         Uint8List.fromList(List<int>.generate((1 << 20) * 2 + 37, (i) => i % 251));
     final zip = File('${dir.path}/r.zip')..writeAsBytesSync(plain);
-    final blob = (await sealReport(zip)).readAsBytesSync();
+    final pair = osr1TestKeyPair();
+    final pub = base64Encode((pair.publicKey as ECPublicKey).Q!.getEncoded(false));
+    final blob = (await sealReport(zip, publicKeyB64: pub)).readAsBytesSync();
     expect(String.fromCharCodes(blob.sublist(0, 4)), 'OSR1');
     expect(blob.length, kOsr1Overhead + plain.length);
 
-    final pair = osr1TestKeyPair();
-    final pub = base64Encode((pair.publicKey as ECPublicKey).Q!.getEncoded(false));
     osr1EncryptFile(zip.path, '${dir.path}/t.osr1', publicKeyB64: pub);
     expect(
         osr1Decrypt(File('${dir.path}/t.osr1').readAsBytesSync(),
@@ -242,7 +249,7 @@ void main() {
       databaseFactory = databaseFactoryFfi;
       tmp = await Directory.systemTemp.createTemp('slice');
       PathProviderPlatform.instance = _TempPaths(tmp.path);
-      LocalDb.dbName = 'openstrap_slice_test.db';
+      LocalDb.dbName = 'projectfit_slice_test.db';
       await deleteDatabase(
           p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName));
     });

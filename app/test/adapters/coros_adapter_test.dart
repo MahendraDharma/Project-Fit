@@ -8,11 +8,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/host.dart';
-import 'package:openstrap_edge/ble/adapters/coros.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/host.dart';
+import 'package:projectfit/ble/adapters/coros.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
 
 /// uint8 HR + contact supported/detected + RR present; 500 and 512 ticks.
 const List<int> kHrWithTwoRr = <int>[0x16, 120, 0xF4, 0x01, 0x00, 0x02];

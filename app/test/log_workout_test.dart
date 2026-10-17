@@ -14,11 +14,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/manual_session.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
-import 'package:openstrap_edge/ui2/screens/log_workout.dart';
-import 'package:openstrap_edge/ui2/screens/detected_activities.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/compute/manual_session.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/screens/log_workout.dart';
+import 'package:projectfit/ui2/screens/detected_activities.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// A real phone, and tall enough that nothing under test is below the fold —
 /// the default 800x600 harness hides the very controls these tests are about.

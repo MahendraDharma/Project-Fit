@@ -9,7 +9,7 @@
 // anchor only, and never the deprecated glass-box score.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/findings.dart';
+import 'package:projectfit/compute/findings.dart';
 
 const _today = '2026-10-02';
 

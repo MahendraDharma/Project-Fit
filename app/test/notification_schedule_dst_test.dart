@@ -15,7 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:openstrap_edge/notify/notification_service.dart';
+import 'package:projectfit/notify/notification_service.dart';
 
 /// The pre-fix implementation, kept verbatim so each test can show the drift
 /// it produced.

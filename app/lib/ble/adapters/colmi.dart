@@ -49,7 +49,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '../../compute/vendor_sleep.dart' show VendorEpoch;
 import '../../data/observation.dart';

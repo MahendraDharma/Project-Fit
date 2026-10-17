@@ -11,12 +11,12 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/compute/manual_session.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/gps/route_models.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/compute/manual_session.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/gps/route_models.dart';
 
 /// A profile with every anchor the scored metrics need.
 Map<String, dynamic> _profile() => {
@@ -76,7 +76,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_manual_workout_test.db';
+    LocalDb.dbName = 'projectfit_manual_workout_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     // A settled week of quiet-waking levels before every window below: a

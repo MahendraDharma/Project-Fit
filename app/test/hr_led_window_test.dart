@@ -4,8 +4,8 @@
 // close at the wake, whatever share of the record the night is.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart';
-import 'package:openstrap_edge/compute/inputs/pebble_inputs.dart';
+import 'package:projectfit/compute/inputs/canonical.dart';
+import 'package:projectfit/compute/inputs/pebble_inputs.dart';
 
 const int _t0 = 1790000000 ~/ 300 * 300;
 

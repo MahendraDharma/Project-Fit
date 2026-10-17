@@ -197,14 +197,14 @@ describe("POST /v1/reports", () => {
   });
 
   it("creates a GitHub issue when configured, without blob contents; failure still gives 201", async () => {
-    e.GITHUB_TOKEN = "t"; e.GITHUB_REPO = "OpenStrap/reports";
+    e.GITHUB_TOKEN = "t"; e.GITHUB_REPO = "ProjectFit/reports";
     const spy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      new Response(JSON.stringify({ html_url: "https://github.com/OpenStrap/reports/issues/1" }), { status: 201 }));
+      new Response(JSON.stringify({ html_url: "https://github.com/MahendraDharma/Project-Fit/reports/issues/1" }), { status: 201 }));
     const r = await post(meta());
     expect(r.status).toBe(201);
     const id = ((await r.json()) as any).id;
     const [url, init] = spy.mock.calls[0] as [string, RequestInit];
-    expect(url).toBe("https://api.github.com/repos/OpenStrap/reports/issues");
+    expect(url).toBe("https://api.github.com/repos/ProjectFit/reports/issues");
     const body = JSON.parse(init.body as string);
     expect(body.title).toBe(`[${id}] sync: Sync stuck`);
     expect(body.labels).toContain("sync");

@@ -6,8 +6,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/charts.dart';
-import 'package:openstrap_edge/ui2/paint_activity.dart';
+import 'package:projectfit/ui2/charts.dart';
+import 'package:projectfit/ui2/paint_activity.dart';
 
 class _Rec implements Canvas {
   final paths = <Path>[];

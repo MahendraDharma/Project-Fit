@@ -104,7 +104,7 @@ Object? wgerMuscleName(Map muscle) =>
 
 Future<void> main() async {
   final client = HttpClient()
-    ..userAgent = 'OpenStrap exercise catalogue updater';
+    ..userAgent = 'ProjectFit exercise catalogue updater';
   try {
     final licenseRows = await _fetchAll(
       client,

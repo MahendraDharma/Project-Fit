@@ -2,11 +2,11 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/ai/ai_prefs.dart';
-import 'package:openstrap_edge/ai/reminder_plan.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/notify/notification_service.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
+import 'package:projectfit/ai/ai_prefs.dart';
+import 'package:projectfit/ai/reminder_plan.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/notify/notification_service.dart';
+import 'package:projectfit/notify/tap_router.dart';
 
 void main() {
   group('aiReminderPlan', () {

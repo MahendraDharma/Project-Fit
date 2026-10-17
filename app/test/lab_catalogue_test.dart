@@ -6,7 +6,7 @@
 // to the right sex, and absent rather than guessed when there isn't one.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/lab_catalogue.dart';
+import 'package:projectfit/data/lab_catalogue.dart';
 
 void main() {
   group('the catalogue', () {

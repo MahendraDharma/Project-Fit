@@ -10,7 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/series_codec.dart';
+import 'package:projectfit/data/series_codec.dart';
 
 /// Structural equality over decoded JSON. Hand-rolled rather than pulling in
 /// package:collection so the test adds no dependency.

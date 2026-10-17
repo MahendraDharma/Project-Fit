@@ -4,8 +4,8 @@
 // here without fixtures.
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/step_calibration.dart';
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/step_calibration.dart';
 
 Substrate _sub(List<int> stepCount, {List<int>? ts, String? family}) {
   final n = ts?.length ?? stepCount.length;

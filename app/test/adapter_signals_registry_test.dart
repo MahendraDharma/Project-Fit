@@ -10,20 +10,20 @@
 // membership AND the declared cadence.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/ble_hrs.dart';
-import 'package:openstrap_edge/ble/adapters/colmi.dart';
-import 'package:openstrap_edge/ble/adapters/coros.dart';
-import 'package:openstrap_edge/ble/adapters/garmin.dart';
-import 'package:openstrap_edge/ble/adapters/miband234.dart';
-import 'package:openstrap_edge/ble/adapters/oura.dart';
-import 'package:openstrap_edge/ble/adapters/pebble.dart';
-import 'package:openstrap_edge/ble/adapters/polar_pmd.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_edge/ble/adapters/miscale.dart';
-import 'package:openstrap_edge/ble/adapters/thermometer.dart';
-import 'package:openstrap_edge/ble/adapters/ultrahuman.dart';
-import 'package:openstrap_edge/ble/adapters/whoop_gen4.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/ble_hrs.dart';
+import 'package:projectfit/ble/adapters/colmi.dart';
+import 'package:projectfit/ble/adapters/coros.dart';
+import 'package:projectfit/ble/adapters/garmin.dart';
+import 'package:projectfit/ble/adapters/miband234.dart';
+import 'package:projectfit/ble/adapters/oura.dart';
+import 'package:projectfit/ble/adapters/pebble.dart';
+import 'package:projectfit/ble/adapters/polar_pmd.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit/ble/adapters/miscale.dart';
+import 'package:projectfit/ble/adapters/thermometer.dart';
+import 'package:projectfit/ble/adapters/ultrahuman.dart';
+import 'package:projectfit/ble/adapters/whoop_gen4.dart';
 
 void main() {
   test('kAdapterSignals matches each adapter own declaration', () {

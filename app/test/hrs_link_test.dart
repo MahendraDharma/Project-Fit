@@ -14,13 +14,13 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart' show Guid;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/ble_state.dart'
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/ble_state.dart'
     show acquireSecondaryLinkSlot, releaseSecondaryLinkSlot;
-import 'package:openstrap_edge/ble/hrs_link.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart'
+import 'package:projectfit/ble/hrs_link.dart';
+import 'package:projectfit/compute/inputs/canonical.dart'
     show wearableEnabledCursor;
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/db.dart';
 
 /// Frames as the three common flag shapes put them on the wire.
 ///
@@ -408,7 +408,7 @@ void main() {
     // comment in `HrsLink.forgetDevice`.
     test('a forgotten ring leaves its picker approval alone', () async {
       TestWidgetsFlutterBinding.ensureInitialized();
-      const channel = MethodChannel('openstrap/accessory_setup');
+      const channel = MethodChannel('projectfit/accessory_setup');
       final calls = <MethodCall>[];
       final messenger =
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;

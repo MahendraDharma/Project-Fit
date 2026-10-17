@@ -7,12 +7,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/data/db.dart' show LocalDb;
-import 'package:openstrap_edge/ui2/profile/devices.dart';
-import 'package:openstrap_edge/ui2/screens/metric_detail.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/data/db.dart' show LocalDb;
+import 'package:projectfit/ui2/profile/devices.dart';
+import 'package:projectfit/ui2/screens/metric_detail.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 const _keys = [
   'resting_hr', 'hrv', 'readiness', 'resp_rate', 'sleep', 'efficiency', 'deep',

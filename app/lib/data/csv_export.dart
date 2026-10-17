@@ -35,7 +35,7 @@ class CsvExportSet {
     this.addColumns,
   });
 
-  /// Filename stem, e.g. `daily` → `openstrap_daily_<stamp>.csv`.
+  /// Filename stem, e.g. `daily` → `projectfit_daily_<stamp>.csv`.
   final String name;
   final String title;
   final List<String> columns;
@@ -381,7 +381,7 @@ class CsvExportResult {
 
 /// Parent directory for CSV exports. Each run gets its own subdirectory under
 /// it, named by timestamp.
-const _csvDirName = 'openstrap_csv';
+const _csvDirName = 'projectfit_csv';
 
 /// How many runs survive a cleanup.
 ///
@@ -423,7 +423,7 @@ Future<CsvExportResult> exportCsvFiles(
       // emitting one made an empty database indistinguishable from a working
       // export to the caller.
       if (rows.isEmpty) continue;
-      final file = File(p.join(dir.path, 'openstrap_${set.name}_$stamp.csv'));
+      final file = File(p.join(dir.path, 'projectfit_${set.name}_$stamp.csv'));
       // utf8 with a BOM: without it Excel on Windows reads the file as the
       // local code page and mangles every non-ASCII character in a note.
       await file.writeAsBytes([
@@ -518,7 +518,7 @@ Future<String?> exportHeartRateCsv(String from, String to,
       await Isolate.run(() => renderCsv(kHeartRateCsvColumns, rows));
   final (dir, stamp) = await _newRunDir(now);
   final file =
-      File(p.join(dir.path, 'openstrap_heart_rate_${from}_${to}_$stamp.csv'));
+      File(p.join(dir.path, 'projectfit_heart_rate_${from}_${to}_$stamp.csv'));
   await file.writeAsBytes([
     0xEF,
     0xBB,

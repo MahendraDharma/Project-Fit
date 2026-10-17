@@ -29,10 +29,10 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_db.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/observation.dart';
+import 'package:projectfit/coach/coach_db.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/observation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -198,9 +198,9 @@ void main() {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
       PathProviderPlatform.instance = _FakePathProvider(
-        (await Directory.systemTemp.createTemp('openstrap_obs_')).path,
+        (await Directory.systemTemp.createTemp('projectfit_obs_')).path,
       );
-      LocalDb.dbName = 'openstrap_observation_test.db';
+      LocalDb.dbName = 'projectfit_observation_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     });
@@ -401,11 +401,11 @@ void main() {
       expect((await LocalDb.schemaHealth())['ok'], isTrue);
     });
     // ── the v48 rung, against a REAL export ──────────────────────────────────
-    // `OPENSTRAP_TEST_DBS=/path/one.db,/path/two.db`. `onUpgrade` runs inside
+    // `PROJECTFIT_TEST_DBS=/path/one.db,/path/two.db`. `onUpgrade` runs inside
     // openDatabase on iOS's launch-path CPU watchdog, so a rung's cost is a
     // number, not an assurance — and phase 3 must move no computed value, which
     // means every `day_result` payload has to come back byte-identical.
-    for (final src in (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+    for (final src in (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
         .split(',')
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty)) {

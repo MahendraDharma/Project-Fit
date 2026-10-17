@@ -8,9 +8,9 @@
 // and broke on the way out of it, and a test that only exercised the helper
 // could not see it.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 const _profile = Profile(ageYears: 35, sex: 'm', weightKg: 75, heightCm: 178);
 

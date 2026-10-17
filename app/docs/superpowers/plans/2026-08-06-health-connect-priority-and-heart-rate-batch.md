@@ -23,8 +23,8 @@
 ## File Structure
 
 - Create `lib/health/health_heart_rate_batch.dart`: typed sample model, normalization, platform-neutral export routing, and MethodChannel writer.
-- Create `android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectHeartRateWriter.kt`: validate and replace one daily `HeartRateRecord` on `Dispatchers.IO`.
-- Modify `android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/NativeChannels.kt`: register the new writer.
+- Create `android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectHeartRateWriter.kt`: validate and replace one daily `HeartRateRecord` on `Dispatchers.IO`.
+- Modify `android/app/src/main/kotlin/io/github/mahendradharma/projectfit/NativeChannels.kt`: register the new writer.
 - Modify `lib/health/health_export.dart`: prioritize newest Android sleep and route continuous HR through the batch API.
 - Modify `test/health_sleep_export_test.dart`: cover sleep-first/abort/no-duplicate behavior.
 - Create `test/health_heart_rate_export_test.dart`: cover normalization, batching, Apple preservation, empty data, and `false` propagation.
@@ -122,8 +122,8 @@ git commit -m "fix(health): prioritize current Android sleep export"
 
 **Files:**
 - Create: `lib/health/health_heart_rate_batch.dart`
-- Create: `android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectHeartRateWriter.kt`
-- Modify: `android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/NativeChannels.kt`
+- Create: `android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectHeartRateWriter.kt`
+- Modify: `android/app/src/main/kotlin/io/github/mahendradharma/projectfit/NativeChannels.kt`
 - Modify: `lib/health/health_export.dart`
 - Create: `test/health_heart_rate_export_test.dart`
 
@@ -131,7 +131,7 @@ git commit -m "fix(health): prioritize current Android sleep export"
 - Produces: `HealthHeartRateSample(DateTime time, int beatsPerMinute)` and `toMap()`.
 - Produces: `normalizeHealthHeartRateSamples(List<Map<String, Object?>> rows, DateTime start, DateTime end)`.
 - Produces: `HealthConnectHeartRateWriter.replaceDay(DateTime start, DateTime end, List<HealthHeartRateSample> samples) -> Future<bool>`.
-- Produces: `MethodChannelHealthConnectHeartRateWriter` on channel `openstrap/health_connect_heart_rate`, method `replaceHeartRateDay`.
+- Produces: `MethodChannelHealthConnectHeartRateWriter` on channel `projectfit/health_connect_heart_rate`, method `replaceHeartRateDay`.
 - Produces: `exportContinuousHeartRateDay(...) -> Future<bool>` that selects one Android batch call or preserved generic per-minute calls.
 
 - [ ] **Step 1: Write failing Dart tests for the wished-for API**
@@ -195,7 +195,7 @@ Run: `flutter build apk --debug`
 Expected: Kotlin compiles against pinned `connect-client:1.1.0-alpha07` and the debug APK succeeds.
 
 ```powershell
-git add android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectHeartRateWriter.kt android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/NativeChannels.kt lib/health/health_heart_rate_batch.dart lib/health/health_export.dart test/health_heart_rate_export_test.dart
+git add android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectHeartRateWriter.kt android/app/src/main/kotlin/io/github/mahendradharma/projectfit/NativeChannels.kt lib/health/health_heart_rate_batch.dart lib/health/health_export.dart test/health_heart_rate_export_test.dart
 git commit -m "fix(health): batch Android heart-rate export"
 ```
 
@@ -209,7 +209,7 @@ git commit -m "fix(health): batch Android heart-rate export"
 
 **Interfaces:**
 - Consumes: all Task 1 and Task 2 interfaces.
-- Produces: release APK at `build/app/outputs/flutter-apk/app-release.apk` and desktop copy `C:\Users\felix\Desktop\OpenStrap-Edge-fix-193.apk`.
+- Produces: release APK at `build/app/outputs/flutter-apk/app-release.apk` and desktop copy `C:\Users\felix\Desktop\ProjectFit-Edge-fix-193.apk`.
 
 - [ ] **Step 1: Run static analysis and focused tests**
 
@@ -234,11 +234,11 @@ Expected: `build/app/outputs/flutter-apk/app-release.apk` is produced successful
 
 - [ ] **Step 4: Copy, hash, install, and open the APK**
 
-Copy the release APK to `C:\Users\felix\Desktop\OpenStrap-Edge-fix-193.apk`, calculate SHA-256, run `adb install -r` against the connected device, and open `wtf.openstrap.openstrap_edge/.MainActivity`. Do not uninstall the app or clear its database.
+Copy the release APK to `C:\Users\felix\Desktop\ProjectFit-Edge-fix-193.apk`, calculate SHA-256, run `adb install -r` against the connected device, and open `io.github.mahendradharma.projectfit/.MainActivity`. Do not uninstall the app or clear its database.
 
 - [ ] **Step 5: Verify the real export boundary**
 
-Clear only logcat, tap `Sync now`, and confirm in logs that the newest sleep write occurs before heart-rate/workout writes, there is no burst of per-minute `HEART_RATE` calls, and the current sleep replacement succeeds. Open Health Connect and verify one OpenStrap sleep parent for `01:36–08:20` with all stages. Google/Fitbit refresh may remain asynchronous; distinguish its cache from the Health Connect source of truth.
+Clear only logcat, tap `Sync now`, and confirm in logs that the newest sleep write occurs before heart-rate/workout writes, there is no burst of per-minute `HEART_RATE` calls, and the current sleep replacement succeeds. Open Health Connect and verify one ProjectFit sleep parent for `01:36–08:20` with all stages. Google/Fitbit refresh may remain asynchronous; distinguish its cache from the Health Connect source of truth.
 
 - [ ] **Step 6: Commit any verification-only test adjustment, push, and update PR**
 

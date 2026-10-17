@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/coach/coach_responses.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/coach/coach_responses.dart';
 
 Map<String, dynamic> _body(String model, {bool tools = true}) => {
   'model': model,

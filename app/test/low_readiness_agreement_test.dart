@@ -13,13 +13,13 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/findings.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/models/payloads.dart';
-import 'package:openstrap_edge/ui2/screens/health_screen.dart' show HealthData;
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/findings.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/models/payloads.dart';
+import 'package:projectfit/ui2/screens/health_screen.dart' show HealthData;
 
 /// The frozen headline as the engine hands it to the planner: only a pin taken
 /// on [day]'s own night (`LocalDb.headlinePinFor`).

@@ -18,11 +18,11 @@
 // `raw_archive` (reason `undecodable_rec_v25`).
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 // Two consecutive v25 seconds, 76-byte inner each.
 const _v25a =

@@ -8,7 +8,7 @@
 // the contract is pinned here once, for both.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/step_cadence.dart';
+import 'package:projectfit/compute/step_cadence.dart';
 
 void main() {
   // Minute keys are epoch-seconds ~/ 60, same as the wake-series buckets.

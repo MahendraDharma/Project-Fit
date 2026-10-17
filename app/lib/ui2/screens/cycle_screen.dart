@@ -45,7 +45,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart' show mdc, robustBaseline;
+import 'package:projectfit_analytics/onehz.dart' show mdc, robustBaseline;
 import 'package:provider/provider.dart';
 
 import '../../data/day_label.dart';

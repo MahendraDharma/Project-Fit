@@ -1,15 +1,11 @@
-// The project's public links — one place, shared by the profile screen's
-// Community rows and the Home nudge (nudges.dart) that points at two of
-// these.
+// The project's public links — one place, used by the profile screen's
+// Community rows.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const kGithubUrl = 'https://github.com/OpenStrap/edge';
-const kRedditUrl = 'https://www.reddit.com/r/OpenStrap/';
-const kDiscordUrl = 'https://discord.gg/dUXds5MWkd';
-const kSponsorUrl = 'https://github.com/sponsors/abdulsaheel';
+const kGithubUrl = 'https://github.com/MahendraDharma/Project-Fit';
 
 /// Every link here is external — the browser/app the platform already picks
 /// for that URL scheme, never a WebView inside this app. Reports whether it

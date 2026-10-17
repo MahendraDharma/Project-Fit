@@ -21,15 +21,15 @@ import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/ui2/screens/log_workout.dart' show dayLabel;
-import 'package:openstrap_edge/ui2/screens/sleep_detail.dart'
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/ui2/screens/log_workout.dart' show dayLabel;
+import 'package:projectfit/ui2/screens/sleep_detail.dart'
     show correctedSleepWindow;
-import 'package:openstrap_edge/ui2/screens/workout_screen.dart'
+import 'package:projectfit/ui2/screens/workout_screen.dart'
     show lastSevenDays;
 
 typedef _SetenvNative = Int32 Function(Pointer<Utf8>, Pointer<Utf8>, Int32);
@@ -89,7 +89,7 @@ void main() {
     _setProcessTz('America/New_York');
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_dst_test.db';
+    LocalDb.dbName = 'projectfit_dst_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

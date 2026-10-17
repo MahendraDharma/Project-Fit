@@ -8,11 +8,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/observation.dart';
-import 'package:openstrap_edge/ble/adapters/ble_hrs.dart';
-import 'package:openstrap_edge/ble/adapters/oura.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/observation.dart';
+import 'package:projectfit/ble/adapters/ble_hrs.dart';
+import 'package:projectfit/ble/adapters/oura.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

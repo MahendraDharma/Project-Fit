@@ -5,11 +5,11 @@
 // debugOnLiveFrame directly.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' show BandProfile;
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' show BandProfile;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/app_state_live_harness.dart';

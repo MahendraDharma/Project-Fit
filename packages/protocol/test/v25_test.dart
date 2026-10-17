@@ -1,4 +1,4 @@
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 String _innerHex(String framed) => framed.substring(8);

@@ -3,20 +3,20 @@
 // per-column share. Prints numbers only; asserts nothing beyond a lossless
 // round trip.
 //
-// Skips unless OPENSTRAP_TEST_DBS names one or more real exports:
-//   OPENSTRAP_TEST_DBS=/path/a.db,/path/b.db \
+// Skips unless PROJECTFIT_TEST_DBS names one or more real exports:
+//   PROJECTFIT_TEST_DBS=/path/a.db,/path/b.db \
 //     flutter test test/substrate_archive_size_probe_test.dart
 // Every source is opened READ-ONLY.
 
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/substrate_archive_codec.dart';
+import 'package:projectfit/data/substrate_archive_codec.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
-  final real = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final real = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .where((s) => s.trim().isNotEmpty)
       .toList();
@@ -24,7 +24,7 @@ void main() {
     test(
       'substrate archive size probe',
       () {},
-      skip: 'set OPENSTRAP_TEST_DBS to measure real exports',
+      skip: 'set PROJECTFIT_TEST_DBS to measure real exports',
     );
     return;
   }

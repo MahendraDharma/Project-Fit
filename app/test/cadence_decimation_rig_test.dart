@@ -1,7 +1,7 @@
 // THE DECIMATION RIG — measure what a slower band's cadence does to a metric,
 // against the only ground truth we have: the same real night at 1 Hz.
 //
-// The premise: OpenStrap holds real 1 Hz WHOOP data, so the true answer for any
+// The premise: ProjectFit holds real 1 Hz WHOOP data, so the true answer for any
 // window-based metric is already known. Take every Nth REAL sample of that same
 // data, run the metric again, and compare. A cadence-aware metric converges on
 // the 1 Hz answer. Most of ours do not, and this file is where that stops being
@@ -12,7 +12,7 @@
 // something to diff against. The only thing asserted here is the decimator
 // itself (see the pure-unit test at the bottom, which runs with no database).
 //
-// Source data: `OPENSTRAP_TEST_DBS=/path/export.db` — same env-var idiom as
+// Source data: `PROJECTFIT_TEST_DBS=/path/export.db` — same env-var idiom as
 // `db_migration_ladder_test.dart` / `db_v42_retention_and_provenance_test.dart`.
 // Skipped entirely when unset, because that file is personal and can never be
 // committed. The database is opened READ-ONLY and never migrated: the rig reads
@@ -28,7 +28,7 @@
 // `cardio_stager` its own epoch means, both from raw samples).
 //
 // Run:
-//   OPENSTRAP_TEST_DBS=~/Documents/openstrap/openstrap_export_1786730410696.db \
+//   PROJECTFIT_TEST_DBS=~/Documents/projectfit/projectfit_export_1786730410696.db \
 //     flutter test test/cadence_decimation_rig_test.dart --concurrency=1
 //
 // Writes `build/cadence_baseline.json` (gitignored) and prints the same table.
@@ -40,7 +40,7 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 /// Cadences under test, seconds per record. 1 is the ground truth.
 ///
@@ -373,7 +373,7 @@ void main() {
     expect(decimateEveryNth(<int>[], at, 5), isEmpty);
   });
 
-  final real = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final real = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .where((s) => s.trim().isNotEmpty)
       .toList();

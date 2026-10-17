@@ -7,8 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
 
 void main() {
   test('german keeps the noun case in the using caption', () {

@@ -239,7 +239,7 @@ class Cmd {
 
 /// Band-agnostic opcode safety classification (kept SEPARATE from
 /// [dangerousCmds] above,
-/// which is OpenStrap's own, independently-curated gen4 list — the two do not
+/// which is ProjectFit's own, independently-curated gen4 list — the two do not
 /// fully overlap, e.g. this list omits the device-update opcodes (0x24-0x26)
 /// that [dangerousCmds] already blocks, and adds a few flags ours didn't
 /// have, notably 120/SET_FF_VALUE — see the note on [forbidden] below).

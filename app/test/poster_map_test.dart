@@ -11,12 +11,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
-import 'package:openstrap_edge/ui2/activity/poster.dart';
-import 'package:openstrap_edge/ui2/activity/summary.dart';
-import 'package:openstrap_edge/ui2/activity/tiles.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/activity/poster.dart';
+import 'package:projectfit/ui2/activity/summary.dart';
+import 'package:projectfit/ui2/activity/tiles.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

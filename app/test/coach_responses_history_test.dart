@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/coach/coach_responses.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/coach/coach_responses.dart';
+import 'package:projectfit/data/local_repository.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -22,7 +22,7 @@
 
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 // ── THE app's HR ceiling for zones / TRIMP / calories ────────────────────────
 //

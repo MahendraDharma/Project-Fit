@@ -46,7 +46,7 @@ val hasReleaseSigning =
     signingValue("storeFile", "ANDROID_KEYSTORE_PATH") != null
 
 android {
-    namespace = "wtf.openstrap.openstrap_edge"
+    namespace = "io.github.mahendradharma.projectfit"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -63,7 +63,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "wtf.openstrap.openstrap_edge"
+        applicationId = "io.github.mahendradharma.projectfit"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = maxOf(26, flutter.minSdkVersion) // Health Connect requires API 26+

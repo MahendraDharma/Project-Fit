@@ -1,4 +1,4 @@
-// Regression tests for NOOP CSV schema drift (OpenStrap/edge#160).
+// Regression tests for NOOP CSV schema drift (MahendraDharma/Project-Fit#160).
 //
 // NOOP shipped a schema change that these tests pin:
 //   • `band_sleep_state` INSERTED at index 15, shifting event_kind/event_payload
@@ -18,10 +18,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/import/noop_import.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/import/noop_import.dart';
 
 /// The CURRENT NOOP header — `band_sleep_state` at 15, event_* shifted to 16/17.
 const _header = 'unix_s,iso_utc,stream,hr_bpm,rr_ms,grav_x,grav_y,grav_z,'
@@ -156,7 +156,7 @@ void main() {
     setUpAll(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_noop_drift_test.db';
+      LocalDb.dbName = 'projectfit_noop_drift_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
       tmp = await Directory.systemTemp.createTemp('noop_drift');

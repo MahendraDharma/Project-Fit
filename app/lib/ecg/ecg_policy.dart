@@ -10,7 +10,7 @@
 // the first terminal packet. The frozen official capture is the oracle: 86
 // transport frames → 30 accepted → 3,000 samples.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import 'ecg_models.dart';
 

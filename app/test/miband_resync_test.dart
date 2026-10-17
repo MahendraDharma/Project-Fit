@@ -3,10 +3,10 @@
 // land once, whole, whatever instant the syncs ran at.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/miband234.dart';
-import 'package:openstrap_edge/ble/miband_link.dart';
-import 'package:openstrap_edge/compute/vendor_sleep.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/ble/adapters/miband234.dart';
+import 'package:projectfit/ble/miband_link.dart';
+import 'package:projectfit/compute/vendor_sleep.dart';
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

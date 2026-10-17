@@ -11,7 +11,7 @@
     Background only, in LaunchBackground, which carries the same two colours as
     P.bg — light #F8FAFC and dark #0B1017. The handoff to Flutter is then a
     colour that does not change, and the only thing that appears is the
-    OpenStrap mark, once, in BootSplash.
+    ProjectFit mark, once, in BootSplash.
 -->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <dependencies>

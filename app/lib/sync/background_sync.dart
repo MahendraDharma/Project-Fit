@@ -15,7 +15,7 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ble/adapters/_registry.dart' show kWhoopGen4;
@@ -536,7 +536,7 @@ Future<void> checkSyncStaleness({bool allowPermissionPrompt = false}) async {
         // event was actually presented.
         priority: NotifPriority.normal,
         title: "Your band hasn't synced in a while",
-        body: 'No new data for about $hoursStale hours. Open OpenStrap to '
+        body: 'No new data for about $hoursStale hours. Open ProjectFit to '
             'reconnect — background sync may have stalled.',
         date: now.toIso8601String().substring(0, 10),
         // Home: its day card carries the synced-through line and the sync

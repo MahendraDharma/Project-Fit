@@ -933,20 +933,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.5.0"
-  openstrap_analytics:
-    dependency: "direct main"
-    description:
-      path: "../packages/analytics"
-      relative: true
-    source: path
-    version: "1.0.0"
-  openstrap_protocol:
-    dependency: "direct main"
-    description:
-      path: "../packages/protocol"
-      relative: true
-    source: path
-    version: "1.0.0"
   ota_update:
     dependency: "direct main"
     description:
@@ -1107,6 +1093,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  projectfit_analytics:
+    dependency: "direct main"
+    description:
+      path: "../packages/analytics"
+      relative: true
+    source: path
+    version: "1.0.0"
+  projectfit_protocol:
+    dependency: "direct main"
+    description:
+      path: "../packages/protocol"
+      relative: true
+    source: path
+    version: "1.0.0"
   provider:
     dependency: "direct main"
     description:

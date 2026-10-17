@@ -19,7 +19,7 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 Uint8List _hex(String s) => Uint8List.fromList([
       for (var i = 0; i + 1 < s.length; i += 2)

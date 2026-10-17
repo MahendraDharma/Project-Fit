@@ -21,7 +21,7 @@ import 'reset_gate.dart';
 import 'shortcut_sync_task.dart';
 
 class IosShortcutSync {
-  static const channel = MethodChannel('openstrap/shortcut_sync');
+  static const channel = MethodChannel('projectfit/shortcut_sync');
   static ShortcutSyncTask? _active;
   static void Function()? _onForegroundCommitFailure;
 

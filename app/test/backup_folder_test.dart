@@ -4,11 +4,11 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/auto_backup.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
+import 'package:projectfit/data/auto_backup.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/sync/reset_gate.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -259,9 +259,9 @@ void main() {
         documents.files[backupFileName(DateTime(2026, 10, day))] = [day];
       }
       documents.files['important.txt'] = [42];
-      documents.files['openstrap-notes.db'] = [42];
+      documents.files['projectfit-notes.db'] = [42];
       documents.files['download.partial'] = [42];
-      documents.files['openstrap-20260101-000000.db.gz.partial'] = [0];
+      documents.files['projectfit-20260101-000000.db.gz.partial'] = [0];
       expect((await run()).succeeded, isTrue);
       expect(
         documents.files.keys.where((n) => n.endsWith('.db.gz')),
@@ -272,11 +272,11 @@ void main() {
         isNot(contains(backupFileName(DateTime(2026, 10, 1)))),
       );
       expect(documents.files['important.txt'], [42]);
-      expect(documents.files['openstrap-notes.db'], [42]);
+      expect(documents.files['projectfit-notes.db'], [42]);
       expect(documents.files['download.partial'], [42]);
       expect(
         documents.files,
-        isNot(contains('openstrap-20260101-000000.db.gz.partial')),
+        isNot(contains('projectfit-20260101-000000.db.gz.partial')),
       );
     },
   );
@@ -284,7 +284,7 @@ void main() {
   test(
     'cleanup failure does not turn a completed backup into a failed one',
     () async {
-      documents.files['openstrap-20260101-000000.db.gz.partial'] = [0];
+      documents.files['projectfit-20260101-000000.db.gz.partial'] = [0];
       documents.failDelete = true;
       final result = await run();
       expect(result.succeeded, isTrue);
@@ -316,7 +316,7 @@ void main() {
       final directory = await backupDirectory();
       final backup = File(p.join(directory.path, backupFileName(when)));
       final staging = File('${backup.path}.partial');
-      final unrelated = File(p.join(directory.path, 'openstrap-notes.db'));
+      final unrelated = File(p.join(directory.path, 'projectfit-notes.db'));
       final download = File(p.join(directory.path, 'download.partial'));
       for (final file in [backup, staging, unrelated, download]) {
         await file.writeAsBytes([1]);

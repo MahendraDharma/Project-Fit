@@ -1,8 +1,8 @@
-name: openstrap_edge
+name: projectfit
 description: "A local-first health app for your wearables. No subscription, no fees, private by default. Not affiliated with any device maker."
 publish_to: 'none'
 # NOTE: bumping this also requires manually bumping MARKETING_VERSION/
-# CURRENT_PROJECT_VERSION for the OpenStrapWidget(Extension) and "OpenStrapWatch
+# CURRENT_PROJECT_VERSION for the ProjectFitWidget(Extension) and "ProjectFitWatch
 # Watch App" targets in ios/Runner.xcodeproj/project.pbxproj — they aren't wired
 # to FLUTTER_BUILD_NAME/FLUTTER_BUILD_NUMBER. See guides/IOS_INSTALLATION.md
 # "Version Numbers".
@@ -37,7 +37,7 @@ dependencies:
   # engine. Replace the old cloud backend: decode happens on-device, and the
   # local re-layer computes metrics here (see lib/data/local_repository.dart +
   # lib/compute/derivation_engine.dart). The analytics package now points at the
-  # 1 Hz-native family (import via `package:openstrap_analytics/onehz.dart`).
+  # 1 Hz-native family (import via `package:projectfit_analytics/onehz.dart`).
   # SIBLING PACKAGES ARE PINNED TO COMMIT SHAs, NOT FLOATING `main`/BRANCH REFS.
   # A floating ref means an upstream commit silently changes the behaviour of an
   # already-tagged edge release (this bit us: analytics v42 rode `ref: main` into
@@ -47,9 +47,9 @@ dependencies:
   # NOTE: this is the multiband branch, so protocol is pinned at the gen5 work
   # rather than plain `main`. Prefer merge commits on `main` over PR-branch
   # heads where possible — a deleted branch can orphan a PR-branch SHA.
-  openstrap_protocol:
+  projectfit_protocol:
     path: ../packages/protocol
-  openstrap_analytics:
+  projectfit_analytics:
     path: ../packages/analytics
 
   # BLE — flutter_blue_plus is the maintained cross-platform GATT client.
@@ -255,7 +255,7 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   # The icon's own plate, so the ring the mask leaves around the artwork is the
   # same colour as the artwork's edge rather than the old cream.
-  adaptive_icon_background: "#020D1C"
+  adaptive_icon_background: "#0A1D3A"
   adaptive_icon_foreground: "assets/launcher/icon_adaptive.png"
 
 flutter:

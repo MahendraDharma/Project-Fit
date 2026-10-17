@@ -36,7 +36,7 @@ import 'adapters/_registry.dart';
 import 'adapters/adapter.dart' show ReplayBandLink;
 import 'adapters/gatt_link.dart';
 import 'adapters/host.dart' show BandHost;
-import 'package:openstrap_protocol/openstrap_protocol.dart'
+import 'package:projectfit_protocol/projectfit_protocol.dart'
     show PebbleFrameReassembler;
 
 import 'adapters/pebble.dart';

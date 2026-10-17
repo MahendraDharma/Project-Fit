@@ -306,7 +306,7 @@ Uint8List cmdBuzz(int seq,
 //   • a 20-byte RICH form ([cmdSetAlarm]) — time + slot + a haptic waveform.
 //
 // ⚠ Which form a WHOOP 4 EXECUTES is firmware-dependent (evidence: issue
-// #32 + OpenStrap/edge#265). On fw 41.17.4 the RICH form latches — event 56
+// #32 + MahendraDharma/Project-Fit#265). On fw 41.17.4 the RICH form latches — event 56
 // STRAP_DRIVEN_ALARM_SET, armed GET_ALARM readback — but the scheduler never
 // executes it (three controlled arms, zero event 57), while the REV-1 form
 // fired autonomously at the armed second (events 60 + 57 + the one-shot
@@ -409,7 +409,7 @@ Uint8List cmdSetAlarmSimple(int seq, DateTime when,
 /// stamped at the target epoch — with no phone connected. On that firmware
 /// the 20-byte rich form ([cmdSetAlarm]) latches and confirms identically
 /// but never executed, while at least one other 4.0 does execute it; see
-/// issue #32 and OpenStrap/edge#265 for the evidence.
+/// issue #32 and MahendraDharma/Project-Fit#265 for the evidence.
 ///
 /// Note the confirmation lifecycle: ALARM_SET (56) and the fired events
 /// arrive via the band's HISTORY stream on the next sync, not live, and 56
@@ -447,7 +447,7 @@ List<int> alarmRev1Payload(DateTime when, {int hapticMode = 0}) {
 /// ⚠ gen4: whether this form EXECUTES is firmware-dependent — on fw 41.17.4
 /// it is stored and confirmed (event 56) exactly like a live arm yet the
 /// scheduler never fires it, while at least one other 4.0 executes it
-/// (issue #32, OpenStrap/edge#265). For a gen4 wake alarm use
+/// (issue #32, MahendraDharma/Project-Fit#265). For a gen4 wake alarm use
 /// [cmdSetAlarmRev1]. On gen5 this rich body (plus the crescendo byte) is the
 /// only known arm form, still hardware-unverified for actually waking.
 ///

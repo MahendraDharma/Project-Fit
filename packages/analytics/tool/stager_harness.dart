@@ -45,7 +45,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 /// 4-class labels, in the order used for the confusion matrix.
 const kClasses = ['Wake', 'Light', 'Deep', 'REM'];

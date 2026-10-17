@@ -953,17 +953,17 @@ class SyncController {
         !task.stopped) {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
-    if (_initError() != null || _isDisposed) throw StateError('Edge is not ready');
+    if (_initError() != null || _isDisposed) throw StateError('ProjectFit is not ready');
     if (busy) task.update('waiting');
     while (busy && !task.stopped) {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
     if (task.stopped) return SyncReport(0, 0, false);
-    if (ResetGate.active || _isDisposed) throw StateError('Edge is not ready');
+    if (ResetGate.active || _isDisposed) throw StateError('ProjectFit is not ready');
     if (engine.isConnected) {
       final usable = await _linkUsableAfterResume('Shortcut');
       if (task.stopped) return SyncReport(0, 0, false);
-      if (ResetGate.active || _isDisposed) throw StateError('Edge is not ready');
+      if (ResetGate.active || _isDisposed) throw StateError('ProjectFit is not ready');
       if (!usable) await engine.disconnect();
     }
     if (!engine.isConnected) {

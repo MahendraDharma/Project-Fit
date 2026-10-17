@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
+import 'package:projectfit/ble/ble_state.dart';
 
 void main() {
   group('ReconnectPolicy backoff schedule', () {

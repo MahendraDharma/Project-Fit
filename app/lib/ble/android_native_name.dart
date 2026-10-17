@@ -19,7 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class AndroidNativeName {
-  static const MethodChannel _ch = MethodChannel('openstrap/ble_native');
+  static const MethodChannel _ch = MethodChannel('projectfit/ble_native');
 
   /// The native Android name for [remoteId] (the MAC on Android), or null when
   /// the platform has none — which is exactly the value the readiness gate

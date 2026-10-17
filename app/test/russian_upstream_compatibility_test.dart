@@ -3,13 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/l10n/display_text.dart';
-import 'package:openstrap_edge/l10n/presentation_text.dart';
-import 'package:openstrap_edge/l10n/sweep_text.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
-import 'package:openstrap_edge/ui2/screens/coach_text.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/l10n/display_text.dart';
+import 'package:projectfit/l10n/presentation_text.dart';
+import 'package:projectfit/l10n/sweep_text.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/screens/coach_text.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 void main() {
   Widget russianPage(Widget child) => MaterialApp(

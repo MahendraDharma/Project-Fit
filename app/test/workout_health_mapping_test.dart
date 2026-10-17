@@ -19,7 +19,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health/health.dart';
-import 'package:openstrap_edge/health/health_export.dart';
+import 'package:projectfit/health/health_export.dart';
 
 void main() {
   group('healthActivityForType', () {

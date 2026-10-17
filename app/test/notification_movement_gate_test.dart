@@ -15,9 +15,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/notify/tap_router.dart';
 
 NotificationEvent movementEvent({NotifPriority priority = NotifPriority.normal,
     String? route}) {

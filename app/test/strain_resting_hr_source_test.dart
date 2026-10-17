@@ -17,10 +17,10 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 const int _t0 = 1786700000; // a fixed epoch second, local-zone independent
 

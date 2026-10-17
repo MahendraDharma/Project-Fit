@@ -14,7 +14,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/import/import_container.dart';
+import 'package:projectfit/import/import_container.dart';
 
 List<int> _zipOf(Map<String, String> members) {
   final a = Archive();
@@ -405,7 +405,7 @@ void main() {
           .listSync()
           .whereType<Directory>()
           .map((d) => d.path)
-          .where((d) => d.contains('openstrap_import_'))
+          .where((d) => d.contains('projectfit_import_'))
           .toSet();
       final before = importDirs();
       await expectLater(
@@ -436,7 +436,7 @@ void main() {
   // gzip used to be a flat refusal ("unzip it first and pick the CSV inside").
   // It is inflated now: it is what every command-line tool produces when
   // someone compresses a CSV, and it is the shape this app's own auto-backups
-  // take (`openstrap-….db.gz`).
+  // take (`projectfit-….db.gz`).
   group('gzip', () {
     test('a gzipped CSV is inflated and imported', () async {
       const csv = 'Cycle start time,Recovery score';
@@ -460,7 +460,7 @@ void main() {
         ...List.filled(64, 0),
       ];
       final path =
-          await write('openstrap-20260810-120000.db.gz', gzip.encode(db));
+          await write('projectfit-20260810-120000.db.gz', gzip.encode(db));
       final resolved = await resolveNoopDatabase(path);
       expect(resolved, isNotNull);
       try {

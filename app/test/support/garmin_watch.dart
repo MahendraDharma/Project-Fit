@@ -5,7 +5,7 @@
 
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 /// Builds a FIT file: definitions + data records, little-endian.
 class FitWriter {

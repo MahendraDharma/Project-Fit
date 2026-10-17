@@ -10,8 +10,8 @@ cheap.
 | Your change | Repo |
 |---|---|
 | A metric, or how an existing number is computed | **here** |
-| A record type, opcode, event, anything byte-level | [protocol](https://github.com/OpenStrap/protocol) |
-| Storage, sync, Bluetooth, UI, when things get computed | [edge](https://github.com/OpenStrap/edge) |
+| A record type, opcode, event, anything byte-level | [protocol](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol) |
+| Storage, sync, Bluetooth, UI, when things get computed | [edge](https://github.com/MahendraDharma/Project-Fit) |
 
 ## The two rules that matter
 

@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/cycle_screen.dart';
+import 'package:projectfit/ui2/screens/cycle_screen.dart';
 
 CycleData _data(List<String> starts, Map<String, double> rhrByDate) =>
     CycleData(

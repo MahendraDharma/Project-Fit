@@ -8,10 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 final _onset = DateTime(2026, 5, 19, 23, 7).millisecondsSinceEpoch ~/ 1000;
 
@@ -486,7 +486,7 @@ void main() {
           ],
         };
 
-    testWidgets('a switcher offers OpenStrap and each device; picking one '
+    testWidgets('a switcher offers ProjectFit and each device; picking one '
         'says whose staging it is and what it cannot report', (t) async {
       await _pump(
         t,
@@ -501,7 +501,7 @@ void main() {
           ],
         ),
       );
-      expect(find.text('OpenStrap'), findsOneWidget);
+      expect(find.text('ProjectFit'), findsOneWidget);
       expect(find.text('Mi Band'), findsOneWidget);
       expect(find.text('Colmi ring'), findsOneWidget);
       expect(find.textContaining('Staged by'), findsNothing,
@@ -521,16 +521,16 @@ void main() {
       expect(find.text('Staged by Colmi ring'), findsOneWidget);
       expect(find.textContaining('does not report'), findsNothing);
 
-      await t.ensureVisible(find.text('OpenStrap'));
+      await t.ensureVisible(find.text('ProjectFit'));
       await t.pumpAndSettle();
-      await t.tap(find.text('OpenStrap'));
+      await t.tap(find.text('ProjectFit'));
       await t.pumpAndSettle();
       expect(find.textContaining('Staged by'), findsNothing);
     });
 
     testWidgets('no device night means no switcher', (t) async {
       await _pump(t, SleepData(day: '2026-05-20', night: _night()));
-      expect(find.text('OpenStrap'), findsNothing);
+      expect(find.text('ProjectFit'), findsNothing);
     });
   });
 

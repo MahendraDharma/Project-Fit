@@ -1,4 +1,4 @@
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 // R11 (0x2B/0x0B) container decode. No real R11 capture is checked into this

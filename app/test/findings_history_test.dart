@@ -7,7 +7,7 @@
 // is a log that disagrees with the buzz the user got that morning.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/findings.dart';
+import 'package:projectfit/compute/findings.dart';
 
 Map<String, dynamic> _cd(List<Map<String, dynamic>> recent) => {
       'recent': recent,

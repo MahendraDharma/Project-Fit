@@ -7,8 +7,8 @@
 // the real constructor in app_state_sync_commit_test.dart.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/state/app_state.dart';
 
 import 'support/app_state_sync_harness.dart';
 

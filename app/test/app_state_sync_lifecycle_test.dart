@@ -11,10 +11,10 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ios_ble_restore.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/sync/band_ownership.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
+import 'package:projectfit/ble/ios_ble_restore.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/sync/band_ownership.dart';
+import 'package:projectfit/sync/paired_device.dart';
 
 import 'support/app_state_sync_harness.dart';
 

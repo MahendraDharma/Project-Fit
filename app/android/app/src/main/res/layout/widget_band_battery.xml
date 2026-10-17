@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   Band-battery widget: battery ring with the percentage inside, strap name
-  below — mirrors OpenStrapBatteryWidget.swift's home-screen family. Colours
-  and background are set at render time (OpenStrapBatteryWidgetProvider).
+  below — mirrors ProjectFitBatteryWidget.swift's home-screen family. Colours
+  and background are set at render time (ProjectFitBatteryWidgetProvider).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"

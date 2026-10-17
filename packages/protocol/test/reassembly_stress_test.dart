@@ -4,7 +4,7 @@
 // Reproduces the "first read correct, second read garbled (esp. name)" report if
 // the reassembler carries state between reads.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 // Full on-wire frames from whoop_capture.jsonl (band serial 4C2248092, renamed

@@ -17,7 +17,7 @@ import '../sync/background_sync.dart';
 import '../sync/headless_gate.dart';
 
 class IosBleRestore {
-  static const _ch = MethodChannel('openstrap/ble_restore');
+  static const _ch = MethodChannel('projectfit/ble_restore');
 
   /// Set true while the app holds a live foreground session (BleEngine connected).
   /// A wake-triggered headless sync would otherwise fight flutter_blue_plus for the

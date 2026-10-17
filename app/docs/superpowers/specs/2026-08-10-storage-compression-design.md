@@ -151,7 +151,7 @@ resumable.
 
 ### Backups and import
 
-- `auto_backup` writes `openstrap-YYYYMMDD-HHMMSS.db.gz`.
+- `auto_backup` writes `projectfit-YYYYMMDD-HHMMSS.db.gz`.
 - The retention pattern must match **both** `.db` and `.db.gz`. If it only
   matches the new name, existing backups become invisible to
   `sortBackupsNewestFirst` and are never pruned, leaking five stale copies.

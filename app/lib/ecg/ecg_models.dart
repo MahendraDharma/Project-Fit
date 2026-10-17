@@ -9,7 +9,7 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 /// Which wrist the band is worn on — the official opcode-123 selector.
 enum EcgWrist {

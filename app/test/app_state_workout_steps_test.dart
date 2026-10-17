@@ -10,7 +10,7 @@
 // timeline that ends at (or near) the real now.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/state/app_state.dart';
 
 import 'support/app_state_workout_harness.dart';
 

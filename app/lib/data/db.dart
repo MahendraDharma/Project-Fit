@@ -18,7 +18,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +214,7 @@ const String kPrimaryBandSourceSql = 'source IS NULL';
 
 class LocalDb {
   static Database? _db;
-  static String dbName = 'openstrap.db';
+  static String dbName = 'projectfit.db';
 
   /// Workout sensors (adapter ids) whose rule-R6 flag is on, admitted inside
   /// a session window only ([sessionWindowRows]). Loaded from the flags by
@@ -2567,7 +2567,7 @@ class LocalDb {
   /// Readings a CLEARED device took and wrote to the phone's health store: a
   /// blood-pressure cuff, a CGM, a thermometer.
   ///
-  /// THE WHOLE VALUE IS THAT OPENSTRAP DID NOT MEASURE IT. The source name is
+  /// THE WHOLE VALUE IS THAT PROJECTFIT DID NOT MEASURE IT. The source name is
   /// mandatory and travels with every row, and these never blend into a
   /// composite of ours — there is no "combined" anything, and no derived number
   /// takes one of these as an input.
@@ -2585,7 +2585,7 @@ class LocalDb {
   /// idempotent and an edit made in the source app lands as an update.
   /// Readings taken by a device that is CLEARED to take them — a BP cuff, a
   /// CGM, a thermometer. `source` is NOT NULL because the whole value of these
-  /// rows is that OpenStrap did not measure them.
+  /// rows is that ProjectFit did not measure them.
   ///
   /// READ-ONLY INPUTS TO DISPLAY. NEVER TRAINING TARGETS. the moment a cuff
   /// series and a wrist PPG series live in one database, the obvious next idea
@@ -9156,7 +9156,7 @@ class LocalDb {
     final db = await instance;
     final tmp = await getTemporaryDirectory();
     final stamp = DateTime.now().millisecondsSinceEpoch;
-    final dest = p.join(tmp.path, 'openstrap_export_$stamp.db');
+    final dest = p.join(tmp.path, 'projectfit_export_$stamp.db');
     final f = File(dest);
     if (await f.exists()) await f.delete(); // VACUUM INTO requires a fresh path
     Database? copy;
@@ -9299,7 +9299,7 @@ class LocalDb {
     final src = await instance;
     final tmp = await getTemporaryDirectory();
     final stamp = DateTime.now().millisecondsSinceEpoch;
-    final dest = p.join(tmp.path, 'openstrap_days_$stamp.db');
+    final dest = p.join(tmp.path, 'projectfit_days_$stamp.db');
     await deleteDatabase(dest);
     final out = await openDatabase(
       dest,
@@ -9891,7 +9891,7 @@ class LocalDb {
     return {for (final r in rows) r['date'] as String};
   }
 
-  /// Import another device's exported OpenStrap DB ([path], from [exportCopy] +
+  /// Import another device's exported ProjectFit DB ([path], from [exportCopy] +
   /// share) by MERGING its rows into this one (INSERT-OR-REPLACE). Covers derived
   /// results, the metric series, user data, and the raw ledger so the receiving
   /// device has the full history (and can re-derive). Same app ⇒ same schema; a
@@ -9914,13 +9914,13 @@ class LocalDb {
     if (await sniffFile(path) != ImportContainer.gzip) {
       return _mergeFromDbFile(path);
     }
-    final work = await Directory.systemTemp.createTemp('openstrap_restore_');
+    final work = await Directory.systemTemp.createTemp('projectfit_restore_');
     try {
       final inflated = await inflateGzip(path, work);
       if (inflated == null ||
           await sniffFile(inflated) != ImportContainer.sqlite) {
         throw const ImportFormatException(
-          'That file unpacked to something that is not an OpenStrap database.',
+          'That file unpacked to something that is not an ProjectFit database.',
         );
       }
       return await _mergeFromDbFile(inflated);

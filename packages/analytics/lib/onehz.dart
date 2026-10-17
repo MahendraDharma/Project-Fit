@@ -1,4 +1,4 @@
-/// openstrap_analytics — 1 Hz-native physiological analytics family.
+/// projectfit_analytics — 1 Hz-native physiological analytics family.
 ///
 /// The old minute-resolution library that used to live alongside this one has
 /// been removed; this is the only analytics library in the package now.

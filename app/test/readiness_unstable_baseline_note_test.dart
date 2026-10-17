@@ -10,7 +10,7 @@
 // `unstable_baseline:z=...,cap=...` note) before this existed.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 void main() {
   test('null note: null, the honest floor for anything unrecognised', () {

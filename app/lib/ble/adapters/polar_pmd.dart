@@ -18,7 +18,7 @@
 
 import 'dart:async';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '_registry.dart';
 import 'adapter.dart';

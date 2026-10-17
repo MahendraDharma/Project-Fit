@@ -4,7 +4,7 @@
 // AppState._tickWorkout and is not re-tested here.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/zone_alert.dart';
+import 'package:projectfit/state/zone_alert.dart';
 
 void main() {
   final t0 = DateTime(2026, 9, 18, 7, 0);

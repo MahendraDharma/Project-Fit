@@ -1,6 +1,6 @@
 {
   "@@locale": "ru",
-  "appTitle": "OpenStrap",
+  "appTitle": "ProjectFit",
   "profileTitle": "Профиль",
   "profileMyDevices": "Мои устройства",
   "profileLanguage": "Язык",
@@ -155,7 +155,7 @@
   "dataBackUpNow": "Создать копию сейчас",
   "dataBringDataInGroup": "Импорт данных",
   "dataImportFile": "Импортировать файл",
-  "dataImportFileSub": "Резервная копия OpenStrap, CSV дневника, выгрузка датчиков или CSV производителя. Дни, измеренные браслетом, не перезаписываются",
+  "dataImportFileSub": "Резервная копия ProjectFit, CSV дневника, выгрузка датчиков или CSV производителя. Дни, измеренные браслетом, не перезаписываются",
   "dataFromYourPhone": "С телефона",
   "dataFromYourPhoneSub": "Пульс в покое, артериальное давление, глюкоза и температура тела.",
   "dataRebuildGroup": "Пересчёт",
@@ -558,7 +558,7 @@
   "welcomeSetUpMyBand": "Настроить браслет",
   "welcomeImporting": "Импорт…",
   "welcomeBringMyHistoryFirst": "Сначала импортировать историю",
-  "welcomeImportFooterNote": "Выгрузка датчиков, резервная копия OpenStrap или CSV производителя. Импортированные дни учитываются в обычном диапазоне и не заменяют дни, измеренные браслетом.",
+  "welcomeImportFooterNote": "Выгрузка датчиков, резервная копия ProjectFit или CSV производителя. Импортированные дни учитываются в обычном диапазоне и не заменяют дни, измеренные браслетом.",
   "welcomeChoosePassphrase": "Задайте парольную фразу",
   "welcomePassphrase": "Парольная фраза",
   "welcomePassphraseCreateNote": "Без неё файл не открыть. Ни аккаунта, ни сервера с копией нет, поэтому забытый пароль означает потерю резервной копии.",
@@ -1971,7 +1971,7 @@
   "coachNoDataTitle": "Пока нет данных для чтения",
   "coachNoModelsListed": "Сервис не предоставил список моделей. Введите название ниже.",
   "coachNotSetUp": "Не настроено",
-  "coachNotSetUpBody": "Выберите модель на своём компьютере или любого совместимого с OpenAI провайдера со своим ключом. Данные в любом случае не проходят через OpenStrap.",
+  "coachNotSetUpBody": "Выберите модель на своём компьютере или любого совместимого с OpenAI провайдера со своим ключом. Данные в любом случае не проходят через ProjectFit.",
   "coachNotSetUpTitle": "Тренер не настроен",
   "coachPastChats": "ПРОШЛЫЕ ЧАТЫ",
   "coachPickModelFirst": "Сначала выберите или укажите модель.",
@@ -4327,7 +4327,7 @@
       }
     }
   },
-  "workoutDeleteBodyOwn": "Тренировка исчезнет из OpenStrap. Копия в {storeName}, если она есть, останется.",
+  "workoutDeleteBodyOwn": "Тренировка исчезнет из ProjectFit. Копия в {storeName}, если она есть, останется.",
   "@workoutDeleteBodyOwn": {
     "placeholders": {
       "storeName": {
@@ -4335,7 +4335,7 @@
       }
     }
   },
-  "workoutDeleteBodyImported": "Тренировка исчезнет из OpenStrap и не будет импортирована снова. Оригинал в {storeName} останется.",
+  "workoutDeleteBodyImported": "Тренировка исчезнет из ProjectFit и не будет импортирована снова. Оригинал в {storeName} останется.",
   "@workoutDeleteBodyImported": {
     "placeholders": {
       "storeName": {
@@ -5511,14 +5511,14 @@
   "settingsNeverSendSectionTitle": "Что никогда не передаётся",
   "settingsNeverSendBody": "Восстановление, нагрузка и оценка сна не передаются ни на одной платформе: отсутствующее значение пришло бы как ноль. Передаются факты о синхронизации, но не измерения.",
   "settingsBuzzFromShortcutSectionTitle": "Вибрация браслета из команды",
-  "settingsBuzzFromShortcutAndroidBody": "Отправьте wtf.openstrap.openstrap_edge.BUZZ_STRAP с этим токеном в строковом поле «token». Без него любое приложение телефона могло бы вызывать вибрацию.",
+  "settingsBuzzFromShortcutAndroidBody": "Отправьте io.github.mahendradharma.projectfit.BUZZ_STRAP с этим токеном в строковом поле «token». Без него любое приложение телефона могло бы вызывать вибрацию.",
   "settingsBuzzFromShortcutIosBody": "Это направление работает в iOS: команда, которую вы запускаете сами, может обратиться к приложению. Но сама запускаться после синхронизации браслета она не может.",
   "settingsNoTokenYet": "Токена пока нет — откройте экран заново.",
   "settingsCopied": "Скопировано",
   "settingsCopyTheToken": "Скопировать токен",
   "bandStatusBluetoothDeniedTitle": "Bluetooth запрещён для приложения",
-  "bandStatusBluetoothDeniedReason": "Телефон не даёт OpenStrap использовать Bluetooth, поэтому подключиться нельзя. Разрешите Bluetooth для OpenStrap в настройках телефона.",
-  "bandStatusBluetoothDeniedFix": "Откройте «Настройки → OpenStrap» и разрешите Bluetooth",
+  "bandStatusBluetoothDeniedReason": "Телефон не даёт ProjectFit использовать Bluetooth, поэтому подключиться нельзя. Разрешите Bluetooth для ProjectFit в настройках телефона.",
+  "bandStatusBluetoothDeniedFix": "Откройте «Настройки → ProjectFit» и разрешите Bluetooth",
   "bandStatusBluetoothOffTitle": "Bluetooth выключен",
   "bandStatusBluetoothOffReason": "Bluetooth телефона выключен, поэтому ни одно приложение не может связаться с браслетом. Он продолжает запись, данные не теряются.",
   "bandStatusBluetoothOffFix": "Включить Bluetooth",
@@ -5586,15 +5586,15 @@
   "profileGithubTitle": "GitHub",
   "profileGithubSub": "Поставьте звезду и поддержите проект — это помогает ему развиваться",
   "profileRedditTitle": "Reddit",
-  "profileRedditSub": "Присоединяйтесь к r/OpenStrap: делитесь успехами, вопросами и идеями",
+  "profileRedditSub": "Присоединяйтесь к r/ProjectFit: делитесь успехами, вопросами и идеями",
   "profileDiscordTitle": "Discord",
   "profileDiscordSub": "Общайтесь с пользователями и разработчиками",
   "profileSponsorTitle": "Поддержать проект",
   "profileSponsorSub": "Это бесплатный проект с открытым кодом — поддержка помогает продолжать работу",
   "nudgeDiscordTitle": "Присоединяйтесь",
-  "nudgeDiscordBody": "В Discord общаются пользователи OpenStrap: ошибки, идеи и люди с таким же браслетом, как у вас.",
+  "nudgeDiscordBody": "В Discord общаются пользователи ProjectFit: ошибки, идеи и люди с таким же браслетом, как у вас.",
   "nudgeDiscordCta": "Присоединиться к Discord",
-  "nudgeDonateTitle": "Нравится OpenStrap?",
+  "nudgeDonateTitle": "Нравится ProjectFit?",
   "nudgeDonateBody": "Это бесплатный проект с открытым кодом и без подписки. Поддержка помогает его сопровождать.",
   "nudgeDonateCta": "Поддержать проект",
   "nudgeNotNow": "Не сейчас",
@@ -6304,7 +6304,7 @@
   "supplementADoseIsDue1543e3": "Пора принять дозу.",
   "supplementALocalModelCanTake62d4a8": "Локальной модели может понадобиться время на загрузку перед первым ответом. По умолчанию 5 минут (300 с). Облачные провайдеры всегда используют 2 минуты.",
   "supplementALowConfidenceOverlayA9fbabe": "Оценка с низкой уверенностью: датчик на запястье не видит медленные волны мозга. Глубокий сон здесь определяется по стабильности пульса внутри NREM.",
-  "supplementAMinuteOfNotesTonightac2cf6": "Минута вечерних записей помогает OpenStrap узнать, что связано с вашим восстановлением.",
+  "supplementAMinuteOfNotesTonightac2cf6": "Минута вечерних записей помогает ProjectFit узнать, что связано с вашим восстановлением.",
   "supplementAPossibleNapIsReady84b3cf": "Можно проверить возможный дневной сон.",
   "supplementAPossibleWorkoutIsReady2861bb": "Можно проверить возможную тренировку.",
   "supplementAStepGoalOf500f44746": "Цель по шагам должна быть от 500 до 100 000. Ничего не сохранено.",
@@ -6520,7 +6520,7 @@
   "supplementEveryDaya3fd74": "каждый день",
   "supplementFiguref85bdc": "график",
   "supplementG54fd17": "г",
-  "supplementIOSCanOnlyShowThe2139b2": "iOS показывает окно сопряжения, только пока приложение не использовало Bluetooth. Полностью закройте OpenStrap и откройте снова.",
+  "supplementIOSCanOnlyShowThe2139b2": "iOS показывает окно сопряжения, только пока приложение не использовало Bluetooth. Полностью закройте ProjectFit и откройте снова.",
   "supplementKcal72037b": "ккал",
   "supplementKg138984": "кг",
   "supplementKm08ec69": "км",
@@ -7126,7 +7126,7 @@
       }
     }
   },
-  "iosUninstallUnpairsWarning": "На iOS удаление OpenStrap также снимает с телефона сопряжение всех браслетов и датчиков, сопряжённых здесь, поэтому другие приложения, включая приложение производителя, тоже их теряют.",
+  "iosUninstallUnpairsWarning": "На iOS удаление ProjectFit также снимает с телефона сопряжение всех браслетов и датчиков, сопряжённых здесь, поэтому другие приложения, включая приложение производителя, тоже их теряют.",
   "logFoodEditTitle": "Изменить запись",
   "logFoodDateLabel": "Дата",
   "logFoodTimeLabel": "Время",

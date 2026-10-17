@@ -7,7 +7,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/substrate_archive_codec.dart';
+import 'package:projectfit/data/substrate_archive_codec.dart';
 
 ArchiveTable _table(List<Map<String, Object?>> rows) =>
     (ArchiveTableBuilder()..addRows(rows)).build();

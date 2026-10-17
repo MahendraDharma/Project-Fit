@@ -6,13 +6,13 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart' show kAlgoVersion;
-import 'package:openstrap_edge/compute/readiness_calibration_backfill.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/compute/derivation_engine.dart' show kAlgoVersion;
+import 'package:projectfit/compute/readiness_calibration_backfill.dart';
+import 'package:projectfit/data/db.dart';
 
 Map<String, dynamic> bundle(double hrv, double rhr, double rr) {
   final z = (0.4 * hrv + 0.3 * rhr + 0.2 * rr) / 0.9;
@@ -40,7 +40,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_readiness_cal_backfill_test.db';
+    LocalDb.dbName = 'projectfit_readiness_cal_backfill_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

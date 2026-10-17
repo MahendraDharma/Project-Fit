@@ -20,13 +20,13 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart' show napBoundaryBufferSec;
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/data/coverage_resolver.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/derive_prepare.dart' show napBoundaryBufferSec;
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/data/coverage_resolver.dart';
+import 'package:projectfit/data/db.dart';
 
 const _primary = LocalDb.kPrimaryDeviceId; // ''
 const _ring = 'ring-TEST-0001';

@@ -3,11 +3,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/activity/day_strain.dart';
-import 'package:openstrap_edge/ui2/activity/summary.dart';
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/theme/theme_controller.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/activity/day_strain.dart';
+import 'package:projectfit/ui2/activity/summary.dart';
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/theme/theme_controller.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:provider/provider.dart';
 
 Widget _app(Widget home, {double scale = 1, Brightness b = Brightness.light}) =>

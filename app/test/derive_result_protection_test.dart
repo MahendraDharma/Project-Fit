@@ -24,18 +24,18 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/derive_prepare.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_result_protection_test.db';
+    LocalDb.dbName = 'projectfit_result_protection_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

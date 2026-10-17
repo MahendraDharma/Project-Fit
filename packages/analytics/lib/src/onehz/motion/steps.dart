@@ -12,8 +12,8 @@
 // So we split the problem the only honest way:
 //
 //   TIER A — [pedometer] / [livePedometer]: a real step counter on the 100 Hz
-//     foreground stream, ported from the OpenStrap backend
-//     (openstrap-analytics/src/steps.ts). See [StepParams] for what it actually
+//     foreground stream, ported from the ProjectFit backend
+//     (projectfit-analytics/src/steps.ts). See [StepParams] for what it actually
 //     is and is not — it is NOT AN-2554 verbatim, and the ×1.11 "calibration"
 //     it used to carry was measured to be a fabricated +10.6%. Its CONFIRM=8
 //     regularity gate rejects IRREGULAR handling and reads 0 at rest; it does

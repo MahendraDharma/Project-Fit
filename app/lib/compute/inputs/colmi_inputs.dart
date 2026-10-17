@@ -24,7 +24,7 @@
 // No beats, no respiration, no movement record: those rows are unavailable,
 // with the reason in [kColmiColumn].
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import '../../ble/adapters/colmi.dart' show kColmiHistoryDays;
 import '../../data/db.dart';

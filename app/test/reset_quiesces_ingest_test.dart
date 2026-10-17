@@ -28,7 +28,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
+import 'package:projectfit/sync/reset_gate.dart';
 
 void main() {
   final src = File('lib/state/app_state.dart').readAsStringSync();

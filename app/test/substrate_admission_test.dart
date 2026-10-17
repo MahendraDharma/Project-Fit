@@ -31,8 +31,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -239,9 +239,9 @@ void main() {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
       PathProviderPlatform.instance = _FakePathProvider(
-        (await Directory.systemTemp.createTemp('openstrap_admit_')).path,
+        (await Directory.systemTemp.createTemp('projectfit_admit_')).path,
       );
-      LocalDb.dbName = 'openstrap_admission_test.db';
+      LocalDb.dbName = 'projectfit_admission_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     });

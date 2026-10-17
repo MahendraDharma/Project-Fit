@@ -5,7 +5,7 @@
 // per-session number may come out of here at all.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/stress/session_effect.dart';
+import 'package:projectfit/stress/session_effect.dart';
 
 List<Map<String, dynamic>> _rows(List<(double, double)> pairs) => [
   for (final (pre, post) in pairs) {'pre_rmssd': pre, 'post_rmssd': post},

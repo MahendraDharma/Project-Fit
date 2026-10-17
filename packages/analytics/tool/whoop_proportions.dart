@@ -21,7 +21,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 void main(List<String> args) {
   final dir = Directory(args.isEmpty ? '/tmp/sleepdbg' : args.first);

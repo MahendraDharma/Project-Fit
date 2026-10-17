@@ -9,8 +9,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/journal_fields.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -39,9 +39,9 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    tmp = await Directory.systemTemp.createTemp('openstrap_journal_metric_');
+    tmp = await Directory.systemTemp.createTemp('projectfit_journal_metric_');
     PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-    LocalDb.dbName = 'openstrap_journal_metric_test.db';
+    LocalDb.dbName = 'projectfit_journal_metric_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
 
 import '../tool/update_wger_exercises.dart';
 import '../tool/wger_weightlifting_selection.dart';

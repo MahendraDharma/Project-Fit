@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class TaskerBridge {
-  static const _ch = MethodChannel('openstrap/tasker');
+  static const _ch = MethodChannel('projectfit/tasker');
 
   final Future<void> Function(int pattern) buzzPattern;
 
@@ -30,7 +30,7 @@ class TaskerBridge {
   /// Read (without clearing) a buzz Tasker requested while the app was fully
   /// dead — see TaskerReceiver.kt's "engine dead" fallback. This goes through
   /// a native method-channel call reading the SAME native SharedPreferences
-  /// file ("openstrap_runtime") TaskerReceiver writes to directly. The
+  /// file ("projectfit_runtime") TaskerReceiver writes to directly. The
   /// `shared_preferences` PLUGIN reads/writes a DIFFERENT, plugin-managed
   /// store (its own file, `flutter.`-prefixed keys) — it can never see what
   /// TaskerReceiver persisted, so do not "simplify" this back to

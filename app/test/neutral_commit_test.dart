@@ -6,9 +6,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart' show TimeAnchor;
-import 'package:openstrap_edge/ble/adapters/adapter.dart' show NeutralSample;
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/ble/adapters/_registry.dart' show TimeAnchor;
+import 'package:projectfit/ble/adapters/adapter.dart' show NeutralSample;
+import 'package:projectfit/data/db.dart';
 
 void main() {
   setUpAll(() {
@@ -17,7 +17,7 @@ void main() {
   });
 
   setUp(() async {
-    LocalDb.dbName = 'openstrap_neutral_commit_test.db';
+    LocalDb.dbName = 'projectfit_neutral_commit_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

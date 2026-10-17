@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/sleep_detail.dart'
+import 'package:projectfit/ui2/screens/sleep_detail.dart'
     show correctedSleepWindow;
 
 void main() {

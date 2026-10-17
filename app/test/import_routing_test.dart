@@ -17,8 +17,8 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/ui2/onboarding/welcome.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/ui2/onboarding/welcome.dart';
 
 /// Records where `runImport` sent each path instead of importing it. Every
 /// override replaces work that needs a database and a derivation engine; the

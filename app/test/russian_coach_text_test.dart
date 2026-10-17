@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_actions.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/l10n/display_text.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/l10n/app_localizations_ru.dart';
-import 'package:openstrap_edge/ui2/screens/coach_text.dart';
+import 'package:projectfit/coach/coach_actions.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/l10n/display_text.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/l10n/app_localizations_ru.dart';
+import 'package:projectfit/ui2/screens/coach_text.dart';
 
 void main() {
   test('owned provider errors localize while server details stay verbatim', () {

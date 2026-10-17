@@ -4,7 +4,7 @@
 // dispersionBelowQuantum this let a 1 bpm rise clear the gate.
 
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 void main() {
   group('overreachingConjunction RHR quantum guard', () {

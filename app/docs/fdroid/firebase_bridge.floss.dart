@@ -1,5 +1,5 @@
 // F-Droid stand-in for lib/telemetry/firebase_bridge.dart: same API, no firebase.
-// Copied over the real one by wtf.openstrap.openstrap_edge.yml.
+// Copied over the real one by io.github.mahendradharma.projectfit.yml.
 
 import 'package:flutter/foundation.dart';
 

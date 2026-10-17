@@ -4,16 +4,16 @@ import 'dart:io';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_blue_plus_platform_interface/flutter_blue_plus_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/sync/background_sync.dart';
-import 'package:openstrap_edge/sync/band_ownership.dart';
-import 'package:openstrap_edge/sync/headless_gate.dart';
-import 'package:openstrap_edge/sync/ios_shortcut_sync.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' show BandProfile;
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/sync/background_sync.dart';
+import 'package:projectfit/sync/band_ownership.dart';
+import 'package:projectfit/sync/headless_gate.dart';
+import 'package:projectfit/sync/ios_shortcut_sync.dart';
+import 'package:projectfit/sync/paired_device.dart';
+import 'package:projectfit/sync/reset_gate.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' show BandProfile;
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -56,7 +56,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_shortcut_sync_test.db';
+    LocalDb.dbName = 'projectfit_shortcut_sync_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

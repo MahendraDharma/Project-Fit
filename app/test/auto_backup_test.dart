@@ -9,8 +9,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/auto_backup.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/auto_backup.dart';
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -148,7 +148,7 @@ void main() {
 
     test('is zero-padded so widths match', () {
       expect(backupFileName(DateTime(2026, 1, 2, 3, 4, 5)),
-          'openstrap-20260102-030405.db.gz');
+          'projectfit-20260102-030405.db.gz');
     });
 
     test('two runs in the same minute get different names', () {
@@ -164,7 +164,7 @@ void main() {
     late Directory tmp;
 
     setUp(() async {
-      tmp = await Directory.systemTemp.createTemp('openstrap_backup_test_');
+      tmp = await Directory.systemTemp.createTemp('projectfit_backup_test_');
     });
 
     tearDown(() async {
@@ -175,34 +175,34 @@ void main() {
         File(p.join(tmp.path, name))..writeAsStringSync('x');
 
     test('orders newest first', () {
-      touch('openstrap-20260101-000000.db');
-      touch('openstrap-20260301-000000.db');
-      touch('openstrap-20260201-000000.db');
+      touch('projectfit-20260101-000000.db');
+      touch('projectfit-20260301-000000.db');
+      touch('projectfit-20260201-000000.db');
       final out = sortBackupsNewestFirst(tmp.listSync());
       expect(
         out.map((f) => p.basename(f.path)),
         [
-          'openstrap-20260301-000000.db',
-          'openstrap-20260201-000000.db',
-          'openstrap-20260101-000000.db',
+          'projectfit-20260301-000000.db',
+          'projectfit-20260201-000000.db',
+          'projectfit-20260101-000000.db',
         ],
       );
     });
 
     test('matches only the exact shape it emits', () {
       // This list is what retention DELETES, in a folder the user can drop
-      // files into. A loose openstrap-*.db glob would eat their notes.
+      // files into. A loose projectfit-*.db glob would eat their notes.
       touch(backupFileName(DateTime(2026, 1, 1, 0, 0, 0)));
       touch('holiday-photos.zip');
-      touch('openstrap-notes.txt');
-      touch('openstrap-notes.db');
-      touch('openstrap-2026.db');
-      touch('openstrap-20260101.db');
+      touch('projectfit-notes.txt');
+      touch('projectfit-notes.db');
+      touch('projectfit-2026.db');
+      touch('projectfit-20260101.db');
       touch('random.db');
-      touch('openstrap-20260101-000000.db.gz.bak');
+      touch('projectfit-20260101-000000.db.gz.bak');
       final out = sortBackupsNewestFirst(tmp.listSync());
       expect(out.map((f) => p.basename(f.path)), [
-        'openstrap-20260101-000000.db.gz',
+        'projectfit-20260101-000000.db.gz',
       ]);
     });
 
@@ -211,12 +211,12 @@ void main() {
       // backups. If the pattern stopped matching them they would never be
       // counted toward retention and never pruned — five full-size copies
       // leaked permanently, which is the opposite of the point.
-      touch('openstrap-20260101-000000.db');
-      touch('openstrap-20260102-000000.db.gz');
+      touch('projectfit-20260101-000000.db');
+      touch('projectfit-20260102-000000.db.gz');
       final out = sortBackupsNewestFirst(tmp.listSync());
       expect(out.map((f) => p.basename(f.path)), [
-        'openstrap-20260102-000000.db.gz',
-        'openstrap-20260101-000000.db',
+        'projectfit-20260102-000000.db.gz',
+        'projectfit-20260101-000000.db',
       ]);
     });
 
@@ -224,9 +224,9 @@ void main() {
       // These leaked for the same reason: two runs inside one second produce a
       // `-2` suffix that the pattern never covered, so the file was invisible
       // to retention forever.
-      touch('openstrap-20260101-000000.db.gz');
-      touch('openstrap-20260101-000000-2.db.gz');
-      touch('openstrap-20260101-000000-3.db');
+      touch('projectfit-20260101-000000.db.gz');
+      touch('projectfit-20260101-000000-2.db.gz');
+      touch('projectfit-20260101-000000-3.db');
       expect(sortBackupsNewestFirst(tmp.listSync()).length, 3);
     });
 
@@ -235,15 +235,15 @@ void main() {
       // `.` (0x2E), so `-2` compared LESS than the unsuffixed name and the
       // second backup of that second was ranked the older of the pair — the
       // one retention evicts first. A higher index is always the later write.
-      touch('openstrap-20260101-000000.db.gz');
-      touch('openstrap-20260101-000000-2.db.gz');
-      touch('openstrap-20260101-000000-10.db.gz');
+      touch('projectfit-20260101-000000.db.gz');
+      touch('projectfit-20260101-000000-2.db.gz');
+      touch('projectfit-20260101-000000-10.db.gz');
       expect(
         sortBackupsNewestFirst(tmp.listSync()).map((f) => p.basename(f.path)),
         [
-          'openstrap-20260101-000000-10.db.gz',
-          'openstrap-20260101-000000-2.db.gz',
-          'openstrap-20260101-000000.db.gz',
+          'projectfit-20260101-000000-10.db.gz',
+          'projectfit-20260101-000000-2.db.gz',
+          'projectfit-20260101-000000.db.gz',
         ],
       );
     });
@@ -257,7 +257,7 @@ void main() {
     late Directory tmp;
 
     setUp(() async {
-      tmp = await Directory.systemTemp.createTemp('openstrap_prune_test_');
+      tmp = await Directory.systemTemp.createTemp('projectfit_prune_test_');
     });
 
     tearDown(() async {
@@ -266,24 +266,24 @@ void main() {
 
     test('keeps the newest and deletes the rest', () async {
       for (final d in ['0101', '0201', '0301', '0401', '0501']) {
-        File(p.join(tmp.path, 'openstrap-2026$d-000000.db'))
+        File(p.join(tmp.path, 'projectfit-2026$d-000000.db'))
             .writeAsStringSync('x');
       }
       await pruneBackups(tmp, keep: 2);
       expect(
         sortBackupsNewestFirst(tmp.listSync()).map((f) => p.basename(f.path)),
-        ['openstrap-20260501-000000.db', 'openstrap-20260401-000000.db'],
+        ['projectfit-20260501-000000.db', 'projectfit-20260401-000000.db'],
       );
     });
 
     test('never touches a file that is not a backup', () async {
-      File(p.join(tmp.path, 'openstrap-20260101-000000.db'))
+      File(p.join(tmp.path, 'projectfit-20260101-000000.db'))
           .writeAsStringSync('x');
       final other = File(p.join(tmp.path, 'important.txt'))
         ..writeAsStringSync('x');
       // Deliberately close to ours: this is the one retention would have
       // deleted under a prefix match.
-      final lookalike = File(p.join(tmp.path, 'openstrap-notes.db'))
+      final lookalike = File(p.join(tmp.path, 'projectfit-notes.db'))
         ..writeAsStringSync('x');
       await pruneBackups(tmp, keep: 0);
       expect(other.existsSync(), isTrue);
@@ -292,7 +292,7 @@ void main() {
     });
 
     test('fewer backups than the limit is a no-op', () async {
-      File(p.join(tmp.path, 'openstrap-20260101-000000.db'))
+      File(p.join(tmp.path, 'projectfit-20260101-000000.db'))
           .writeAsStringSync('x');
       await pruneBackups(tmp, keep: 5);
       expect(sortBackupsNewestFirst(tmp.listSync()), hasLength(1));
@@ -305,9 +305,9 @@ void main() {
     setUpAll(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      tmp = await Directory.systemTemp.createTemp('openstrap_backup_run_');
+      tmp = await Directory.systemTemp.createTemp('projectfit_backup_run_');
       PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-      LocalDb.dbName = 'openstrap_backup_run_test.db';
+      LocalDb.dbName = 'projectfit_backup_run_test.db';
       await databaseFactory.deleteDatabase(
         p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
       );
@@ -520,7 +520,7 @@ void main() {
       // see it — otherwise a partial would still be counted and still evict.
       final dir = await backupDirectory();
       File(
-        p.join(dir.path, 'openstrap-20260809-180000.db.gz$kBackupStagingSuffix'),
+        p.join(dir.path, 'projectfit-20260809-180000.db.gz$kBackupStagingSuffix'),
       ).writeAsStringSync('half a backup');
       try {
         final seen = sortBackupsNewestFirst(dir.listSync())
@@ -545,10 +545,10 @@ void main() {
       final dir = await backupDirectory();
       final foreign = File(p.join(dir.path, 'holiday-video.mp4.partial'))
         ..writeAsStringSync('someone else is downloading this');
-      final lookalike = File(p.join(dir.path, 'openstrap-notes.db.partial'))
+      final lookalike = File(p.join(dir.path, 'projectfit-notes.db.partial'))
         ..writeAsStringSync('not ours either');
       final ours = File(
-        p.join(dir.path, 'openstrap-20260809-181500.db.gz$kBackupStagingSuffix'),
+        p.join(dir.path, 'projectfit-20260809-181500.db.gz$kBackupStagingSuffix'),
       )..writeAsStringSync('half a backup');
 
       await pruneStagingFiles(dir);
@@ -695,7 +695,7 @@ void main() {
           .listSync()
           .whereType<File>()
           .map((f) => p.basename(f.path))
-          .where((n) => n.startsWith('openstrap_export_'))
+          .where((n) => n.startsWith('projectfit_export_'))
           .toList();
       expect(leftovers, isEmpty);
     });

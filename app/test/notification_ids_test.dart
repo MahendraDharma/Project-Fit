@@ -14,9 +14,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_ids.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_ids.dart';
 
 /// Dated keys, anchored to TODAY so the retention prune (14 days) can never
 /// make this suite time-dependent.

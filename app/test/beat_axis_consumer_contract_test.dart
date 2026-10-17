@@ -13,9 +13,9 @@
 // `flutter test` it is live, which is exactly why this test can see it.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit_analytics/onehz.dart';
+import 'package:projectfit/compute/derive_prepare.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 const _t0 = 1788786610;
 

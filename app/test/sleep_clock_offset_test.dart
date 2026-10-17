@@ -6,7 +6,7 @@
 // modulo artifact and nothing about the person. These checks are the guard.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 /// Epoch second of a local wall-clock time on a fixed date.
 int _localAt(int hour, int minute, {int day = 15}) =>

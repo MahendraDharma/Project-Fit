@@ -40,13 +40,13 @@ import 'ui2/screens/wellness_screen.dart';
 import 'ui2/screens/workout_screen.dart';
 import 'ui2/ui2.dart';
 
-class OpenStrapApp extends StatefulWidget {
-  const OpenStrapApp({super.key});
+class ProjectFitApp extends StatefulWidget {
+  const ProjectFitApp({super.key});
   @override
-  State<OpenStrapApp> createState() => _OpenStrapAppState();
+  State<ProjectFitApp> createState() => _ProjectFitAppState();
 }
 
-class _OpenStrapAppState extends State<OpenStrapApp> with WidgetsBindingObserver {
+class _ProjectFitAppState extends State<ProjectFitApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -129,7 +129,7 @@ class _OpenStrapAppState extends State<OpenStrapApp> with WidgetsBindingObserver
     final twelveHour = !context.watch<ClockFormatController>().resolve24h(
         MediaQuery.alwaysUse24HourFormatOf(context));
     return MaterialApp(
-      title: 'OpenStrap',
+      title: 'ProjectFit',
       debugShowCheckedModeBanner: false,
       // The palette is the design system's, the CHOICE is still the user's.
       theme: buildTheme(Brightness.light),
@@ -334,7 +334,7 @@ class _InitFailed extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('OpenStrap could not start',
+                Text('ProjectFit could not start',
                     style: F.t2.copyWith(color: p.ink)),
                 const SizedBox(height: 8),
                 Text(

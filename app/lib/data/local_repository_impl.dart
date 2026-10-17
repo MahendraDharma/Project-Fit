@@ -27,8 +27,8 @@ import '../compute/manual_session.dart';
 import '../compute/onehz_pipeline.dart' show kUnknownAbsenceNote, needInputNote;
 import '../compute/profile.dart';
 import '../compute/quiet_level.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import 'day_label.dart';
 import 'db.dart';
@@ -750,8 +750,8 @@ class LocalRepositoryImpl extends LocalRepository {
       // Sleep need, ONLY when it was learned (see [_sleepNeedMin]). Absent means
       // the key is not written at all, so `TodayData.sleepNeed` is empty and
       // `WidgetService.push` writes the -1 sentinel every native reader gates
-      // its sleep ring on (`needMin > 0` in OpenStrapWidget.swift,
-      // WatchMetrics.swift and OpenStrapWidgetProvider.kt). A hard 480 here put
+      // its sleep ring on (`needMin > 0` in ProjectFitWidget.swift,
+      // WatchMetrics.swift and ProjectFitWidgetProvider.kt). A hard 480 here put
       // a fabricated 8 h denominator on the lock screen and the wrist, where
       // the phone's own screens refuse to show one.
       if (needMin != null)

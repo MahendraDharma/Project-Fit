@@ -16,10 +16,10 @@
 		511D97990D2F790E7357E9B4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 62B87A5BFE3C75EF3DA30015 /* GoogleService-Info.plist */; };
 		5348973D2FDC19C80033A4D9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5348973C2FDC19C80033A4D9 /* WidgetKit.framework */; };
 		5348973F2FDC19C80033A4D9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5348973E2FDC19C80033A4D9 /* SwiftUI.framework */; };
-		5348974E2FDC19C90033A4D9 /* OpenStrapWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5348973B2FDC19C80033A4D9 /* OpenStrapWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5348974E2FDC19C90033A4D9 /* ProjectFitWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5348973B2FDC19C80033A4D9 /* ProjectFitWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		534897A72FDC2B310033A4D9 /* LiveActivityBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534897A62FDC2B310033A4D9 /* LiveActivityBridge.swift */; };
 		53962E962FF6EE120061A61B /* WatchBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53962E952FF6EE120061A61B /* WatchBridge.swift */; };
-		53962E972FF6EE120061A61B /* OpenStrapIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53962E942FF6EE120061A61B /* OpenStrapIntents.swift */; };
+		53962E972FF6EE120061A61B /* ProjectFitIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53962E942FF6EE120061A61B /* ProjectFitIntents.swift */; };
 		584C82D4C91D63C59A9B68ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8259C983D095EF84D51BCF /* Foundation.framework */; };
 		5A0C00000000000000000001 /* ShortcutSyncBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C00000000000000000002 /* ShortcutSyncBridge.swift */; };
 		5A0C00000000000000000003 /* LongSyncDataIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C00000000000000000004 /* LongSyncDataIntent.swift */; };
@@ -36,7 +36,7 @@
 		ACCE55E7000000000000B11D /* AccessorySetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCE55E7000000000000F11E /* AccessorySetup.swift */; };
 		B9D2F406183A5C7E92B1D3F5 /* HealthKitSleepWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C1E3F507294B6D81A0C2E4 /* HealthKitSleepWriter.swift */; };
 		BEEF00000000000000000002 /* BreathingLiveActivityBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEF00000000000000000001 /* BreathingLiveActivityBridge.swift */; };
-		FADE0001FADE0001FADE0001 /* OpenStrapWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 53962EBE2FF6EF790061A61B /* OpenStrapWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FADE0001FADE0001FADE0001 /* ProjectFitWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 53962EBE2FF6EF790061A61B /* ProjectFitWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,7 @@
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5348973A2FDC19C80033A4D9;
-			remoteInfo = OpenStrapWidgetExtension;
+			remoteInfo = ProjectFitWidgetExtension;
 		};
 		99D9F39CEDD34D72655792B9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -66,7 +66,7 @@
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 53962EBD2FF6EF790061A61B;
-			remoteInfo = "OpenStrapWatch Watch App";
+			remoteInfo = "ProjectFitWatch Watch App";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -77,7 +77,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5348974E2FDC19C90033A4D9 /* OpenStrapWidgetExtension.appex in Embed Foundation Extensions */,
+				5348974E2FDC19C90033A4D9 /* ProjectFitWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,7 +98,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				FADE0001FADE0001FADE0001 /* OpenStrapWatch Watch App.app in Embed Watch Content */,
+				FADE0001FADE0001FADE0001 /* ProjectFitWatch Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,15 +118,15 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		46A2B400A52A2CA90242C195 /* HealthRoutes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HealthRoutes.swift; sourceTree = "<group>"; };
 		4A03AF838C04AE2BCB84D0B1 /* Signing.defaults.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Signing.defaults.xcconfig; path = Config/Signing.defaults.xcconfig; sourceTree = "<group>"; };
-		5348973B2FDC19C80033A4D9 /* OpenStrapWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OpenStrapWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5348973B2FDC19C80033A4D9 /* ProjectFitWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ProjectFitWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5348973C2FDC19C80033A4D9 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		5348973E2FDC19C80033A4D9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		534897562FDC1A450033A4D9 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
-		534897572FDC1A610033A4D9 /* OpenStrapWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenStrapWidgetExtension.entitlements; sourceTree = "<group>"; };
+		534897572FDC1A610033A4D9 /* ProjectFitWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProjectFitWidgetExtension.entitlements; sourceTree = "<group>"; };
 		534897A62FDC2B310033A4D9 /* LiveActivityBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityBridge.swift; sourceTree = "<group>"; };
-		53962E942FF6EE120061A61B /* OpenStrapIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenStrapIntents.swift; sourceTree = "<group>"; };
+		53962E942FF6EE120061A61B /* ProjectFitIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFitIntents.swift; sourceTree = "<group>"; };
 		53962E952FF6EE120061A61B /* WatchBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchBridge.swift; sourceTree = "<group>"; };
-		53962EBE2FF6EF790061A61B /* OpenStrapWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OpenStrapWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		53962EBE2FF6EF790061A61B /* ProjectFitWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ProjectFitWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A0C00000000000000000002 /* ShortcutSyncBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutSyncBridge.swift; sourceTree = "<group>"; };
 		5A0C00000000000000000004 /* LongSyncDataIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongSyncDataIntent.swift; sourceTree = "<group>"; };
 		5A0C00000000000000000006 /* LongSyncDataIntentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongSyncDataIntentTests.swift; sourceTree = "<group>"; };
@@ -159,29 +159,29 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		534897532FDC19C90033A4D9 /* Exceptions for "OpenStrapWidget" folder in "OpenStrapWidgetExtension" target */ = {
+		534897532FDC19C90033A4D9 /* Exceptions for "ProjectFitWidget" folder in "ProjectFitWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 5348973A2FDC19C80033A4D9 /* OpenStrapWidgetExtension */;
+			target = 5348973A2FDC19C80033A4D9 /* ProjectFitWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		534897402FDC19C80033A4D9 /* OpenStrapWidget */ = {
+		534897402FDC19C80033A4D9 /* ProjectFitWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				534897532FDC19C90033A4D9 /* Exceptions for "OpenStrapWidget" folder in "OpenStrapWidgetExtension" target */,
+				534897532FDC19C90033A4D9 /* Exceptions for "ProjectFitWidget" folder in "ProjectFitWidgetExtension" target */,
 			);
 			explicitFileTypes = {
 			};
 			explicitFolders = (
 			);
-			path = OpenStrapWidget;
+			path = ProjectFitWidget;
 			sourceTree = "<group>";
 		};
-		53962EBF2FF6EF790061A61B /* OpenStrapWatch Watch App */ = {
+		53962EBF2FF6EF790061A61B /* ProjectFitWatch Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 			);
@@ -189,7 +189,7 @@
 			};
 			explicitFolders = (
 			);
-			path = "OpenStrapWatch Watch App";
+			path = "ProjectFitWatch Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -292,16 +292,16 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				53962E942FF6EE120061A61B /* OpenStrapIntents.swift */,
+				53962E942FF6EE120061A61B /* ProjectFitIntents.swift */,
 				53962E952FF6EE120061A61B /* WatchBridge.swift */,
 				534897A62FDC2B310033A4D9 /* LiveActivityBridge.swift */,
 				BEEF00000000000000000001 /* BreathingLiveActivityBridge.swift */,
-				534897572FDC1A610033A4D9 /* OpenStrapWidgetExtension.entitlements */,
+				534897572FDC1A610033A4D9 /* ProjectFitWidgetExtension.entitlements */,
 				6A2B37C32FDD000100000001 /* Config */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
-				534897402FDC19C80033A4D9 /* OpenStrapWidget */,
-				53962EBF2FF6EF790061A61B /* OpenStrapWatch Watch App */,
+				534897402FDC19C80033A4D9 /* ProjectFitWidget */,
+				53962EBF2FF6EF790061A61B /* ProjectFitWatch Watch App */,
 				97C146EF1CF9000F007C117D /* Products */,
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				AF81963B4F996986D8D5C105 /* Pods */,
@@ -317,8 +317,8 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
-				5348973B2FDC19C80033A4D9 /* OpenStrapWidgetExtension.appex */,
-				53962EBE2FF6EF790061A61B /* OpenStrapWatch Watch App.app */,
+				5348973B2FDC19C80033A4D9 /* ProjectFitWidgetExtension.appex */,
+				53962EBE2FF6EF790061A61B /* ProjectFitWatch Watch App.app */,
 				9AB0D2B3B0A362AED6D7BFB0 /* ShortcutUITests.xctest */,
 			);
 			name = Products;
@@ -392,9 +392,9 @@
 			productReference = 331C8081294A63A400263BE5 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		5348973A2FDC19C80033A4D9 /* OpenStrapWidgetExtension */ = {
+		5348973A2FDC19C80033A4D9 /* ProjectFitWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 534897542FDC19C90033A4D9 /* Build configuration list for PBXNativeTarget "OpenStrapWidgetExtension" */;
+			buildConfigurationList = 534897542FDC19C90033A4D9 /* Build configuration list for PBXNativeTarget "ProjectFitWidgetExtension" */;
 			buildPhases = (
 				534897372FDC19C80033A4D9 /* Sources */,
 				534897382FDC19C80033A4D9 /* Frameworks */,
@@ -405,16 +405,16 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				534897402FDC19C80033A4D9 /* OpenStrapWidget */,
+				534897402FDC19C80033A4D9 /* ProjectFitWidget */,
 			);
-			name = OpenStrapWidgetExtension;
-			productName = OpenStrapWidgetExtension;
-			productReference = 5348973B2FDC19C80033A4D9 /* OpenStrapWidgetExtension.appex */;
+			name = ProjectFitWidgetExtension;
+			productName = ProjectFitWidgetExtension;
+			productReference = 5348973B2FDC19C80033A4D9 /* ProjectFitWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		53962EBD2FF6EF790061A61B /* OpenStrapWatch Watch App */ = {
+		53962EBD2FF6EF790061A61B /* ProjectFitWatch Watch App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 53962EC92FF6EF7A0061A61B /* Build configuration list for PBXNativeTarget "OpenStrapWatch Watch App" */;
+			buildConfigurationList = 53962EC92FF6EF7A0061A61B /* Build configuration list for PBXNativeTarget "ProjectFitWatch Watch App" */;
 			buildPhases = (
 				53962EBA2FF6EF790061A61B /* Sources */,
 				53962EBB2FF6EF790061A61B /* Frameworks */,
@@ -425,11 +425,11 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				53962EBF2FF6EF790061A61B /* OpenStrapWatch Watch App */,
+				53962EBF2FF6EF790061A61B /* ProjectFitWatch Watch App */,
 			);
-			name = "OpenStrapWatch Watch App";
-			productName = "OpenStrapWatch Watch App";
-			productReference = 53962EBE2FF6EF790061A61B /* OpenStrapWatch Watch App.app */;
+			name = "ProjectFitWatch Watch App";
+			productName = "ProjectFitWatch Watch App";
+			productReference = 53962EBE2FF6EF790061A61B /* ProjectFitWatch Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
@@ -532,8 +532,8 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
-				5348973A2FDC19C80033A4D9 /* OpenStrapWidgetExtension */,
-				53962EBD2FF6EF790061A61B /* OpenStrapWatch Watch App */,
+				5348973A2FDC19C80033A4D9 /* ProjectFitWidgetExtension */,
+				53962EBD2FF6EF790061A61B /* ProjectFitWatch Watch App */,
 				A7883417CA432F4099968E48 /* ShortcutUITests */,
 			);
 		};
@@ -651,7 +651,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# GoogleService-Info.plist is gitignored (no committed credentials, real or\n# placeholder). The Resources phase below still statically references it, so\n# a fresh clone with no Firebase project configured needs SOMETHING on disk\n# at this path or the build fails outright. Generate a format-valid, inert\n# placeholder here (never committed, never overwrites a real file a\n# contributor has placed for their own local Firebase project) so Firebase\n# telemetry stays fully optional at build time, matching the Android side.\n# `-s` (exists AND non-empty), not `-f`: CI writes this file unconditionally\n# from a secret (base64 -d > ...), so an unset/blank secret leaves a 0-byte\n# file that `-f` would treat as \\\"already present\\\" and skip regenerating.\nPLIST=\"$SRCROOT/Runner/GoogleService-Info.plist\"\nif [ ! -s \"$PLIST\" ]; then\n  cat > \"$PLIST\" <<'EOF'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>API_KEY</key>\n\t<string>AIzaSyDummyDummyDummyDummyDummyDummyDum</string>\n\t<key>GCM_SENDER_ID</key>\n\t<string>000000000000</string>\n\t<key>PLIST_VERSION</key>\n\t<string>1</string>\n\t<key>BUNDLE_ID</key>\n\t<string>wtf.openstrap.dummy</string>\n\t<key>PROJECT_ID</key>\n\t<string>dummy-project</string>\n\t<key>STORAGE_BUCKET</key>\n\t<string>dummy-project.appspot.com</string>\n\t<key>IS_ADS_ENABLED</key>\n\t<false/>\n\t<key>IS_ANALYTICS_ENABLED</key>\n\t<false/>\n\t<key>IS_APPINVITE_ENABLED</key>\n\t<false/>\n\t<key>IS_GCM_ENABLED</key>\n\t<false/>\n\t<key>IS_SIGNIN_ENABLED</key>\n\t<false/>\n\t<key>GOOGLE_APP_ID</key>\n\t<string>1:000000000000:ios:0000000000000000000000</string>\n</dict>\n</plist>\nEOF\nfi\n";
+			shellScript = "# GoogleService-Info.plist is gitignored (no committed credentials, real or\n# placeholder). The Resources phase below still statically references it, so\n# a fresh clone with no Firebase project configured needs SOMETHING on disk\n# at this path or the build fails outright. Generate a format-valid, inert\n# placeholder here (never committed, never overwrites a real file a\n# contributor has placed for their own local Firebase project) so Firebase\n# telemetry stays fully optional at build time, matching the Android side.\n# `-s` (exists AND non-empty), not `-f`: CI writes this file unconditionally\n# from a secret (base64 -d > ...), so an unset/blank secret leaves a 0-byte\n# file that `-f` would treat as \\\"already present\\\" and skip regenerating.\nPLIST=\"$SRCROOT/Runner/GoogleService-Info.plist\"\nif [ ! -s \"$PLIST\" ]; then\n  cat > \"$PLIST\" <<'EOF'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>API_KEY</key>\n\t<string>AIzaSyDummyDummyDummyDummyDummyDummyDum</string>\n\t<key>GCM_SENDER_ID</key>\n\t<string>000000000000</string>\n\t<key>PLIST_VERSION</key>\n\t<string>1</string>\n\t<key>BUNDLE_ID</key>\n\t<string>wtf.projectfit.dummy</string>\n\t<key>PROJECT_ID</key>\n\t<string>dummy-project</string>\n\t<key>STORAGE_BUCKET</key>\n\t<string>dummy-project.appspot.com</string>\n\t<key>IS_ADS_ENABLED</key>\n\t<false/>\n\t<key>IS_ANALYTICS_ENABLED</key>\n\t<false/>\n\t<key>IS_APPINVITE_ENABLED</key>\n\t<false/>\n\t<key>IS_GCM_ENABLED</key>\n\t<false/>\n\t<key>IS_SIGNIN_ENABLED</key>\n\t<false/>\n\t<key>GOOGLE_APP_ID</key>\n\t<string>1:000000000000:ios:0000000000000000000000</string>\n</dict>\n</plist>\nEOF\nfi\n";
 		};
 		937F4BC2D23308952D408C29 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -766,7 +766,7 @@
 				534897A72FDC2B310033A4D9 /* LiveActivityBridge.swift in Sources */,
 				BEEF00000000000000000002 /* BreathingLiveActivityBridge.swift in Sources */,
 				53962E962FF6EE120061A61B /* WatchBridge.swift in Sources */,
-				53962E972FF6EE120061A61B /* OpenStrapIntents.swift in Sources */,
+				53962E972FF6EE120061A61B /* ProjectFitIntents.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
 				46AF580757DC25648B6B0C95 /* BleRestoreManager.swift in Sources */,
@@ -789,7 +789,7 @@
 		};
 		5348974D2FDC19C90033A4D9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5348973A2FDC19C80033A4D9 /* OpenStrapWidgetExtension */;
+			target = 5348973A2FDC19C80033A4D9 /* ProjectFitWidgetExtension */;
 			targetProxy = 5348974C2FDC19C90033A4D9 /* PBXContainerItemProxy */;
 		};
 		ED3603C44AC0D2B2B09121D8 /* PBXTargetDependency */ = {
@@ -800,7 +800,7 @@
 		};
 		FADE0004FADE0004FADE0004 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 53962EBD2FF6EF790061A61B /* OpenStrapWatch Watch App */;
+			target = 53962EBD2FF6EF790061A61B /* ProjectFitWatch Watch App */;
 			targetProxy = FADE0003FADE0003FADE0003 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -970,17 +970,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = OpenStrapWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ProjectFitWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_TEAM = "$(APPLE_DEVELOPMENT_TEAM)";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OpenStrapWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OpenStrapWidget;
+				INFOPLIST_FILE = ProjectFitWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ProjectFitWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_OpenStrapAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_ProjectFitAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1017,17 +1017,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = OpenStrapWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ProjectFitWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_TEAM = "$(APPLE_DEVELOPMENT_TEAM)";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OpenStrapWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OpenStrapWidget;
+				INFOPLIST_FILE = ProjectFitWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ProjectFitWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_OpenStrapAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_ProjectFitAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1061,17 +1061,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = OpenStrapWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ProjectFitWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_TEAM = "$(APPLE_DEVELOPMENT_TEAM)";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = OpenStrapWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = OpenStrapWidget;
+				INFOPLIST_FILE = ProjectFitWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ProjectFitWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_OpenStrapAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
+				INFOPLIST_KEY_ProjectFitAppGroupIdentifier = "$(APP_GROUP_IDENTIFIER)";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1107,7 +1107,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "OpenStrapWatch Watch App/OpenStrapWatch Watch App.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "ProjectFitWatch Watch App/ProjectFitWatch Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
@@ -1140,7 +1140,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OpenStrapWatch Watch App/OpenStrapWatch Watch App-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProjectFitWatch Watch App/ProjectFitWatch Watch App-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -1163,7 +1163,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "OpenStrapWatch Watch App/OpenStrapWatch Watch App.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "ProjectFitWatch Watch App/ProjectFitWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_TEAM = "$(APPLE_DEVELOPMENT_TEAM)";
@@ -1192,7 +1192,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OpenStrapWatch Watch App/OpenStrapWatch Watch App-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProjectFitWatch Watch App/ProjectFitWatch Watch App-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1214,7 +1214,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "OpenStrapWatch Watch App/OpenStrapWatch Watch App.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "ProjectFitWatch Watch App/ProjectFitWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_TEAM = "$(APPLE_DEVELOPMENT_TEAM)";
@@ -1243,7 +1243,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OpenStrapWatch Watch App/OpenStrapWatch Watch App-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProjectFitWatch Watch App/ProjectFitWatch Watch App-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1506,7 +1506,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		534897542FDC19C90033A4D9 /* Build configuration list for PBXNativeTarget "OpenStrapWidgetExtension" */ = {
+		534897542FDC19C90033A4D9 /* Build configuration list for PBXNativeTarget "ProjectFitWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				534897502FDC19C90033A4D9 /* Debug */,
@@ -1516,7 +1516,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		53962EC92FF6EF7A0061A61B /* Build configuration list for PBXNativeTarget "OpenStrapWatch Watch App" */ = {
+		53962EC92FF6EF7A0061A61B /* Build configuration list for PBXNativeTarget "ProjectFitWatch Watch App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				53962EC62FF6EF7A0061A61B /* Debug */,

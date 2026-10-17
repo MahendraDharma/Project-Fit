@@ -3,10 +3,10 @@
 // raw-free cleanup of naps that were the next night.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/nap_overlap_cleanup.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/nap_overlap_cleanup.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 void main() {
   test('day strain is never below a finished session in it', () {

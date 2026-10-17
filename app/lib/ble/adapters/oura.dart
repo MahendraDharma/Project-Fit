@@ -42,7 +42,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:pointycastle/export.dart' show AESEngine, ECBBlockCipher, KeyParameter;
 
 import '../../data/observation.dart'

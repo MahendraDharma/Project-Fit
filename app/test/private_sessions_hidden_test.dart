@@ -2,8 +2,8 @@
 // both the CSV workouts export and the coach read, so it must not carry one.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/csv_export.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/csv_export.dart';
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -13,7 +13,7 @@ void main() {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_private_sessions_test.db';
+    LocalDb.dbName = 'projectfit_private_sessions_test.db';
     dir = await databaseFactory.getDatabasesPath();
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));

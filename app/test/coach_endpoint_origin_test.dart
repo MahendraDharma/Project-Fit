@@ -7,7 +7,7 @@
 // the endpoint actually changed.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_config.dart';
 
 void main() {
   test('same host and port, different path: same origin', () {

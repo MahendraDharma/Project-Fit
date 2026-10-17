@@ -383,7 +383,7 @@ Future<ImportOutcome> runImport(
   }
 
   if (decrypted.isNotEmpty) sources.add('Encrypted backup');
-  if (plain.any(_isDbBackup)) sources.add('OpenStrap backup');
+  if (plain.any(_isDbBackup)) sources.add('ProjectFit backup');
   try {
     for (final p in db) {
       days += await app.importEdgeBackup(p);
@@ -469,7 +469,7 @@ Future<ImportOutcome> runImport(
   if (vendor.isNotEmpty) {
     // The catch-all group: anything that is not a backup or a raw export is
     // handed to the vendor importer, so it is also where junk in a mixed
-    // selection lands. Throwing from here would report an OpenStrap backup
+    // selection lands. Throwing from here would report an ProjectFit backup
     // that HAS just landed as a failed import, so it is caught and named
     // instead — unless it is the only thing that was picked.
     try {
@@ -622,7 +622,7 @@ class WelcomeView extends StatelessWidget {
               // the same rolling baselines. What IS true is the half that
               // protects data: no import overwrites a day this band measured.
               l?.welcomeImportFooterNote ??
-                  'A sensor export, an OpenStrap backup or a vendor CSV. Imported days count toward your usual range, and never overwrite a day the band measured.',
+                  'A sensor export, an ProjectFit backup or a vendor CSV. Imported days count toward your usual range, and never overwrite a day the band measured.',
               style: F.cap.copyWith(color: p.ink3),
             ),
             if (busy) ...[

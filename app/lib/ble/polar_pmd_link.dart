@@ -26,7 +26,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart'
     show ValueListenable, ValueNotifier, debugPrint, visibleForTesting;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' show polarPmdStopPpi;
+import 'package:projectfit_protocol/projectfit_protocol.dart' show polarPmdStopPpi;
 
 import '../compute/inputs/canonical.dart' show wearableEnabled;
 import '../data/db.dart';

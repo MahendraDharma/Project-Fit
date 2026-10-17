@@ -6,8 +6,8 @@
 // RHR chart with the wrong unit on the axis — and the second then counted the
 // same RHR twice, once through that VO2max and once directly.
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/human/coaching.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/human/coaching.dart';
 
 void main() {
   group('sleepNeed', () {

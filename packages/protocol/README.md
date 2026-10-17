@@ -1,10 +1,10 @@
-# OpenStrap protocol
+# ProjectFit protocol
 
-[![test](https://github.com/OpenStrap/protocol/actions/workflows/test.yml/badge.svg)](https://github.com/OpenStrap/protocol/actions/workflows/test.yml)
+[![test](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol/actions/workflows/test.yml/badge.svg)](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![stars](https://img.shields.io/github/stars/OpenStrap/protocol?style=flat&color=e2825f)](https://github.com/OpenStrap/protocol/stargazers)
+[![stars](https://img.shields.io/github/stars/ProjectFit/protocol?style=flat&color=e2825f)](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol/stargazers)
 [![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/dUXds5MWkd)
-[![Donate](https://img.shields.io/badge/donate-BTC%20%2F%20ETH-f7931a)](https://github.com/OpenStrap/edge/blob/main/DONATE.md)
+[![Donate](https://img.shields.io/badge/donate-BTC%20%2F%20ETH-f7931a)](https://github.com/MahendraDharma/Project-Fit/blob/main/app/DONATE.md)
 
 Pure Dart, zero runtime deps. You hand it an already-unwrapped chunk of bytes from the
 band, it hands you back a record with named fields, or a decoded command/event. That's
@@ -12,7 +12,7 @@ the whole job. Covers WHOOP 4 (gen4), WHOOP 5 and MG (gen5, including MG's ECG
 records), a generic Bluetooth Heart Rate Service (0x180D) sensor, and the Oura ring's
 wire format.
 
-This isn't backend-side anymore — the app ([edge](https://github.com/OpenStrap/edge))
+This isn't backend-side anymore — the app ([edge](https://github.com/MahendraDharma/Project-Fit))
 depends on this package directly and calls it on-device. There's no cloud, no upload, no
 server that ever sees your raw bytes.
 
@@ -75,7 +75,7 @@ class R24 {
 ```
 
 ```dart
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 final sample = parseR24(inner);
 if (sample != null) {
@@ -147,7 +147,7 @@ reboot, firmware push) exist for a reason — gate them behind an explicit user 
 never auto-send. You really don't want to brick one of these.
 
 The actual client implementation of all this — the real Bluetooth connection, the retry
-logic, all of it — lives in [edge](https://github.com/OpenStrap/edge)'s `ble_engine.dart`,
+logic, all of it — lives in [edge](https://github.com/MahendraDharma/Project-Fit)'s `ble_engine.dart`,
 if you want to see it wired up end to end.
 
 ## Build it
@@ -184,14 +184,14 @@ tests, and the rules that keep this package honest. Security issues go through
 
 ## Support the work
 
-No subscription, no paywall, no company behind this. If OpenStrap gave your band a second
+No subscription, no paywall, no company behind this. If ProjectFit gave your band a second
 life, a small tip genuinely helps:
 
 - **BTC** — `bc1qvtcch38dcwp967ar764uu6eetw7tf907844wfq`
 - **EVM** (Ethereum · Base · Arbitrum · Optimism · Polygon) —
   `0x8310C89393366b7eBCD47ABa82e1dfB5ECeFFbD9`
 
-[What donations actually pay for →](https://github.com/OpenStrap/edge/blob/main/DONATE.md)
+[What donations actually pay for →](https://github.com/MahendraDharma/Project-Fit/blob/main/app/DONATE.md)
 
 Nothing is gated behind paying, and nothing ever will be. Protocol findings and bug
 reports are worth more than money, though.

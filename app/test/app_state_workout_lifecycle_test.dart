@@ -9,10 +9,10 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/gps/screen_wake.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/gps/screen_wake.dart';
+import 'package:projectfit/state/app_state.dart';
 
 import 'support/app_state_workout_harness.dart';
 

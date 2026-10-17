@@ -9,10 +9,10 @@ import 'dart:io' show sleep;
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/sync/background_sync.dart';
+import 'package:projectfit/sync/background_sync.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

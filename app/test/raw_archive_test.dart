@@ -12,15 +12,15 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_archive_test.db';
+    LocalDb.dbName = 'projectfit_archive_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });
@@ -344,7 +344,7 @@ void main() {
   //   whoop-5.db   3 archived v18 → 3 recovered.
   //   whoop-4.db   0 — its 28,395 archived frames are v25 PPG bursts, which
   //                are identified, not undecodable, and are not seconds.
-  final real = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final real = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .where((s) => s.trim().isNotEmpty);
   for (final src in real) {

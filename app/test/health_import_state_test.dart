@@ -6,8 +6,8 @@
 // word on the button follows it.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/health/health_import_state.dart';
-import 'package:openstrap_edge/health/health_workout_import.dart';
+import 'package:projectfit/health/health_import_state.dart';
+import 'package:projectfit/health/health_workout_import.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

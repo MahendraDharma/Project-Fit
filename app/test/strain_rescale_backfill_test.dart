@@ -14,9 +14,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart' show kAlgoVersion;
-import 'package:openstrap_edge/compute/strain_backfill.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/compute/derivation_engine.dart' show kAlgoVersion;
+import 'package:projectfit/compute/strain_backfill.dart';
+import 'package:projectfit/data/db.dart';
 
 /// Seed a derived day the way the engine would have before the rescale.
 Future<void> seedDay(
@@ -75,7 +75,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_strain_backfill_test.db';
+    LocalDb.dbName = 'projectfit_strain_backfill_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

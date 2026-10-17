@@ -5,14 +5,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
-import 'package:openstrap_edge/coach/coach_engine.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/state/clock_format.dart' show formatClockOf;
-import 'package:openstrap_edge/ui2/screens/screens.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_engine.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/state/clock_format.dart' show formatClockOf;
+import 'package:projectfit/ui2/screens/screens.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Map<String, dynamic> _env(num v) =>
     {'value': v, 'confidence': .8, 'tier': 'HIGH'};

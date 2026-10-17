@@ -18,7 +18,7 @@ except Exception:
     pass
 print("throwaway keypair: ok")
 
-p = os.path.expanduser(os.environ.get("REPORT_PRIVATE_KEY", "~/.openstrap-research/report-keys/report_private_key.pem"))
+p = os.path.expanduser(os.environ.get("REPORT_PRIVATE_KEY", "~/.projectfit-research/report-keys/report_private_key.pem"))
 if os.path.exists(p):
     priv = serialization.load_pem_private_key(open(p, "rb").read(), None)
     assert priv.public_key().public_bytes(*_RAW) == base64.b64decode(PUBLIC_KEY_B64), "private key does not match contract public key"

@@ -16,24 +16,24 @@ import '../models/payloads.dart';
 import '../ui2/screens/home_screen.dart' show readinessBand;
 
 class WidgetService {
-  static const _platform = MethodChannel('openstrap/ios_config');
+  static const _platform = MethodChannel('projectfit/ios_config');
 
   /// Fallback App Group id. iOS builds read the configured value from Info.plist.
   static const String fallbackAppGroupId = String.fromEnvironment(
     'APP_GROUP_IDENTIFIER',
-    defaultValue: 'group.com.example.openstrap',
+    defaultValue: 'group.io.github.mahendradharma.projectfit',
   );
   static String appGroupId = fallbackAppGroupId;
 
   /// WidgetKit "kind" (Swift) / Android provider class name.
-  static const String _iOSName = 'OpenStrapWidget';
+  static const String _iOSName = 'ProjectFitWidget';
 
   /// WidgetKit "kind" for the lock-screen Band Battery widget (Swift).
-  static const String _batteryIOSName = 'OpenStrapBatteryWidget';
-  static const String _androidName = 'OpenStrapWidgetProvider';
+  static const String _batteryIOSName = 'ProjectFitBatteryWidget';
+  static const String _androidName = 'ProjectFitWidgetProvider';
 
   /// Android provider class for the Band Battery widget.
-  static const String _batteryAndroidName = 'OpenStrapBatteryWidgetProvider';
+  static const String _batteryAndroidName = 'ProjectFitBatteryWidgetProvider';
 
   /// The other two faces on the same snapshot: last night's sleep, and the
   /// overnight autonomic pair (HRV + resting HR). They read the keys [push]
@@ -41,8 +41,8 @@ class WidgetService {
   /// nobody told it to re-read is the failure this list exists to stop.
   static const List<(String, String)> _snapshotWidgets = [
     (_iOSName, _androidName),
-    ('OpenStrapSleepWidget', 'SleepWidgetProvider'),
-    ('OpenStrapOvernightWidget', 'OvernightWidgetProvider'),
+    ('ProjectFitSleepWidget', 'SleepWidgetProvider'),
+    ('ProjectFitOvernightWidget', 'OvernightWidgetProvider'),
   ];
 
   static Future<void> _reloadSnapshotWidgets() async {
@@ -566,7 +566,7 @@ class WidgetService {
 
   /// True once (and clears) if the BREATHING Live Activity's stop button was
   /// tapped. A separate flag (`end_breathing_session`) from the workout's
-  /// `end_session` — EndBreathingIntent in OpenStrapBreathingLiveActivity.swift
+  /// `end_session` — EndBreathingIntent in ProjectFitBreathingLiveActivity.swift
   /// sets it; two independent Live Activities must never share one flag.
   static Future<bool> consumeEndBreathingFlag() async {
     try {

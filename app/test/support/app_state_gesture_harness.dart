@@ -17,14 +17,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/gestures/device_action.dart';
-import 'package:openstrap_edge/gestures/gesture_dispatcher.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/gestures/device_action.dart';
+import 'package:projectfit/gestures/gesture_dispatcher.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -78,7 +78,7 @@ class TickCounter {
   void stop() => app.removeListener(_tick);
 }
 
-/// The `openstrap/device_actions` method channel: records every `perform`.
+/// The `projectfit/device_actions` method channel: records every `perform`.
 class ActionChannel {
   ActionChannel({this.ok = true}) {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -90,7 +90,7 @@ class ActionChannel {
       return null;
     });
   }
-  static const _ch = MethodChannel('openstrap/device_actions');
+  static const _ch = MethodChannel('projectfit/device_actions');
   bool ok;
   final performed = <String>[];
 

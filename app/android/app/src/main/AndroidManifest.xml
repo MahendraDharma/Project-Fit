@@ -105,7 +105,7 @@
     <uses-permission android:name="android.permission.health.READ_HEIGHT" />
     <!-- READ only, and there will never be a WRITE counterpart. These come
          from devices CLEARED to take them — a blood-pressure cuff, a CGM, a
-         thermometer — and the whole value is that OpenStrap did not measure
+         thermometer — and the whole value is that ProjectFit did not measure
          them. They are shown with the source app's name attached, they are
          never blended into anything of ours, and nothing derived takes one as
          an input. See lib/health/health_measurement_import.dart. -->
@@ -122,7 +122,7 @@
         android:required="false" />
 
     <application
-        android:label="Edge"
+        android:label="ProjectFit"
         android:name=".EdgeApplication"
         android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"
@@ -241,7 +241,7 @@
             android:exported="true"
             android:enabled="true">
             <intent-filter>
-                <action android:name="wtf.openstrap.openstrap_edge.BUZZ_STRAP" />
+                <action android:name="io.github.mahendradharma.projectfit.BUZZ_STRAP" />
             </intent-filter>
         </receiver>
 
@@ -250,7 +250,7 @@
              "Notification access" in system settings. Class lives in the plugin. -->
         <service
             android:name="notification.listener.service.NotificationListener"
-            android:label="OpenStrap notification relay"
+            android:label="ProjectFit notification relay"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -279,18 +279,18 @@
             </intent-filter>
         </receiver>
 
-        <!-- Home-screen widgets (Android siblings of ios/OpenStrapWidget). The app
+        <!-- Home-screen widgets (Android siblings of ios/ProjectFitWidget). The app
              pushes snapshots via home_widget (WidgetService); these just render. -->
         <receiver
-            android:name=".OpenStrapWidgetProvider"
+            android:name=".ProjectFitWidgetProvider"
             android:exported="true"
-            android:label="@string/widget_openstrap_label">
+            android:label="@string/widget_projectfit_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_openstrap_info" />
+                android:resource="@xml/widget_projectfit_info" />
         </receiver>
         <receiver
             android:name=".SleepWidgetProvider"
@@ -315,7 +315,7 @@
                 android:resource="@xml/widget_overnight_info" />
         </receiver>
         <receiver
-            android:name=".OpenStrapBatteryWidgetProvider"
+            android:name=".ProjectFitBatteryWidgetProvider"
             android:exported="true"
             android:label="@string/widget_battery_label">
             <intent-filter>

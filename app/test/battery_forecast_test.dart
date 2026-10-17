@@ -2,7 +2,7 @@
 // that it abstains rather than guesses, so most of these assert SILENCE.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/notify/battery_forecast.dart';
+import 'package:projectfit/notify/battery_forecast.dart';
 
 void main() {
   const f = BatteryForecaster();

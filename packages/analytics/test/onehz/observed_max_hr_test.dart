@@ -1,7 +1,7 @@
 // TS-03 — the observed HR ceiling and its two guards (hold + motion), and the
 // TS-04 %HRR zones that anchor on it.
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 /// n seconds of HR at [bpm] with the given accel deviation from 1 g, starting

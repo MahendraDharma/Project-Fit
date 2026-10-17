@@ -18,8 +18,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/profile/devices.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/profile/devices.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 HealthSource _sensor({String? tier = 'beatToBeat', bool connected = false}) =>
     HealthSource(

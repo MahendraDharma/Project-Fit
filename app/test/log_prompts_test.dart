@@ -16,17 +16,17 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/app.dart';
-import 'package:openstrap_edge/ui2/app_shell.dart' show ShellDomain;
-import 'package:openstrap_edge/ui2/screens/wellness_screen.dart'
+import 'package:projectfit/app.dart';
+import 'package:projectfit/ui2/app_shell.dart' show ShellDomain;
+import 'package:projectfit/ui2/screens/wellness_screen.dart'
     show WellnessScreen;
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/med_store.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/notify/notification_service.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/med_store.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/notify/notification_service.dart';
+import 'package:projectfit/notify/tap_router.dart';
 
 /// A definition that existed long before any day under test, so `slotsForDay`'s
 /// created-at bound never trims a slot out from under a case.

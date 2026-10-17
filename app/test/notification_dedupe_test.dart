@@ -17,12 +17,12 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/data/day_label.dart';
+import 'package:projectfit/data/day_label.dart';
 
-import 'package:openstrap_edge/notify/fired_keys.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
+import 'package:projectfit/notify/fired_keys.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/tap_router.dart';
 
 /// Records every event handed to the OS layer so tests can assert call counts.
 class _FakeSink {

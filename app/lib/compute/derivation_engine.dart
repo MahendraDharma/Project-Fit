@@ -37,7 +37,7 @@ import 'package:flutter/foundation.dart';
 import 'findings.dart';
 import 'nap_overlap_cleanup.dart';
 import 'nap_edits.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 import '../data/live_coverage_policy.dart' show CoverageSpan;
 import '../data/step_calibration.dart';
 
@@ -427,7 +427,7 @@ import 'vendor_sleep.dart';
 // shifted event_kind/event_payload) — the importer read columns by name so it
 // never misparsed, but it dropped `steps` into its default branch and every
 // imported day reported steps = 0 while the band had actually counted them
-// (2,572 over the 3.5 h in the OpenStrap/edge#160 export). The counter is now
+// (2,572 over the 3.5 h in the MahendraDharma/Project-Fit#160 export). The counter is now
 // differenced into contiguous runs and written to `live_coverage`, the same
 // table the live 100 Hz pedometer uses, so imported and live days count steps
 // identically and the 1 Hz estimate still cannot double-count those minutes.
@@ -1476,7 +1476,7 @@ import 'vendor_sleep.dart';
 // would silently keep firing the false positive.
 //
 // PIN GATE (invariant #5): v77 above cites the analytics walking term
-// (OpenStrap/analytics#52). Do not release with a pubspec pin that predates
+// (ProjectFit/analytics#52). Do not release with a pubspec pin that predates
 // that merge — recomputing v77+ against a sibling that cannot price walking
 // would burn the version on nothing.
 //
@@ -1776,7 +1776,7 @@ import 'vendor_sleep.dart';
 // at `sleepOffsetSec + 1 h`, now freezes earlier on those mornings. UNCHANGED:
 // onset, stages, which day owns the night (decided on the untrimmed end),
 // gen4 (no band envelope), manual/confirmed overrides and the HR-led
-// fallback. Analytics change: OpenStrap/analytics PR #80; kAnalyticsPin
+// fallback. Analytics change: ProjectFit/analytics PR #80; kAnalyticsPin
 // repinned to analytics main @ 4fc2b12, which also carries #81-#85.
 // 103 → 104: detected naps require review; only accepted naps receive sleep credit.
 // Detector methods and sibling pins are unchanged.
@@ -1901,7 +1901,7 @@ const int kAlgoVersion = 113;
 // would have recomputed v80 against a sibling without the sustained-window
 // fix it claims. No other symbol changed; no further kAlgoVersion move.
 //
-// REPIN (this branch) @ 6664854 — protocol main at the OpenStrap/protocol#35
+// REPIN (this branch) @ 6664854 — protocol main at the ProjectFit/protocol#35
 // merge commit ("record HELLO revision instead of gating parsing"). The old
 // pin's parser returned null for any hello body whose revision byte was not
 // 1; this branch makes HELLO MANDATORY, so under that gate a firmware that
@@ -1947,7 +1947,7 @@ const int kAlgoVersion = 113;
 // already contains 1caf448 as an ancestor (verified: `git merge-base
 // --is-ancestor 1caf448 fe1464d` on the protocol repo) — main's pin is
 // strictly ahead, nothing this branch's repin added is lost by taking it.
-// REPIN (this branch) @ fbda904 — protocol OpenStrap/protocol#49 head, which
+// REPIN (this branch) @ fbda904 — protocol ProjectFit/protocol#49 head, which
 // adds the o2ring frame envelope/parser. NO kAlgoVersion bump: o2ring's
 // adapter `signals` stays `const {}` (excluded from `kDerivableSources`), so
 // nothing this pin adds is ever read by a decoder the derivation pipeline
@@ -1988,7 +1988,7 @@ const int kAlgoVersion = 113;
 // entry above.
 // REPIN @ 9fc1d6a — analytics PR #80 (band-state night end:
 // bandTrimmedOffsetSec, segmentSleep(bandSleepState:),
-// SleepSegmentation.bandOffsetTrimSec), on OpenStrap/analytics main, for v100
+// SleepSegmentation.bandOffsetTrimSec), on ProjectFit/analytics main, for v100
 // above.
 // REPIN @ c0effea: analytics main, #79 + #86 (rmssd gate), for v105.
 // REPIN: feat/multidevice-analytics head (ring settle band), WHOOP output

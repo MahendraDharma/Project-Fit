@@ -1,7 +1,7 @@
 //
 //  BreathingLiveActivityBridge.swift
 //  Runner — drives the breathing-session Live Activity from Flutter over a
-//  MethodChannel. Channel "openstrap/breathing_live_activity": start / update /
+//  MethodChannel. Channel "projectfit/breathing_live_activity": start / update /
 //  end. Separate from LiveActivityBridge.swift (the workout one) deliberately —
 //  a breathing session shows fundamentally different content (coherence, not
 //  HR/zone/strain) and this keeps the well-tuned workout activity untouched.
@@ -14,16 +14,16 @@ import Flutter
 import ActivityKit
 
 // Live Activity attributes (Runner copy). MUST stay identical to the copy in
-// the widget extension (OpenStrapBreathingLiveActivity.swift) — ActivityKit
+// the widget extension (ProjectFitBreathingLiveActivity.swift) — ActivityKit
 // matches the activity to the widget by the type name + Codable shape.
 //
 // coherenceScore uses -1 as the "not yet available" sentinel (same convention
-// as OpenStrapShared.readiness/strain/etc in OpenStrapIntents.swift) rather
+// as ProjectFitShared.readiness/strain/etc in ProjectFitIntents.swift) rather
 // than Optional, to keep ContentState's shape simple — the widget renders
 // "Calibrating…" for < 0, matching the in-app screen's honest pre-result state
 // (never a fabricated number).
 @available(iOS 16.1, *)
-struct OpenStrapBreathingAttributes: ActivityAttributes {
+struct ProjectFitBreathingAttributes: ActivityAttributes {
   public struct ContentState: Codable, Hashable {
     var coherenceScore: Double // -1 = not yet available ("Calibrating…")
   }
@@ -31,7 +31,7 @@ struct OpenStrapBreathingAttributes: ActivityAttributes {
 }
 
 enum BreathingLiveActivityBridge {
-  private static let channelName = "openstrap/breathing_live_activity"
+  private static let channelName = "projectfit/breathing_live_activity"
 
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
@@ -52,7 +52,7 @@ enum BreathingLiveActivityBridge {
   }
 
   @available(iOS 16.2, *)
-  private static func state(_ a: [String: Any]) -> OpenStrapBreathingAttributes.ContentState {
+  private static func state(_ a: [String: Any]) -> ProjectFitBreathingAttributes.ContentState {
     .init(coherenceScore: dbl(a, "coherenceScore"))
   }
 
@@ -62,10 +62,10 @@ enum BreathingLiveActivityBridge {
     // One at a time — end any stragglers first, and actually wait for them:
     // an unawaited Task here used to race Activity.request below, sometimes
     // leaving a stale activity alongside the new one.
-    for act in Activity<OpenStrapBreathingAttributes>.activities {
+    for act in Activity<ProjectFitBreathingAttributes>.activities {
       await act.end(nil, dismissalPolicy: .immediate)
     }
-    let attrs = OpenStrapBreathingAttributes(
+    let attrs = ProjectFitBreathingAttributes(
       startedAt: Date(timeIntervalSince1970: dbl(a, "startedAtMs", 0) / 1000.0))
     do {
       _ = try Activity.request(
@@ -79,14 +79,14 @@ enum BreathingLiveActivityBridge {
   @available(iOS 16.2, *)
   private static func update(_ a: [String: Any]) async {
     let content = ActivityContent(state: state(a), staleDate: nil)
-    for act in Activity<OpenStrapBreathingAttributes>.activities {
+    for act in Activity<ProjectFitBreathingAttributes>.activities {
       await act.update(content)
     }
   }
 
   @available(iOS 16.2, *)
   private static func end() async {
-    for act in Activity<OpenStrapBreathingAttributes>.activities {
+    for act in Activity<ProjectFitBreathingAttributes>.activities {
       await act.end(nil, dismissalPolicy: .immediate)
     }
   }

@@ -15,21 +15,21 @@ import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/compute/hr_max.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/health/health_export.dart';
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_service.dart';
-import 'package:openstrap_edge/state/alarm_schedule.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
-import 'package:openstrap_edge/ui2/activity/live.dart';
-import 'package:openstrap_edge/sync/paired_device.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/compute/hr_max.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/health/health_export.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_service.dart';
+import 'package:projectfit/state/alarm_schedule.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/activity/live.dart';
+import 'package:projectfit/sync/paired_device.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +37,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_app_state_regressions_test.db';
+    LocalDb.dbName = 'projectfit_app_state_regressions_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

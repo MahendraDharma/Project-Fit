@@ -17,8 +17,8 @@
 // it honest.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/live_step_runs.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
+import 'package:projectfit/ble/live_step_runs.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
 
 void main() {
   final catalogueKeys = {for (final a in allActivities) a.typeKey};

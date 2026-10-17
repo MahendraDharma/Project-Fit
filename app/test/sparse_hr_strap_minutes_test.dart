@@ -2,7 +2,7 @@
 // its own minute's, not spread over the next four as a ring reading is.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 void main() {
   test("a strap's 20-minute session on a ring's day is 20 minutes, not 24",

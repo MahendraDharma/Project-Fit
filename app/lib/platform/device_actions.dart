@@ -1,4 +1,4 @@
-// device_actions.dart — the Dart side of the `openstrap/device_actions` method
+// device_actions.dart — the Dart side of the `projectfit/device_actions` method
 // channel. Mirrors the edge_tracking / live_activity bridges: a thin wrapper that
 // asks native what it can do (capabilities) and tells it to do one thing (perform).
 //
@@ -17,7 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class DeviceActions {
-  static const _ch = MethodChannel('openstrap/device_actions');
+  static const _ch = MethodChannel('projectfit/device_actions');
 
   /// The set of action ids this OS+device can actually perform. The settings UI
   /// uses this to hide unsupported actions (e.g. system volume on iOS). Returns an

@@ -6,8 +6,8 @@
 // pulling in a package this repo doesn't otherwise depend on.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/gps/gpx_export.dart';
-import 'package:openstrap_edge/gps/route_models.dart';
+import 'package:projectfit/gps/gpx_export.dart';
+import 'package:projectfit/gps/route_models.dart';
 
 WorkoutRoute _route({List<HrSample> hr = const []}) => WorkoutRoute(
       sessionId: 's1',

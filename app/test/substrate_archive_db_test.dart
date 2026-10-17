@@ -10,13 +10,13 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/auto_backup.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/substrate_archive.dart';
-import 'package:openstrap_edge/data/substrate_archive_codec.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/ui2/onboarding/welcome.dart';
+import 'package:projectfit/data/auto_backup.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/substrate_archive.dart';
+import 'package:projectfit/data/substrate_archive_codec.dart';
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/ui2/onboarding/welcome.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -143,7 +143,7 @@ Future<(Map<String, Map<String, Object?>>, Map<String, Map<String, Object?>>)>
 _roundTrip(String exportPath) async {
   final home = LocalDb.dbName;
   await LocalDb.close();
-  LocalDb.dbName = 'openstrap_substrate_archive_roundtrip.db';
+  LocalDb.dbName = 'projectfit_substrate_archive_roundtrip.db';
   final path = p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName);
   await databaseFactory.deleteDatabase(path);
   try {
@@ -244,9 +244,9 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    tmp = await Directory.systemTemp.createTemp('openstrap_substrate_archive_');
+    tmp = await Directory.systemTemp.createTemp('projectfit_substrate_archive_');
     PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-    LocalDb.dbName = 'openstrap_substrate_archive_test.db';
+    LocalDb.dbName = 'projectfit_substrate_archive_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );
@@ -1180,7 +1180,7 @@ void main() {
       'the failure', () async {
     List<String> leftovers() => [
       for (final f in tmp.listSync().whereType<File>())
-        if (p.basename(f.path).startsWith('openstrap_export_'))
+        if (p.basename(f.path).startsWith('projectfit_export_'))
           p.basename(f.path),
     ];
     LocalDb.debugFailExportStrip = true;

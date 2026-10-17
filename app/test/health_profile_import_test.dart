@@ -11,7 +11,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health/health.dart';
-import 'package:openstrap_edge/health/health_profile_import.dart';
+import 'package:projectfit/health/health_profile_import.dart';
 
 /// Records the window each read asks for, so the platform-specific limits can
 /// be asserted without a health store.

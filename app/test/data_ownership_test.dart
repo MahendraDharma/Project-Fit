@@ -9,9 +9,9 @@
 // mode being tested for.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/csv_export.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/sync/update_service.dart';
+import 'package:projectfit/data/csv_export.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/sync/update_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -48,7 +48,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_data_ownership_test.db';
+    LocalDb.dbName = 'projectfit_data_ownership_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
   });

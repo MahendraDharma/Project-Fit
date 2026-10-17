@@ -13,7 +13,7 @@
 //   • raw_archive is thinned to a stated 1-in-60 sample behind the retention
 //     edge instead of growing ~45 MB/day forever.
 //
-// The REAL-DB half (`OPENSTRAP_TEST_DBS=/path/one.db,/path/two.db`) runs the
+// The REAL-DB half (`PROJECTFIT_TEST_DBS=/path/one.db,/path/two.db`) runs the
 // whole ladder over old-schema exports. Skipped when the env var is unset —
 // those files are not in the repo.
 
@@ -22,10 +22,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_edge/import/whoop_import.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit/import/whoop_import.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 
 Sample _sample(int ts, int counter, {int? ambient}) => Sample(
   tsEpoch: ts,
@@ -435,7 +435,7 @@ void main() {
   });
 
   // Old-schema exports: the whole ladder, end to end.
-  final real = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final real = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .where((s) => s.trim().isNotEmpty)
       .toList();

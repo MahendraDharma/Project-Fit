@@ -9,7 +9,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
 
 void main() {
   group('runWithConcurrency', () {

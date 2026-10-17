@@ -5,7 +5,7 @@
 // forever). Pure, so both edges are testable without a band.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
+import 'package:projectfit/ble/ble_state.dart';
 
 void main() {
   test('nothing has arrived, so nothing is syncing', () {

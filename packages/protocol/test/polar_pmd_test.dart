@@ -6,7 +6,7 @@
 // this way.
 
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 void main() {
   test('start/stop PPI commands', () {

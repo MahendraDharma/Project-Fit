@@ -1,0 +1,74 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+# Read-only: this workflow only builds and tests code from pull requests.
+permissions:
+  contents: read
+
+jobs:
+  packages:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [protocol, analytics]
+    name: ${{ matrix.package }}
+    defaults:
+      run:
+        working-directory: packages/${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.11.4
+      - run: dart pub get
+      - run: dart analyze
+      - run: dart test
+
+  app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Pinned: the app does not build on Flutter 3.44.x yet (see app/AGENTS.md).
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.6
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      # --concurrency=1: the suite uses sqflite_common_ffi against real database
+      # files, and parallel workers race on them.
+      - run: flutter test --concurrency=1 --reporter=expanded
+      # The WHOOP freeze goldens are per timezone; the run above is UTC.
+      - name: Zone-dependent tests (+05:30, -04:00)
+        run: |
+          TZ=Asia/Kolkata flutter test --concurrency=1 test/whoop_freeze_golden_test.dart test/adapters/miscale_test.dart
+          TZ=America/New_York flutter test --concurrency=1 test/whoop_freeze_golden_test.dart test/adapters/miscale_test.dart
+
+  tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -I -m unittest discover -s tools/garmin_inventory/tests

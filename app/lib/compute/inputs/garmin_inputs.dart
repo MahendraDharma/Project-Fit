@@ -15,7 +15,7 @@
 // No accelerometer, no beats, no skin temperature are decoded: every metric
 // that needs one is unavailable, with the reason in [kGarminColumn].
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../../data/day_label.dart';
 import '../../data/db.dart';

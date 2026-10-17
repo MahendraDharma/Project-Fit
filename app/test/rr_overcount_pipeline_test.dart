@@ -9,7 +9,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
 
 const int _t0 = 1786700000;
 const int _nightSec = 7 * 3600;

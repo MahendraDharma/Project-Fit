@@ -13,7 +13,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/models/metric.dart';
+import 'package:projectfit/models/metric.dart';
 
 void main() {
   group('whyFromNote', () {

@@ -10,7 +10,7 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 Uint8List _u32le(int v) => Uint8List.fromList(
     [v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, (v >> 24) & 0xff]);

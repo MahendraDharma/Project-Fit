@@ -35,8 +35,8 @@ cd ios
 xcodebuild -workspace Runner.xcworkspace -scheme Runner \
   -destination "id=$SIMULATOR_ID" -only-testing:RunnerTests \
   BUILD_DIR="$PWD/../build/ios" CODE_SIGNING_ALLOWED=NO \
-  APP_BUNDLE_IDENTIFIER=com.example.openstrapEdge.shortcuttests \
-  APP_GROUP_IDENTIFIER=group.com.example.openstrap.shortcuttests test
+  APP_BUNDLE_IDENTIFIER=io.github.mahendradharma.projectfit.shortcuttests \
+  APP_GROUP_IDENTIFIER=group.io.github.mahendradharma.projectfit.shortcuttests test
 ```
 
 The `ShortcutIntents` scheme runs the system-invocation tests. It needs Xcode 27, an iOS 27 simulator, and a development-signed build.

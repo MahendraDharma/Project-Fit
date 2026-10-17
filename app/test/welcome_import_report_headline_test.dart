@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/ui2/onboarding/welcome.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/ui2/onboarding/welcome.dart';
 
 Future<void> _pump(WidgetTester tester, ImportOutcome o) => tester.pumpWidget(
       MaterialApp(home: Scaffold(body: ImportReport(o))),
@@ -36,7 +36,7 @@ void main() {
     await _pump(
       tester,
       const ImportOutcome(
-          source: 'OpenStrap backup', days: 10, workouts: 3, journalRows: 1, labRows: 1),
+          source: 'ProjectFit backup', days: 10, workouts: 3, journalRows: 1, labRows: 1),
     );
     expect(find.textContaining('10 days imported'), findsOneWidget);
     // The others still show, just not as the headline — journal gets its own
@@ -51,7 +51,7 @@ void main() {
     await _pump(
       tester,
       const ImportOutcome(
-          source: 'OpenStrap backup', days: 4, archiveBucketsSkipped: 2),
+          source: 'ProjectFit backup', days: 4, archiveBucketsSkipped: 2),
     );
     expect(find.textContaining('Part of that file could not be used'),
         findsOneWidget);
@@ -65,7 +65,7 @@ void main() {
     // Every backed-up day already finalized here: 0 days imported.
     await _pump(
       tester,
-      const ImportOutcome(source: 'OpenStrap backup', archiveBucketsSkipped: 1),
+      const ImportOutcome(source: 'ProjectFit backup', archiveBucketsSkipped: 1),
     );
     expect(find.textContaining('Nothing was imported'), findsOneWidget);
     expect(find.textContaining('1 day of saved sensor history'),
@@ -97,7 +97,7 @@ void main() {
       (tester) async {
     await _pump(
       tester,
-      const ImportOutcome(source: 'OpenStrap backup', archiveBucketsRestored: 3),
+      const ImportOutcome(source: 'ProjectFit backup', archiveBucketsRestored: 3),
     );
     expect(find.textContaining('Nothing was imported'), findsNothing);
     expect(find.textContaining('restored or extended for 3 days'),

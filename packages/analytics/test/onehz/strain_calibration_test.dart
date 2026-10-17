@@ -11,7 +11,7 @@
 // `banisterTrimp`, so the anchors constrain the whole pipeline, not just the map.
 
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 // One representative profile, matching the `max_hr_used` seen in real bundles.
 const double kRhr = 60.0;

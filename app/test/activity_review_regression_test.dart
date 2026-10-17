@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/activity_store.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/models/activity_suggestion.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/profile.dart';
+import 'package:projectfit/data/activity_store.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/models/activity_suggestion.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/profile.dart';
 
 void main() {
   late Database db;

@@ -10,8 +10,8 @@
 //  * Debounce: one action per 2 s, however many events the band sends.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/gestures/device_action.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/gestures/device_action.dart';
 
 import 'support/app_state_gesture_harness.dart';
 

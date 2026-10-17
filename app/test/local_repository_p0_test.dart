@@ -15,9 +15,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
 
 void main() {
   late LocalRepositoryImpl repo;
@@ -28,7 +28,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_repo_p0_test.db';
+    LocalDb.dbName = 'projectfit_repo_p0_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

@@ -93,7 +93,7 @@ Expected: PASS (baseline green before touching anything).
 // background lease is renewed. No BLE, no DB.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   final now = DateTime(2026, 9, 21, 23, 0);
@@ -391,7 +391,7 @@ git commit -m "sync: BandPromptPolicy — who programs the band's sync prompt"
 // that silence as death.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   const period = Duration(seconds: kKeepAliveIntervalSeconds);
@@ -798,9 +798,9 @@ git commit -m "ios: stop owning the 1 Hz HR stream in background"
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/sync/sync_policy.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 class _Rig {
   final logs = <String>[];
@@ -1003,9 +1003,9 @@ git commit -m "ble: keep-alive fuse ignores silence accumulated while suspended"
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/ble/ble_state.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 class _Link {
   final logs = <String>[];
@@ -1442,13 +1442,13 @@ Pair (quit the official WHOOP app first), confirm "Listening" in the app, then b
 
 - [ ] **Step 2: Pull the log and check the four markers**
 
-Files app → On My iPhone → Edge → `openstrap_sync.log` (and `.1`). Share it to the Mac and run:
+Files app → On My iPhone → Edge → `projectfit_sync.log` (and `.1`). Share it to the Mac and run:
 
 ```bash
-grep -c "HighFreq prompt received" openstrap_sync.log
-grep -n "Band prompt:\|HighFreq enter\|HighFreq exit" openstrap_sync.log | tail -20
-grep -c "Backlog drained\|records pulled" openstrap_sync.log
-grep -n "bouncing the link\|Connection dropped\|stale link\|resumed after\|\[probe\]" openstrap_sync.log | tail -30
+grep -c "HighFreq prompt received" projectfit_sync.log
+grep -n "Band prompt:\|HighFreq enter\|HighFreq exit" projectfit_sync.log | tail -20
+grep -c "Backlog drained\|records pulled" projectfit_sync.log
+grep -n "bouncing the link\|Connection dropped\|stale link\|resumed after\|\[probe\]" projectfit_sync.log | tail -30
 ```
 
 Expected:
@@ -1467,7 +1467,7 @@ Settings → Battery → last 24 h → Edge. Record On screen / Background minut
 Enable smart wake for one weekday alarm, background the app overnight. Next morning:
 
 ```bash
-grep -n "\[smart-wake\]\|Band prompt: smartWake=true" openstrap_sync.log | tail
+grep -n "\[smart-wake\]\|Band prompt: smartWake=true" projectfit_sync.log | tail
 ```
 
 Expected: the window arms with `reason` = the plan source at 61 s, and `[smart-wake]` check lines appear during the window (the early buzz only if light sleep was detected; the fallback alarm fires regardless).

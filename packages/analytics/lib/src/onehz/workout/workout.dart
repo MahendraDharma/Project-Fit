@@ -1,6 +1,6 @@
 /// WORKOUT / ACTIVITY DETECTION family — 1 Hz-native, HYBRID.
 ///
-/// Keeps OpenStrap's existing day-level strain / HR-zones (clinical/load_trimp)
+/// Keeps ProjectFit's existing day-level strain / HR-zones (clinical/load_trimp)
 /// untouched and adds bout-detection:
 ///
 ///   * [AutoWorkoutDetector] — opt-in "did you just work out?" SUGGESTION
@@ -17,7 +17,7 @@
 /// `workout_suggestions` from [AutoWorkoutDetector] instead.
 ///
 /// HYBRID SEAM: every detected bout is typed through a [SportClassifier]
-/// (default "detected"). OpenStrap's motion-based HAR typer can be injected
+/// (default "detected"). ProjectFit's motion-based HAR typer can be injected
 /// when high-rate accel features ([MotionFeatures]) are available. → sport.dart
 library onehz_workout;
 

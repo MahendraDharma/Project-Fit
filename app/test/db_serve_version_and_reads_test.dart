@@ -19,10 +19,10 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:yaml/yaml.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart'
-    show kAlgoVersion, kAnalyticsPin, kProtocolPin;
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/day_label.dart';
+import 'package:projectfit/compute/derivation_engine.dart'
+    show kAlgoVersion;
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/day_label.dart';
 
 Future<void> _put(String dayId, int version, {double? readiness}) =>
     LocalDb.putDayResult(
@@ -36,46 +36,24 @@ Future<void> _put(String dayId, int version, {double? readiness}) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // The other half of the serve seam: a day_result records the algo version and
-  // NOTHING about which analytics/protocol produced it, so two builds pinning
-  // different siblings at the same version serve each other's days as
-  // equivalent, and the substrate is pruned behind them. That is not detectable
-  // at runtime — the only place it can be caught is here, where the pin and the
-  // version constant have to agree. Repin, and this goes red on the line above
-  // kAlgoVersion.
-  test('the sibling pins match the SHAs kAlgoVersion was derived against', () {
+  // ProjectFit keeps protocol and analytics in this repository
+  // (packages/), so the app must resolve them from there. A git dependency
+  // here would quietly run a sibling nobody in this tree reviewed, and serve
+  // its days at the same kAlgoVersion. Any change under packages/ that moves an
+  // output still needs a kAlgoVersion bump. kAnalyticsPin / kProtocolPin
+  // record the upstream commits the in-tree copies were imported from.
+  test('siblings resolve from the in-tree packages', () {
     final deps =
         (loadYaml(File('pubspec.yaml').readAsStringSync())
             as Map)['dependencies'] as Map;
-    String ref(String pkg) => ((deps[pkg] as Map)['git'] as Map)['ref'] as String;
+    expect((deps['projectfit_analytics'] as Map)['path'], '../packages/analytics');
+    expect((deps['projectfit_protocol'] as Map)['path'], '../packages/protocol');
 
-    const why =
-        'sibling repinned without visiting kAlgoVersion. bump it and say what '
-        'moved, or every day already derived at this version is served as if '
-        'it came from the new analytics';
-    expect(ref('openstrap_analytics'), kAnalyticsPin, reason: why);
-    expect(ref('openstrap_protocol'), kProtocolPin, reason: why);
-
-    // AND THE LOCK, which is the file that actually decides what a build
-    // resolves. `pubspec.yaml` and the constants agreeing while the lock
-    // trails behind is a PARTIAL repin — the exact failure mode the repin
-    // comments promise this test catches, and it did not until it read this
-    // file. `resolved-ref` too: `ref` alone can name a moved branch.
     final locked =
         (loadYaml(File('pubspec.lock').readAsStringSync())
             as Map)['packages'] as Map;
-    String lockRef(String pkg, String field) =>
-        ((locked[pkg] as Map)['description'] as Map)[field] as String;
-
-    const whyLock =
-        'pubspec.lock disagrees with pubspec.yaml and the pin constants — a '
-        'partial repin. Move all three together, or a build resolves a '
-        'sibling nobody reasoned about';
-    for (final field in const ['ref', 'resolved-ref']) {
-      expect(lockRef('openstrap_analytics', field), kAnalyticsPin,
-          reason: whyLock);
-      expect(lockRef('openstrap_protocol', field), kProtocolPin,
-          reason: whyLock);
+    for (final pkg in const ['projectfit_analytics', 'projectfit_protocol']) {
+      expect((locked[pkg] as Map)['source'], 'path', reason: pkg);
     }
   });
 

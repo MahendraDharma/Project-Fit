@@ -3,7 +3,7 @@
 // isolated as a pure function so it doesn't need a widget test.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart';
+import 'package:projectfit/ui2/screens/home_screen.dart';
 
 void main() {
   test('draining below the default threshold is low', () {

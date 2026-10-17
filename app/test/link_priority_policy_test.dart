@@ -12,8 +12,8 @@
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/sync/sync_policy.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/sync/sync_policy.dart';
 
 void main() {
   test('an idle backgrounded link runs at the cheap interval', () {

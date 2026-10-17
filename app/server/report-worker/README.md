@@ -1,6 +1,6 @@
-# OpenStrap report worker
+# ProjectFit report worker
 
-Cloudflare Worker behind "Report an issue" in the app. Contract: `~/.openstrap-research/REPORT_CONTRACT.md`.
+Cloudflare Worker behind "Report an issue" in the app. Contract: `~/.projectfit-research/REPORT_CONTRACT.md`.
 
 ## What it stores
 
@@ -34,22 +34,22 @@ cd server/report-worker
 npm install
 npx wrangler login
 
-npx wrangler r2 bucket create openstrap-reports
-npx wrangler r2 bucket lifecycle add openstrap-reports expire-logs --prefix logs/ --expire-days 30
-npx wrangler r2 bucket lifecycle add openstrap-reports expire-db   --prefix db/   --expire-days 14
+npx wrangler r2 bucket create projectfit-reports
+npx wrangler r2 bucket lifecycle add projectfit-reports expire-logs --prefix logs/ --expire-days 30
+npx wrangler r2 bucket lifecycle add projectfit-reports expire-db   --prefix db/   --expire-days 14
 
-npx wrangler d1 create openstrap-reports          # copy database_id into wrangler.toml
-npx wrangler d1 migrations apply openstrap-reports --remote
+npx wrangler d1 create projectfit-reports          # copy database_id into wrangler.toml
+npx wrangler d1 migrations apply projectfit-reports --remote
 
 npx wrangler secret put ADMIN_TOKEN               # e.g. openssl rand -hex 32
 # optional GitHub tracker (private repo, token with Issues: write only)
 npx wrangler secret put GITHUB_TOKEN
-npx wrangler secret put GITHUB_REPO               # OpenStrap/reports
+npx wrangler secret put GITHUB_REPO               # ProjectFit/reports
 
 npx wrangler deploy
 ```
 
-Custom domain: Workers & Pages > openstrap-reports > Settings > Domains > add `reports.openstrap.site` (zone must be on Cloudflare), or uncomment `routes` in `wrangler.toml` and redeploy. Check `curl https://reports.openstrap.site/v1/health`.
+Custom domain: Workers & Pages > projectfit-reports > Settings > Domains > add `reports.example.invalid` (zone must be on Cloudflare), or uncomment `routes` in `wrangler.toml` and redeploy. Check `curl https://reports.example.invalid/v1/health`.
 
 ## Fetch and decrypt a report
 
@@ -59,7 +59,7 @@ export REPORT_ADMIN_TOKEN=...
 python3 tools/fetch_report.py OS-XXXXXX      # writes OS-XXXXXX.zip
 ```
 
-Private key path: `REPORT_PRIVATE_KEY` (default `~/.openstrap-research/report-keys/report_private_key.pem`). Keep it out of every repo. `python3 tools/selfcheck.py` verifies the encrypt/decrypt round trip, including the real key pair when present.
+Private key path: `REPORT_PRIVATE_KEY` (default `~/.projectfit-research/report-keys/report_private_key.pem`). Keep it out of every repo. `python3 tools/selfcheck.py` verifies the encrypt/decrypt round trip, including the real key pair when present.
 
 Admin API: `GET /v1/admin/reports?since=ISO&after_id=ID` (metadata, 1000 per page, ordered by `created_at, id`) and `GET /v1/admin/reports/<id>/blob`, both with `Authorization: Bearer $ADMIN_TOKEN`.
 
@@ -68,10 +68,10 @@ Admin API: `GET /v1/admin/reports?since=ISO&after_id=ID` (metadata, 1000 per pag
 `tools/backup_to_oracle.sh` mirrors metadata (no blobs) into SQLite nightly. Needs `python3`. Each run pages the admin list with a `(created_at, id)` cursor and replaces the whole table in one transaction, so a report the user deleted (the Worker scrubs it and stops listing it) or that passed 90 days is gone from the backup the next night; it also purges rows older than 90 days locally. The backup never holds data longer than the policy.
 
 ```sh
-sudo install -d /opt/openstrap-report-backup && sudo cp tools/backup_to_oracle.sh /opt/openstrap-report-backup/
-echo 'REPORT_ADMIN_TOKEN=...' | sudo tee /etc/openstrap-report-backup.env && sudo chmod 600 /etc/openstrap-report-backup.env
-sudo cp tools/openstrap-report-backup.{service,timer} /etc/systemd/system/
-sudo systemctl daemon-reload && sudo systemctl enable --now openstrap-report-backup.timer
+sudo install -d /opt/projectfit-report-backup && sudo cp tools/backup_to_oracle.sh /opt/projectfit-report-backup/
+echo 'REPORT_ADMIN_TOKEN=...' | sudo tee /etc/projectfit-report-backup.env && sudo chmod 600 /etc/projectfit-report-backup.env
+sudo cp tools/projectfit-report-backup.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now projectfit-report-backup.timer
 ```
 
 ## Develop

@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health/health.dart';
-import 'package:openstrap_edge/health/health_workout_import.dart';
+import 'package:projectfit/health/health_workout_import.dart';
 
 HealthDataPoint _w({
   String uuid = 'w1',
@@ -58,10 +58,10 @@ void main() {
       // The export rewrites them under a new uuid each pass; importing them
       // would duplicate every band session in History.
       final rows = workoutsFrom([
-        _w(uuid: 'ios', source: 'OpenStrap', sourceId: 'wtf.openstrap.x'),
-        _w(uuid: 'android', source: 'wtf.openstrap.x', sourceId: ''),
+        _w(uuid: 'ios', source: 'ProjectFit', sourceId: 'wtf.projectfit.x'),
+        _w(uuid: 'android', source: 'wtf.projectfit.x', sourceId: ''),
         _w(uuid: 'strava'),
-      ], ownApp: 'wtf.openstrap.x');
+      ], ownApp: 'wtf.projectfit.x');
       expect(rows.map((r) => r.uuid), ['strava']);
       // An unknown own id must not drop Health Connect's empty sourceIds.
       expect(workoutsFrom([_w(sourceId: '')], ownApp: ''), hasLength(1));

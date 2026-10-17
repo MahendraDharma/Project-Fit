@@ -8,9 +8,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/gps/screen_wake.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/gps/screen_wake.dart';
+import 'package:projectfit/state/app_state.dart';
 
 import 'support/app_state_workout_harness.dart';
 

@@ -17,7 +17,7 @@ storage is local to the Android device.
 
 For Android sleep replacement, derive a local sleep-day cleanup interval that
 runs from noon to noon and fully contains the new parent session. Delete
-OpenStrap-owned `SleepSessionRecord` values in that interval, then insert the
+ProjectFit-owned `SleepSessionRecord` values in that interval, then insert the
 single normalized parent session.
 
 For a normal overnight session ending before local noon, the interval is local
@@ -37,7 +37,7 @@ by the calling package; sleep records written by other apps are not affected.
 1. Dart normalizes and validates the parent session and stages as today.
 2. The typed MethodChannel sends the same parent payload.
 3. The Android writer calculates the local noon-to-noon cleanup interval.
-4. It deletes OpenStrap-owned `SleepSessionRecord` values in that interval.
+4. It deletes ProjectFit-owned `SleepSessionRecord` values in that interval.
 5. It inserts exactly one parent with all ordered, clipped, positive-duration,
    non-overlapping stages.
 6. Any delete or insert exception, or an insert count other than one, returns

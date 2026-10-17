@@ -5,7 +5,7 @@
 Please **don't** open a public issue for a security problem.
 
 Use GitHub's private reporting instead:
-[**Report a vulnerability →**](https://github.com/OpenStrap/protocol/security/advisories/new)
+[**Report a vulnerability →**](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol/security/advisories/new)
 
 That goes straight to the maintainer and stays private until there's a fix.
 
@@ -22,7 +22,7 @@ company with an on-call rota:
 This repo is a pure-Dart library with zero runtime dependencies: bytes in,
 decoded records/frames/commands out. It doesn't run on its own, ship an app,
 talk to a network, or store anything — no database, no telemetry, no
-Firebase. It's a dependency of [edge](https://github.com/OpenStrap/edge),
+Firebase. It's a dependency of [edge](https://github.com/MahendraDharma/Project-Fit),
 which is where the app, its distribution model, and its data-handling
 questions live.
 
@@ -41,7 +41,7 @@ questions live.
 - WHOOP's own apps and services. Please report those to WHOOP.
 - App-level distribution and privacy questions (signing, sideloading, device
   storage access, telemetry, health-data upload) — those belong to
-  [edge's SECURITY.md](https://github.com/OpenStrap/edge/blob/main/SECURITY.md)
-  and [PRIVACY.md](https://github.com/OpenStrap/edge/blob/main/PRIVACY.md),
+  [edge's SECURITY.md](https://github.com/MahendraDharma/Project-Fit/blob/main/app/SECURITY.md)
+  and [PRIVACY.md](https://github.com/MahendraDharma/Project-Fit/blob/main/app/PRIVACY.md),
   not this repo.
 - Metric accuracy. Wrong numbers are bugs — open a normal issue.

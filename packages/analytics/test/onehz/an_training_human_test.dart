@@ -3,7 +3,7 @@
 // must say nothing, and the abstention is the part that gets quietly deleted
 // later, so it is the part that is pinned here.
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 List<String> _dates(int n) {

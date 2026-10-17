@@ -8,7 +8,7 @@
 
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 import 'package:test/test.dart';
 
 /// [n] consecutive real calendar dates from 2026-01-01. Real ones, because a

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/health/health_heart_rate_batch.dart';
+import 'package:projectfit/health/health_heart_rate_batch.dart';
 
 int _seconds(DateTime value) => value.millisecondsSinceEpoch ~/ 1000;
 
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('Android sends all normalized samples in one replace call', () async {
-      const channel = MethodChannel('openstrap/test_health_connect_heart_rate');
+      const channel = MethodChannel('projectfit/test_health_connect_heart_rate');
       final calls = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
@@ -107,7 +107,7 @@ void main() {
 
     test('Android batch false result is retryable', () async {
       const channel = MethodChannel(
-        'openstrap/test_health_connect_heart_rate_failure',
+        'projectfit/test_health_connect_heart_rate_failure',
       );
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (_) async => false);
@@ -239,7 +239,7 @@ void main() {
 
     test('native empty request completes before Health Connect availability', () {
       final source = File(
-        'android/app/src/main/kotlin/wtf/openstrap/openstrap_edge/HealthConnectHeartRateWriter.kt',
+        'android/app/src/main/kotlin/io/github/mahendradharma/projectfit/HealthConnectHeartRateWriter.kt',
       ).readAsStringSync();
       final replace = source.substring(
         source.indexOf('private suspend fun replace'),

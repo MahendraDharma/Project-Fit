@@ -27,7 +27,7 @@ import 'tokens.dart';
 /// PageRouteBuilder has no interactive back-gesture support, which silently
 /// kills the iOS edge-swipe-back on every pushed screen. The app's shared-axis
 /// fade-through transition therefore lives in the theme's pageTransitionsTheme
-/// instead (see buildOpenStrapTheme + page_transitions.dart): Android-likes
+/// instead (see buildProjectFitTheme + page_transitions.dart): Android-likes
 /// keep the fade-through, iOS/macOS get the Cupertino slide WITH swipe-back.
 /// [name] shows up as `current_screen` on the next Crashlytics crash/ANR
 /// report (see TelemetryNavigatorObserver) — without it, every push here

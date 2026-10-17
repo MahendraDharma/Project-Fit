@@ -1,4 +1,4 @@
-# OpenStrap Analytics — Algorithms
+# ProjectFit Analytics — Algorithms
 
 Every metric here is a **published, peer-reviewed method**, computed by a **pure
 deterministic function**, running on the 1 Hz substrate a WHOOP 4.0 actually exposes:

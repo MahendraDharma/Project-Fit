@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 import '../../ble/adapters/_registry.dart'
     show DeviceCategory, categoryOf, kBleHrs, kCoros, kPolarPmd;

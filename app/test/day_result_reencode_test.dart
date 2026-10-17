@@ -15,8 +15,8 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/series_codec.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/series_codec.dart';
 
 Map<String, dynamic> bundleFor(int t0, {int n = 30}) => {
   'scalars': {'rhr': 55.0, 'readiness': 71.0},
@@ -70,7 +70,7 @@ void main() {
   setUp(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_reencode_test.db';
+    LocalDb.dbName = 'projectfit_reencode_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await LocalDb.close();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
@@ -330,7 +330,7 @@ void main() {
     // A source export holding one legacy row, the shape an older device wrote.
     final srcPath = p.join(
       await databaseFactory.getDatabasesPath(),
-      'openstrap_reencode_src.db',
+      'projectfit_reencode_src.db',
     );
     await databaseFactory.deleteDatabase(srcPath);
     final src = await databaseFactory.openDatabase(srcPath);

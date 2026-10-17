@@ -9,8 +9,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/app_state.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/app_state.dart';
 
 import 'support/app_state_workout_harness.dart';
 

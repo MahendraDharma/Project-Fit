@@ -5,15 +5,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/activity_store.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/models/activity_suggestion.dart';
+import 'package:projectfit/data/activity_store.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/models/activity_suggestion.dart';
 
 void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_workout_suggestion_refresh_test.db';
+    LocalDb.dbName = 'projectfit_workout_suggestion_refresh_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     // Open the review store's cutoff to the fixtures below.

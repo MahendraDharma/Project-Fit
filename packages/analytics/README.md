@@ -1,10 +1,10 @@
-# OpenStrap analytics
+# ProjectFit analytics
 
-[![test](https://github.com/OpenStrap/analytics/actions/workflows/test.yml/badge.svg)](https://github.com/OpenStrap/analytics/actions/workflows/test.yml)
+[![test](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics/actions/workflows/test.yml/badge.svg)](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![stars](https://img.shields.io/github/stars/OpenStrap/analytics?style=flat&color=e2825f)](https://github.com/OpenStrap/analytics/stargazers)
+[![stars](https://img.shields.io/github/stars/ProjectFit/analytics?style=flat&color=e2825f)](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics/stargazers)
 [![Discord](https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white)](https://discord.gg/dUXds5MWkd)
-[![Donate](https://img.shields.io/badge/donate-BTC%20%2F%20ETH-f7931a)](https://github.com/OpenStrap/edge/blob/main/DONATE.md)
+[![Donate](https://img.shields.io/badge/donate-BTC%20%2F%20ETH-f7931a)](https://github.com/MahendraDharma/Project-Fit/blob/main/app/DONATE.md)
 
 This is the math. Given the always-on 1 Hz substrate a WHOOP 4.0 actually hands over —
 beat-to-beat RR intervals, 1 Hz heart rate, 1 Hz tri-axial accel, and a few relative ADC
@@ -14,7 +14,7 @@ off.
 
 Pure Dart, zero runtime dependencies. No AI, no I/O, no randomness, no clock. Same input,
 same output, every time. It runs **on-device**, computed by the app
-([edge](https://github.com/OpenStrap/edge)) directly — no cloud, no backend cron, no
+([edge](https://github.com/MahendraDharma/Project-Fit)) directly — no cloud, no backend cron, no
 server that ever touches your data. (There used to be a minute-resolution family in here,
 ported over from an old backend-cron setup. That's gone. This is a 1 Hz-native rewrite,
 and the "1 Hz" part isn't decoration — it's what makes a lot of these methods work at
@@ -69,7 +69,7 @@ hoping you don't notice.
 ## Quick start
 
 ```dart
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 // nnMs: cleaned beat-to-beat RR intervals in ms (see foundations/rr_correction.dart
 // for turning raw RR into this). nnTimesMs: cumulative beat timestamp in ms
@@ -172,14 +172,14 @@ tests, and the rules that keep this package honest. Security issues go through
 
 ## Support the work
 
-No subscription, no paywall, no company behind this. If OpenStrap gave your band a second
+No subscription, no paywall, no company behind this. If ProjectFit gave your band a second
 life, a small tip genuinely helps:
 
 - **BTC** — `bc1qvtcch38dcwp967ar764uu6eetw7tf907844wfq`
 - **EVM** (Ethereum · Base · Arbitrum · Optimism · Polygon) —
   `0x8310C89393366b7eBCD47ABa82e1dfB5ECeFFbD9`
 
-[What donations actually pay for →](https://github.com/OpenStrap/edge/blob/main/DONATE.md)
+[What donations actually pay for →](https://github.com/MahendraDharma/Project-Fit/blob/main/app/DONATE.md)
 
 Nothing is gated behind paying, and nothing ever will be. Protocol findings and bug
 reports are worth more than money, though.

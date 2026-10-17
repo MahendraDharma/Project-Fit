@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/gestures/device_action.dart';
-import 'package:openstrap_edge/gestures/gesture_dispatcher.dart';
-import 'package:openstrap_edge/gestures/gesture_settings.dart';
-import 'package:openstrap_edge/state/gesture_controller.dart';
+import 'package:projectfit/gestures/device_action.dart';
+import 'package:projectfit/gestures/gesture_dispatcher.dart';
+import 'package:projectfit/gestures/gesture_settings.dart';
+import 'package:projectfit/state/gesture_controller.dart';
 
 void main() {
   late DateTime now;

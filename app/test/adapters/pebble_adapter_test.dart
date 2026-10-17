@@ -5,11 +5,11 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/pebble.dart';
-import 'package:openstrap_edge/ble/adapters/signals.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/pebble.dart';
+import 'package:projectfit/ble/adapters/signals.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 List<int> u16(int v) => [v & 0xff, v >> 8];
 List<int> u32(int v) => [v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, v >> 24];

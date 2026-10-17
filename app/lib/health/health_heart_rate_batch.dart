@@ -33,7 +33,7 @@ class MethodChannelHealthConnectHeartRateWriter
     implements HealthConnectHeartRateWriter {
   MethodChannelHealthConnectHeartRateWriter({MethodChannel? channel})
     : _channel =
-          channel ?? const MethodChannel('openstrap/health_connect_heart_rate');
+          channel ?? const MethodChannel('projectfit/health_connect_heart_rate');
 
   final MethodChannel _channel;
 

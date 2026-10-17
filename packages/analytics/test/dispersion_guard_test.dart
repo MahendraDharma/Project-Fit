@@ -5,7 +5,7 @@
 // users on a milestone whose gate forbids any kAlgoVersion bump).
 
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 void main() {
   group('dispersionBelowQuantum', () {

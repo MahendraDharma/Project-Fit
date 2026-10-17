@@ -24,8 +24,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/substrate.dart';
 
 /// A 1 Hz substrate with a single still, low-HR block — the shape `detectNaps`
 /// scores as a nap — laid over an otherwise moving, awake-HR day.

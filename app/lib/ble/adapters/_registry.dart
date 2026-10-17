@@ -43,7 +43,7 @@
 //      is the next wave, and until then `isFramed` remains the predicate that
 //      tells the two worlds apart.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import 'signals.dart';
 

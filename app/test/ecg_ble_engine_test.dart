@@ -10,11 +10,11 @@ import 'dart:typed_data';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
-import 'package:openstrap_edge/data/models.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/ble/ble_state.dart';
+import 'package:projectfit/data/models.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 Uint8List _helloBody({int revision = 1, int optical = 0}) {
   final body = Uint8List(Gen5HelloInfo.semanticBodyLen);

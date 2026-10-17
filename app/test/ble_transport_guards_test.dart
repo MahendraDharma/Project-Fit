@@ -3,8 +3,8 @@
 // frame routing.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/ble/ble_state.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -8,8 +8,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/csv_export.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/csv_export.dart';
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -102,7 +102,7 @@ void main() {
     setUpAll(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_csv_export_test.db';
+      LocalDb.dbName = 'projectfit_csv_export_test.db';
       await databaseFactory.deleteDatabase(
         p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
       );
@@ -278,7 +278,7 @@ void main() {
     late Directory tmp;
 
     setUpAll(() async {
-      tmp = await Directory.systemTemp.createTemp('openstrap_csv_files_');
+      tmp = await Directory.systemTemp.createTemp('projectfit_csv_files_');
       PathProviderPlatform.instance = _FakePathProvider(tmp.path);
     });
 

@@ -18,7 +18,7 @@
 // stays with the phone pedometer. And it is cadence, not gait analysis: no
 // stride length, no ground contact, no activity name.
 
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 /// A minute below this is not sustained walking (it is a few steps to the
 /// kettle inside an otherwise still minute); above it is not walking either.

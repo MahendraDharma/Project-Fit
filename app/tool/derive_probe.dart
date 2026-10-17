@@ -3,9 +3,9 @@
 // DayBundleInput, attach a history for day 2, run deriveDayBundle, print stack.
 // Run: dart run tool/derive_probe.dart [/tmp/r24_0626_hex.txt]
 import 'dart:io';
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
 
 void main(List<String> args) {
   final path = args.isNotEmpty ? args[0] : '/tmp/r24_0626_hex.txt';

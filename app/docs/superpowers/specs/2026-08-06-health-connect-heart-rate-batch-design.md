@@ -2,7 +2,7 @@
 
 ## Problem
 
-OpenStrap exports every minute-average heart-rate value through
+ProjectFit exports every minute-average heart-rate value through
 `health.writeHealthData`. In `health 11.1.1`, each Android call creates and
 inserts a separate `HeartRateRecord`. A manual export therefore consumes the
 Health Connect API-call quota before recent sleep sessions can be replaced.
@@ -30,7 +30,7 @@ samples must be inside the parent interval, ordered, unique by timestamp, and
 within Health Connect's valid heart-rate range.
 
 The Android writer serializes replacements with a mutex, validates the payload
-again, deletes OpenStrap's prior `HeartRateRecord` data in the exact day window,
+again, deletes ProjectFit's prior `HeartRateRecord` data in the exact day window,
 and inserts one `HeartRateRecord` whose `samples` list contains all minute
 averages. Health Connect therefore sees two API calls per re-export (delete and
 insert), rather than approximately 1,440 individual inserts plus deletion.
@@ -69,4 +69,4 @@ The project-local typed writer is the smallest option that preserves behavior.
 - Android compilation verifies the pinned Health Connect constructor/API.
 - Run focused health tests, formatting, `flutter analyze`, and a release APK
   build. Install the APK and manually verify that a fresh sync writes the current
-  OpenStrap sleep session after the Health Connect quota has recovered.
+  ProjectFit sleep session after the Health Connect quota has recovered.

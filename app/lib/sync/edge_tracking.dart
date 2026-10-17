@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class EdgeTracking {
-  static const _ch = MethodChannel('openstrap/edge_tracking');
+  static const _ch = MethodChannel('projectfit/edge_tracking');
 
   // Whether the FGS should currently carry the `location` service type (a GPS
   // route session is live). Sticky across the frequent no-arg start() calls so

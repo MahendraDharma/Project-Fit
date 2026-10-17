@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -16,7 +16,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_movement_floor_test.db';
+    LocalDb.dbName = 'projectfit_movement_floor_test.db';
   });
 
   setUp(() async {

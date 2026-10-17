@@ -7,10 +7,10 @@
 //     would erase the morning's mood unless the day is merged first.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_actions.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
+import 'package:projectfit/coach/coach_actions.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
 
 class _FakeRepo extends LocalRepository {
   Map<String, JournalMetricValue> stored = {};

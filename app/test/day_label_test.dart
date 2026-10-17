@@ -8,8 +8,8 @@
 // (lib/data/day_label.dart) to local-calendar semantics with an injected clock.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
 
 void main() {
   test('dayLabelOf labels by LOCAL calendar date, zero-padded', () {

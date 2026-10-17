@@ -1,7 +1,7 @@
 // Submax VO2max estimate — known-answer + gating tests.
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/clinical/vo2max.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/clinical/vo2max.dart';
 
 void main() {
   group('vo2maxSubmaxEstimate', () {

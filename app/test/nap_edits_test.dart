@@ -6,7 +6,7 @@
 // worse than useless — the nap the user deleted would quietly come back.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/nap_edits.dart';
+import 'package:projectfit/compute/nap_edits.dart';
 
 Map<String, dynamic> nap(int start, int end, {double? confidence}) => {
   'start': start,

@@ -54,7 +54,7 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart'
     show ValueListenable, ValueNotifier, debugPrint, visibleForTesting;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart'
+import 'package:projectfit_protocol/projectfit_protocol.dart'
     show polarPmdSupportsPpi;
 
 import '../compute/inputs/canonical.dart' show wearableEnabled;
@@ -895,7 +895,7 @@ class HrsLink {
     // does not even advertise, which presents as a silent, timeout-less connect
     // that names nothing.
     //
-    // "Forget this device in OpenStrap" cannot reasonably mean "unpair it from
+    // "Forget this device in ProjectFit" cannot reasonably mean "unpair it from
     // your phone for every app". The same reasoning already reverted the same
     // call on the picker path (`2068fd4b`) and closed #520; it applies to an
     // explicit forget just as much, because the collateral is identical and the

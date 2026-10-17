@@ -6,11 +6,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/journal_fields.dart';
-import 'package:openstrap_edge/data/nutrition_store.dart';
-import 'package:openstrap_edge/ui2/screens/day_timeline.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/journal_fields.dart';
+import 'package:projectfit/data/nutrition_store.dart';
+import 'package:projectfit/ui2/screens/day_timeline.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 final int _day = DateTime(2026, 8, 14).millisecondsSinceEpoch ~/ 1000;
 int _at(int h, [int m = 0]) => _day + h * 3600 + m * 60;

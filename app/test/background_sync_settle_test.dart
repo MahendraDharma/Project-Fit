@@ -9,9 +9,9 @@ import 'dart:typed_data';
 import 'package:fake_async/fake_async.dart';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/sync/background_sync.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/sync/background_sync.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _noRearm(BleEngine _) async {}

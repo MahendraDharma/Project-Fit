@@ -3,7 +3,7 @@
 // fixed NUL-terminated offset (payload[16]); the old "first printable run" scan
 // latched onto the volatile binary header and surfaced "?*" junk on some firmware.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/import/backup_crypto.dart';
+import 'package:projectfit/import/backup_crypto.dart';
 
 // THE ROUND TRIP COMES FIRST — before the share sheet, before a settings
 // toggle, before auto-backup is allowed anywhere near this. A backup format
@@ -132,7 +132,7 @@ void main() {
         isA<BackupFormatException>().having(
           (e) => e.message,
           'message',
-          contains('not an OpenStrap backup'),
+          contains('not an ProjectFit backup'),
         ),
       ),
     );

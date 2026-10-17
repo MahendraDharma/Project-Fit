@@ -1,6 +1,6 @@
 # Development
 
-How to build and run OpenStrap Edge from source, and how the pieces fit together.
+How to build and run ProjectFit from source, and how the pieces fit together.
 For which repo a change belongs in, and tests, see
 [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -11,7 +11,7 @@ supported yet). The `protocol` and `analytics` packages are pulled from git, pin
 to exact commits in `pubspec.yaml`, so `pub get` fetches them for you.
 
 ```bash
-git clone https://github.com/OpenStrap/edge.git
+git clone https://github.com/MahendraDharma/Project-Fit.git
 cd edge
 cp .env.example .env
 flutter pub get
@@ -29,7 +29,7 @@ unsigned IPA instead of using TestFlight, see
 ## Install channels
 
 - **iOS:** public TestFlight beta. TestFlight gets new builds first.
-- **Android:** APK on [GitHub Releases](https://github.com/OpenStrap/edge/releases/latest).
+- **Android:** APK on [GitHub Releases](https://github.com/MahendraDharma/Project-Fit/releases/latest).
   Cut less often, so it can trail TestFlight by a version or two.
 - **F-Droid:** not listed yet. A build recipe that swaps out the Google-backed pieces
   (Firebase, ML Kit barcode scanning, Play Services location) is drafted in
@@ -41,9 +41,9 @@ unsigned IPA instead of using TestFlight, see
 wearable -> Bluetooth -> protocol decoder -> local storage -> analytics -> UI
 ```
 
-- [`openstrap_protocol`](https://github.com/OpenStrap/protocol) turns bytes from the
+- [`projectfit_protocol`](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/protocol) turns bytes from the
   device into records.
-- [`openstrap_analytics`](https://github.com/OpenStrap/analytics) turns those records
+- [`projectfit_analytics`](https://github.com/MahendraDharma/Project-Fit/tree/main/packages/analytics) turns those records
   into metrics, each with its own confidence score. Nothing gets filled in when the
   data isn't there.
 - This repo is the glue: Bluetooth reliability, local storage (versioned, so an

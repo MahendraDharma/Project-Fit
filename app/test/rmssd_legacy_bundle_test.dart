@@ -16,13 +16,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/data/day_label.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/models/payloads.dart';
-import 'package:openstrap_edge/ui2/screens/health_screen.dart' show HealthData;
-import 'package:openstrap_edge/widget/widget_service.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/data/day_label.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/models/payloads.dart';
+import 'package:projectfit/ui2/screens/health_screen.dart' show HealthData;
+import 'package:projectfit/widget/widget_service.dart';
 
 /// A pre-change bundle: rmssd fell back to the NREM median because the
 /// session estimator abstained.
@@ -67,7 +67,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_rmssd_legacy_bundle_test.db';
+    LocalDb.dbName = 'projectfit_rmssd_legacy_bundle_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );
@@ -109,7 +109,7 @@ void main() {
       return true;
     });
     messenger.setMockMethodCallHandler(
-        const MethodChannel('openstrap/ios_config'), (call) async {
+        const MethodChannel('projectfit/ios_config'), (call) async {
       return call.method == 'appGroupIdentifier' ? 'group.test' : null;
     });
   });
@@ -120,7 +120,7 @@ void main() {
     messenger.setMockMethodCallHandler(
         const MethodChannel('home_widget'), null);
     messenger.setMockMethodCallHandler(
-        const MethodChannel('openstrap/ios_config'), null);
+        const MethodChannel('projectfit/ios_config'), null);
   });
 
   test('every consumer serves the retained value, with its old confidence',

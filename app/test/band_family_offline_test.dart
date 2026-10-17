@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/state/app_state.dart';
-import 'package:openstrap_edge/sync/paired_device.dart' show PairedDevice;
-import 'package:openstrap_edge/ui2/profile/devices.dart' show liveSources;
+import 'package:projectfit/state/app_state.dart';
+import 'package:projectfit/sync/paired_device.dart' show PairedDevice;
+import 'package:projectfit/ui2/profile/devices.dart' show liveSources;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

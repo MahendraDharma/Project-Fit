@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/movement_floor_policy.dart';
-import 'package:openstrap_edge/data/day_label.dart' show dayLabelBefore;
+import 'package:projectfit/compute/movement_floor_policy.dart';
+import 'package:projectfit/data/day_label.dart' show dayLabelBefore;
 
 /// The frozen movement floor is ONE shared scalar that every day of a derive
 /// sweep reads and can write. `DerivationEngine.run()` dispatches days

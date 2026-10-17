@@ -1,4 +1,4 @@
-// SEAM: cloud removed. Implement against openstrap_analytics + db.dart in the local re-layer. See HANDOFF.
+// SEAM: cloud removed. Implement against projectfit_analytics + db.dart in the local re-layer. See HANDOFF.
 //
 // LocalRepository is the contract every UI screen consumes. It MIRRORS the old
 // ApiClient surface 1:1 (same method names, args, and return shapes — Map / List
@@ -8,7 +8,7 @@
 // Today every method throws UnimplementedError('re-layer: <method>'). The future
 // local re-layer will implement this interface by computing the same payloads from
 // `lib/data/db.dart` (the local raw SQLite store) through the pure-Dart
-// `openstrap_analytics` package — the exact metric functions the backend used to
+// `projectfit_analytics` package — the exact metric functions the backend used to
 // run server-side. The screen DATA layer is therefore a clean, localized seam:
 // nothing above this file references HTTP, JWT, or a backend URL anymore.
 
@@ -349,7 +349,7 @@ abstract class LocalRepository {
 
   // ── live HRV spot-check ───────────────────────────────────────────────────────
   /// Was POST /spotcheck (decode collected live RR frames → HRV). The re-layer
-  /// computes this on-device via openstrap_protocol.realtimeRr + openstrap_analytics.
+  /// computes this on-device via projectfit_protocol.realtimeRr + projectfit_analytics.
   Future<Map<String, dynamic>> spotCheck(List<String> records) =>
       throw UnimplementedError('re-layer: spotCheck');
 

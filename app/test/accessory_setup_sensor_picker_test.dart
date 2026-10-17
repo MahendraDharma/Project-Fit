@@ -1,5 +1,5 @@
 // The Dart half of the sensor picker (#371/#372): what goes over the
-// `openstrap/accessory_setup` channel for a `kAskPickerSensors` entry.
+// `projectfit/accessory_setup` channel for a `kAskPickerSensors` entry.
 //
 // The native side tells a SENSOR picker from the band picker by the argument's
 // shape alone — a `{"services": [...]}` map versus a Bool / null — and matches
@@ -8,12 +8,12 @@
 // sending exactly what it sent before.
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/accessory_setup.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/accessory_setup.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const channel = MethodChannel('openstrap/accessory_setup');
+  const channel = MethodChannel('projectfit/accessory_setup');
   final calls = <MethodCall>[];
   Object? reply = 'AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE';
 

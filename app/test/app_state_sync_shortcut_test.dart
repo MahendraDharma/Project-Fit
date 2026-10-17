@@ -11,9 +11,9 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/sync/reset_gate.dart';
-import 'package:openstrap_edge/sync/shortcut_sync_task.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/sync/reset_gate.dart';
+import 'package:projectfit/sync/shortcut_sync_task.dart';
 
 import 'support/app_state_sync_harness.dart';
 

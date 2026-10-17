@@ -17,7 +17,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
+import 'package:projectfit_analytics/onehz.dart' as ana;
 import 'package:provider/provider.dart';
 
 import '../../compute/vendor_sleep.dart' show vendorStagesReported;
@@ -616,7 +616,7 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
       // side by side as alternatives, never merged.
       if (d.deviceNights.isNotEmpty) ...[
         DeviceFilter(
-          allLabel: 'OpenStrap',
+          allLabel: 'ProjectFit',
           showWithOne: true,
           options: [
             for (final dn in d.deviceNights)

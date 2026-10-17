@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_responses.dart';
+import 'package:projectfit/coach/coach_responses.dart';
 
 const _apiBase = 'https://api.openai.com/v1';
 

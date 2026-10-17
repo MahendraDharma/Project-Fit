@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/auto_backup.dart';
-import 'package:openstrap_edge/state/prefs.dart';
+import 'package:projectfit/data/auto_backup.dart';
+import 'package:projectfit/state/prefs.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';

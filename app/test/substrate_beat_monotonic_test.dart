@@ -18,7 +18,7 @@
 // least it can be, and never the interval series.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/derive_prepare.dart';
+import 'package:projectfit/compute/derive_prepare.dart';
 
 const _t0 = 1788786610;
 

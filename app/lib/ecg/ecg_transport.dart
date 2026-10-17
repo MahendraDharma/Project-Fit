@@ -2,7 +2,7 @@
 // depends on THIS — a fake implements it in tests — and the adapter in
 // ble_ecg_transport.dart forwards to BleEngine 1:1.
 
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 import 'ecg_models.dart';
 

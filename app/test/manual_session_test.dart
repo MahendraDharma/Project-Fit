@@ -15,8 +15,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/compute/manual_session.dart';
-import 'package:openstrap_edge/compute/profile.dart';
+import 'package:projectfit/compute/manual_session.dart';
+import 'package:projectfit/compute/profile.dart';
 
 /// The ONE ceiling for [_profile] since TS-03a: estimatedMaxHr(30, 'gen4'|'gen5')
 /// = Tanaka 208 - 0.7*30 = 187. It bands the zones AND anchors TRIMP/Keytel;

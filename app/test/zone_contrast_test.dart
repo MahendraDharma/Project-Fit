@@ -18,7 +18,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/theme/tokens.dart';
+import 'package:projectfit/theme/tokens.dart';
 
 /// WCAG 2.1 relative luminance.
 double _luminance(Color c) {

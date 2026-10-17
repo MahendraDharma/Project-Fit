@@ -32,7 +32,7 @@
 
 import 'dart:io';
 
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
 
 const String kPlistPath = 'ios/Runner/Info.plist';
 

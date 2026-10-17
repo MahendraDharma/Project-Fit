@@ -79,7 +79,7 @@ class LocalBackupStorage implements BackupStorage {
 class AndroidBackupStorage implements BackupStorage {
   const AndroidBackupStorage(this.folder);
 
-  static const channel = MethodChannel('openstrap/backup_folder');
+  static const channel = MethodChannel('projectfit/backup_folder');
   final BackupFolder folder;
 
   static Future<BackupFolder?> pick() async {

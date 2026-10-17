@@ -178,7 +178,7 @@ class NoopBackupImporter {
     final actualPages = fileLen ~/ pageSize;
     if (actualPages <= declaredPages) return (path, null); // header agrees
 
-    final scratch = await Directory.systemTemp.createTemp('openstrap_noopfix_');
+    final scratch = await Directory.systemTemp.createTemp('projectfit_noopfix_');
     try {
       final repaired = p.join(scratch.path, 'repaired.sqlite');
       await File(path).copy(repaired); // OS-level copy, not materialised here

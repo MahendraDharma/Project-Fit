@@ -14,17 +14,17 @@ import 'dart:typed_data';
 
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/ble_engine.dart';
-import 'package:openstrap_edge/ble/ble_state.dart';
-import 'package:openstrap_edge/state/alarm_schedule.dart'
+import 'package:projectfit/ble/ble_engine.dart';
+import 'package:projectfit/ble/ble_state.dart';
+import 'package:projectfit/state/alarm_schedule.dart'
     show
         alarmGraceTimerDelay,
         alarmLatchAlertAtMs,
         alarmLatchAlertDelay,
         alarmLatchAlertResumeDelay,
         alarmLatchFailed;
-import 'package:openstrap_edge/sync/sync_policy.dart' show ClockRef;
-import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+import 'package:projectfit/sync/sync_policy.dart' show ClockRef;
+import 'package:projectfit_protocol/projectfit_protocol.dart' as proto;
 
 /// A gen5 link with no radio behind it, plus the seq of every command written.
 /// Same seam as `command_correlation_test.dart`: the reply is injected from

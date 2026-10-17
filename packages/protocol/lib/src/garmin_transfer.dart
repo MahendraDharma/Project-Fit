@@ -167,7 +167,7 @@ const int kGarminHostProtocolVersion = 113;
 /// host name, manufacturer and model as length-prefixed strings (each cut
 /// to 255 bytes), then a 0x01.
 Uint8List garminBuildDeviceInfoReply({
-  String name = 'OpenStrap',
+  String name = 'ProjectFit',
   String manufacturer = '',
   String model = '',
   int appVersion = 1,

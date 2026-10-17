@@ -18,8 +18,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
 
 class _FakePathProvider extends PathProviderPlatform {
   _FakePathProvider(this.root);
@@ -74,9 +74,9 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    tmp = await Directory.systemTemp.createTemp('openstrap_sw_');
+    tmp = await Directory.systemTemp.createTemp('projectfit_sw_');
     PathProviderPlatform.instance = _FakePathProvider(tmp.path);
-    LocalDb.dbName = 'openstrap_sleep_windows_test.db';
+    LocalDb.dbName = 'projectfit_sleep_windows_test.db';
     await databaseFactory.deleteDatabase(
       p.join(await databaseFactory.getDatabasesPath(), LocalDb.dbName),
     );

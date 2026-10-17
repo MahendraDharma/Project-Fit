@@ -32,8 +32,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class ScreenWake {
-  static const _android = MethodChannel('openstrap/edge_tracking');
-  static const _ios = MethodChannel('openstrap/ios_config');
+  static const _android = MethodChannel('projectfit/edge_tracking');
+  static const _ios = MethodChannel('projectfit/ios_config');
 
   /// What the PLATFORM last confirmed, not what we last asked for.
   ///

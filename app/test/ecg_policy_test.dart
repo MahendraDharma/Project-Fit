@@ -6,9 +6,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ecg/ecg_models.dart';
-import 'package:openstrap_edge/ecg/ecg_policy.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ecg/ecg_models.dart';
+import 'package:projectfit/ecg/ecg_policy.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 LabradorR17 pkt({
   required int seq,

@@ -12,8 +12,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/day_steps.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/screens/day_steps.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 /// Local 09:00 on an arbitrary day, as epoch seconds.
 final _nine = DateTime(2026, 8, 17, 9).millisecondsSinceEpoch ~/ 1000;

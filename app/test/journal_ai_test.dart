@@ -3,8 +3,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/ai/journal_ai.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/ai/journal_ai.dart';
+import 'package:projectfit/coach/coach_config.dart';
 
 void main() {
   group('parseJournalAiResponse', () {

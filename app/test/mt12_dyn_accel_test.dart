@@ -6,7 +6,7 @@
 // than 0, and the column arrives on an existing install without losing a row.
 // Nothing reads `dyn_accel_g`; there is no derived number to test.
 //
-// The REAL-DB half (`OPENSTRAP_TEST_DBS=/path/one.db,/path/two.db`) runs the
+// The REAL-DB half (`PROJECTFIT_TEST_DBS=/path/one.db,/path/two.db`) runs the
 // whole ladder over old-schema exports and counts every substrate table before
 // and after. Skipped when the env var is unset — those files are not in the
 // repo.
@@ -16,8 +16,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 Future<void> _useFreshDb(String name) async {
   await LocalDb.close();
@@ -88,7 +88,7 @@ void main() {
   });
 
   // Old-schema exports: the ladder, end to end, with a row census either side.
-  final real = (Platform.environment['OPENSTRAP_TEST_DBS'] ?? '')
+  final real = (Platform.environment['PROJECTFIT_TEST_DBS'] ?? '')
       .split(',')
       .where((s) => s.trim().isNotEmpty)
       .toList();

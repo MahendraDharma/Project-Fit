@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/detected_activities.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ui2/screens/detected_activities.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Future<void> _pump(WidgetTester t, int count) => t.pumpWidget(MaterialApp(
       theme: buildTheme(Brightness.light),

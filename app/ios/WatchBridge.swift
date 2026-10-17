@@ -7,7 +7,7 @@
 // watch over WCSession. The watch caches it locally and its glance renders from
 // that (there are no complications — see WatchStore.swift). One source of truth: we never recompute here, we mirror.
 //
-// Trigger: Dart calls the `syncWatch` method on the existing `openstrap/ios_config`
+// Trigger: Dart calls the `syncWatch` method on the existing `projectfit/ios_config`
 // channel right after it updates the widget (see WidgetService). We also push on
 // session (re)activation so the watch is fresh the moment it connects.
 
@@ -18,7 +18,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
   static let shared = WatchBridge()
 
   // The keys mirrored from WidgetService.push()/pushBattery(). Kept in lockstep
-  // with lib/widget/widget_service.dart and OpenStrapWidget.swift.
+  // with lib/widget/widget_service.dart and ProjectFitWidget.swift.
   private static let intKeys = [
     "readiness", "readiness_tier", "hrv", "hrv_baseline", "sleep_min",
     "sleep_need_min", "rhr", "updated_at", "batt_pct", "batt_at",
@@ -28,10 +28,10 @@ final class WatchBridge: NSObject, WCSessionDelegate {
   private static let boolKeys = ["has_data", "batt_charging", "theme_dark"]
 
   private var appGroupId: String {
-    Bundle.main.object(forInfoDictionaryKey: "OpenStrapAppGroupIdentifier") as? String
+    Bundle.main.object(forInfoDictionaryKey: "ProjectFitAppGroupIdentifier") as? String
       // Same fallback as AppGroup.swift and WidgetService.fallbackAppGroupId —
       // see the note there.
-      ?? "group.com.example.openstrap"
+      ?? "group.io.github.mahendradharma.projectfit"
   }
 
   /// Activate the WCSession. Safe to call once at launch; no-op if unsupported

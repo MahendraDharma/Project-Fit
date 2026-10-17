@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/l10n/app_localizations.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/l10n/app_localizations.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Future<void> _pump(WidgetTester tester, Locale locale) =>
     tester.pumpWidget(MaterialApp(

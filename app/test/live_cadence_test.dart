@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/ble/live_cadence.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/ble/live_cadence.dart';
 
 // Per-minute counts are RAW (pre-gain). The gait band is tested against the RAW
 // minute and `StepParams.gain` is applied once, to the median, at the end —

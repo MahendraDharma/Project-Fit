@@ -5,13 +5,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/notify/notification_center.dart';
-import 'package:openstrap_edge/notify/notification_event.dart';
-import 'package:openstrap_edge/notify/notification_ids.dart';
-import 'package:openstrap_edge/notify/notification_prefs.dart';
-import 'package:openstrap_edge/notify/notification_service.dart';
-import 'package:openstrap_edge/notify/tap_router.dart';
-import 'package:openstrap_edge/ui2/profile/settings.dart';
+import 'package:projectfit/notify/notification_center.dart';
+import 'package:projectfit/notify/notification_event.dart';
+import 'package:projectfit/notify/notification_ids.dart';
+import 'package:projectfit/notify/notification_prefs.dart';
+import 'package:projectfit/notify/notification_service.dart';
+import 'package:projectfit/notify/tap_router.dart';
+import 'package:projectfit/ui2/profile/settings.dart';
 
 NotificationEvent _ev(NotifCategory c, NotifPriority p) => NotificationEvent(
       dedupeKey: '2026-06-27:${c.name}',

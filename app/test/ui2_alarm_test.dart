@@ -12,8 +12,8 @@ import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:openstrap_edge/state/clock_format.dart';
-import 'package:openstrap_edge/ui2/profile/alarm.dart';
+import 'package:projectfit/state/clock_format.dart';
+import 'package:projectfit/ui2/profile/alarm.dart';
 
 void main() {
   group('what the screen may claim', () {

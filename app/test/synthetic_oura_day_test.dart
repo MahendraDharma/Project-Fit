@@ -13,15 +13,15 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/hrs_link.dart';
-import 'package:openstrap_edge/ble/oura_link.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart';
-import 'package:openstrap_edge/compute/inputs/oura_inputs.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/compute/vendor_sleep.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/hrs_link.dart';
+import 'package:projectfit/ble/oura_link.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/inputs/canonical.dart';
+import 'package:projectfit/compute/inputs/oura_inputs.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/compute/vendor_sleep.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

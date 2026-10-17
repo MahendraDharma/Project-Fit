@@ -4,11 +4,11 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ecg/ecg_guard_store.dart';
-import 'package:openstrap_edge/ecg/ecg_models.dart';
-import 'package:openstrap_edge/ecg/ecg_recovery.dart';
-import 'package:openstrap_edge/ecg/ecg_transport.dart';
-import 'package:openstrap_edge/ecg/ecg_waveform_buffer.dart';
+import 'package:projectfit/ecg/ecg_guard_store.dart';
+import 'package:projectfit/ecg/ecg_models.dart';
+import 'package:projectfit/ecg/ecg_recovery.dart';
+import 'package:projectfit/ecg/ecg_transport.dart';
+import 'package:projectfit/ecg/ecg_waveform_buffer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

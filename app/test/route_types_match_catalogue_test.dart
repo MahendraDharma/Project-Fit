@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/gps/route_types.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
+import 'package:projectfit/gps/route_types.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
 
 /// The bug this pins: `kRouteTypeKeys` used to live in app_state as
 /// {'run', 'cycle', 'walk', 'hike'} while the catalogue stores 'running',

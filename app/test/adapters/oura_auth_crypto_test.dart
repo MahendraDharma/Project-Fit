@@ -12,7 +12,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/oura.dart';
+import 'package:projectfit/ble/adapters/oura.dart';
 
 Uint8List _hex(String s) => Uint8List.fromList([
       for (var i = 0; i + 1 < s.length; i += 2)

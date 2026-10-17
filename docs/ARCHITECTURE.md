@@ -251,7 +251,7 @@ BLE state restoration untuk WHOOP, dan `BGTaskScheduler` untuk impor Apple Healt
 
 | Fase | Isi | Hasil |
 |---|---|---|
-| **0. Fondasi** | Fork/setup repo; CI; ganti nama & branding ke ProjectFit | App build di iPhone (TestFlight) |
+| **0. Fondasi** | Fork/setup repo; CI; ganti nama & branding ke ProjectFit ✅ (build iOS/Android belum diverifikasi) | App build di iPhone (TestFlight) |
 | **1. Data masuk** | WHOOP BLE (dari OpenStrap); impor FIT Garmin (+ Body Battery field 3); Apple Health reader; alat inventaris data ✅ (`tools/garmin_inventory`) | Semua data FR55 + WHOOP pengguna terbaca |
 | **2. Inti harian** | Kesiapan, Beban, Tidur + kebutuhan tidur, Stres dengan fusi multi-perangkat | Layar Hari Ini lengkap |
 | **3. Latihan** | ATL/CTL/TSB, VO₂max, Energi, zona, aktivitas GPS | Tab Latihan |

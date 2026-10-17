@@ -22,11 +22,11 @@ import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' show BluetoothDevice;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/hrs_link.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/ui2/profile/pair_sensor.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/hrs_link.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/ui2/profile/pair_sensor.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -208,7 +208,7 @@ void main() {
     });
 
     // #538: iOS removes AccessorySetupKit pairings for every app when
-    // OpenStrap is deleted. Say so before pairing, and only on iOS.
+    // ProjectFit is deleted. Say so before pairing, and only on iOS.
     for (final platform in [TargetPlatform.iOS, TargetPlatform.android]) {
       testWidgets('the uninstall-unpairs warning on ${platform.name}',
           (t) async {
@@ -216,7 +216,7 @@ void main() {
         await _pump(t,
             const PairSensorView(entryLabel: 'Bluetooth heart rate sensor'));
         expect(
-          find.textContaining('deleting OpenStrap also unpairs'),
+          find.textContaining('deleting ProjectFit also unpairs'),
           platform == TargetPlatform.iOS ? findsOneWidget : findsNothing,
         );
         debugDefaultTargetPlatformOverride = null;

@@ -12,7 +12,7 @@
 // This NEVER writes a row — it only ever SUGGESTS.
 //
 // HYBRID SEAM: every surviving bout is run through a [SportClassifier]; the
-// default returns "detected" (no sport typing). OpenStrap's motion-based HAR typer
+// default returns "detected" (no sport typing). ProjectFit's motion-based HAR typer
 // can be injected to type each bout when high-rate accel features exist.
 //
 // Pure / headless: no I/O, no clock, dart:math only. All ts/start/end are unix

@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:openstrap_edge/notify/notification_relay.dart';
-import 'package:openstrap_edge/ui2/profile/band_notifications.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/notify/notification_relay.dart';
+import 'package:projectfit/ui2/profile/band_notifications.dart';
+import 'package:projectfit/ui2/ui2.dart';
 
 Future<void> _pump(WidgetTester t, Widget w, {double scale = 1}) async {
   t.view.physicalSize = Size(390 * 3, 2400 * 3 * scale);

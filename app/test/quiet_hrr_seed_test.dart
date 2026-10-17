@@ -11,11 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:openstrap_edge/compute/quiet_level.dart';
-import 'package:openstrap_edge/compute/quiet_level_seed.dart';
-import 'package:openstrap_edge/compute/strain_backfill.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/series_codec.dart';
+import 'package:projectfit/compute/quiet_level.dart';
+import 'package:projectfit/compute/quiet_level_seed.dart';
+import 'package:projectfit/compute/strain_backfill.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/series_codec.dart';
 
 /// 400 wake minutes at 62 bpm, then 400 sleep minutes at 50 that are in
 /// `hr_curve` but not in `strain_curve` — so they must not enter the median.
@@ -84,7 +84,7 @@ void main() {
     setUpAll(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_quiet_hrr_seed_test.db';
+      LocalDb.dbName = 'projectfit_quiet_hrr_seed_test.db';
       final dir = await databaseFactory.getDatabasesPath();
       await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     });

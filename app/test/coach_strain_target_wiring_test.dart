@@ -12,8 +12,8 @@
 // production never emitted.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/local_repository_impl.dart';
-import 'package:openstrap_edge/models/payloads.dart';
+import 'package:projectfit/data/local_repository_impl.dart';
+import 'package:projectfit/models/payloads.dart';
 
 /// A cross-day map shaped exactly like `crossDayPipeline` emits.
 Map<String, dynamic> crossDayWith(Object? strainCoachValue) => {

@@ -14,9 +14,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:test/test.dart';
-import 'package:openstrap_analytics/src/onehz/types.dart';
-import 'package:openstrap_analytics/src/onehz/motion/motion.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit_analytics/src/onehz/types.dart';
+import 'package:projectfit_analytics/src/onehz/motion/motion.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 List<AccelSample> _still(int n, double x, double y, double z) => [
       for (var i = 0; i < n; i++) AccelSample(i * 1000.0, x, y, z),

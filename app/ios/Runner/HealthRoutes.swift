@@ -17,7 +17,7 @@ import HealthKit
 // the plugin emits for the same sample ("\(sample.uuid)"), so the join is exact
 // rather than a start-time match with a tolerance.
 enum HealthRouteBridge {
-  private static let channelName = "openstrap/health_routes"
+  private static let channelName = "projectfit/health_routes"
   private static let store = HKHealthStore()
 
   /// One point per this many seconds. HKWorkoutRoute delivers roughly 1 Hz, so
@@ -101,7 +101,7 @@ enum HealthRouteBridge {
       // HealthKit callbacks arrive on arbitrary threads and `out` is a value
       // type, so appending from several of them at once is a data race.
       let group = DispatchGroup()
-      let queue = DispatchQueue(label: "openstrap.health.routes")
+      let queue = DispatchQueue(label: "projectfit.health.routes")
       var out: [[String: Any]] = []
       for workout in workouts {
         group.enter()
@@ -135,7 +135,7 @@ enum HealthRouteBridge {
         return
       }
       let group = DispatchGroup()
-      let queue = DispatchQueue(label: "openstrap.health.route.points")
+      let queue = DispatchQueue(label: "projectfit.health.route.points")
       var all: [CLLocation] = []
       for route in routes {
         group.enter()

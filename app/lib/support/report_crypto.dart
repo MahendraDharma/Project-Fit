@@ -3,7 +3,7 @@
 //
 //   ephemeral P-256 keypair → ECDH with our public key (32-byte x)
 //   → HKDF-SHA256(salt = ephemeral public key, 65 bytes uncompressed,
-//                 info = "openstrap-report-v1", 32 bytes)
+//                 info = "projectfit-report-v1", 32 bytes)
 //   → AES-256-GCM, random 12-byte nonce, no AAD.
 //
 //   blob = "OSR1" | eph_pub(65) | nonce(12) | ciphertext || tag(16)
@@ -17,13 +17,14 @@ import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
 
-/// The maintainers' report key, P-256 uncompressed point. The private half
-/// never ships in any repo.
-const String kReportPublicKeyB64 =
-    'BPMdcMa2jzNju8JAdSFLFwRuhvEDcaPPUmFbamtbKR2kb7SEml4HfuXf1nRg/SKZNFrG/TBbjx9Jai+/BLHbmhc=';
+/// The maintainers' report key, P-256 uncompressed point (base64), set per
+/// build: `--dart-define=REPORT_PUBLIC_KEY=...`. The private half never ships
+/// in any repo. Empty by default: ProjectFit has no report service yet, and the
+/// key this replaced belonged to the upstream project's maintainers.
+const String kReportPublicKeyB64 = String.fromEnvironment('REPORT_PUBLIC_KEY');
 
 const List<int> kOsr1Magic = [0x4F, 0x53, 0x52, 0x31]; // "OSR1"
-const String _info = 'openstrap-report-v1';
+const String _info = 'projectfit-report-v1';
 
 final ECDomainParameters _p256 = ECDomainParameters('secp256r1');
 

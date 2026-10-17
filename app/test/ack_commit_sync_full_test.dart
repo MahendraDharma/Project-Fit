@@ -17,8 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common/sqflite_logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/models.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/models.dart';
 
 void main() {
   // Every `synchronous=…` statement executed on any connection, in order.
@@ -38,7 +38,7 @@ void main() {
         },
       ),
     );
-    LocalDb.dbName = 'openstrap_ack_sync_full_test.db';
+    LocalDb.dbName = 'projectfit_ack_sync_full_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     // Force the open now so its onConfigure PRAGMAs aren't counted in per-test

@@ -1,5 +1,5 @@
 // M5 §2.2's real-export payload-diff gate, run against the actual export DB
-// (openstrap_export_1788006514220.db, the one M0/M3 used).
+// (projectfit_export_1788006514220.db, the one M0/M3 used).
 //
 // The literal spec §2.2 SQL (`day_result` at algo_version=86 vs 87) is
 // VACUOUS on this specific export: `SELECT MAX(algo_version) FROM
@@ -27,12 +27,12 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:openstrap_edge/compute/derivation_engine.dart';
-import 'package:openstrap_edge/compute/profile.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/compute/derivation_engine.dart';
+import 'package:projectfit/compute/profile.dart';
+import 'package:projectfit/data/db.dart';
 
 const _sourcePath =
-    '/Users/abdulsahil/Downloads/openstrap_export_1788006514220.db';
+    '/Users/abdulsahil/Downloads/projectfit_export_1788006514220.db';
 
 void main() {
   sqfliteFfiInit();

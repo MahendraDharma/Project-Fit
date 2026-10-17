@@ -1,0 +1,9 @@
+[Unit]
+Description=Pull ProjectFit report metadata into local SQLite
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/projectfit-report-backup.env
+ExecStart=/opt/projectfit-report-backup/backup_to_oracle.sh

@@ -4,10 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ui2/screens/home_screen.dart' show ChartPoint;
-import 'package:openstrap_edge/ui2/screens/month_grid.dart';
-import 'package:openstrap_edge/ui2/trend.dart';
-import 'package:openstrap_edge/ui2/ui2.dart' show buildTheme;
+import 'package:projectfit/ui2/screens/home_screen.dart' show ChartPoint;
+import 'package:projectfit/ui2/screens/month_grid.dart';
+import 'package:projectfit/ui2/trend.dart';
+import 'package:projectfit/ui2/ui2.dart' show buildTheme;
 
 void main() {
   group('a cell is a place against your own usual range', () {

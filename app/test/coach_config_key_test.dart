@@ -12,7 +12,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_config.dart';
+import 'package:projectfit/coach/coach_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Stands in for the keychain: records the options every write asks for, and

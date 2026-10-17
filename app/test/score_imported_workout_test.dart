@@ -5,10 +5,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/data/local_repository.dart';
-import 'package:openstrap_edge/ui2/activity/catalogue.dart';
-import 'package:openstrap_edge/ui2/screens/log_workout.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/data/local_repository.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
+import 'package:projectfit/ui2/screens/log_workout.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -67,7 +67,7 @@ void main() {
     setUp(() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
-      LocalDb.dbName = 'openstrap_score_imported_test.db';
+      LocalDb.dbName = 'projectfit_score_imported_test.db';
       dir = Directory(await databaseFactory.getDatabasesPath());
       await LocalDb.close();
       await databaseFactory.deleteDatabase(p.join(dir.path, LocalDb.dbName));

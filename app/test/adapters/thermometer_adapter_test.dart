@@ -3,9 +3,9 @@
 // the generator before the thermometer goes quiet.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/adapter.dart';
-import 'package:openstrap_edge/ble/adapters/thermometer.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/adapter.dart';
+import 'package:projectfit/ble/adapters/thermometer.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 
 /// 36.52 °C, flags 0x00 (Celsius, no stamp, no site).
 const List<int> kReading = <int>[0x00, 0x44, 0x0E, 0x00, 0xFE];

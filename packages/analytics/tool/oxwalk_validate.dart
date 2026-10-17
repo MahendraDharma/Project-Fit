@@ -51,7 +51,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:openstrap_analytics/onehz.dart';
+import 'package:projectfit_analytics/onehz.dart';
 
 const _sets = <String, double>{
   'Wrist_100Hz': 100,

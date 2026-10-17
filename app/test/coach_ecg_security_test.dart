@@ -6,8 +6,8 @@
 // its `device_id` and `notes` columns out. Both facts are pinned here.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/coach/coach_db.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit/coach/coach_db.dart';
+import 'package:projectfit/data/db.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -15,7 +15,7 @@ void main() {
   setUpAll(() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
-    LocalDb.dbName = 'openstrap_coach_ecg_security_test.db';
+    LocalDb.dbName = 'projectfit_coach_ecg_security_test.db';
     final dir = await databaseFactory.getDatabasesPath();
     await databaseFactory.deleteDatabase(p.join(dir, LocalDb.dbName));
     await LocalDb.insertEcgReading(

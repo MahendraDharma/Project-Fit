@@ -62,9 +62,9 @@ private struct ArmState {
 class BleRestoreManager: NSObject {
   static let shared = BleRestoreManager()
 
-  private static let restoreId = "openstrap.ble.restore"
-  private static let bandUUIDKey = "openstrap.ble.band_uuid"   // LEGACY scalar. Never removed.
-  private static let bandUUIDsKey = "openstrap.ble.band_uuids"  // [String], the new truth.
+  private static let restoreId = "projectfit.ble.restore"
+  private static let bandUUIDKey = "projectfit.ble.band_uuid"   // LEGACY scalar. Never removed.
+  private static let bandUUIDsKey = "projectfit.ble.band_uuids"  // [String], the new truth.
 
   private var central: CBCentralManager?
   private var bandUUID: UUID?
@@ -143,7 +143,7 @@ class BleRestoreManager: NSObject {
 
   /// Wire the Dart channel. Safe on the implicit engine too (background launch).
   func attach(messenger: FlutterBinaryMessenger) {
-    let ch = FlutterMethodChannel(name: "openstrap/ble_restore", binaryMessenger: messenger)
+    let ch = FlutterMethodChannel(name: "projectfit/ble_restore", binaryMessenger: messenger)
     ch.setMethodCallHandler { [weak self] call, result in
       guard let self = self else { result(nil); return }
       switch call.method {
@@ -426,7 +426,7 @@ class BleRestoreManager: NSObject {
 
   private func beginBackground() {
     endBackground()
-    bgTask = UIApplication.shared.beginBackgroundTask(withName: "openstrap.bleSync") { [weak self] in
+    bgTask = UIApplication.shared.beginBackgroundTask(withName: "projectfit.bleSync") { [weak self] in
       self?.endBackground()
     }
   }

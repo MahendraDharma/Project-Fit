@@ -4,7 +4,7 @@
 // before notifying) so the 546 `AppColors.x` call sites always resolve to the
 // mode being rendered, and it drives the system status-bar icon brightness.
 //
-// First launch follows the OS: if the phone is in dark mode, OpenStrap opens in
+// First launch follows the OS: if the phone is in dark mode, ProjectFit opens in
 // "Ember on Char" from the login/signup screen onward. The choice is persisted
 // and editable later from onboarding and Profile; UI updates live on change.
 
@@ -76,8 +76,8 @@ class ThemeController extends ChangeNotifier {
   ThemeMode get materialThemeMode =>
       isDark ? ThemeMode.dark : ThemeMode.light;
 
-  ThemeData get lightTheme => buildOpenStrapTheme(kLightPalette);
-  ThemeData get darkTheme => buildOpenStrapTheme(kDarkPalette);
+  ThemeData get lightTheme => buildProjectFitTheme(kLightPalette);
+  ThemeData get darkTheme => buildProjectFitTheme(kDarkPalette);
 
   /// User picked a mode (onboarding / profile). Updates live + persists.
   Future<void> setChoice(AppThemeChoice choice) async {

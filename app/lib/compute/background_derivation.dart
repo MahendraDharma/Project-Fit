@@ -22,5 +22,5 @@
 // watchdog, which shares the same OS-level WorkManager instance and would
 // otherwise get wiped by an unscoped cancelAll()).
 
-const String kHeavyDeriveTaskName = 'openstrap.derive.heavy';
-const String kSyncTaskName = 'openstrap.sync';
+const String kHeavyDeriveTaskName = 'projectfit.derive.heavy';
+const String kSyncTaskName = 'projectfit.sync';

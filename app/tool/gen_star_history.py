@@ -4,7 +4,7 @@
 Why self-hosted rather than star-history.com or starchart.cc:
 
   * star-history.com refuses these repos outright — it answers
-    "GitHub restricted starred-data access for openstrap/edge".
+    "GitHub restricted starred-data access for projectfit/edge".
   * starchart.cc rate-limits anonymous callers, so the image intermittently
     renders as a broken graphic.
   * Both would make every visitor's browser call a third party. GitHub proxies
@@ -27,18 +27,18 @@ from datetime import datetime, timezone
 
 # Which repos to plot. Defaults to edge alone, and that default is load-bearing:
 # a workflow's built-in GITHUB_TOKEN is scoped to its OWN repository, so reading
-# OpenStrap/protocol from a job running in OpenStrap/edge returns
+# ProjectFit/protocol from a job running in MahendraDharma/Project-Fit returns
 # 403 "Resource not accessible by integration". Charting siblings needs a PAT
 # with read access to them, so it's opt-in rather than a default that fails:
 #
-#   STAR_HISTORY_REPOS="OpenStrap/edge,OpenStrap/protocol" python3 tool/gen_star_history.py
+#   STAR_HISTORY_REPOS="MahendraDharma/Project-Fit,ProjectFit/protocol" python3 tool/gen_star_history.py
 #
 # Keep whatever CI uses identical to what you run locally. If the repo set
 # differs between the two, the committed SVG flip-flops and the workflow commits
 # a revision every week — the churn the fail-closed/no-change guards exist to
 # prevent.
 REPOS = [r.strip() for r in
-         os.environ.get("STAR_HISTORY_REPOS", "OpenStrap/edge").split(",")
+         os.environ.get("STAR_HISTORY_REPOS", "MahendraDharma/Project-Fit").split(",")
          if r.strip()]
 OUT = "docs/star-history.svg"
 

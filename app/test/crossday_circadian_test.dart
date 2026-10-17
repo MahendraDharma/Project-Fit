@@ -12,7 +12,7 @@
 //   * a note that does not say what the metric was actually computed FROM.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/crossday_pipeline.dart';
+import 'package:projectfit/compute/crossday_pipeline.dart';
 
 /// A physiologically-shaped 24 h HR profile: nocturnal trough, daytime plateau.
 /// [phaseShiftH] moves the whole rhythm later, [flat] removes it entirely.

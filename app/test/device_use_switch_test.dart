@@ -5,11 +5,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/compute/inputs/canonical.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_edge/state/prefs.dart';
-import 'package:openstrap_edge/ui2/profile/wearable_numbers.dart';
-import 'package:openstrap_edge/ui2/ui2.dart';
+import 'package:projectfit/compute/inputs/canonical.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit/state/prefs.dart';
+import 'package:projectfit/ui2/profile/wearable_numbers.dart';
+import 'package:projectfit/ui2/ui2.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';

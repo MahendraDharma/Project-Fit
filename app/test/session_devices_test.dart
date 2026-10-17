@@ -4,10 +4,10 @@
 import 'dart:io' show pid;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/ble/adapters/_registry.dart';
-import 'package:openstrap_edge/ble/session_link.dart';
-import 'package:openstrap_edge/data/db.dart';
-import 'package:openstrap_protocol/openstrap_protocol.dart';
+import 'package:projectfit/ble/adapters/_registry.dart';
+import 'package:projectfit/ble/session_link.dart';
+import 'package:projectfit/data/db.dart';
+import 'package:projectfit_protocol/projectfit_protocol.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

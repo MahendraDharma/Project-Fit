@@ -10,8 +10,8 @@
 // more trust than the bare absence did.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_edge/models/metric.dart';
-import 'package:openstrap_edge/ui2/grammar.dart';
+import 'package:projectfit/models/metric.dart';
+import 'package:projectfit/ui2/grammar.dart';
 
 /// Local midnight of an arbitrary day, so the windows below read like a night.
 final _mid = DateTime(2026, 8, 14).millisecondsSinceEpoch ~/ 1000;

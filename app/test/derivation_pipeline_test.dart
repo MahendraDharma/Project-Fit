@@ -11,10 +11,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openstrap_analytics/onehz.dart' as ana;
-import 'package:openstrap_edge/compute/onehz_pipeline.dart';
-import 'package:openstrap_edge/compute/substrate.dart';
-import 'package:openstrap_edge/data/db.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
+import 'package:projectfit/compute/onehz_pipeline.dart';
+import 'package:projectfit/compute/substrate.dart';
+import 'package:projectfit/data/db.dart';
 
 void main() {
   File? fixtureFile() {
