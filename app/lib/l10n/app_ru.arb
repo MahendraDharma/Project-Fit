@@ -7515,5 +7515,35 @@
         "type": "String"
       }
     }
-  }
+  },
+  "alarmSleepGoalRowTitle": "Будить по цели сна",
+  "alarmSleepGoalRowSub": "Разбудить раньше, когда отдых за эту ночь достигнет вашей потребности во сне, а не на лёгкой фазе. Нужна изученная потребность во сне.",
+  "monthlyReportTitle": "Ваш месяц",
+  "monthlyReportSub": "ПОСЛЕДНИЕ 30 ДНЕЙ ПРОТИВ 30 ДНЕЙ ДО НИХ",
+  "monthlyReportLinkSub": "Что изменилось, а что было лишь обычными колебаниями",
+  "monthlyReportFootnote": "Изменение называется, только если оно больше 0,2 вашего обычного разброса от дня ко дню в предыдущем месяце (Хопкинс). Меньшие различия — обычные колебания и считаются стабильными.",
+  "monthlyReportNotEnough": "Пока недостаточно дней",
+  "monthlyReportNotEnoughDetail": "{have} из {need} дней с данными в менее полном месяце",
+  "@monthlyReportNotEnoughDetail": {"placeholders": {"have": {"type": "int"}, "need": {"type": "int"}}},
+  "monthlyReportWas": "было {previous} · {currentDays} и {previousDays} дней с данными",
+  "@monthlyReportWas": {"placeholders": {"previous": {"type": "String"}, "currentDays": {"type": "int"}, "previousDays": {"type": "int"}}},
+  "workoutLoadRatioLabel": "Соотношение нагрузки",
+  "workoutLoadZoneLow": "низкое",
+  "workoutLoadZoneOptimal": "оптимальное",
+  "workoutLoadZoneHigh": "высокое",
+  "workoutLoadZoneVeryHigh": "очень высокое",
+  "workoutLoadRatioFootnote": "Соотношение нагрузки — ваши последние 7 дней против последних шести недель (зоны Габбетта: 0,8–1,3 оптимально). Оно описывает неделю и не предсказывает травмы.",
+  "hrvStatusTitle": "Статус ВСР",
+  "hrvStatusBalanced": "В вашем диапазоне",
+  "hrvStatusAbove": "Выше вашего диапазона",
+  "hrvStatusBelow": "Ниже вашего диапазона",
+  "hrvStatusWeek": "Среднее за 7 ночей {week} мс · ваш обычный диапазон {low}–{high} мс",
+  "@hrvStatusWeek": {"placeholders": {"week": {"type": "String"}, "low": {"type": "String"}, "high": {"type": "String"}}},
+  "hrvStatusFootnote": "ВСР этой недели во сне против 60 ночей до неё. Тренировки, болезнь, алкоголь и поездки могут её сдвигать, и здесь их не различить.",
+  "hrvStatusLearningTitle": "Статус ВСР ещё обучается",
+  "hrvStatusLearningBody": "Нужны четыре ночи на этой неделе и две недели ночей до неё.",
+  "workoutMuscleSetsTitle": "Подходы по мышцам за 7 дней",
+  "workoutMuscleSetsFootnote": "Подход считается как 1 для основных мышц упражнения и как 0,5 для вспомогательных. ",
+  "workoutMuscleSetsNoRpe": "Оценивайте подходы по RPE, чтобы видеть, сколько из них были тяжёлыми.",
+  "workoutMuscleSetsHard": "Второе число — тяжёлые подходы: RPE 7 и выше, только там, где вы оценили подход."
 }
