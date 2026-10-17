@@ -1,6 +1,6 @@
 # Audit Kesetaraan Fitur: WHOOP vs ProjectFit
 
-Status: v0.1 · 2026-10-17 · Perangkat acuan: **WHOOP 4.0**
+Status: v0.2 · 2026-10-17 · Perangkat acuan: **WHOOP 4.0**
 
 Tujuan: daftar fitur aplikasi WHOOP, apa yang sudah ada di ProjectFit (warisan OpenStrap),
 apa yang kurang, dan apa yang tidak bisa dibuat secara jujur dari data yang tersedia.
@@ -15,9 +15,9 @@ Legenda: ✅ setara · 🟡 sebagian · ❌ belum ada · ⛔ tidak bisa dibuat j
 
 | Status | Jumlah | Fitur |
 |---|---|---|
-| ✅ | 12 | Recovery, Strain 0–21, Strain target, Sleep performance, Sleep need & debt, konsistensi tidur, Journal, deteksi aktivitas, zona HR, rekap mingguan, Coach AI, langkah |
+| ✅ | 15 | Recovery, Strain 0–21, Strain target, Sleep performance, Sleep need & debt, konsistensi tidur, Journal, deteksi aktivitas, zona HR, rekap mingguan, Coach AI, langkah, **Strength Trainer (set per otot)**, **laporan bulanan**, **alarm bangun saat target tidur** |
 | 🟡 | 8 | Restorative sleep, Sleep Planner, alarm haptic, Stress Monitor, Health Monitor (HR/HRV/RHR/napas ada; SpO₂ & suhu belum), siklus menstruasi, Heart Screener (ECG), Advanced Labs |
-| ❌ | 3 | Strength Trainer (beban otot), Monthly Performance Assessment, mode alarm "bangun saat target tercapai" |
+| ❌ | 1 | Alarm "bangun saat Recovery hijau" |
 | ⛔ | 3 | Healthspan / WHOOP Age, SpO₂ & suhu kulit WHOOP 4.0 (sampai field-nya teridentifikasi), Blood Pressure Insights |
 
 **Temuan terpenting:** pada WHOOP 4.0, SpO₂ dan suhu kulit **tidak bisa dibaca** dari rekaman
@@ -43,7 +43,8 @@ Ini target reverse engineering nomor satu.
 |---|---|---|---|
 | **Sleep Planner** | Rekomendasi jam tidur dari kebutuhan & jadwal | Target bedtime di Sleep Coach (`wellnessTargetBedtime`) dan `alertness_forecast` | 🟡 belum dibandingkan alurnya |
 | **Alarm haptic** | Jam tetap, setelah target tidur tercapai, atau saat Recovery hijau | Jam tetap + jendela pintar (`smartWindowMinutes`), getar lewat strap | 🟡 |
-| Bangun saat target tidur / Recovery tercapai | Ada | Tidak ada | ❌ |
+| Bangun saat target tidur tercapai | Ada | Mode "Wake at sleep goal" di dalam jendela smart wake: buzz saat istirahat malam ini (van Hees) mencapai sleep need yang dipelajari; alarm cadangan tidak berubah (`state/alarm_schedule.dart`, `state/smart_wake.dart`) | ✅ |
+| Bangun saat Recovery hijau | Ada | Belum ada (Recovery baru final setelah tidur selesai) | ❌ |
 
 ## 3. Kesehatan
 
@@ -63,7 +64,7 @@ Ini target reverse engineering nomor satu.
 | Fitur WHOOP | Di WHOOP | Di ProjectFit | Status |
 |---|---|---|---|
 | Deteksi aktivitas otomatis | Ada | `workout/auto_detect.dart` | ✅ |
-| **Strength Trainer** (beban otot) | Set, repetisi, berat → muscular load digabung ke Strain | Log latihan beban ada (katalog wger, `log_workout.dart`), tapi tidak ada metrik beban otot | ❌ |
+| **Strength Trainer** (beban otot) | Set, repetisi, berat → muscular load digabung ke Strain | Set per kelompok otot 7 hari (primer 1, sekunder 0,5) + set berat (RPE ≥ 7) + tonase; sengaja **tidak** digabung ke Strain karena tidak ada nilai tukar terbitan (`analytics/.../workout/muscle_volume.dart`, `ui2/activity/muscle_sets.dart`) | ✅ metode berbeda |
 | Zona HR | Ada | `workout/hr_zones.dart` | ✅ |
 | Langkah | Ada | Dari gerak strap + pedometer HP (`motion/steps.dart`, `health/phone_pedometer.dart`) | ✅ |
 
@@ -73,24 +74,35 @@ Ini target reverse engineering nomor satu.
 |---|---|---|---|
 | **Journal** | Kebiasaan → dampak ke Recovery/tidur | Jurnal + uji asosiasi (`human/associations.dart`, `data/journal_fields.dart`) | ✅ |
 | Rekap mingguan | Ada | Notifikasi rekap mingguan | ✅ |
-| **Monthly Performance Assessment** | Laporan bulanan tren tidur, recovery, strain | Tidak ada | ❌ |
+| **Monthly Performance Assessment** | Laporan bulanan tren tidur, recovery, strain | Layar "Your month": 30 hari vs 30 hari sebelumnya untuk 7 metrik; perubahan hanya disebut bila melewati SWC 0,2 SD (Hopkins 2004) (`ui2/screens/monthly_report.dart`) | ✅ |
 | **Healthspan**: WHOOP Age & Pace of Aging | 9 input: durasi & konsistensi tidur, langkah, menit zona HR, aktivitas kekuatan, VO₂max, RHR, massa tubuh tanpa lemak | **Sengaja dihapus OpenStrap**: versi lama hanya RHR yang dihitung dua kali, dan VO₂max-nya k/RHR. Sebagian besar input tersedia, tetapi VO₂max tidak bisa diestimasi jujur dari data ini | ⛔ sebagai satu angka "usia" |
 | **WHOOP Coach** (AI) | Ada | Coach AI dengan kunci milik pengguna, hanya membaca view yang diizinkan (`lib/coach/`) | ✅ |
 | Teams / komunitas | Ada | Di luar lingkup (local-first) | — |
 
-## 6. Daftar kerja yang diusulkan
+## 6. Fitur ala Garmin Connect untuk WHOOP 4.0
+
+| Fitur Garmin | Di ProjectFit dengan WHOOP 4.0 | Status |
+|---|---|---|
+| **HRV Status** | Rata-rata ln-RMSSD 7 malam vs baseline 60 malam ± SWC (Plews 2012/2013); seimbang / di atas / di bawah (`clinical/hrv_status.dart`, `ui2/screens/hrv_status_card.dart`, tab Health) | ✅ |
+| **Training load / load ratio** | ATL 7 hari & CTL 42 hari (sudah ada) + rasio akut:kronis dengan zona Gabbett 2016; diberi catatan kritik Impellizzeri 2020 (`clinical/load_ratio.dart`, kartu beban di tab Workout) | ✅ |
+| **Training Readiness** | Setara Readiness (§1) | ✅ |
+| **Stress** | Baevsky Stress Index (§3) | 🟡 skala berbeda |
+| **Sleep Score** | Sleep performance + staging (§1) | 🟡 |
+| **Body Battery** | Tidak dibuat: metode Firstbeat tidak dipublikasikan, dan versi buatan sendiri berarti konstanta yang dipilih tanpa dasar | ⛔ |
+| **VO₂max, Race Predictor** | Tidak dibuat: estimasi VO₂max lama OpenStrap hanya k/RHR (dihapus); butuh data kecepatan lari GPS untuk metode yang jujur | ❌ |
+
+## 7. Daftar kerja yang diusulkan
 
 | # | Pekerjaan | Kenapa | Cara | Butuh |
 |---|---|---|---|---|
 | 1 | **Identifikasi field suhu kulit & SpO₂ WHOOP 4.0** | Membuka Health Monitor, sinyal sakit dari suhu, insight siklus | Rekam data sambil mengukur pembanding (termometer kulit, oksimeter) lalu korelasi per byte, metode yang sama dengan OpenStrap. Ditambah REA pada APK WHOOP Android untuk melihat apakah aplikasi men-decode field ini atau mengirim byte mentah ke cloud | WHOOP 4.0 Anda, alat pembanding, akses HP Android untuk APK |
-| 2 | **Beban otot dari latihan beban** | Melengkapi Strain untuk latihan kekuatan | Volume load (set × repetisi × beban) dan session-RPE × durasi (Foster 2001), digabung ke Strain dengan bobot yang dinyatakan terbuka | Kode saja |
-| 3 | **Alarm: bangun saat target tidur tercapai** | Fitur alarm favorit WHOOP | Alarm pintar yang sudah ada + sleep need yang sudah dihitung | Kode saja + uji di strap |
+| ~~2~~ | ~~**Beban otot dari latihan beban**~~ ✅ | Melengkapi Strain untuk latihan kekuatan | Volume load (set × repetisi × beban) dan session-RPE × durasi (Foster 2001), digabung ke Strain dengan bobot yang dinyatakan terbuka | Kode saja |
+| ~~3~~ | ~~**Alarm: bangun saat target tidur tercapai**~~ ✅ | Fitur alarm favorit WHOOP | Alarm pintar yang sudah ada + sleep need yang sudah dihitung | Kode saja + uji di strap |
 | 4 | **Healthspan versi jujur** | Fitur WHOOP terbaru | Tampilkan tiap input terhadap ambang pedoman (mis. 150 menit zona sedang/minggu, 7–9 jam tidur, langkah harian), **tanpa** meringkasnya jadi satu "usia" | Kode + desain |
-| 5 | **Laporan bulanan** | Ringkasan jangka panjang | Agregasi metrik yang sudah ada per bulan | Kode saja |
+| ~~5~~ | ~~**Laporan bulanan**~~ ✅ | Ringkasan jangka panjang | Agregasi metrik yang sudah ada per bulan | Kode saja |
 | 6 | Validasi Restorative sleep & Sleep Planner | Pastikan alurnya setara | Bandingkan dengan aplikasi WHOOP di malam yang sama | WHOOP 4.0 + aplikasi WHOOP |
 
-Nomor 2, 3 dan 5 bisa dikerjakan sekarang tanpa perangkat. Nomor 1 paling berdampak, tetapi
-butuh data dari strap Anda.
+Nomor 2, 3 dan 5 sudah selesai. Nomor 1 paling berdampak, tetapi butuh data dari strap Anda.
 
 ## Referensi
 
