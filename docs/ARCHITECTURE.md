@@ -1,6 +1,8 @@
 # Project-Fit — Rancangan Arsitektur
 
-Status: **draf v0.1** · Bahasa kerja: Indonesia · Terakhir diperbarui: 2026-10-17
+Status: **draf v0.2** · Bahasa kerja: Indonesia · Terakhir diperbarui: 2026-10-17
+
+**Keputusan yang sudah diambil:** fork OpenStrap (AGPL-3.0) · nama aplikasi **ProjectFit**.
 
 Satu aplikasi yang menggabungkan apa yang dilakukan tiga aplikasi:
 
@@ -29,10 +31,9 @@ Repo inti OpenStrap (`edge`, `protocol`, `analytics`) berlisensi **AGPL-3.0**. `
 | Merek | Wajib ganti nama, logo dan ikon (lihat `TRADEMARKS.md` OpenStrap). Boleh menulis "berbasis OpenStrap" | Tidak terikat |
 | Dokumen protokol | Bebas dipakai | `research/PROTOCOL.md` (MIT) tetap boleh dipakai sebagai referensi |
 
-**Rekomendasi: A (fork)**, kecuali aplikasi ini harus closed-source. Alasannya: nilai terbesar
+**Diputuskan: A (fork).** ProjectFit berlisensi AGPL-3.0 (lihat `LICENSE`). Alasannya: nilai terbesar
 OpenStrap justru ada di bagian yang paling mahal untuk dibuat ulang (decoder yang sudah diuji di
-perangkat asli dan mesin metrik). Keputusan ini **milik pemilik proyek** dan harus diambil sebelum
-kode pertama ditulis.
+perangkat asli dan mesin metrik).
 
 Catatan yang sama berlaku untuk **Gadgetbridge** (AGPL-3.0): kalau jalan B dipilih, Gadgetbridge
 hanya boleh dibaca sebagai referensi perilaku protokol, kodenya tidak disalin.
@@ -250,8 +251,8 @@ BLE state restoration untuk WHOOP, dan `BGTaskScheduler` untuk impor Apple Healt
 
 | Fase | Isi | Hasil |
 |---|---|---|
-| **0. Fondasi** | Putuskan §0.1; fork/setup repo; CI; ganti nama & branding | App build di iPhone (TestFlight) |
-| **1. Data masuk** | WHOOP BLE (dari OpenStrap); impor FIT Garmin (+ Body Battery field 3); Apple Health reader; alat inventaris data | Semua data FR55 + WHOOP pengguna terbaca |
+| **0. Fondasi** | Fork/setup repo; CI; ganti nama & branding ke ProjectFit | App build di iPhone (TestFlight) |
+| **1. Data masuk** | WHOOP BLE (dari OpenStrap); impor FIT Garmin (+ Body Battery field 3); Apple Health reader; alat inventaris data ✅ (`tools/garmin_inventory`) | Semua data FR55 + WHOOP pengguna terbaca |
 | **2. Inti harian** | Kesiapan, Beban, Tidur + kebutuhan tidur, Stres dengan fusi multi-perangkat | Layar Hari Ini lengkap |
 | **3. Latihan** | ATL/CTL/TSB, VO₂max, Energi, zona, aktivitas GPS | Tab Latihan |
 | **4. Wawasan** | Jurnal → dampak, anomali, prediksi lomba, status latihan | Tab Kesehatan & Jurnal |
@@ -261,13 +262,11 @@ BLE state restoration untuk WHOOP, dan `BGTaskScheduler` untuk impor Apple Healt
 
 ## 10. Pertanyaan terbuka
 
-1. Fork AGPL (A) atau tulis ulang (B)? → menentukan seluruh fase 0.
-2. Nama aplikasi?
-3. Data apa yang ditulis Garmin Connect iOS ke Apple Health untuk FR55? → diverifikasi dari data
+1. Data apa yang ditulis Garmin Connect iOS ke Apple Health untuk FR55? → diverifikasi dari data
    ekspor/HP pengguna.
-4. Apakah ekspor akun Garmin berisi data per menit, atau hanya ringkasan harian? → diverifikasi saat
+2. Apakah ekspor akun Garmin berisi data per menit, atau hanya ringkasan harian? → diverifikasi saat
    ekspor tiba.
-5. Perlu cloud sync antar-perangkat, atau cukup backup?
+3. Perlu cloud sync antar-perangkat, atau cukup backup?
 
 ## Referensi
 

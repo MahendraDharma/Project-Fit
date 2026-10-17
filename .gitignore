@@ -1,0 +1,9 @@
+# Health data and reports: never commit these.
+garmin_report*
+reports/
+*.fit
+*.FIT
+GARMIN/
+
+__pycache__/
+*.pyc
