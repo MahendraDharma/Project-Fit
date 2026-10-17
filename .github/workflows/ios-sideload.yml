@@ -1,0 +1,87 @@
+name: ios-sideload
+
+# An UNSIGNED iOS .ipa for sideloading with a free Apple ID (Sideloadly,
+# AltStore, SideStore). No paid Apple Developer account is involved: the
+# sideloading tool re-signs the app with the user's own Apple ID on install.
+# See docs/IOS_SIDELOAD.md.
+#
+# Run it by hand from the Actions tab (workflow_dispatch), or push a v* tag to
+# also attach the .ipa and an AltStore source (apps.json) to a GitHub release.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-sideload-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ipa:
+    runs-on: macos-latest
+    permissions:
+      contents: write # only used to attach to a release on tag pushes
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Pinned: the app does not build on Flutter 3.44.x yet (see app/AGENTS.md).
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.6
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build unsigned iOS app
+        run: flutter build ios --release --no-codesign
+
+      # The Watch companion cannot survive a free-account re-sign: its
+      # Info.plist names the phone app's bundle id, and every sideloading tool
+      # gives the phone app a new per-user id without patching that key. The
+      # app installs without it; a source build with one signing identity
+      # keeps it.
+      - name: Strip Watch companion
+        run: rm -rf build/ios/iphoneos/Runner.app/Watch
+
+      - name: Package unsigned IPA
+        id: ipa
+        run: |
+          REF="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then REF="$(git rev-parse --short HEAD)"; fi
+          NAME="projectfit-${REF}-unsigned.ipa"
+          cd build/ios/iphoneos
+          rm -rf Payload && mkdir Payload
+          cp -R Runner.app Payload/Runner.app
+          zip -qr -y "$GITHUB_WORKSPACE/$NAME" Payload
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          ls -l "$GITHUB_WORKSPACE/$NAME"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: projectfit-ipa
+          path: ${{ steps.ipa.outputs.name }}
+          retention-days: 30
+
+      - name: Generate AltStore source
+        if: github.ref_type == 'tag'
+        working-directory: .
+        run: |
+          python3 .github/scripts/gen_altstore_source.py \
+            "${{ steps.ipa.outputs.name }}" apps.json "${{ github.repository }}" "${{ github.ref_name }}"
+
+      - name: Attach IPA + AltStore source to the release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.ipa.outputs.name }}
+            apps.json
