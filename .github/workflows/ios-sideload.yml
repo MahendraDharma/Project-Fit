@@ -41,8 +41,33 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Build unsigned iOS app
-        run: flutter build ios --release --no-codesign
+      # `flutter build ios --no-codesign` does not reach every target: the
+      # Watch companion (and, on newer Xcode, extensions) still asks for a
+      # Development Team. So Flutter only writes its configuration here, and
+      # xcodebuild runs with signing switched off as COMMAND-LINE settings,
+      # which apply to every target in the build.
+      - name: Configure Flutter for a release build
+        run: flutter build ios --release --no-codesign --config-only
+
+      - name: Build unsigned iOS app (xcodebuild, no signing on any target)
+        working-directory: app/ios
+        run: |
+          set -o pipefail
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner \
+            -configuration Release -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" \
+            build 2>&1 | tee xcodebuild.log | grep -E "error:|warning: .*sign|BUILD (SUCCEEDED|FAILED)" || true
+          grep -q "BUILD SUCCEEDED" xcodebuild.log
+
+      - name: Upload the xcodebuild log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: app/ios/xcodebuild.log
 
       # The Watch companion cannot survive a free-account re-sign: its
       # Info.plist names the phone app's bundle id, and every sideloading tool
@@ -50,7 +75,7 @@ jobs:
       # app installs without it; a source build with one signing identity
       # keeps it.
       - name: Strip Watch companion
-        run: rm -rf build/ios/iphoneos/Runner.app/Watch
+        run: rm -rf ios/build/dd/Build/Products/Release-iphoneos/Runner.app/Watch
 
       - name: Package unsigned IPA
         id: ipa
@@ -58,7 +83,7 @@ jobs:
           REF="${GITHUB_REF_NAME}"
           if [ "${GITHUB_REF_TYPE}" != "tag" ]; then REF="$(git rev-parse --short HEAD)"; fi
           NAME="projectfit-${REF}-unsigned.ipa"
-          cd build/ios/iphoneos
+          cd ios/build/dd/Build/Products/Release-iphoneos
           rm -rf Payload && mkdir Payload
           cp -R Runner.app Payload/Runner.app
           zip -qr -y "$GITHUB_WORKSPACE/$NAME" Payload
