@@ -1,0 +1,297 @@
+name: openstrap_edge
+description: "A local-first health app for your wearables. No subscription, no fees, private by default. Not affiliated with any device maker."
+publish_to: 'none'
+# NOTE: bumping this also requires manually bumping MARKETING_VERSION/
+# CURRENT_PROJECT_VERSION for the OpenStrapWidget(Extension) and "OpenStrapWatch
+# Watch App" targets in ios/Runner.xcodeproj/project.pbxproj — they aren't wired
+# to FLUTTER_BUILD_NAME/FLUTTER_BUILD_NUMBER. See guides/IOS_INSTALLATION.md
+# "Version Numbers".
+version: 0.11.3+78
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Pinned to what flutter_localizations (this SDK) requires — see its own
+  # pubspec.lock entry, don't drift it independently.
+  intl: ^0.20.2
+  cupertino_icons: ^1.0.8
+
+  # The single icon family behind lib/ui2. One pack, one stroke weight, one
+  # optical size — replacing the five-pack mix the old design system blended
+  # per concept, which is why no two screens' icons quite matched. Lucide is
+  # what the interface was drawn in; keeping it means a screen can name the
+  # glyph the design names.
+  lucide_icons_flutter: ^3.1.15
+
+  # Renders the three community brand marks (assets/icons/) as tinted SVG —
+  # GitHub/Discord/Reddit have their own logos, not a Lucide glyph standing
+  # in for them. Nowhere else: every other icon in the app is still Lucide.
+  flutter_svg: ^2.0.10+1
+
+  # Local pure-Dart packages — the protocol byte codecs and the metric/analytics
+  # engine. Replace the old cloud backend: decode happens on-device, and the
+  # local re-layer computes metrics here (see lib/data/local_repository.dart +
+  # lib/compute/derivation_engine.dart). The analytics package now points at the
+  # 1 Hz-native family (import via `package:openstrap_analytics/onehz.dart`).
+  # SIBLING PACKAGES ARE PINNED TO COMMIT SHAs, NOT FLOATING `main`/BRANCH REFS.
+  # A floating ref means an upstream commit silently changes the behaviour of an
+  # already-tagged edge release (this bit us: analytics v42 rode `ref: main` into
+  # 0.9.13/0.9.14 with no edge change and shipped the main-thread staging ANRs).
+  # Bump these SHAs deliberately, as part of a reviewed edge change. Local dev
+  # still builds against ../analytics and ../protocol via pubspec_overrides.yaml.
+  # NOTE: this is the multiband branch, so protocol is pinned at the gen5 work
+  # rather than plain `main`. Prefer merge commits on `main` over PR-branch
+  # heads where possible — a deleted branch can orphan a PR-branch SHA.
+  openstrap_protocol:
+    path: ../packages/protocol
+  openstrap_analytics:
+    path: ../packages/analytics
+
+  # BLE — flutter_blue_plus is the maintained cross-platform GATT client.
+  flutter_blue_plus: ^1.36.8
+
+  # Local raw-first storage.
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  path_provider: ^2.1.5
+
+  # Unwrapping the archives users actually pick on the import screen: a WHOOP
+  # "My Data" export is a ZIP of CSVs, and a NOOP `.noopbak` is a ZIP holding a
+  # SQLite database (issues #199, #160). Already present transitively; declared
+  # directly because `lib/import/import_container.dart` imports it.
+  archive: ^4.0.9
+
+  # Passphrase-encrypted backup (lib/import/backup_crypto.dart). A vetted,
+  # long-standing pure-Dart implementation of AES-256-GCM and
+  # PBKDF2-HMAC-SHA256 — no hand-rolled construction, and no platform channel,
+  # so the round trip is testable headless. `crypto` (already transitive) has
+  # HMAC but no AEAD, which is the one primitive that must not be improvised.
+  pointycastle: ^3.9.1
+
+  # The Withings Steel HR / Activité challenge proof is a plain SHA1, not a
+  # cipher — declared directly now that `lib/ble/adapters/withings_steel_hr.dart`
+  # imports it, rather than riding along as transitive.
+  crypto: ^3.0.3
+
+  # Background scheduled derivation (the heavy nightly pass: sleep staging +
+  # 24-h spectra). Android: a real OS-scheduled WorkManager job. iOS: see the
+  # honest caveat in lib/compute/background_derivation.dart — app-killed heavy
+  # compute is opportunistic via BGTaskScheduler, never guaranteed.
+  workmanager: ^0.9.0
+
+  # HTTP — retained ONLY for the OTA self-update pointer (see lib/sync/update_service.dart)
+  # and the AI Coach's direct LLM (BYOK) calls. No backend / auth traffic anymore.
+  http: ^1.2.2
+
+  # Barcode scanning for the food log (lib/ui2/screens/scan_barcode.dart).
+  #
+  # The floor is not cosmetic: 7.3.0 and 7.4.0 fixed a controller-dispose bug
+  # that tore down ANOTHER controller's camera, and an Apple `captureOutput`
+  # race. This app holds a camera nowhere else today, but the first bug is the
+  # kind that only shows up once it does.
+  #
+  # The default Android config links the BUNDLED ML Kit model, which is what we
+  # want: +3-10 MB of APK in exchange for needing no Google Play Services at
+  # all, on a build distributed through GitHub Releases. Do NOT set the
+  # `useUnbundled` Gradle property.
+  mobile_scanner: ^7.3.1
+
+  # State + small settings persistence.
+  provider: ^6.1.2
+  shared_preferences: ^2.3.3
+
+  # Charts (for the future server-analytics view).
+  fl_chart: ^0.69.2
+
+  # Interactive maps for GPS workout routes (run/ride/walk). Raster tiles are
+  # fetched on demand from CARTO (basemaps.cartocdn.com) — OSM data, but served
+  # by CARTO rather than tile.openstreetmap.org, whose tile-usage policy does
+  # not permit app traffic. No cloud API keys, no Google/Mapbox. The
+  # "© OpenStreetMap contributors" attribution is rendered on every map.
+  # Recorded GPS points are stored on-device only (workout_route table) and are
+  # never uploaded — but the tile requests do tell CARTO which area is on
+  # screen, which PRIVACY.md states.
+  # flutter_map_tile_caching (offline tile cache) is a documented follow-up — it
+  # pulls heavier native storage deps, so v1 uses live CARTO tiles only.
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+
+  # Type: Manrope + Barlow Condensed are BUNDLED under assets/fonts/ (declared
+  # in flutter.fonts below), not pulled at runtime — see the note there.
+
+  # Declarative motion (flutter_animate) and the five-pack icon mix that
+  # backed lib/ui/kit/os_icons.dart went with lib/ui. lib/ui2 has one icon
+  # family (lucide_icons_flutter, declared above) and one motion gate
+  # (lib/ui2/theme.dart), so none of them have a consumer any more.
+  #
+  # phosphor_flutter also no longer COMPILES against the current Flutter SDK —
+  # `IconData` became a final class, and PhosphorIconData extends it — which is
+  # what was failing 33 test files on main before this branch.
+
+  # Structural deep-equality (series_codec's verifyLossless) — was transitive
+  # via flutter itself; declared directly since lib/ code now imports it.
+  collection: ^1.18.0
+
+  # Injectable clock (RouteTracker's stall watchdog) — was a transitive dep via
+  # fake_async/flutter_test; declared directly since lib/ code now imports it.
+  # `clock.now()` instead of raw DateTime.now() lets fakeAsync tests control
+  # time deterministically instead of needing a real multi-second sleep.
+  clock: ^1.1.2
+
+  # Share recap cards (rendered card → image → share sheet).
+  share_plus: ^10.1.4
+
+  # File picker for data imports (NOOP raw CSV, Edge .db backup, WHOOP export CSV).
+  file_picker: ^8.1.6
+
+  # Apple Health (HealthKit, iOS) + Google Health Connect (Android) — export each
+  # day's derived metrics to the platform health store.
+  # >=12.0.0 is not optional: 11.1.1's `_alignValue` lists SLEEP_ASLEEP twice
+  # and never lists SLEEP_LIGHT, so every light/Core stage write threw on iOS —
+  # ~70% of a night, every night, and it flipped the day's export to failed too.
+  health: ^12.2.1
+  # Open the Health Connect app/settings so the user can grant per-app access
+  # manually (the reliable path when its in-app request dialog is locked out).
+  android_intent_plus: ^5.1.0
+
+  # Opt-in, consent-gated companion telemetry + health-data contribution:
+  #   • device_info_plus  — OEM / model / OS for crash-report context
+  #   • battery_plus       — phone battery + charging state (upload gate)
+  #   • connectivity_plus  — Wi-Fi check (only upload the heavy .db on unmetered)
+  #   • uuid               — stable anonymous install id (the device_id anchor)
+  device_info_plus: ^10.1.2   # capped <11 by `health`
+  battery_plus: ^6.1.0
+  connectivity_plus: ^6.1.0
+  uuid: ^4.5.1
+
+  # Home/lock-screen widget bridge (writes a snapshot to the App Group → WidgetKit).
+  home_widget: ^0.6.0
+
+  # OS-level notifications (band battery low / charging, health alerts, recovery,
+  # scheduled reminders). The single display layer; see lib/notify/. Local +
+  # scheduled only (no FCM — the app is cloud-free).
+  flutter_local_notifications: ^18.0.1
+  # zonedSchedule needs an initialized tz database + the device's IANA zone, so
+  # wind-down / weekly-recap nudges fire at the right wall-clock time.
+  timezone: ^0.9.4
+  flutter_timezone: ^3.0.1
+
+  # OTA self-update (Android sideload): read our own version, download + install the
+  # signed APK from the backend's update pointer, with a browser fallback.
+  package_info_plus: ^8.1.0
+  ota_update: ^7.1.0
+  url_launcher: ^6.3.0
+  notification_listener_service: ^1.0.0
+  flutter_secure_storage: ^10.3.1
+  gpt_markdown: ^1.1.7
+  firebase_core: ^4.11.0
+  firebase_crashlytics: ^5.2.4
+  firebase_performance: ^0.11.4+3
+  firebase_analytics: ^12.4.3
+
+# NOTE: to build against the in-tree sibling packages during local development,
+# create a (gitignored) pubspec_overrides.yaml — pub auto-detects it. Keeping the
+# overrides OUT of this file means CI/release resolves the pinned git refs above
+# (the siblings aren't checked out in CI, so a committed path override fails
+# `flutter pub get` with exit 66).
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  test: ^1.25.8
+  # no_runtime_font_fetch_test parses pubspec.yaml to assert every family the
+  # type scale uses is bundled rather than fetched at runtime.
+  yaml: ^3.1.2
+  flutter_launcher_icons: ^0.13.1
+  sqflite_common_ffi: ^2.4.0+3
+  # RouteTracker's stall-watchdog tests drive virtual time (was a transitive
+  # dep via flutter_test; declared directly since test/ now imports it).
+  fake_async: ^1.3.1
+  # day_window_dst_test moves the PROCESS timezone via libc setenv/tzset so the
+  # DST day-length regressions are real on a non-DST host (transitive via
+  # sqflite_common_ffi; declared directly since test/ now imports it).
+  ffi: ^2.1.0
+  # db_p0_fixes_test swaps PathProviderPlatform.instance for a temp-dir fake so
+  # exportDaysDb can run without a platform plugin (transitive via
+  # path_provider; declared directly since test/ now imports it).
+  path_provider_platform_interface: ^2.1.0
+  # ack_commit_sync_full_test wraps the ffi factory in SqfliteDatabaseFactoryLogger
+  # to spy the PRAGMA synchronous=FULL/NORMAL bracket around the ACK-gating commit
+  # (transitive via sqflite_common_ffi; declared directly since test/ now imports it).
+  # PINNED, not a caret range: that constructor is @experimental upstream, so a
+  # minor bump is allowed to change or withdraw it and would break the test on
+  # someone else's `pub upgrade` rather than on a deliberate one here.
+  sqflite_common: 2.5.8
+
+# Run with `dart run flutter_launcher_icons`. TWO THINGS TO KNOW BEFORE YOU DO:
+#
+#   · 0.13.1 rewrites ios/Runner.xcodeproj/project.pbxproj with a regex that
+#     matches ANY `ASSETCATALOG_COMPILER_*` setting and overwrites its value
+#     with the app-icon name. On this project that silently sets
+#     GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS, GLOBAL_ACCENT_COLOR_NAME and
+#     WIDGET_BACKGROUND_COLOR_NAME to "AppIcon" on the widget and watch targets.
+#     `git checkout -- ios/Runner.xcodeproj/project.pbxproj` afterwards: the one
+#     setting it needs to write (APPICON_NAME = AppIcon) is already correct, and
+#     the alternate-icon settings next to it must survive.
+#   · It does NOT generate the alternate icon. AppIconBW.appiconset is built by
+#     hand from assets/images/icon_bw.png at the same slots as AppIcon.
+#
+# adaptive_icon_foreground is a PRE-INSET copy of the icon, not the icon itself.
+# Android composites both layers on a 108 dp canvas and every launcher mask
+# crops it to the middle 72 dp, so full-bleed art is zoomed 1.5x — which was
+# cutting the mark off both sides. assets/launcher/ is not a bundled asset dir;
+# it is build-time input only.
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
+  remove_alpha_ios: true
+  # The icon's own plate, so the ring the mask leaves around the artwork is the
+  # same colour as the artwork's edge rather than the old cream.
+  adaptive_icon_background: "#020D1C"
+  adaptive_icon_foreground: "assets/launcher/icon_adaptive.png"
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/2.0x/
+    - assets/images/3.0x/
+    # The three community brand marks the one-icon-family rule (see
+    # lucide_icons_flutter below) deliberately doesn't cover — a generic
+    # Lucide glyph can't stand in for GitHub/Discord/Reddit's own logos.
+    # Official simple-icons SVGs, single fill path, tinted at paint time.
+    - assets/icons/
+  # Both families are bundled, not fetched. google_fonts resolves a missing
+  # family over HTTP to fonts.gstatic.com on first launch — before the user
+  # has seen the consent screen, and contrary to PRIVACY.md. It also lets the
+  # hero readiness numerals flicker or fall back on a cold offline launch.
+  # SIL Open Font License (OFL.txt alongside the .ttf files, from
+  # https://github.com/google/fonts).
+  fonts:
+    - family: Barlow Condensed
+      fonts:
+        - asset: assets/fonts/BarlowCondensed/BarlowCondensed-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/BarlowCondensed/BarlowCondensed-ExtraBold.ttf
+          weight: 800
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope/Manrope-400.ttf
+          weight: 400
+        - asset: assets/fonts/Manrope/Manrope-500.ttf
+          weight: 500
+        - asset: assets/fonts/Manrope/Manrope-600.ttf
+          weight: 600
+        - asset: assets/fonts/Manrope/Manrope-700.ttf
+          weight: 700
+        - asset: assets/fonts/Manrope/Manrope-800.ttf
+          weight: 800

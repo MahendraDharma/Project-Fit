@@ -1,0 +1,655 @@
+// Tests for the on-device wake alarm:
+//   - the exact SET_ALARM_TIME byte layouts: the REV-1 9-byte form (the one
+//     gen4 firmware executes — pinned against the official app's wire capture
+//     and our own on-device fire, 2026-08-19), the gen5 rich 21-byte slot-1
+//     body, the reference-only rich/short forms, and the RUN/DISABLE bodies
+//     (AlarmPayloads),
+//   - the strap-event confirmation state machine (AlarmConfirmation), and
+//   - the arm/run decision made on the correlated reply's alarm-status byte,
+//     driven over the engine's fake-link seam.
+// No radio and no DB — everything here is deterministic.
+
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:fake_async/fake_async.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openstrap_edge/ble/ble_engine.dart';
+import 'package:openstrap_edge/ble/ble_state.dart';
+import 'package:openstrap_edge/state/alarm_schedule.dart'
+    show
+        alarmGraceTimerDelay,
+        alarmLatchAlertAtMs,
+        alarmLatchAlertDelay,
+        alarmLatchAlertResumeDelay,
+        alarmLatchFailed;
+import 'package:openstrap_edge/sync/sync_policy.dart' show ClockRef;
+import 'package:openstrap_protocol/openstrap_protocol.dart' as proto;
+
+/// A gen5 link with no radio behind it, plus the seq of every command written.
+/// Same seam as `command_correlation_test.dart`: the reply is injected from
+/// INSIDE the write, i.e. before the write call returns, which is the ordering
+/// the correlation contract demands and the one a fast strap produces.
+class _Link {
+  final logs = <String>[];
+  final written = <({int seq, int opcode})>[];
+  final inners = <Uint8List>[];
+  late final BleEngine engine;
+
+  _Link({proto.Decoded? Function(int seq, int opcode)? replyTo}) {
+    engine = BleEngine(onRecord: (_, _) async {}, onState: (_) {}, log: logs.add);
+    engine.debugInstallFakeLink(
+      band: proto.BandProfile.gen5,
+      onWrite: (frame) async {
+        final inner = proto.parseFrame(frame, profile: proto.BandProfile.gen5)!.inner;
+        written.add((seq: inner[1], opcode: inner[2]));
+        inners.add(inner);
+        // gen5 SET_CLOCKs before every arm; a strap answers that one
+        final reply = replyTo?.call(inner[1], inner[2]) ??
+            (inner[2] == proto.Cmd.setClock ? _ok(inner[2], inner[1]) : null);
+        if (reply != null) engine.debugAbsorbDecoded(reply);
+        return true;
+      },
+    );
+  }
+
+  bool logged(String needle) => logs.any((l) => l.contains(needle));
+}
+
+/// A COMMAND_RESPONSE carrying the doc-07 alarm/haptics status byte, decoded by
+/// the REAL protocol parser so the test asserts on the wire layout rather than
+/// on a hand-written field map: `[0x24][strap seq][opcode][echoed seq][result]`
+/// then body `[revision][alarm status]`.
+proto.Decoded _alarmReply(
+  int opcode,
+  int seq,
+  int alarmStatus, {
+  int outer = 1,
+  int revision = 3,
+}) {
+  final inner = Uint8List.fromList(
+      [0x24, 0x55, opcode, seq, outer, revision, alarmStatus]);
+  final r =
+      proto.parseCommandResponse(inner, profile: proto.BandProfile.gen5)!;
+  return proto.Decoded('cmd_response', {'opcode': r.opcode, ...r.decoded});
+}
+
+proto.Decoded _ok(int opcode, int seq) => proto.Decoded('cmd_response', {
+      'opcode': opcode,
+      'req_seq': seq,
+      'cmd_status': CommandAwaiter.statusSuccess,
+    });
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(BleEngine.resetBandClaimForTest);
+  tearDown(BleEngine.resetBandClaimForTest);
+
+  group('AlarmPayloads byte layout', () {
+    // A hand-computed vector:
+    //   sec    = 0x01020304 = 16909060  → LE [04 03 02 01]
+    //   subsec = (500 * 32768) ~/ 1000 = 16384 = 0x4000 → LE [00 40]
+    final when = DateTime.fromMillisecondsSinceEpoch(16909060 * 1000 + 500,
+        isUtc: true);
+
+    test('subsecOf uses the 1/32768 s formula', () {
+      expect(AlarmPayloads.subsecOf(when), 16384);
+      // 0 ms → 0 subsec; 999 ms → the top of the range.
+      expect(
+          AlarmPayloads.subsecOf(
+              DateTime.fromMillisecondsSinceEpoch(1000, isUtc: true)),
+          0);
+      expect(
+          AlarmPayloads.subsecOf(
+              DateTime.fromMillisecondsSinceEpoch(1999, isUtc: true)),
+          (999 * 32768) ~/ 1000);
+    });
+
+    test('rev1 (9B, the gen4 arm form) = 0x01 + u32 sec LE + u16 subsec + u16 mode', () {
+      final p = AlarmPayloads.rev1(when);
+      expect(p.length, 9);
+      expect(p, <int>[
+        0x01, // rev-1 form marker
+        0x04, 0x03, 0x02, 0x01, // sec LE
+        0x00, 0x40, // subsec LE (16384)
+        0x00, 0x00, // haptic-mode (stock wake buzz)
+      ]);
+    });
+
+    test('rev1 matches the official WHOOP app wire capture byte-for-byte', () {
+      // btsnoop of the official app arming a real WHOOP 4.0 (noop PR #535):
+      // epoch 1781912880 = 0x6A35D530 → [01, 30, D5, 35, 6A, 00, 00, 00, 00].
+      // The same 9-byte shape fired OUR band on-device (fw 41.17.4,
+      // 2026-08-19 18:55:00: events 60+57 stamped at the armed second). This
+      // is the app-parity anchor: keep the payload byte-for-byte what the
+      // official app sends.
+      final p = AlarmPayloads.rev1(
+          DateTime.fromMillisecondsSinceEpoch(1781912880 * 1000, isUtc: true));
+      expect(p, <int>[0x01, 0x30, 0xD5, 0x35, 0x6A, 0x00, 0x00, 0x00, 0x00]);
+    });
+
+    test('rich (20B, gen4 reference only — execution is fw-dependent) layout', () {
+      final p = AlarmPayloads.rich(when);
+      expect(p.length, 20);
+      expect(p, <int>[
+        0x04, // rich-form marker
+        0x00, // index
+        0x04, 0x03, 0x02, 0x01, // sec LE
+        0x00, 0x40, // subsec LE (16384)
+        47, 152, 0, 0, 0, 0, 0, 0, // 8 waveform effects
+        0, 0, // loop control u16 LE
+        7, // overall loop
+        30, // duration seconds
+      ]);
+    });
+
+    test('rich honours a custom index + custom 12-byte haptics', () {
+      final custom = List<int>.generate(12, (i) => i + 1);
+      final p = AlarmPayloads.rich(when, index: 3, haptics: custom);
+      expect(p[0], 0x04);
+      expect(p[1], 3);
+      expect(p.sublist(8), custom);
+    });
+
+    test('simple (7B) = rev1 minus the haptic-mode u16 (same frame once padded)', () {
+      final p = AlarmPayloads.simple(when);
+      expect(p.length, 7);
+      expect(p, <int>[0x01, 0x04, 0x03, 0x02, 0x01, 0x00, 0x40]);
+    });
+
+    test('setPayloadForBand: gen4 rev1 (9B), gen5 index1 rich (21B)', () {
+      final g4 = AlarmPayloads.setPayloadForBand(when, isGen5: false);
+      // gen4 = the rev-1 form, byte-identical to AlarmPayloads.rev1 — the
+      // official app's wire form (see AlarmPayloads for the firmware
+      // evidence).
+      expect(g4, AlarmPayloads.rev1(when));
+      expect(g4.length, 9);
+      expect(g4[0], 0x01);
+      // gen5: the full composed 21-byte body, exact bytes in field order.
+      expect(AlarmPayloads.setPayloadForBand(when, isGen5: true), <int>[
+        0x04, // rich-form marker
+        0x01, // slot 1 (index 0 is rejected on gen5)
+        0x04, 0x03, 0x02, 0x01, // sec LE
+        0x00, 0x40, // subsec LE (16384)
+        47, 152, 0, 0, 0, 0, 0, 0, // 8 waveform effects
+        0, 0, // loop control u16 LE
+        7, // overall loop
+        30, // duration seconds
+        0, // crescendo flag, off by default
+      ]);
+      expect(
+        AlarmPayloads.setPayloadForBand(when, isGen5: true, crescendo: 1).last,
+        1,
+      );
+      // Gen5 ignores a caller-supplied index so slot 0 cannot be armed by accident.
+      expect(
+        AlarmPayloads.setPayloadForBand(when, isGen5: true, index: 0)[1],
+        0x01,
+      );
+    });
+
+    test('gen5 Maverick buzz is a short Find-band-style pulse', () {
+      expect(AlarmPayloads.gen5MaverickBuzz(),
+          <int>[0x01, 47, 152, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+      expect(AlarmPayloads.gen5MaverickBuzz(overallLoop: 7).last, 7);
+    });
+
+    test('RUN_ALARM + DISABLE_ALARM bodies are both [0x01]', () {
+      expect(AlarmPayloads.runNow, <int>[0x01]);
+      expect(AlarmPayloads.disable, <int>[0x01]);
+    });
+
+    test('default haptics match the stock wake-buzz pattern', () {
+      expect(AlarmPayloads.defaultHaptics,
+          <int>[47, 152, 0, 0, 0, 0, 0, 0, 0, 0, 7, 30]);
+    });
+  });
+
+  group('AlarmPayloads.toStrapFrame (RTC-frame arming)', () {
+    // Wall-clock target with a non-zero sub-second so we can assert it survives.
+    final wall = DateTime.fromMillisecondsSinceEpoch(1750000000 * 1000 + 250,
+        isUtc: true);
+
+    test('uncorrelated (drift 0) → wall target unchanged', () {
+      expect(AlarmPayloads.toStrapFrame(wall, 0).millisecondsSinceEpoch,
+          wall.millisecondsSinceEpoch);
+    });
+
+    test('strap RTC behind wall (drift +90) → armed epoch = wall − 90', () {
+      final r = AlarmPayloads.toStrapFrame(wall, 90);
+      expect(r.millisecondsSinceEpoch ~/ 1000, 1750000000 - 90);
+      // whole-second shift keeps the sub-second remainder intact
+      expect(AlarmPayloads.subsecOf(r), AlarmPayloads.subsecOf(wall));
+    });
+
+    test('strap RTC ahead of wall (drift −30) → armed epoch = wall + 30', () {
+      expect(AlarmPayloads.toStrapFrame(wall, -30).millisecondsSinceEpoch ~/ 1000,
+          1750000000 + 30);
+    });
+
+    test('rev1() encodes the strap-frame epoch, not the raw wall epoch', () {
+      // On a strap whose RTC is 90s behind, arming the raw wall epoch would fire
+      // 90s late (or never, for a large offset); the shipped gen4 payload must
+      // carry the shifted (wall − drift) seconds. Mirrors engine.setAlarm.
+      final p = AlarmPayloads.rev1(AlarmPayloads.toStrapFrame(wall, 90));
+      final sec = p[1] | (p[2] << 8) | (p[3] << 16) | (p[4] << 24);
+      expect(sec, 1750000000 - 90);
+    });
+  });
+
+  group('ClockRef.driftSec + reconnect fallback (stale-correlation guard)', () {
+    final wall = DateTime.fromMillisecondsSinceEpoch(1750000000 * 1000,
+        isUtc: true);
+
+    test('driftSec = wall − device (positive when the strap RTC is behind)', () {
+      expect(const ClockRef(device: 1000, wall: 1090).driftSec, 90);
+      expect(const ClockRef(device: 1100, wall: 1070).driftSec, -30);
+      expect(const ClockRef(device: 1000, wall: 1000).driftSec, 0);
+    });
+
+    test('no correlation yet (just after reconnect) → drift 0 → raw wall epoch', () {
+      // On reconnect _clockRef is nulled until THIS session's GET_CLOCK reply, so
+      // the arm must fall back to the raw epoch rather than reuse the previous
+      // session's offset. This mirrors engine.setAlarm's `_clockRef?.driftSec ?? 0`.
+      const ClockRef? ref = null;
+      final driftSec = ref?.driftSec ?? 0;
+      expect(driftSec, 0);
+      expect(
+          AlarmPayloads.toStrapFrame(wall, driftSec).millisecondsSinceEpoch ~/ 1000,
+          1750000000);
+    });
+
+    test('correlated session → arms in the strap frame using the offset', () {
+      const ref = ClockRef(device: 1749999910, wall: 1750000000); // strap 90s behind
+      final driftSec = ref.driftSec; // 90
+      expect(driftSec, 90);
+      expect(
+          AlarmPayloads.toStrapFrame(wall, driftSec).millisecondsSinceEpoch ~/ 1000,
+          1750000000 - 90);
+    });
+  });
+
+  group('AlarmConfirmation state machine', () {
+    test('event ids match the protocol EventId names', () {
+      expect(AlarmConfirmation.kEvtSet, proto.EventId.strapDrivenAlarmSet);
+      expect(AlarmConfirmation.kEvtStrapExecuted,
+          proto.EventId.strapDrivenAlarmExecuted);
+      expect(AlarmConfirmation.kEvtAppExecuted,
+          proto.EventId.appDrivenAlarmExecuted);
+      expect(AlarmConfirmation.kEvtDisabled,
+          proto.EventId.strapDrivenAlarmDisabled);
+      expect(AlarmConfirmation.kEvtHapticsFired, proto.EventId.hapticsFired);
+    });
+
+    test('a fresh alarm is neither pending nor confirmed', () {
+      final a = AlarmConfirmation();
+      expect(a.confirmed, isFalse);
+      expect(a.isPending(0), isFalse);
+      expect(a.isUnconfirmed(0), isFalse);
+    });
+
+    test('after SET → PENDING inside the grace window, then UNCONFIRMED', () {
+      final a = AlarmConfirmation(graceMs: 6000);
+      a.set(1750000000, 0);
+      expect(a.confirmed, isFalse);
+      expect(a.isPending(0), isTrue);
+      expect(a.isPending(5999), isTrue);
+      expect(a.isUnconfirmed(5999), isFalse);
+      // grace elapsed with no confirm event → soft-warning state.
+      expect(a.isPending(6000), isFalse);
+      expect(a.isUnconfirmed(6000), isTrue);
+    });
+
+    test('default grace covers a slow strap, and a late 56 still confirms',
+        () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      expect(a.isPending(12500), isTrue,
+          reason: 'event 56 can arrive well after the first few seconds');
+      expect(a.isUnconfirmed(30000), isTrue);
+      expect(a.onEvent(AlarmConfirmation.kEvtSet, 90000),
+          AlarmEffect.confirmed);
+      expect(a.isUnconfirmed(90000), isFalse);
+    });
+
+    test('the retry reopens the window before it closes, so no warning flash',
+        () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      final retryAt =
+          alarmGraceTimerDelay(a.graceMs, retryLeft: true).inMilliseconds;
+      expect(a.isPending(retryAt), isTrue,
+          reason: 'still waiting when the retry re-sets the window');
+      final lastAt =
+          alarmGraceTimerDelay(a.graceMs, retryLeft: false).inMilliseconds;
+      expect(a.isUnconfirmed(lastAt), isTrue,
+          reason: 'the final rebuild lands on the warning');
+    });
+
+    test('critical alert holds back while connected, a late 56 then wins', () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      final alertAt = 2 * a.graceMs +
+          alarmLatchAlertDelay(connected: true).inMilliseconds;
+      expect(alertAt, greaterThan(90000),
+          reason: 'a 56 at 90s must beat the alert');
+      a.onEvent(AlarmConfirmation.kEvtSet, 90000);
+      expect(alarmLatchFailed(a, 1750000000, enabled: true), isFalse);
+      expect(alarmLatchAlertDelay(connected: false), Duration.zero);
+    });
+
+    test('a relaunch resumes the alert a killed process was holding', () {
+      const epoch = 1750000000;
+      const armedAt = epoch * 1000 - 8 * 3600 * 1000; // armed at bedtime
+      final alertAt = alarmLatchAlertAtMs(armedAt, 30000);
+      final stored = ['$epoch', '$alertAt'];
+      // Killed 2 min after the arm: the rest of the hold still runs.
+      expect(
+          alarmLatchAlertResumeDelay(stored,
+              savedEpoch: epoch, confirmed: false, nowMs: armedAt + 120000),
+          Duration(milliseconds: alertAt - armedAt - 120000));
+      // Relaunched after the hold ran out: alert now.
+      expect(
+          alarmLatchAlertResumeDelay(stored,
+              savedEpoch: epoch, confirmed: false, nowMs: alertAt + 1),
+          Duration.zero);
+      // Confirmed, a different alarm, or the alarm time already passed.
+      expect(
+          alarmLatchAlertResumeDelay(stored,
+              savedEpoch: epoch, confirmed: true, nowMs: alertAt + 1),
+          isNull);
+      expect(
+          alarmLatchAlertResumeDelay(stored,
+              savedEpoch: epoch + 60, confirmed: false, nowMs: alertAt + 1),
+          isNull);
+      expect(
+          alarmLatchAlertResumeDelay(stored,
+              savedEpoch: epoch, confirmed: false, nowMs: epoch * 1000),
+          isNull);
+      expect(
+          alarmLatchAlertResumeDelay(null,
+              savedEpoch: epoch, confirmed: false, nowMs: alertAt + 1),
+          isNull);
+    });
+
+    test('event 56 confirms (and clears pending/unconfirmed)', () {
+      final a = AlarmConfirmation(graceMs: 6000);
+      a.set(1750000000, 0);
+      final eff = a.onEvent(AlarmConfirmation.kEvtSet, 100);
+      expect(eff, AlarmEffect.confirmed);
+      expect(a.confirmed, isTrue);
+      expect(a.lastEventId, 56);
+      expect(a.isPending(10000), isFalse);
+      expect(a.isUnconfirmed(10000), isFalse);
+    });
+
+    test('event 57 marks FIRED with a timestamp', () {
+      final a = AlarmConfirmation();
+      a.set(1750000000, 0);
+      final eff = a.onEvent(AlarmConfirmation.kEvtStrapExecuted, 4242);
+      expect(eff, AlarmEffect.fired);
+      expect(a.firedAt, 4242);
+      expect(a.lastEventId, 57);
+    });
+
+    test('event 58 (RUN_ALARM buzz) does not consume the armed slot', () {
+      final a = AlarmConfirmation();
+      a.set(1750000000, 0);
+      a.onEvent(AlarmConfirmation.kEvtSet, 10);
+      final eff = a.onEvent(AlarmConfirmation.kEvtAppExecuted, 4242);
+      expect(eff, AlarmEffect.buzzed);
+      expect(a.firedAt, isNull);
+      expect(a.targetEpoch, 1750000000);
+      expect(a.confirmed, isTrue);
+    });
+
+    test('event 59 clears the alarm', () {
+      final a = AlarmConfirmation();
+      a.set(1750000000, 0);
+      a.onEvent(AlarmConfirmation.kEvtSet, 10);
+      final eff = a.onEvent(AlarmConfirmation.kEvtDisabled, 20);
+      expect(eff, AlarmEffect.cleared);
+      expect(a.confirmed, isFalse);
+      expect(a.targetEpoch, isNull);
+      expect(a.lastEventId, 59);
+    });
+
+    test('a replayed event from an earlier arm leaves the current one alone',
+        () {
+      // Monday's 07:00 fired; Tuesday's 07:00 is armed (SET written Monday
+      // 22:00). The strap then re-sends Monday's events on a reconnect.
+      const mon7 = 1759302000;
+      const tue7 = mon7 + 86400;
+      const setAt = mon7 + 15 * 3600;
+      final a = AlarmConfirmation()..set(tue7, setAt * 1000);
+      expect(
+          a.onEvent(AlarmConfirmation.kEvtSet, 0, tsSec: mon7 - 9 * 3600),
+          isNull);
+      expect(a.confirmed, isFalse, reason: 'an old 56 must not confirm');
+      expect(
+          a.onEvent(AlarmConfirmation.kEvtStrapExecuted, 0, tsSec: mon7),
+          isNull);
+      expect(a.onEvent(AlarmConfirmation.kEvtDisabled, 0, tsSec: mon7),
+          isNull);
+      expect(a.targetEpoch, tue7, reason: 'an old fire/disable must not clear');
+
+      // This arm's own events still land.
+      expect(a.onEvent(AlarmConfirmation.kEvtSet, 0, tsSec: setAt + 1),
+          AlarmEffect.confirmed);
+      expect(a.onEvent(AlarmConfirmation.kEvtStrapExecuted, 0, tsSec: tue7),
+          AlarmEffect.fired);
+    });
+
+    test('with nothing armed only a fire from just now counts; an unset RTC '
+        'is taken as is', () {
+      const now = 1759302000;
+      final a = AlarmConfirmation();
+      expect(
+          a.onEvent(AlarmConfirmation.kEvtStrapExecuted, now * 1000,
+              tsSec: now - 8 * 3600),
+          isNull);
+      // A replayed RUN_ALARM buzz is not news either.
+      expect(
+          a.onEvent(AlarmConfirmation.kEvtAppExecuted, now * 1000,
+              tsSec: now - 8 * 3600),
+          isNull);
+      expect(
+          a.onEvent(AlarmConfirmation.kEvtStrapExecuted, now * 1000,
+              tsSec: now),
+          AlarmEffect.fired);
+      // ts below the plausible floor can't be placed, so the old behaviour.
+      a.set(1759302000, 0);
+      expect(a.onEvent(AlarmConfirmation.kEvtStrapExecuted, 0, tsSec: 5000),
+          AlarmEffect.fired);
+    });
+
+    test('an unrelated event returns null and changes nothing', () {
+      final a = AlarmConfirmation();
+      a.set(1750000000, 0);
+      expect(a.onEvent(proto.EventId.wristOn, 5), isNull);
+      expect(a.confirmed, isFalse);
+      expect(a.targetEpoch, 1750000000);
+    });
+  });
+
+  // The pure decision behind AppState._notifyAlarmLatchFailed (Feature 2.1):
+  // whether the "alarm not confirmed" safety notification should fire for a
+  // given epoch, given the toggle and the CURRENT confirmation state. No
+  // notification plumbing here — the OS-facing side is exercised separately.
+  group('alarmLatchFailed (safety notification gate)', () {
+    test('fires when the toggle is on, the epoch is still the target, and it '
+        'never confirmed', () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      expect(alarmLatchFailed(a, 1750000000, enabled: true), isTrue);
+    });
+
+    test('the toggle off overrides everything else', () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      expect(alarmLatchFailed(a, 1750000000, enabled: false), isFalse);
+    });
+
+    test('a confirmed alarm never fires it, even with the toggle on', () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      a.onEvent(AlarmConfirmation.kEvtSet, 10);
+      expect(alarmLatchFailed(a, 1750000000, enabled: true), isFalse);
+    });
+
+    test('a superseded epoch (a newer arm, or a cancel) does not fire the '
+        'STALE one\'s notification', () {
+      final a = AlarmConfirmation()..set(1750000000, 0);
+      a.set(1750003600, 100); // a fresh arm replaced the pending one
+      expect(alarmLatchFailed(a, 1750000000, enabled: true), isFalse,
+          reason: 'that epoch is no longer what this machine is tracking');
+      // The NEW target, still unconfirmed, is what should fire instead.
+      expect(alarmLatchFailed(a, 1750003600, enabled: true), isTrue);
+    });
+
+    test('a disabled/cleared alarm (targetEpoch null) never fires it', () {
+      final a = AlarmConfirmation()
+        ..set(1750000000, 0)
+        ..disable();
+      expect(alarmLatchFailed(a, 1750000000, enabled: true), isFalse);
+    });
+  });
+
+
+  // the SET_ALARM_TIME reply carries a haptics/alarm
+  // status byte "in addition to the ordinary outer command result — check
+  // both". Before this, the engine treated a successful WRITE as an armed
+  // alarm, so a strap that answered `invalid alarm time` left the app showing
+  // a wake alarm that did not exist on the band.
+  group('engine wiring — an arm is judged on the strap\'s reply', () {
+    final wake = DateTime.fromMillisecondsSinceEpoch(1750000000 * 1000);
+
+    test('a rejected alarm time returns null — nothing to persist', () async {
+      final link = _Link(
+        replyTo: (seq, opcode) => opcode == proto.Cmd.setAlarmTime
+            ? _alarmReply(opcode, seq, proto.AlarmStatus.invalidAlarmTime)
+            : null,
+      );
+
+      expect(await link.engine.setAlarm(wake), isNull,
+          reason: 'the strap refused it; there is no alarm on the band');
+      expect(link.logged('arm REJECTED'), isTrue);
+      expect(link.logged('invalid_alarm_time'), isTrue,
+          reason: 'the status name is the whole diagnostic');
+      expect(link.engine.pendingCommandCount, 0);
+    });
+
+    test('a SUCCESS outer result does not override a rejecting status byte',
+        () async {
+      // The reply above already carries outer result 1 — the point of the doc's
+      // "check both" is that this combination exists on the wire.
+      final link = _Link(
+        replyTo: (seq, opcode) => opcode == proto.Cmd.setAlarmTime
+            ? _alarmReply(opcode, seq, proto.AlarmStatus.invalidAlarmId,
+                outer: 1)
+            : null,
+      );
+      expect(await link.engine.setAlarm(wake), isNull);
+      expect(link.logged('invalid_alarm_id'), isTrue);
+    });
+
+    test('an accepted arm returns the armed time and logs the status', () async {
+      final link = _Link(
+        replyTo: (seq, opcode) => opcode == proto.Cmd.setAlarmTime
+            ? _alarmReply(opcode, seq, proto.AlarmStatus.validInputPattern)
+            : null,
+      );
+
+      expect(await link.engine.setAlarm(wake), wake);
+      expect(link.logged('arm accepted'), isTrue);
+      expect(link.logged('valid_input_pattern'), isTrue);
+    });
+
+    test('a FAILURE outer result rejects the arm even with no status byte',
+        () async {
+      final link = _Link(
+        replyTo: (seq, opcode) => opcode == proto.Cmd.setAlarmTime
+            ? proto.Decoded('cmd_response', {
+                'opcode': opcode,
+                'req_seq': seq,
+                'cmd_status': CommandAwaiter.statusFailure,
+              })
+            : null,
+      );
+      expect(await link.engine.setAlarm(wake), isNull);
+      expect(link.logged('arm REJECTED'), isTrue);
+    });
+
+    test('an unanswered arm still arms, logged as unconfirmed', () {
+      // Correlation is new and unproven on every strap: a band that does not
+      // echo the originating sequence must not lose its wake alarm. The arm
+      // costs at most the awaiter's single 5 s timeout, with no resend.
+      fakeAsync((async) {
+        final link = _Link(); // only the pre-arm clock write is answered
+        DateTime? armed;
+        var done = false;
+        link.engine.setAlarm(wake).then((v) {
+          armed = v;
+          done = true;
+        });
+
+        async.elapse(const Duration(seconds: 4));
+        expect(done, isFalse, reason: 'still waiting on the reply');
+        async.elapse(const Duration(seconds: 2));
+
+        expect(done, isTrue);
+        expect(armed, wake, reason: 'an unanswered read-back is not a refusal');
+        expect(link.logged('arm UNCONFIRMED'), isTrue);
+        expect(link.engine.pendingCommandCount, 0);
+      });
+    });
+
+    test('gen5 arms against the clock its own SET_CLOCK just set', () async {
+      // a correlation left over from before the arm's SET_CLOCK: strap an hour
+      // behind. once that write lands the strap reads wall time, so the alarm
+      // must go out unshifted, not an hour early.
+      final link = _Link(
+        replyTo: (seq, opcode) => opcode == proto.Cmd.setAlarmTime
+            ? _alarmReply(opcode, seq, proto.AlarmStatus.validInputPattern)
+            : null,
+      );
+      final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      link.engine.debugAbsorbDecoded(
+          proto.Decoded('clock', {'clock_epoch': nowSec - 3600}));
+      final at = DateTime.now().add(const Duration(hours: 8));
+
+      expect(await link.engine.setAlarm(at), at);
+      final arm = link.inners.lastWhere((i) => i[2] == proto.Cmd.setAlarmTime);
+      final epoch = ByteData.sublistView(arm, 5, 9).getUint32(0, Endian.little);
+      expect(epoch, at.millisecondsSinceEpoch ~/ 1000);
+    });
+
+    test('a failed write is still the only silent null', () async {
+      final link = _Link();
+      link.engine.debugWriteHook = (_) async => false;
+      expect(await link.engine.setAlarm(wake), isNull);
+      expect(link.logged('arm REJECTED'), isFalse,
+          reason: 'nothing was refused — nothing was ever sent');
+      expect(link.engine.pendingCommandCount, 0,
+          reason: 'a write that never went out leaves no observer behind');
+    });
+  });
+
+  test('a stale retry never escalates over a newer arm', () {
+    // AppState needs the whole plugin stack, so this pins the guard by source:
+    // a grace retry that resumes after a newer arm must not cancel that arm's
+    // grace timer, so the shared escalation checks staleness before it cancels.
+    final src = File('lib/state/app_state.dart').readAsStringSync();
+    final guard = RegExp(
+      r'void _escalateAlarmLatchFailed\(int epoch\) \{[^}]*?'
+      r'if \(_savedAlarm != epoch\) return;\s*\n\s*_alarmGraceTimer\?\.cancel\(\);',
+    );
+    expect(guard.hasMatch(src), isTrue);
+  });
+
+  test('an offline first window ends before the warning rebuild', () {
+    // The first grace timer fires 250ms before its window closes; when the
+    // link is down that window is also the last, so the escalation branch must
+    // close it itself or the row sits on "waiting" next to the alert.
+    final src = File('lib/state/app_state.dart').readAsStringSync();
+    final branch = RegExp(
+      r'if \(_alarmAutoRetried \|\| !isConnected\) \{[^}]*?'
+      r'_alarm\.setAtMs = null;\s*\n\s*notifyListeners\(\);',
+    );
+    expect(branch.hasMatch(src), isTrue);
+  });
+}

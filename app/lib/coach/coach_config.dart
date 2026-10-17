@@ -1,0 +1,491 @@
+// CoachConfig — local, BYOK settings for the AI coach. The API key is stored in
+// the platform keychain/keystore (flutter_secure_storage); endpoint, API + model in
+// SharedPreferences. NOTHING here ever touches our backend — the key stays on the
+// device and the app calls the OpenAI-compatible provider directly.
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// The origin (`scheme://host[:port]`) [url] resolves to, or the trimmed
+/// string itself when it doesn't parse as a URI with a host.
+///
+/// Used by the coach setup screen to tell whether an edit to the base URL
+/// actually changed WHERE requests go, as opposed to e.g. its path — an API
+/// key typed for one endpoint must not be silently carried over and sent to a
+/// different one just because the base-URL field still has text in it.
+String coachEndpointOrigin(String url) {
+  final u = Uri.tryParse(url.trim());
+  if (u == null || u.host.isEmpty) return url.trim();
+  return u.origin;
+}
+
+/// The provider's wire format. Model identifiers never select the protocol.
+enum CoachApi {
+  responses('responses'),
+  chatCompletions('chat/completions');
+
+  const CoachApi(this.endpoint);
+  final String endpoint;
+
+  /// Also migrates settings saved before an API choice existed.
+  static CoachApi defaultFor(String baseUrl) {
+    final base = baseUrl.trim().isEmpty ? CoachConfig.defaultBaseUrl : baseUrl;
+    return coachEndpointOrigin(base) == 'https://api.openai.com'
+        ? responses
+        : chatCompletions;
+  }
+}
+
+/// What the coach setup screen's Save should pass as [CoachConfig.save]'s
+/// `apiKey` argument.
+///
+/// [keyText] is the key field's current contents. [storedKeyReadable] is
+/// `CoachConfig.apiKey != null` — a key is stored AND this process could read
+/// it. [pendingKeyDelete] is true once the endpoint has changed since the
+/// stored key was last confirmed to belong to it (see
+/// `_CoachSetupState._onBaseChanged`).
+///
+/// [pendingKeyDelete] exists because an EMPTY field is not proof there is
+/// nothing to delete: a key that exists but could not be read
+/// (`CoachConfig.keyUnreadable`) also seeds the field empty, exactly like a
+/// key that was never set — without tracking the endpoint change separately,
+/// that unreadable-but-real key would survive Save untouched and later reach
+/// whatever new endpoint was configured.
+String? coachApiKeyToSave({
+  required String keyText,
+  required bool storedKeyReadable,
+  required bool pendingKeyDelete,
+}) {
+  final trimmed = keyText.trim();
+  if (trimmed.isNotEmpty) return keyText;
+  if (pendingKeyDelete) return ''; // force delete: no replacement was typed
+  // An empty field with a readable stored key means the user saw it and
+  // cleared it on purpose. An empty field with nothing readable (no key, or
+  // an unreadable one, and no endpoint change) must not be treated the same
+  // way — CoachConfig.save leaves a null apiKey untouched.
+  return storedKeyReadable ? '' : null;
+}
+
+/// True when [url]'s host is one that wants no API key and, once configured,
+/// gets the user-adjustable request timeout instead of the fixed cloud one —
+/// every [isPrivateCoachHost] host, plus the 100.64.0.0/10 shared address
+/// space (RFC 6598), which is where Tailscale hands out its node addresses —
+/// an Ollama reached over a tailnet was classified as cloud, needed a key it
+/// never has, and Save left the coach unconfigured. Shared by
+/// [CoachConfig.isLocalEndpoint] and the coach setup screen so a LAN-hosted
+/// Ollama/LM Studio is recognized the same way everywhere: a narrower check in
+/// just one place used to leave that case with its timeout field hidden and
+/// silently capped at the cloud timeout.
+///
+/// Deliberately narrow beyond that — a public host still needs a key, because
+/// "endpoint with no credential" is a thing worth being sure about before
+/// sending someone's health data to it.
+bool isLocalCoachHost(String url) {
+  if (isPrivateCoachHost(url)) return true;
+  final v4 = _ipv4LeadingOctets(url);
+  return v4 != null && v4.$1 == 100 && v4.$2 >= 64 && v4.$2 <= 127;
+}
+
+/// The stricter half of [isLocalCoachHost]: loopback, the Android emulator's
+/// host alias, `.local` mDNS names, and the three private IPv4 ranges — NOT
+/// the 100.64.0.0/10 shared space. That range is carrier-grade NAT before it
+/// is Tailscale, so an address in it says nothing about whose machine is on
+/// the other end; it may skip the key requirement, but never the consent
+/// prompt before health data is sent (see [CoachConfig.isPrivateEndpoint]).
+bool isPrivateCoachHost(String url) {
+  final h = Uri.tryParse(url)?.host.toLowerCase() ?? '';
+  if (h == 'localhost' || h == '127.0.0.1' || h == '::1' ||
+      h == '10.0.2.2' || h.endsWith('.local')) {
+    return true;
+  }
+  final v4 = _ipv4LeadingOctets(url);
+  if (v4 == null) return false;
+  final (a, b) = v4;
+  return a == 10 || (a == 172 && b >= 16 && b <= 31) || (a == 192 && b == 168);
+}
+
+/// The first two octets of [url]'s host when it is a dotted IPv4 literal.
+(int, int)? _ipv4LeadingOctets(String url) {
+  final h = Uri.tryParse(url)?.host ?? '';
+  // parseIPv4Address checks every octet is 0-255: `100.64.0.999` is a
+  // registered name to Uri, not an address in any range.
+  try {
+    final o = Uri.parseIPv4Address(h);
+    return (o[0], o[1]);
+  } on FormatException {
+    return null;
+  }
+}
+
+/// True for the iOS/macOS errSecDuplicateItem shape the plugin surfaces when
+/// its own check-then-act (containsKey -> update, else add) still lands on
+/// top of an item it did not find — a leftover from a prior install is the
+/// reported real-world trigger, since Keychain items routinely outlive an app
+/// uninstall while everything else this app stores does not.
+bool _isDuplicateItemError(Object e) {
+  if (e is! PlatformException) return false;
+  final details = e.details;
+  if (details is int && details == -25299) return true;
+  final text = '${e.message ?? ''} ${e.details ?? ''}';
+  return text.contains('-25299') ||
+      text.contains('already exists in the keychain');
+}
+
+class CoachConfig extends ChangeNotifier {
+  static const _kBaseUrl = 'coach_base_url';
+  static const _kModel = 'coach_model';
+  static const _kApi = 'coach_api';
+  static const _kKey = 'coach_api_key'; // secure storage
+  static const _kTimeoutSeconds = 'coach_timeout_seconds';
+
+  /// A local model's first response includes Ollama/LM Studio loading the
+  /// whole model into memory, which alone can pass two minutes on modest
+  /// hardware — a short timeout gives total silence for that long and then a
+  /// hard TimeoutException with no way to give it more room. This is the
+  /// default for [timeoutSeconds], which is only user-configurable — and only
+  /// takes effect — for a local endpoint; see [requestTimeout].
+  static const int defaultTimeoutSeconds = 300;
+
+  /// Fixed timeout for a cloud provider, not user-configurable: those fail in
+  /// seconds, not minutes, when something is actually wrong, so a long
+  /// timeout only delays surfacing a real error. Two minutes.
+  static const int cloudTimeoutSeconds = 120;
+
+  /// Set whenever a key is written, cleared when it is deleted. The keychain
+  /// itself cannot answer "is there a key I currently can't read?" — a locked
+  /// device and an empty keychain both read as nothing — so the answer is kept
+  /// here, where it is always readable.
+  ///
+  /// THREE states, not two. ABSENT (null) means nobody has established the
+  /// answer yet, which is where every install that predates this marker starts:
+  /// their key is in the keychain with no marker beside it. Treating absent as
+  /// "no key" would fail that user exactly as the old code did — a locked
+  /// background relaunch reads nothing, concludes there is no key, and never
+  /// retries. Absent therefore stays UNDETERMINED until a read happens with the
+  /// app in the foreground, where the device is unlocked by definition.
+  static const _kKeyPresent = 'coach_api_key_present';
+
+  static const String defaultBaseUrl = 'https://api.openai.com/v1';
+
+  /// FIRST-UNLOCK, not the plugin's default WHEN-UNLOCKED.
+  ///
+  /// This app is relaunched in the background constantly — BGProcessingTask, the
+  /// BLE restore central waking on a link drop — and those relaunches routinely
+  /// happen while the phone is LOCKED, i.e. exactly when a `whenUnlocked` item
+  /// cannot be read. That read then returned nothing, `load()` cached the
+  /// nothing as "no key", and by the time the user opened the app their key had
+  /// silently vanished ("works for a few minutes, then it's gone after
+  /// sleep/wake" — two TestFlight reports). `first_unlock` keeps the item
+  /// readable from the first unlock after boot onwards, which is what a
+  /// background-heavy app needs. The key still never leaves the device.
+  static const _apple = IOSOptions(
+    accessibility: KeychainAccessibility.first_unlock,
+  );
+  static const _macos = MacOsOptions(
+    accessibility: KeychainAccessibility.first_unlock,
+  );
+
+  final FlutterSecureStorage _secure = const FlutterSecureStorage();
+
+  String _baseUrl = defaultBaseUrl;
+  CoachApi _api = CoachApi.defaultFor(defaultBaseUrl);
+  String _model = '';
+  String? _key; // cached in-memory after load
+  int _timeoutSeconds = defaultTimeoutSeconds;
+
+  /// True when a key IS stored but this process could not read it (a locked
+  /// keychain, a wedged keystore). Distinct from "no key configured", which the
+  /// user can fix by pasting one — this one fixes itself on the next unlocked
+  /// read, and telling them to set a key up again would be wrong.
+  bool _keyUnreadable = false;
+  bool get keyUnreadable => _keyUnreadable;
+
+  /// True while it is still unknown whether a key is stored — an install that
+  /// predates the marker, read while the keychain was unavailable. Not shown to
+  /// the user (there may genuinely be no key); it only keeps the resume retry
+  /// eligible so a legacy key appears by itself once the phone is unlocked.
+  bool _keyUndetermined = false;
+  bool get keyUndetermined => _keyUndetermined;
+
+  /// Bumped TWICE by every [save] — once on the way in, once on the way out.
+  ///
+  /// A [load] that started before a save must not apply its stale result
+  /// afterwards: the startup load is unawaited and a slow keystore read can
+  /// still be in flight when the user pastes a key, and its late `_key = null`
+  /// would wipe the key they just saved out of the session.
+  ///
+  /// One bump only caught the load that started BEFORE the save. A load that
+  /// starts DURING one captured the already-incremented value, so its check
+  /// passed, and its read — taken while the write was still inside the plugin —
+  /// came back empty. Trusted, that empty read is treated as proof there is no
+  /// key: it cleared `_key` and wrote the `_kKeyPresent` marker to false over
+  /// the true the save had just set. A later background read then reports the
+  /// stored key as ABSENT rather than unreadable, which also puts
+  /// [refreshKeyOnResume] to sleep — the retry that would have recovered it.
+  /// Bumping again on the way out invalidates any read that straddled the
+  /// write, which is the only kind that can be wrong about it.
+  int _generation = 0;
+
+  /// ONE keychain MUTATION at a time.
+  ///
+  /// [load] does not only read: it writes the value it just read back, to
+  /// upgrade an item stored before this class asked for `first_unlock`. That
+  /// write is awaited, but `load` itself is not — the startup call is
+  /// fire-and-forget — so nothing stopped it overlapping the user's Save. Two
+  /// ways that ends badly: the upgrade lands last and puts the OLD key back
+  /// over the one they just pasted, or, on iOS, a write races a delete inside
+  /// the plugin and comes out as `PlatformException(-25299)`
+  /// (errSecDuplicateItem). [_generation] already orders the in-memory half of
+  /// that race; it cannot order two calls that are both inside the plugin.
+  ///
+  /// WRITES ONLY, deliberately. The read is left outside, because a keystore
+  /// read can hang outright (the documented Samsung Knox case this file's
+  /// `load` is already shaped around) and a lock that a hung read holds would
+  /// block Save forever — trading a rare clobber for a wedged settings screen.
+  Future<void> _keychainLock = Future.value();
+
+  Future<void> _serialized(Future<void> Function() op) {
+    final done = _keychainLock.then((_) => op());
+    // A failed operation must not wedge the queue — the next caller runs either
+    // way, and the error still reaches whoever awaited `done`.
+    _keychainLock = done.catchError((_) {});
+    return done;
+  }
+
+  String get baseUrl => _baseUrl;
+  CoachApi get api => _api;
+  String get model => _model;
+  /// The saved, user-configurable timeout — meaningful only for a local
+  /// endpoint (see [requestTimeout]), but kept intact and readable regardless
+  /// of the endpoint currently configured so a UI can show/restore it as the
+  /// user switches back and forth.
+  int get timeoutSeconds => _timeoutSeconds;
+
+  /// The timeout actually applied to a provider request. A cloud endpoint
+  /// always gets the fixed [cloudTimeoutSeconds] — not [timeoutSeconds] — so
+  /// switching to a local endpoint to raise the timeout for a slow model can
+  /// never accidentally leave a cloud provider hanging for minutes too.
+  Duration get requestTimeout =>
+      Duration(seconds: isLocalEndpoint ? _timeoutSeconds : cloudTimeoutSeconds);
+  String? get apiKey => _key;
+  bool get hasKey => _key != null && _key!.isNotEmpty;
+
+  /// A model served from this device or this network wants no API key, so
+  /// requiring one made Ollama and LM Studio impossible to finish configuring:
+  /// Save closed the form, `configured` stayed false, and the coach never came
+  /// on with nothing on screen to explain why. See [isLocalCoachHost] for the
+  /// host classification.
+  bool get isLocalEndpoint => isLocalCoachHost(apiBase);
+
+  /// Whether the endpoint is on this device or a private network — the gate
+  /// for skipping a consent prompt before health data leaves the phone.
+  /// Narrower than [isLocalEndpoint]; see [isPrivateCoachHost].
+  bool get isPrivateEndpoint => isPrivateCoachHost(apiBase);
+
+  bool get configured =>
+      (hasKey || isLocalEndpoint) && _baseUrl.isNotEmpty && _model.isNotEmpty;
+
+  /// Normalised base, no trailing slash.
+  String get apiBase {
+    var b = _baseUrl.trim();
+    while (b.endsWith('/')) {
+      b = b.substring(0, b.length - 1);
+    }
+    return b;
+  }
+
+  /// [trusted] marks a read taken with the app in the FOREGROUND, i.e. with the
+  /// device unlocked — the only condition under which an EMPTY read is real
+  /// evidence about what is stored.
+  Future<void> load({bool trusted = false}) async {
+    final prefs = await SharedPreferences.getInstance();
+    _baseUrl = prefs.getString(_kBaseUrl) ?? defaultBaseUrl;
+    _api = switch (prefs.getString(_kApi)) {
+      'responses' => CoachApi.responses,
+      'chatCompletions' => CoachApi.chatCompletions,
+      _ => CoachApi.defaultFor(_baseUrl),
+    };
+    _model = prefs.getString(_kModel) ?? '';
+    _timeoutSeconds = prefs.getInt(_kTimeoutSeconds) ?? defaultTimeoutSeconds;
+    final marker = prefs.getBool(_kKeyPresent); // null = undetermined
+    final generation = _generation;
+
+    // Pending BEFORE the read, not after. The startup read is wrapped in a
+    // timeout that cannot cancel the underlying call, and the Android Keystore
+    // can hang outright — if the answer is only recorded once the read returns,
+    // a read that never returns leaves the app looking like "no key configured"
+    // with the resume retry permanently disabled.
+    _keyUnreadable = marker == true && !hasKey;
+    _keyUndetermined = marker == null;
+
+    try {
+      final read = await _secure.read(
+        key: _kKey,
+        iOptions: _apple,
+        mOptions: _macos,
+      );
+      // A save landed while this read was in flight — it knows more than we do.
+      if (generation != _generation) return;
+      if (read != null && read.isNotEmpty) {
+        _key = read;
+        _keyUnreadable = false;
+        _keyUndetermined = false;
+        // Upgrade an item written before this class asked for `first_unlock`:
+        // accessibility is set at WRITE time, so an existing key keeps the old
+        // attribute until it is written again. Keyed on the marker so this
+        // happens exactly once — a write on every load would put the Android
+        // Keystore (the documented Samsung Knox hang) on the startup path for
+        // no reason.
+        if (marker != true) {
+          await _serialized(() async {
+            // Re-checked INSIDE the lock, not just before the read. A save can
+            // land while this upgrade is queued behind it, and writing `read`
+            // then would put the superseded key back.
+            if (generation != _generation) return;
+            await _secure.write(
+              key: _kKey,
+              value: read,
+              iOptions: _apple,
+              mOptions: _macos,
+            );
+            await prefs.setBool(_kKeyPresent, true);
+          });
+        }
+      } else if (trusted) {
+        // Foreground, so the keychain is readable and an empty answer is the
+        // truth: there is no key. This is also the ONLY way out of a marker that
+        // outlived its item — a device-to-device restore carries
+        // SharedPreferences across but not the keychain payload, and without
+        // this the app would insist forever that a key it cannot produce is
+        // still saved.
+        _key = null;
+        _keyUnreadable = false;
+        _keyUndetermined = false;
+        if (marker != false) await prefs.setBool(_kKeyPresent, false);
+      } else if (marker == true) {
+        // Backgrounded and empty: the keychain was unavailable, NOT the user
+        // having no key. Keep whatever is cached and say why.
+        _keyUnreadable = true;
+        _keyUndetermined = false;
+      } else if (marker == null) {
+        // Nothing recorded either way, and this read proves nothing. Stay
+        // retry-eligible so a legacy key surfaces on the next foreground.
+        _key = null;
+        _keyUndetermined = true;
+      } else {
+        _key = null;
+        _keyUnreadable = false;
+        _keyUndetermined = false;
+      }
+    } catch (_) {
+      // A read that THREW tells us nothing about the stored key, so it must not
+      // overwrite one we already hold in memory. iOS surfaces a locked
+      // `whenUnlocked` item this way rather than as an empty read, so this is
+      // the legacy-install path, not an edge case.
+      if (generation != _generation) return;
+      _keyUnreadable = marker == true;
+      _keyUndetermined = marker == null;
+    }
+    notifyListeners();
+  }
+
+  /// Re-read the key when the answer is still outstanding — it is known to
+  /// exist but was unreadable, or nothing has been established yet. Cheap no-op
+  /// otherwise, so it is safe on every resume, which is exactly when a phone
+  /// that was locked during a background relaunch becomes readable again.
+  Future<void> refreshKeyOnResume() async {
+    if (!_keyUnreadable && !_keyUndetermined) return;
+    await load(trusted: true);
+  }
+
+  /// Throws if the keychain refuses the write or delete — a caller that reports
+  /// "saved" on a key that never reached storage is the same silent loss this
+  /// class exists to stop.
+  Future<void> save({
+    String? baseUrl,
+    CoachApi? api,
+    String? model,
+    String? apiKey,
+    int? timeoutSeconds,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (baseUrl != null) {
+      final previousOrigin = coachEndpointOrigin(_baseUrl);
+      _baseUrl = baseUrl.trim().isEmpty ? defaultBaseUrl : baseUrl.trim();
+      if (api == null && coachEndpointOrigin(_baseUrl) != previousOrigin) {
+        api = CoachApi.defaultFor(_baseUrl);
+      }
+      await prefs.setString(_kBaseUrl, _baseUrl);
+    }
+    if (api != null) {
+      _api = api;
+      await prefs.setString(_kApi, api.name);
+    }
+    if (model != null) {
+      _model = model.trim();
+      await prefs.setString(_kModel, _model);
+    }
+    // A non-positive value would fail every request instantly, so it is
+    // rejected in favour of whatever was already in effect rather than
+    // silently accepted.
+    if (timeoutSeconds != null && timeoutSeconds > 0) {
+      _timeoutSeconds = timeoutSeconds;
+      await prefs.setInt(_kTimeoutSeconds, _timeoutSeconds);
+    }
+    if (apiKey != null) {
+      _generation++;
+      final k = apiKey.trim();
+      // The keychain FIRST, and the in-memory copy only once it succeeded. The
+      // other order leaves memory holding a key that was never persisted (lost
+      // at the next launch, with no marker to even flag it as missing), or
+      // hiding one that is still stored.
+      await _serialized(() async {
+        if (k.isEmpty) {
+          await _secure.delete(key: _kKey, iOptions: _apple, mOptions: _macos);
+          // The marker follows the keychain, and its own failure is not worth
+          // failing the save: a stale `true` costs a retry, never a lost key.
+          try {
+            await prefs.setBool(_kKeyPresent, false);
+          } catch (_) {/* re-established by the next load */}
+        } else {
+          try {
+            await _secure.write(
+              key: _kKey,
+              value: k,
+              iOptions: _apple,
+              mOptions: _macos,
+            );
+          } on Object catch (e) {
+            // A leftover item the plugin's own containsKey missed is still
+            // sitting there — delete it and retry once. A second failure is
+            // rethrown as-is: this recovers the one known stale-item case, it
+            // does not mask a keychain that is genuinely stuck.
+            if (!_isDuplicateItemError(e)) rethrow;
+            await _secure.delete(key: _kKey, iOptions: _apple, mOptions: _macos);
+            await _secure.write(
+              key: _kKey,
+              value: k,
+              iOptions: _apple,
+              mOptions: _macos,
+            );
+          }
+          try {
+            await prefs.setBool(_kKeyPresent, true);
+          } catch (_) {/* re-established by the next load */}
+        }
+      });
+      // The second bump: see [_generation]. Anything that read the keychain
+      // while that write was in flight now fails its check and drops its
+      // answer, instead of clearing the key and filing the marker false.
+      // Skipped when the write threw, on purpose — nothing landed, so a
+      // straddling read's "no key" is the truth.
+      _generation++;
+      _key = k.isEmpty ? null : k;
+      _keyUnreadable = false;
+      _keyUndetermined = false;
+    }
+    notifyListeners();
+  }
+}

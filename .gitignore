@@ -7,3 +7,7 @@ GARMIN/
 
 __pycache__/
 *.pyc
+
+# Dart / Flutter build output
+.dart_tool/
+build/

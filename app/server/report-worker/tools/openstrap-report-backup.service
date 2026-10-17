@@ -1,0 +1,9 @@
+[Unit]
+Description=Pull OpenStrap report metadata into local SQLite
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/openstrap-report-backup.env
+ExecStart=/opt/openstrap-report-backup/backup_to_oracle.sh

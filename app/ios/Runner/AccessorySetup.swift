@@ -1,0 +1,492 @@
+import Foundation
+import Flutter
+import CoreBluetooth
+#if canImport(AccessorySetupKit)
+import AccessorySetupKit
+#endif
+
+/// AccessorySetupKit (ASK) bridge — iOS 18+ only.
+///
+/// WHY: TN3115's relaunch table has two rows that are "No" without ASK and "Yes" with it —
+/// "App Force Quit by the user" and "Control Center Bluetooth button toggled". Note 5:
+/// "Starting in iOS 26 and iPadOS 26, only apps that use AccessorySetupKit to setup
+/// Bluetooth accessories will be relaunched." Apple DTS has since clarified on the forums
+/// that note 5 scopes to *those two rows only* — it is a capability apps GAIN, not one they
+/// lose, and the ordinary relaunch cases (app removed from memory, crashed, device
+/// restarted) never depended on ASK. The condition is also stated per-APP, not
+/// per-accessory; the relaunch itself still fires "if and only if" a pending Core Bluetooth
+/// request completes, which is what BleRestoreManager holds.
+///
+/// So the load-bearing reason to route pairing through the picker is simpler than
+/// "otherwise no background sync": on iOS 18+ this picker IS how a user grants us the
+/// accessory, plus those two extra relaunch cases.
+///
+/// COEXISTENCE: ASK is a provisioning/authorization gate, NOT a connection owner. It hands
+/// back `ASAccessory.bluetoothIdentifier` — the CoreBluetooth peripheral UUID, which is the
+/// exact value flutter_blue_plus uses as `BluetoothDevice.remoteId` on iOS. So after the
+/// user picks the band we just return that UUID to Dart; flutter_blue_plus connects to it
+/// exactly as before. No second GATT owner, no conflict.
+///
+/// Dart MethodChannel `openstrap/accessory_setup`:
+///   - `isSupported`        -> Bool   (true only on iOS 18+)
+///   - `provisionedIds`     -> [String] (every ASK-provisioned accessory's uppercased UUID)
+///   - `provisionedId`      -> String?(uppercased UUID of an already-provisioned band, or nil)
+///   - `showPicker`         -> String (the band provisioned by THIS call; throws on cancel/error)
+///                             optional Bool argument: true = add another accessory
+///   - `removeAll`          -> nil    (deprovision every band, sensors kept — used on unpair)
+///
+/// The service UUIDs the picker matches on are NOT duplicated here: they come from
+/// Info.plist's NSAccessorySetupBluetoothServices, which Apple requires to list every
+/// descriptor criterion anyway, and which is generated from `kBandRegistry` by
+/// `tool/gen_ios_ask_plist.dart`.
+enum AccessorySetup {
+  private static let channelName = "openstrap/accessory_setup"
+
+  // Extra gen5-only fallback match criterion, layered on top of the
+  // registry-driven items below. We do not yet know (no nRF Connect capture)
+  // whether fd4b0001-… is in the primary advertisement or only the scan
+  // response, so this gives gen5 a second chance to match: the 16-bit SIG
+  // member UUID 0xFD4B (what still fits a 31-byte AD). `fileprivate` so Impl
+  // can read it. Every criterion used in an ASDiscoveryDescriptor must also
+  // be listed in Info.plist or iOS silently ignores it — this is NOT a
+  // service, so it deliberately does not go through the
+  // kBandRegistry-generated list.
+  //
+  // A name-substring-only fallback (no service UUID) used to sit alongside
+  // this one but was REMOVED: ASDiscoveryDescriptor requires
+  // bluetoothServiceUUID whenever bluetoothNameSubstring is set, and a
+  // name-only descriptor fails ASK validation with a FATAL trap in
+  // -[ASAccessorySession _validateDiscoveryDescriptor:] — not a catchable
+  // completion-handler error — which crashed every picker invocation.
+  fileprivate static let whoopMemberUUID16 = "FD4B"
+
+  static func register(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "isSupported":
+        if #available(iOS 18.0, *) { result(true) } else { result(false) }
+
+      case "provisionedIds":
+        if #available(iOS 18.0, *) {
+          Impl.shared.provisionedIds { result($0) }      // [String], possibly empty
+        } else {
+          result([String]())
+        }
+
+      // KEPT, not replaced: the old scalar case still answers, because a build of the
+      // app can be newer than the Dart it runs (Flutter attach/hot-restart during
+      // development) and because deleting a channel method to save four lines is how
+      // you get a MissingPluginException on a path nobody tests.
+      case "provisionedId":
+        if #available(iOS 18.0, *) {
+          Impl.shared.provisionedIds { result($0.first) }
+        } else {
+          result(nil)
+        }
+
+      case "showPicker":
+        if #available(iOS 18.0, *) {
+          let reply: (Result<String, Impl.PickerError>) -> Void = { res in
+            switch res {
+            case .success(let id): result(id)
+            case .failure(let err):
+              result(FlutterError(code: "ask_picker", message: err.message, details: nil))
+            }
+          }
+          // A `{"services": [...]}` map is a SENSOR picker (see `showSensorPicker`). A Bool
+          // or no argument is the band picker, byte-identical to before.
+          if let args = call.arguments as? [String: Any],
+             let services = args["services"] as? [String] {
+            Impl.shared.showSensorPicker(services: services, reply)
+            return
+          }
+          let addAnother = (call.arguments as? Bool) ?? false
+          Impl.shared.showPicker(addAnother: addAnother, reply)
+        } else {
+          result(FlutterError(code: "unavailable",
+                              message: "AccessorySetupKit requires iOS 18", details: nil))
+        }
+
+      case "removeAll":
+        if #available(iOS 18.0, *) {
+          Impl.shared.removeAll { result(nil) }
+        } else {
+          result(nil)
+        }
+
+      case "removeSensor":
+        if #available(iOS 18.0, *), let id = call.arguments as? String {
+          Impl.shared.removeSensor(id: id) { result(nil) }
+        } else {
+          result(nil)
+        }
+
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+}
+
+#if canImport(AccessorySetupKit)
+@available(iOS 18.0, *)
+private final class Impl {
+  static let shared = Impl()
+
+  private let session = ASAccessorySession()
+  private var activated = false
+  private let queue = DispatchQueue.main
+  // Set while a showPicker is in flight; resolved by the completion handler.
+  private var pickerResult: ((Result<String, PickerError>) -> Void)?
+  // True from the moment the Gen 4 retry's showPicker is issued until its
+  // completion handler runs. `.pickerDidDismiss` fires for the FIRST (rejected)
+  // sheet during this window — without this guard it resolves `pickerResult`
+  // as cancelled before the retry gets a chance to report its own outcome,
+  // so a successfully provisioned accessory gets reported to Dart as cancelled.
+  private var retryInFlight = false
+  // True from a `showPicker` completion with no error and no new accessory listed, until
+  // `.pickerDidDismiss` resolves the call. `.accessoryAdded` only records the pick in
+  // `awaitingAddedId`: the sheet is still up then and ASK is still finishing authorization,
+  // and the adapter power-cycles across the sheet, so Dart must not get the id (and start
+  // a connect or re-create a central) until the sheet is gone.
+  //
+  // The completion is NOT the user's choice. Traced on iOS 27: event `.pickerDidPresent`,
+  // then the completion with error == nil and `session.accessories` still empty, then —
+  // only after the user tapped through the sheet, well over 5 s later — `.accessoryAdded`
+  // and finally `.pickerDidDismiss`. Resolving at the completion reported "nothing
+  // provisioned" for every pick the user had not finished yet.
+  private var awaitingAdded = false
+  // The ids known before the sheet opened and the band picker's old fallback, kept for the
+  // `.pickerDidDismiss` resolution of an `awaitingAdded` call.
+  private var awaitingKnown: Set<String> = []
+  private var awaitingFallback: () -> String? = { nil }
+  // The id `.accessoryAdded` reported for the current sheet, held until it dismisses.
+  private var awaitingAddedId: String?
+
+  struct PickerError: Error { let message: String }
+
+  private func ensureActivated() {
+    guard !activated else { return }
+    activated = true
+    session.activate(on: queue) { [weak self] event in
+      self?.onEvent(event)
+    }
+  }
+
+  private func onEvent(_ event: ASAccessoryEvent) {
+    // We mostly drive ASK request/response style; the event stream is here so the
+    // session stays live and so a picker-dismiss without a selection can resolve a
+    // pending showPicker as "cancelled".
+    switch event.eventType {
+    case .accessoryAdded:
+      // The pick, but the sheet is still up — hold it for `.pickerDidDismiss`.
+      guard awaitingAdded else { return }
+      awaitingAddedId = event.accessory?.bluetoothIdentifier?.uuidString.uppercased()
+      NSLog("[ASK] accessory added; holding %@ until the sheet dismisses",
+            awaitingAddedId ?? "(no bluetooth id)")
+    case .pickerDidDismiss:
+      // Ignore the first sheet's dismissal while the Gen 4 retry is in flight —
+      // see `retryInFlight`'s doc comment.
+      guard !retryInFlight else { return }
+      // The held `.accessoryAdded` id, else whatever is listed now that was not before (an
+      // add can land in the list without its event), else the band picker's fallback, else
+      // nothing was chosen.
+      if awaitingAdded {
+        awaitingAdded = false
+        let known = awaitingKnown
+        let id = awaitingAddedId ?? allIdList.first { !known.contains($0) } ?? awaitingFallback()
+        awaitingAddedId = nil
+        NSLog("[ASK] picker dismissed; provisioned %@", id ?? "nothing")
+        if let cb = pickerResult {
+          pickerResult = nil
+          if let id = id {
+            cb(.success(id))
+          } else {
+            cb(.failure(PickerError(message: "Pairing cancelled.")))
+          }
+        }
+        return
+      }
+      // If a picker was in flight and nothing got added, treat as cancelled. (If an
+      // accessory WAS added, showPicker's completion handler already resolved it.)
+      if let cb = pickerResult {
+        pickerResult = nil
+        cb(.failure(PickerError(message: "Pairing cancelled.")))
+      }
+    default:
+      break
+    }
+  }
+
+  /// The declared services that belong to a SENSOR, not a band — Info.plist's
+  /// `OSAskSensorServices`, generated from `kAskPickerSensors`. Uppercased.
+  private var sensorServices: Set<String> {
+    let list = Bundle.main.infoDictionary?["OSAskSensorServices"] as? [String] ?? []
+    return Set(list.map { $0.uppercased() })
+  }
+
+  /// The service the accessory was provisioned under, uppercased, or nil.
+  private func service(of accessory: ASAccessory) -> String? {
+    accessory.descriptor.bluetoothServiceUUID?.uuidString.uppercased()
+  }
+
+  /// Every provisioned accessory's uppercased CoreBluetooth UUID, sensors included, in
+  /// session order. `session.accessories` is an ARRAY — one entry per accessory granted.
+  private var allIdList: [String] {
+    session.accessories.compactMap { $0.bluetoothIdentifier?.uuidString.uppercased() }
+  }
+
+  /// Every provisioned BAND's uppercased CoreBluetooth UUID, in session order.
+  ///
+  /// SENSORS ARE LEFT OUT, and every reader depends on that: `provisionedId()` is how
+  /// Dart decides a WHOOP is provisioned, and the band picker's early return below hands
+  /// `known.first` back as the band to connect to. A ring paired first would otherwise
+  /// come back as the user's WHOOP.
+  private var provisionedIdList: [String] {
+    let sensors = sensorServices
+    return session.accessories.compactMap { a in
+      if let svc = service(of: a), sensors.contains(svc) { return nil }
+      return a.bluetoothIdentifier?.uuidString.uppercased()
+    }
+  }
+
+  /// Returns the uppercased UUIDs of the already-provisioned accessories (possibly empty).
+  func provisionedIds(_ completion: @escaping ([String]) -> Void) {
+    ensureActivated()
+    // `accessories` is reliable only after activation has reported .activated; give the
+    // session a brief beat to populate on a cold start, then read it.
+    queue.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+      guard let self = self else { completion([]); return }
+      completion(self.provisionedIdList)
+    }
+  }
+
+  /// - Parameter addAnother: show the picker even though an accessory is already
+  ///   provisioned, i.e. provision a SECOND band. See the ordering warning below.
+  func showPicker(addAnother: Bool = false,
+                  _ completion: @escaping (Result<String, PickerError>) -> Void) {
+    ensureActivated()
+    let known = provisionedIdList
+    let knownAll = allIdList
+    // Already provisioned and not explicitly adding another? Don't re-show the picker —
+    // just return the known id.
+    //
+    // ORDERING (do not "fix" this into an unconditional showPicker): ASK's picker fails
+    // with "CBManager is active with global permissions" once ANY CBCentralManager exists
+    // in the process, and BleRestoreManager creates one at launch on every already-paired
+    // launch. So this early return is also what keeps a repeat "pair" tap from turning
+    // into a guaranteed picker failure.
+    //
+    // ponytail: `addAnother` is therefore plumbing, not a working second-band flow — a
+    // second accessory can only be provisioned while no central is alive (fresh install,
+    // or after unpair, which releases the restore central via BleRestoreManager.disarm).
+    // A real "add a band" flow has to tear both centrals down first; that belongs with
+    // the device table (change-list E3/E4), not here.
+    if !addAnother, let existing = known.first {
+      completion(.success(existing))
+      return
+    }
+
+    // ONE ITEM PER MATCH STRATEGY. A single ASDiscoveryDescriptor AND-combines
+    // its criteria, so folding gen5's 128-bit UUID, 16-bit 0xFD4B, and a name
+    // substring onto one descriptor would match nothing. showPicker(for:) takes
+    // an array so each strategy is its own accessory; the sheet de-duplicates
+    // by peripheral.
+    //
+    // ASK matches ANY item in the picker list, so we offer one item per band in the
+    // registry. A band advertising any listed service can be provisioned; the
+    // provisioned identifier is the same CoreBluetooth UUID whichever it is.
+    //
+    // The list comes straight from Info.plist rather than a Swift copy: Apple requires
+    // every descriptor criterion to be declared there, so that array is by definition
+    // the complete set — a second copy here could only ever be the stale one. It is
+    // generated from kBandRegistry (tool/gen_ios_ask_plist.dart, pinned by
+    // test/ios_ask_plist_test.dart), so adding a band stays a one-file edit in Dart.
+    // Two extra gen5-only fallback items (16-bit member UUID, name substring) are
+    // appended below — see the constants' doc comment for why.
+    let productImage = UIImage(named: "StrapProduct")
+      ?? UIImage(systemName: "sensor.tag.radiowave.forward")
+      ?? UIImage()
+    func makeItem(_ label: String,
+                  _ configure: (ASDiscoveryDescriptor) -> Void) -> ASPickerDisplayItem {
+      let descriptor = ASDiscoveryDescriptor()
+      configure(descriptor)
+      return ASPickerDisplayItem(name: label, productImage: productImage,
+                                 descriptor: descriptor)
+    }
+    let info = Bundle.main.infoDictionary ?? [:]
+    // Sensor services are declared in the same array (Apple requires every criterion to
+    // be) but each has a picker of its own — see `showSensorPicker`.
+    let sensors = sensorServices
+    let services = (info["NSAccessorySetupBluetoothServices"] as? [String] ?? [])
+      .filter { !sensors.contains($0.uppercased()) }
+    let labels = info["OSBandLabels"] as? [String: String] ?? [:]
+    var items = services.map { svc in
+      makeItem(labels[svc.uppercased()] ?? "Band") {
+        $0.bluetoothServiceUUID = CBUUID(string: svc)
+      }
+    }
+    guard !items.isEmpty else {
+      completion(.failure(PickerError(
+        message: "No accessory services are declared in Info.plist.")))
+      return
+    }
+    // Extra gen5-only fallback item — see the constants' doc comment above.
+    items.append(makeItem("WHOOP 5.0 / MG") {
+      $0.bluetoothServiceUUID = CBUUID(string: AccessorySetup.whoopMemberUUID16)
+    })
+    // ponytail: dropped the name-substring-only fallback item. ASDiscoveryDescriptor
+    // requires bluetoothServiceUUID whenever bluetoothNameSubstring is set — a
+    // name-only descriptor fails ASK's validation with a FATAL (uncatchable) trap in
+    // -[ASAccessorySession _validateDiscoveryDescriptor:], not a completion-handler
+    // error, so the existing gen4-retry-on-rejection logic below never even ran.
+    // This crashed every "search for devices" tap (TestFlight crashlog
+    // A3457926-FD0D-48A7-9C6B-DCC6958276BF, iOS 26.6, v0.9.29). Re-add only paired
+    // with a service UUID.
+
+    pickerResult = completion
+    present(items, known: knownAll, fallback: { self.provisionedIdList.first },
+            allowGen4Retry: true)
+  }
+
+  /// The picker for ONE notify-class sensor (`kAskPickerSensors`), filtered to [services].
+  ///
+  /// WHY: with `NSAccessorySetupKitSupports` declared, Core Bluetooth only reaches
+  /// accessories the user approved in an ASK picker, so a sensor's ordinary scan finds
+  /// nothing (#371/#372). The returned id is the sensor's CoreBluetooth UUID and goes
+  /// straight to the existing Dart pairing step.
+  ///
+  /// Already approved → its id comes back with no sheet, like the band picker's early
+  /// return. Every service must be declared under `OSAskSensorServices`; anything else
+  /// is refused here rather than handed to ASK, whose descriptor validation traps.
+  func showSensorPicker(services: [String],
+                        _ completion: @escaping (Result<String, PickerError>) -> Void) {
+    ensureActivated()
+    let wanted = Set(services.map { $0.uppercased() })
+    guard !wanted.isEmpty, wanted.isSubset(of: sensorServices) else {
+      completion(.failure(PickerError(
+        message: "That sensor is not declared for the iOS pairing sheet.")))
+      return
+    }
+    if let existing = session.accessories.first(where: { a in
+      guard let svc = service(of: a) else { return false }
+      return wanted.contains(svc)
+    }), let id = existing.bluetoothIdentifier?.uuidString.uppercased() {
+      completion(.success(id))
+      return
+    }
+    let labels = Bundle.main.infoDictionary?["OSBandLabels"] as? [String: String] ?? [:]
+    // The bundled product bitmap, as the band picker uses — NOT an SF Symbol first. Seen
+    // on iOS 27: with the symbol image, iOS dropped the item ("Ignoring invalid display
+    // items … Cannot launch picker due to no valid display item") and no sheet opened;
+    // with the bitmap, the same descriptor opened the sheet.
+    let image = UIImage(named: "StrapProduct")
+      ?? UIImage(systemName: "sensor.tag.radiowave.forward")
+      ?? UIImage()
+    let sensorItems = wanted.sorted().map { svc -> ASPickerDisplayItem in
+      let descriptor = ASDiscoveryDescriptor()
+      descriptor.bluetoothServiceUUID = CBUUID(string: svc)
+      return ASPickerDisplayItem(name: labels[svc] ?? "Sensor", productImage: image,
+                                 descriptor: descriptor)
+    }
+    pickerResult = completion
+    present(sensorItems, known: allIdList, fallback: { nil }, allowGen4Retry: false)
+  }
+
+  /// Presents the picker and resolves `pickerResult`.
+  ///
+  /// If iOS rejects the widened descriptor list (a name-only item is the
+  /// experimental one), retry once with the WHOOP 4.0 item that already ships,
+  /// so the experiment can never take down 4.0 pairing.
+  ///
+  /// - Parameter known: accessory ids provisioned before this picker run started, sensors
+  ///   included, so the success handler can tell which id it just added (see below).
+  /// - Parameter fallback: the id to report when the run added nothing new — the band
+  ///   picker keeps its old `first` answer; a sensor picker has none.
+  private func present(_ items: [ASPickerDisplayItem], known: [String],
+                       fallback: @escaping () -> String?, allowGen4Retry: Bool) {
+    session.showPicker(for: items) { [weak self] error in
+      guard let self = self else { return }
+      // The retry (if any) that led to THIS completion running is no longer
+      // in flight — whatever we resolve below is the actual outcome.
+      self.retryInFlight = false
+      if let error = error {
+        guard let cb = self.pickerResult else { return }
+        let message = error.localizedDescription
+        // Prefer the typed error code over sniffing the localized message —
+        // a message that doesn't happen to contain "cancel" would otherwise
+        // incorrectly trigger a second picker on a real user cancellation.
+        let cancelled: Bool
+        if let askError = error as? ASError {
+          cancelled = askError.code == .userCancelled
+        } else {
+          cancelled = message.lowercased().contains("cancel")
+        }
+        if allowGen4Retry, !cancelled, items.count > 1 {
+          NSLog("[ASK] picker rejected the %d-item descriptor list (%@) — "
+                + "retrying with the WHOOP 4.0 item only.", items.count, message)
+          self.retryInFlight = true
+          self.present([items[0]], known: known, fallback: fallback, allowGen4Retry: false)
+          return
+        }
+        self.pickerResult = nil
+        cb(.failure(PickerError(message: message)))
+        return
+      }
+      // Picker succeeded — return the accessory THIS run added, not `accessories.first`:
+      // once a second band is provisioned the first entry is the OLD one, so `.first`
+      // would hand Dart the wrong device to connect to. (With none previously known —
+      // every pairing today — the added one IS the first, so this is unchanged.)
+      let knownSet = Set(known)
+      if let added = self.allIdList.first(where: { !knownSet.contains($0) }),
+         let cb = self.pickerResult {
+        self.pickerResult = nil
+        cb(.success(added))
+        return
+      }
+      // Nothing is waiting on this picker any more (already resolved elsewhere).
+      guard self.pickerResult != nil else { return }
+      // The sheet is up and nothing is chosen yet: the pick arrives as `.accessoryAdded`,
+      // or the sheet closes without one (`.pickerDidDismiss`). See `awaitingAdded`.
+      NSLog("[ASK] picker presented; waiting for the user's pick")
+      self.awaitingKnown = knownSet
+      self.awaitingFallback = fallback
+      self.awaitingAddedId = nil
+      self.awaitingAdded = true
+    }
+  }
+
+  /// Deprovisions every BAND. Sensors are kept: the WHOOP's unpair must not take the
+  /// ring's ASK approval with it, or the ring's row stays and its sync can never reach it.
+  func removeAll(_ completion: @escaping () -> Void) {
+    let sensors = sensorServices
+    remove({ a in !(self.service(of: a).map(sensors.contains) ?? false) }, completion)
+  }
+
+  /// Deprovisions the SENSOR with CoreBluetooth id [id] (called when it is forgotten), so
+  /// the next `showSensorPicker` opens a sheet instead of handing back the forgotten one.
+  /// Never removes a band.
+  func removeSensor(id: String, _ completion: @escaping () -> Void) {
+    let sensors = sensorServices
+    let wanted = id.uppercased()
+    remove({ a in
+      a.bluetoothIdentifier?.uuidString.uppercased() == wanted
+        && (self.service(of: a).map(sensors.contains) ?? false)
+    }, completion)
+  }
+
+  private func remove(_ match: (ASAccessory) -> Bool,
+                      _ completion: @escaping () -> Void) {
+    ensureActivated()
+    let accessories = session.accessories.filter(match)
+    guard !accessories.isEmpty else { completion(); return }
+    let group = DispatchGroup()
+    for acc in accessories {
+      group.enter()
+      session.removeAccessory(acc) { _ in group.leave() }
+    }
+    group.notify(queue: queue) { completion() }
+  }
+}
+#endif

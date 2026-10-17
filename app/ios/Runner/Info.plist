@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<!-- ── ZERO-COLLECTION BY DEFAULT (privacy tier 1) ──
+	     Every Firebase SDK auto-starts collecting the moment
+	     Firebase.initializeApp runs: Analytics logs first_open/session_start,
+	     Performance opens app-start + network traces, Crashlytics uploads any
+	     startup crash. That is long before Dart has read the user's stored
+	     telemetry consent (an async SharedPreferences load off the startup
+	     critical path), so the runtime setters alone meant a fresh install
+	     collected before consent existed.
+
+	     These are the "Enabled = false" variants (NOT the permanent
+	     ...Deactivated ones), so TelemetryService can still switch collection
+	     ON at runtime once — and only once — affirmative consent has loaded.
+	     Do NOT flip any of these to true: consent is the only thing allowed
+	     to. Keep in sync with android/app/src/main/AndroidManifest.xml. -->
+	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
+	<false/>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
+	<key>firebase_performance_collection_enabled</key>
+	<false/>
+	<!-- No ad/measurement signals, ever — never consent-gated back on. -->
+	<key>GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS</key>
+	<false/>
+	<key>GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED</key>
+	<false/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Edge</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>OpenStrap Edge</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<!-- GENERATED from lib/ble/adapters/_registry.dart — do not hand-edit.
+	     `dart run tool/gen_ios_ask_plist.dart` rewrites this array and the
+	     OSBandLabels dict below; test/ios_ask_plist_test.dart fails CI if
+	     they drift. On iOS 18+ the ASK picker is the pairing path, so a band
+	     missing here cannot be paired on iPhone at all. -->
+	<key>NSAccessorySetupBluetoothServices</key>
+	<array>
+		<string>61080001-8D6D-82B8-614A-1C8CB0F8DCC6</string>
+		<string>FD4B0001-CCE1-4033-93CE-002D5875F58A</string>
+		<string>180D</string>
+		<string>98ED0001-A541-11E4-B6A0-0002A5D5C51B</string>
+		<string>6E40FFF0-B5A3-F393-E0A9-E50E24DCCA9E</string>
+		<string>86F65000-F706-58A0-95B2-1FB9261E4DC7</string>
+		<string>FEE1</string>
+		<string>FED9</string>
+		<string>6A4E2800-667B-11E3-949A-0800200C9A66</string>
+		<string>1809</string>
+		<string>181B</string>
+		<string>181D</string>
+		<!-- 16-bit SIG member UUID. Distinct from the 128-bit vendor service
+		     above, and NOT the Bluetooth-base expansion
+		     0000FD4B-0000-1000-8000-00805F9B34FB (no band advertises that).
+		     A 128-bit UUID often does not fit the 31-byte advertisement. -->
+		<string>FD4B</string>
+	</array>
+	<!-- Last net for ASK: MG advertises as WHOOP MGB…, 5.0 as WHOOP 5A…,
+	     4.0 as WHOOP 4…. Criteria inside one descriptor AND-combine, so the
+	     name lives on its own ASPickerDisplayItem, not on the UUID items. -->
+	<key>NSAccessorySetupBluetoothNames</key>
+	<array>
+		<string>WHOOP</string>
+	</array>
+	<key>NSAccessorySetupKitSupports</key>
+	<array>
+		<string>Bluetooth</string>
+	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>OpenStrap connects to your WHOOP band over Bluetooth to sync your health data.</string>
+	<!-- GENERATED (see above): service UUID -> ASK picker row label. Cosmetic
+	     only; AccessorySetup.swift falls back to a generic name. -->
+	<key>OSBandLabels</key>
+	<dict>
+		<key>61080001-8D6D-82B8-614A-1C8CB0F8DCC6</key>
+		<string>WHOOP 4</string>
+		<key>FD4B0001-CCE1-4033-93CE-002D5875F58A</key>
+		<string>WHOOP 5</string>
+		<key>180D</key>
+		<string>Bluetooth heart rate sensor</string>
+		<key>98ED0001-A541-11E4-B6A0-0002A5D5C51B</key>
+		<string>Oura Ring</string>
+		<key>6E40FFF0-B5A3-F393-E0A9-E50E24DCCA9E</key>
+		<string>Colmi ring</string>
+		<key>86F65000-F706-58A0-95B2-1FB9261E4DC7</key>
+		<string>Ultrahuman Ring Air</string>
+		<key>FEE1</key>
+		<string>Mi Band 2/3</string>
+		<key>FED9</key>
+		<string>Pebble</string>
+		<key>6A4E2800-667B-11E3-949A-0800200C9A66</key>
+		<string>Garmin watch</string>
+		<key>1809</key>
+		<string>Bluetooth thermometer</string>
+		<key>181B</key>
+		<string>Mi Body Composition Scale</string>
+		<key>181D</key>
+		<string>Mi Smart Scale 2</string>
+	</dict>
+	<!-- GENERATED (see above): the declared services that belong to a SENSOR
+	     paired through its own ASK picker, not to a band. AccessorySetup.swift
+	     subtracts these from the WHOOP picker. -->
+	<!-- GENERATED (see above): Bluetooth company identifiers of the ASK sensors,
+	     declared so the picker finds a sensor whose advertisement carries
+	     manufacturer data. Never set on a descriptor: that traps on iOS 27. -->
+	<key>NSAccessorySetupBluetoothCompanyIdentifiers</key>
+	<array>
+		<string>0x02B2</string>
+		<string>0x0157</string>
+		<string>0x0087</string>
+	</array>
+	<key>OSAskSensorServices</key>
+	<array>
+		<string>180D</string>
+		<string>98ED0001-A541-11E4-B6A0-0002A5D5C51B</string>
+		<string>6E40FFF0-B5A3-F393-E0A9-E50E24DCCA9E</string>
+		<string>86F65000-F706-58A0-95B2-1FB9261E4DC7</string>
+		<string>FEE1</string>
+		<string>FED9</string>
+		<string>6A4E2800-667B-11E3-949A-0800200C9A66</string>
+		<string>1809</string>
+		<string>181B</string>
+		<string>181D</string>
+	</array>
+	<!-- The automatic-backup folder lives in the app's Documents directory.
+	     Without BOTH of these it exists but is invisible in Files, so nothing
+	     the user might sync it with (iCloud Drive, Nextcloud, a cable) can
+	     reach it — which makes the whole feature pointless rather than broken,
+	     and therefore easy to miss. -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<!-- Steps are NOT read from Apple Health any more: that number is the sum of
+	     every app that writes steps, and OpenStrap will not put a figure it
+	     cannot attribute into one of its own. Steps come from this iPhone's
+	     motion chip instead (NSMotionUsageDescription below). Do not put the
+	     step clause back into this string — it is review-visible, and it would
+	     be describing something the app no longer does. -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>OpenStrap reads your height, weight, date of birth and sex to set up your profile; your resting heart rate so it has a starting baseline; any blood pressure, blood glucose or body temperature readings, so a device that is cleared to measure those can sit beside your own data with that device's name on it — never blended into an OpenStrap number; and your workouts and their routes, so a run recorded by another app can be listed and drawn on a map here, named with the app that recorded it and never counted as one OpenStrap measured. It also reads back its own recent samples so it never writes duplicates.</string>
+	<!-- REQUIRED, not optional: Apple documents that calling CoreMotion without
+	     this key CRASHES the app. See ios/Runner/AppDelegate.swift
+	     (PedometerBridge). -->
+	<key>NSMotionUsageDescription</key>
+	<string>OpenStrap counts your daily steps from this iPhone's own motion chip, because a band on your wrist cannot tell walking from stirring a pot, and the phone in your pocket can. It reads step counts only — never your location or anything else the motion chip records — and only the last few days of them. Your steps stay on this device and are never uploaded.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>OpenStrap uses the camera to read the barcode on a food packet, so logging a meal does not mean typing its nutrition panel out by hand. It reads the barcode digits and nothing else — no photo is taken, kept, or sent anywhere.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>OpenStrap writes your sleep, resting heart rate, HRV, respiratory rate, energy and workouts into Apple Health.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>OpenStrap connects to your WHOOP band over Bluetooth to sync your health data.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>OpenStrap records your route during a run, ride or walk so you can see it, colored by heart-rate zone, when the workout ends. Recording continues while your screen is locked or you switch apps, but only while a workout is running — it stops the moment you finish. Your route stays on this device and is never uploaded.</string>
+	<!-- NSLocationAlwaysAndWhenInUseUsageDescription: STILL not requested by app
+	     code. gps_source.dart asks for WHEN-IN-USE only; background delivery
+	     during a workout comes from the "location" UIBackgroundMode plus
+	     allowsBackgroundLocationUpdates, which needs no "Always" grant.
+	     geolocator_apple's PermissionHandler.m links
+	     [CLLocationManager requestAlwaysAuthorization] unconditionally, which
+	     App Store Connect's static binary scan (ITMS-90683) flags even though
+	     that path is never invoked at runtime — hence this string exists.
+	     It must still describe the truth, because if it is ever shown, it is
+	     shown to a user deciding about location access. -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>OpenStrap never needs always-on location and does not ask for it. It records your route only while a run, ride or walk is actively running — including when your screen is locked — and stops as soon as you finish. Your route stays on this device and is never uploaded.</string>
+	<!-- NSPhotoLibraryUsageDescription: not used by app code — import_screen.dart's
+	     only FilePicker call uses FileType.any (Files app / UIDocumentPicker),
+	     never .image/.media. file_picker's iOS podspec unconditionally bundles
+	     DKImagePickerController/PhotoGallery + DKPhotoGallery, which link
+	     PHPhotoLibrary APIs and trip the same ITMS-90683 static scan. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>OpenStrap does not access your photo library. This permission is linked by a dependency but unused — importing your own exported WHOOP data uses the Files app, not Photos.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>OpenStrapAppGroupIdentifier</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<!-- BGTaskSchedulerPermittedIdentifiers: the BGProcessingTask used by
+	     BgSyncScheduler.swift for opportunistic headless sync + heavy derivation,
+	     plus the lighter BGAppRefreshTask (sync-only, no heavy derive) that uses
+	     the separate app-refresh budget iOS grants alongside processing tasks.
+	     NOTE: "location" IS in UIBackgroundModes, and is required — not optional.
+	     Without it iOS suspends the process within seconds of a screen lock or an
+	     app switch, which during a run or ride means the fix stream dies, the
+	     route is lost, and a suspended app is the first thing jetsam reclaims
+	     under memory pressure (the user just sees "the app closed mid-ride").
+	     The previous v1 stance — while-in-use only, plus a "keep the screen on"
+	     hint in the UI — could not survive a real 40-minute workout.
+	     Scope is kept tight so this stays honest and App-Store-defensible:
+	       • authorization stays WHEN-IN-USE (we never request "Always");
+	       • background updates are armed ONLY while a route session is live and
+	         disarmed the moment it ends (see lib/gps/gps_source.dart);
+	       • showBackgroundLocationIndicator is ON, so iOS shows the blue pill
+	         the entire time we are reading location in the background;
+	       • routes are written to the on-device workout_route table and are
+	         never uploaded — background mode changes WHEN we can read GPS, not
+	         where any of it goes.
+	     "processing" enables BGProcessingTask; "fetch" enables BGAppRefreshTask. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>wtf.openstrap.edge.bgsync</string>
+		<string>wtf.openstrap.edge.refresh</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>location</string>
+		<string>processing</string>
+		<string>fetch</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>

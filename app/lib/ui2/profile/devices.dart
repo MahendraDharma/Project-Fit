@@ -1,0 +1,2615 @@
+// Sources, not "devices".
+//
+// This is where the band-agnostic thesis has to be legible, because this is
+// where someone goes to ask "which of my things is this number coming from?".
+//
+// The answer is a quality ladder, and the ordering rule is the inverse of the
+// platform health stores: Apple Health and Health Connect rank by whatever
+// wrote last (with a manual priority list bolted on top), so a phone's step
+// estimate can quietly outrank a chest strap. Here the better sensor wins and
+// recency only breaks a tie within a tier.
+//
+// RULING (supersedes the "no user preference" clause this paragraph used to
+// carry). The default order for every signal is derived from physics, computed
+// from `BandAdapter.signals`; `rankSources`' tier ladder stays as the source of
+// that default. A user may reorder WITHIN ONE SIGNAL, and when they do the row
+// is marked `user_set = 1` with a one-tap reset. Recency never enters a
+// cross-device comparison. The screen no longer claims a preference it cannot
+// set, because now it can.
+//
+// PER SIGNAL, never per metric, and never an N×M grid in Settings. "Priority
+// for readiness" has no meaning — readiness has four inputs. Only a handful of
+// declared signals ever contend, so `contendedSignals` is usually empty and
+// `SignalPriorityScreen`'s entry row is then absent entirely.
+//
+// TWO BUCKETS AND ONLY TWO: what is measuring, and what is NOT YET — the
+// second with a reason and a PERMANENCE beside it. "Not yet" without a
+// permanence becomes a lie by slow motion: "no, an iPhone has no ANT radio" is
+// a different statement from "not yet, a few weeks". There is deliberately no
+// third "imported" tier; bringing a history in is data adoption, not device
+// support, and it never appears on a compatibility list.
+//
+// A tier rung is drawn when something in it exists. Tier 1 is now reachable —
+// a standard Bluetooth heart-rate sensor can be paired from this screen — so it
+// is no longer named in the NOT YET list. What it CANNOT do is stated on the
+// sensor's own row instead: it captures beats during a workout and nothing
+// derives from it yet, because no one on this project has held one
+// (ASSUMPTIONS R6).
+
+import '../../l10n/display_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart'
+    show BluetoothDevice;
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
+
+import '../../ble/adapters/_registry.dart'
+    show
+        BandEntry,
+        kBandRegistry,
+        kBleHrs,
+        kColmi,
+        kCoros,
+        kGarmin,
+        kMiBand234,
+        kMiScale2,
+        kMiScaleComposition,
+        kOura,
+        kPebble,
+        kPolarPmd,
+        kThermometer,
+        kUltrahuman,
+        declaredSignals;
+import '../../ble/adapters/signals.dart' show InputSignal, kRankedSignals;
+import '../../ble/colmi_link.dart' show ColmiLink;
+import '../../ble/coros_link.dart' show CorosLink;
+import '../../ble/garmin_link.dart' show GarminLink;
+import '../../ble/hrs_link.dart' show HrsLink, HrsReading;
+import '../../ble/miband_link.dart' show MiBand234Link, pairMiBand234;
+import '../../ble/oura_link.dart'
+    show OuraLink, OuraSyncCategory, pairOuraRing;
+import '../../ble/pebble_link.dart' show PebbleLink;
+import '../../ble/polar_pmd_link.dart' show PolarPmdLink;
+import '../../ble/session_link.dart' show SessionLink;
+import '../../ble/ultrahuman_link.dart' show UltrahumanLink;
+import '../../ble/band_status_l10n.dart' show localizedBandStatus;
+import '../../ble/ble_state.dart' show BandStatus, kMaxConcurrentSecondaryLinks;
+import '../../compute/inputs/canonical.dart' show columnFor, flagOnOrPrimary;
+import '../../data/db.dart' show LocalDb;
+import '../../data/step_calibration.dart';
+import '../../l10n/app_localizations.dart';
+import '../../notify/battery_forecast.dart';
+import '../../state/prefs.dart' show Prefs;
+import '../../sync/paired_device.dart' show cleanDeviceLabel;
+import '../../state/app_state.dart';
+import '../../state/clock_format.dart' show formatClockOf;
+import '../pairing/device_picker.dart' show DevicePickerScreen;
+import '../onboarding/profile_setup.dart' show formatDay;
+import '../ui2.dart';
+import 'profile.dart';
+import 'settings.dart' show backToRoot;
+import 'wearable_numbers.dart' show DeviceUseSwitch, WearableDayScreen;
+
+/// Measurement quality, which is the ONLY thing that decides precedence.
+enum SourceTier {
+  /// An electrical beat detector: R-peaks, so genuine beat-to-beat intervals.
+  beatToBeat(
+    1,
+    'Beat-to-beat intervals',
+    'Electrical R-peak detection.',
+    C.green,
+  ),
+
+  /// Optical pulse at the wrist. Everything this app ships today.
+  wristOptical(
+    2,
+    'Wrist optical pulse',
+    'Continuous 24/7 pulse, sleep and temperature. Beat timing is inferred '
+        'from a pulse wave, so HRV here is PRV.',
+    C.blue,
+  ),
+
+  /// The phone in a pocket.
+  phone(
+    3,
+    'Steps only',
+    'The phone’s own motion coprocessor. Steps and nothing else.',
+    C.orange,
+  );
+
+  const SourceTier(this.rank, this.label, this.detail, this.accent);
+
+  final int rank;
+  final String label;
+  final String detail;
+  final Color accent;
+}
+
+/// Localized label/detail for a [SourceTier]. The enum's own `.label`/
+/// `.detail` stay English-only (a const enum constructor can't take a
+/// BuildContext) — this is the wrapper every render call site should use
+/// instead, same split as `sourceState`/`_localizedSourceState` below.
+String sourceTierLabel(BuildContext c, SourceTier t) {
+  final l = AppLocalizations.of(c);
+  switch (t) {
+    case SourceTier.beatToBeat:
+      return l?.devicesTierBeatToBeatLabel ?? t.label;
+    case SourceTier.wristOptical:
+      return l?.devicesTierWristOpticalLabel ?? t.label;
+    case SourceTier.phone:
+      return l?.devicesTierPhoneLabel ?? t.label;
+  }
+}
+
+String sourceTierDetail(BuildContext c, SourceTier t) {
+  final l = AppLocalizations.of(c);
+  switch (t) {
+    case SourceTier.beatToBeat:
+      return l?.devicesTierBeatToBeatDetail ?? t.detail;
+    case SourceTier.wristOptical:
+      return l?.devicesTierWristOpticalDetail ?? t.detail;
+    case SourceTier.phone:
+      return l?.devicesTierPhoneDetail ?? t.detail;
+  }
+}
+
+/// This band's name, from the registry entry that decodes it — never asserted.
+///
+/// The two call sites here and in `day_steps.dart` both used to be
+/// `generation == 'gen5' ? 'WHOOP 5' : 'WHOOP 4'`, which does not name a band,
+/// it ASSERTS one: every future adapter, every imported day and every row
+/// banked before the family stamp existed was published as a WHOOP 4. Null is
+/// the honest answer for all of those, and every caller has a word for it.
+String? bandLabelFor(String? adapterId) {
+  if (adapterId == null || adapterId.isEmpty) return null;
+  for (final e in kBandRegistry) {
+    if (e.id == adapterId) return e.label;
+  }
+  return null;
+}
+
+/// One row in a metric screen's device filter (final-plan §6.3).
+///
+/// THREE STATES, and the third is why this is a type rather than a
+/// `List<String>`: a device that cannot supply the metric is SHOWN, disabled,
+/// with the reason. An unexplained absent option is the thing users file bugs
+/// about, and an unexplained empty chart is worse.
+typedef DeviceOption = ({
+  /// `device.id`. `''` is the primary band, permanently (ASSUMPTIONS A1).
+  String deviceId,
+
+  /// What the pill says — the user's own label for the device.
+  String label,
+
+  /// False when the device does not declare every signal the metric needs.
+  /// The pill is drawn and untappable.
+  bool selectable,
+
+  /// Non-null ONLY when the option is worth explaining: the missing-signal
+  /// reason for a non-selectable one, or the empty-window reason for a
+  /// selectable one with no coverage. Null on the ordinary case.
+  String? reason,
+});
+
+/// The metric-screen device filter: one pill per candidate, plus the reason
+/// under it when there is one.
+///
+/// ABSENT, not empty, when [options] has fewer than two entries — the widget
+/// returns `SizedBox.shrink()` so a single-device screen has no row, no
+/// padding, and no layout shift. That is the assertion the single-device
+/// goldens make (final-plan §6.5).
+class DeviceFilter extends StatelessWidget {
+  const DeviceFilter({
+    super.key,
+    required this.options,
+    required this.selected,
+    required this.onSelect,
+    this.color = C.blue,
+    this.allLabel,
+    this.showWithOne = false,
+  });
+
+  /// The first pill's label; "All devices" when null.
+  final String? allLabel;
+
+  /// Show even with a single option (the first pill is then its own view,
+  /// not a merge of one device with itself).
+  final bool showWithOne;
+
+  final List<DeviceOption> options;
+
+  /// Null is "All devices" — the merged view, and the default.
+  final String? selected;
+
+  /// Null argument means All devices.
+  final ValueChanged<String?> onSelect;
+  final Color color;
+
+  @override
+  Widget build(BuildContext c) {
+    if (options.length < (showWithOne ? 1 : 2)) return const SizedBox.shrink();
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    final all = allLabel ?? l?.deviceFilterAllDevices ?? 'All devices';
+    final labels = [all, for (final o in options) o.label];
+    final index = selected == null
+        ? 0
+        : options.indexWhere((o) => o.deviceId == selected) + 1;
+    // Index 0 is All devices and is always tappable, so every disabled index
+    // is shifted by one — the off-by-one that would otherwise grey the wrong
+    // pill.
+    final disabled = <int>{
+      for (var i = 0; i < options.length; i++)
+        if (!options[i].selectable) i + 1,
+    };
+    final shown = index <= 0 ? null : options[index - 1];
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      SubTabs(
+        labels,
+        index < 0 ? 0 : index,
+        (i) => onSelect(i == 0 ? null : options[i - 1].deviceId),
+        color: color,
+        disabled: disabled,
+      ),
+      // THE REASON, for the selected pill and for any disabled one. Never an
+      // unexplained empty chart and never an unexplained dead option.
+      if (shown?.reason case final r?) ...[
+        const SizedBox(height: S.x2),
+        Text('${shown!.label} · $r', style: F.over.copyWith(color: p.ink3)),
+      ] else if (disabled.isNotEmpty) ...[
+        const SizedBox(height: S.x2),
+        Text(
+          [
+            // `reason` is documented as non-null for a non-selectable option
+            // but the type does not enforce it, and an unguarded
+            // interpolation renders the literal text "null" beside the label.
+            for (final o in options)
+              if (!o.selectable)
+                o.reason == null ? o.label : '${o.label} · ${o.reason}',
+            ].join('   '),
+            style: F.over.copyWith(color: p.ink3),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// The global per-signal priority editor: one drag-reorder list per contended
+/// signal, reached from `MyDevicesView`'s "Which source wins" row. Only
+/// contended signals get a list — a signal only one paired device declares
+/// has nothing to order (final-plan §4.5).
+class SignalPriorityScreen extends StatefulWidget {
+  const SignalPriorityScreen({super.key});
+
+  @override
+  State<SignalPriorityScreen> createState() => _SignalPriorityScreenState();
+}
+
+class _SignalPriorityScreenState extends State<SignalPriorityScreen> {
+  bool _loading = true;
+  List<InputSignal> _signals = const [];
+  Map<InputSignal, List<String>> _order = const {};
+  Map<String, String> _labels = const {};
+  Set<String> _userSet = const {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
+  Future<void> _load() async {
+    final app = context.read<AppState>();
+    final sources = liveSources(app);
+    final signals = contendedSignalsOf(sources);
+    final labels = <String, String>{
+      // The phone has no `device` row, so no id. Coalesced to `''` its null
+      // collapsed onto the PRIMARY BAND's key, and a map literal keeps
+      // insertion order with last-write-wins — so a phone iterated after the
+      // band renamed the band's row in the reorder list. The user then drags
+      // a row labelled "Your phone" that actually moves the band, in the one
+      // editor that decides which device wins a signal.
+      for (final s in sources) ?deviceIdOf(s): s.name,
+    };
+    final priorities = await LocalDb.signalPriorities();
+    final order = <InputSignal, List<String>>{};
+    for (final sig in signals) {
+      final declaring = declaringDeviceIds(sources, sig);
+      final stored = priorities[sig.name];
+      order[sig] = stored != null && stored.isNotEmpty
+          ? [
+              for (final id in stored) if (declaring.contains(id)) id,
+              for (final id in declaring) if (!stored.contains(id)) id,
+            ]
+          : declaring;
+    }
+    final userSet = await LocalDb.userSetSignals();
+    if (!mounted) return;
+    setState(() {
+      _signals = signals;
+      _labels = labels;
+      _order = order;
+      _userSet = userSet;
+      _loading = false;
+    });
+  }
+
+  /// A write that did not land must never look like one that did — the list
+  /// snapping back with no sentence anywhere is how a user believes they set
+  /// a preference they did not.
+  Future<void> _sayNotSaved() => showReasonSheet(
+        context,
+        AppLocalizations.of(context)?.devicesOrderNotSaved ??
+            'That order could not be saved. Nothing changed.',
+      );
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: S.x4),
+            child: NavBar(l?.devicesWhichSourceWins ?? 'Which source wins'),
+          ),
+          if (_loading)
+            const Expanded(child: Center(child: CircularProgressIndicator()))
+          else
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
+                children: [
+                  for (final sig in _signals) ...[
+                    Section(
+                      signalDisplayName(c, sig),
+                      Column(children: [
+                        ReorderableListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          onReorder: (from, to) async {
+                            final ids = [...?_order[sig]];
+                            // ReorderableListView's `to` is the index BEFORE removal.
+                            ids.insert(
+                                to > from ? to - 1 : to, ids.removeAt(from));
+                            try {
+                              await LocalDb.setSignalPriority(sig, ids);
+                            } catch (_) {
+                              // The stored order is unchanged, so leave the
+                              // list where it was rather than showing an order
+                              // nothing persisted. Same shape as `_saveRpe`.
+                              if (mounted) await _sayNotSaved();
+                              return;
+                            }
+                            if (!mounted) return;
+                            setState(() {
+                              _order = {..._order, sig: ids};
+                              _userSet = {..._userSet, sig.name};
+                            });
+                          },
+                          children: [
+                            for (final id in _order[sig] ?? const <String>[])
+                              ListTile(
+                                key: ValueKey(id),
+                                title: Text(_labels[id] ?? id),
+                              ),
+                          ],
+                        ),
+                        if (_userSet.contains(sig.name))
+                          Pressable(
+                            onTap: () async {
+                              try {
+                                await LocalDb.clearSignalPriority(sig);
+                              } catch (_) {
+                                if (mounted) await _sayNotSaved();
+                                return;
+                              }
+                              await _load();
+                            },
+                                semanticLabel:
+                                    l?.devicesResetSourceSemantics(
+                                      signalDisplayName(c, sig),
+                                    ) ??
+                                    'Reset ${signalDisplayName(c, sig)} '
+                                'to the default order',
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: S.x2),
+                              child: Text(
+                                l?.devicesResetToDefault ??
+                                    'Back to the default order',
+                                style: F.cap.copyWith(color: p.on(C.blue)),
+                              ),
+                            ),
+                          ),
+                      ]),
+                    ),
+                    const SizedBox(height: S.x4),
+                  ],
+                  Text(
+                    l?.metricDetailHistoryKeepsSource ??
+                        'Days already finished keep the source they were '
+                            'calculated with.',
+                    style: F.over.copyWith(color: p.ink3),
+                  ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The HUMAN name for a signal, for a heading or a screen reader.
+///
+/// `InputSignal.name` is a Dart identifier — `hr1Hz`, `rrIntervals`,
+/// `skinTempRaw` — and it was reaching a settings screen as a section title
+/// and as a semantic label. An exhaustive `switch` with no `default` makes a
+/// future [InputSignal] member a COMPILE ERROR here rather than a leaked
+/// identifier, the same protection `sourceTierLabel` gives.
+String signalDisplayName(BuildContext c, InputSignal s) {
+  final l = AppLocalizations.of(c);
+  return switch (s) {
+    InputSignal.rrIntervals =>
+      l?.signalRrIntervals ?? 'Beat-to-beat intervals',
+    InputSignal.hr1Hz => l?.signalHr1Hz ?? 'Continuous heart rate',
+    InputSignal.hrSparse => l?.signalHrSparse ?? 'Heart rate',
+    InputSignal.accel1Hz => l?.signalAccel1Hz ?? 'Movement',
+    InputSignal.accelHighRate =>
+      l?.signalAccelHighRate ?? 'High-rate movement',
+    InputSignal.ppgGreen => l?.signalPpgGreen ?? 'Green PPG',
+    InputSignal.ppgRedIr => l?.signalPpgRedIr ?? 'Red/infrared PPG',
+    InputSignal.skinTempRaw => l?.signalSkinTempRaw ?? 'Skin temperature',
+    InputSignal.steps => l?.signalSteps ?? 'Steps',
+    InputSignal.skinTempC => l?.signalSkinTempC ?? 'Skin temperature (°C)',
+    InputSignal.activityLevel => l?.signalActivityLevel ?? 'Activity',
+    InputSignal.deviceHrv => l?.signalDeviceHrv ?? 'The device’s own HRV',
+    InputSignal.deviceStages =>
+      l?.signalDeviceStages ?? 'The device’s own sleep stages',
+    InputSignal.deviceResp =>
+      l?.signalDeviceResp ?? 'The device’s own breathing rate',
+    InputSignal.deviceSpo2 => l?.signalDeviceSpo2 ?? 'The device’s own SpO2',
+    InputSignal.deviceStress =>
+      l?.signalDeviceStress ?? 'The device’s own stress',
+    InputSignal.vendorScalars =>
+      l?.signalVendorScalars ?? 'The device’s own numbers',
+
+  };
+}
+
+/// Why this device cannot serve a metric, from the signals it does NOT declare.
+///
+/// Generated, never written per device per metric: it stays true when an
+/// adapter's declarations change and it costs nothing at the fortieth device.
+/// One phrase per [InputSignal] — the physical absence, not the metric.
+///
+/// Takes a [BuildContext] for the same reason [signalDisplayName] does: this
+/// is rendered to the user, as a disabled pill's sub-label, so it is translated
+/// like every other sentence on the screen. And NOT by reusing
+/// [signalDisplayName]: "no accelerometer" and "no temperature sensor" name the
+/// hardware, where the display names ("Movement", "Skin temperature") name what
+/// the user reads off it — the distinction this doc comment's last line is
+/// about. A `switch` with no `default` for the same reason as well: a new
+/// [InputSignal] member is a compile error here rather than a device silently
+/// explaining itself as "cannot supply this".
+String missingSignalReason(BuildContext c, Set<InputSignal> missing) {
+  final l = AppLocalizations.of(c);
+  String words(InputSignal s) => switch (s) {
+        InputSignal.rrIntervals =>
+          l?.missingSignalRrIntervals ?? 'no beat-to-beat intervals',
+        InputSignal.hr1Hz =>
+          l?.missingSignalHr1Hz ?? 'no continuous heart rate',
+        InputSignal.hrSparse => l?.missingSignalHrSparse ?? 'no heart rate',
+        InputSignal.accel1Hz => l?.missingSignalAccel1Hz ?? 'no accelerometer',
+        InputSignal.accelHighRate =>
+          l?.missingSignalAccelHighRate ?? 'no high-rate accelerometer',
+        InputSignal.ppgGreen => l?.missingSignalPpgGreen ?? 'no green PPG',
+        InputSignal.ppgRedIr =>
+          l?.missingSignalPpgRedIr ?? 'no red/infrared PPG',
+        InputSignal.skinTempRaw =>
+          l?.missingSignalSkinTempRaw ?? 'no temperature sensor',
+        InputSignal.steps => l?.missingSignalSteps ?? 'no step count',
+        InputSignal.skinTempC =>
+          l?.missingSignalSkinTempC ?? 'no skin temperature',
+        InputSignal.activityLevel =>
+          l?.missingSignalActivityLevel ?? 'no activity record',
+        InputSignal.deviceHrv =>
+          l?.missingSignalDeviceHrv ?? 'no HRV of its own',
+        InputSignal.deviceStages =>
+          l?.missingSignalDeviceStages ?? 'no sleep stages of its own',
+        InputSignal.deviceResp =>
+          l?.missingSignalDeviceResp ?? 'no breathing rate of its own',
+        InputSignal.deviceSpo2 =>
+          l?.missingSignalDeviceSpo2 ?? 'no SpO2 of its own',
+        InputSignal.deviceStress =>
+          l?.missingSignalDeviceStress ?? 'no stress of its own',
+        InputSignal.vendorScalars =>
+          l?.missingSignalVendorScalars ?? 'reports nothing of its own',
+      };
+  // Ordered by the enum so two devices missing the same pair read identically.
+  final parts = [for (final s in InputSignal.values) if (missing.contains(s)) s];
+  return parts.isEmpty
+      ? (l?.missingSignalUnknown ?? 'cannot supply this')
+      : words(parts.first);
+}
+
+/// The devices that could serve [requires], newest-facts-only: a registry
+/// declaration compared against a `device` row. NO QUERY, which is what makes
+/// the visibility gate in §6.5 free.
+///
+/// SUPERSET test. A device qualifies only when its adapter declares every one
+/// of [requires] — see `MetricSpec.requires`.
+///
+/// [c] is only ever used to translate a rejected device's `reason` — see
+/// [missingSignalReason]. Nothing about WHICH devices qualify depends on it.
+List<DeviceOption> signalCandidates(
+  BuildContext c,
+  AppState app, {
+  required Set<InputSignal> requires,
+}) =>
+    candidatesFromSources(c, rankSources(liveSources(app)), requires: requires);
+
+/// The STORAGE device id for [s], or null when it has none.
+///
+/// `HealthSource.deviceId` is null for BOTH the primary band (whose stored id
+/// is `LocalDb.kPrimaryDeviceId`, `''`) and the phone (which has no `device`
+/// row at all), so the two need different answers from the same field. One
+/// helper rather than the ternary repeated at every consumer: coalescing the
+/// phone's null to `''` silently maps it ONTO the band, and force-unwrapping
+/// it throws the first time a phone source reaches a new path.
+String? deviceIdOf(HealthSource s) =>
+    s.isBand ? LocalDb.kPrimaryDeviceId : s.deviceId;
+
+/// The pure half of [signalCandidates] — split out so a test can hand-build
+/// [HealthSource]s (as `device_sources_test.dart` already does) instead of a
+/// live `AppState`. [c] is passed straight through to [missingSignalReason]
+/// and has no say in which sources qualify.
+List<DeviceOption> candidatesFromSources(
+  BuildContext c,
+  List<HealthSource> sources, {
+  required Set<InputSignal> requires,
+}) {
+  if (requires.isEmpty) return const [];
+  final out = <DeviceOption>[];
+  for (final s in sources) {
+    // The phone has no `device` row and no adapter. It is a step counter, and
+    // steps are the one metric with no `requires` at all (§4.6), so it can
+    // never be a candidate here.
+    final id = deviceIdOf(s);
+    if (id == null) continue;
+    final declared = rankableSignals(s);
+    // A device declaring NOTHING is not a candidate for anything — never
+    // shown, not even disabled. A device behind a flag that is off is this
+    // case (rule R6): it is out of scope for every metric, and a permanent
+    // disabled pill on every screen would be the noise §0 promises a
+    // WHOOP + ring user never sees.
+    if (declared.isEmpty) continue;
+    final missing = requires.difference(declared);
+    out.add((
+      deviceId: id,
+      label: s.name,
+      selectable: missing.isEmpty,
+      reason: missing.isEmpty ? null : missingSignalReason(c, missing),
+    ));
+  }
+  return out;
+}
+
+/// What [s] may be ranked for: its declared signals, or none while its
+/// flag is off (rule R6).
+Set<InputSignal> rankableSignals(HealthSource s) =>
+    s.flagOff ? const {} : declaredSignals(s.family);
+
+/// The devices that DECLARE [sig], in the physics ladder's order.
+///
+/// The one correct basis for a `signal_priority` write. `setSignalPriority`
+/// replaces every row of a signal, and `signalPriority`'s rows are ALSO the
+/// resolver's candidate list — so an order built from anything narrower than
+/// "declares this signal" (a metric's selectable pills, say) silently deletes
+/// a device from a signal it really does declare, and takes it out of every
+/// OTHER metric that shares that signal. Per signal, never per metric.
+List<String> declaringDeviceIds(List<HealthSource> sources, InputSignal sig) => [
+      for (final s in rankSources(sources))
+        // Skipped, never force-unwrapped: an id-less source (the phone) has
+        // nothing to rank, and `!` here would throw the day one declares a
+        // contended signal.
+        if (deviceIdOf(s) case final id?)
+          if (rankableSignals(s).contains(sig)) id,
+    ];
+
+/// Who currently wins each of [requires] — `{signal: deviceId}`, in
+/// [requires]' own order, from the stored `signal_priority` orders in
+/// [stored] (`LocalDb.signalPriorities()`'s shape, keyed by `signal.name`).
+///
+/// PER SIGNAL, because per signal is the only shape the table has. A metric's
+/// "preferred device" is a question about SEVERAL signals: readiness needs
+/// four, and nothing stops a user putting a chest strap first for beat timing
+/// and the band first for continuous heart rate. Reading `requires.first`
+/// alone and calling its winner the metric's preferred device asserts an
+/// agreement that may not exist — see [unanimousWinner], which is the test
+/// for whether it does.
+///
+/// [signalWinners]' coverage lookback — long enough to catch a device paired
+/// months ago and left unranked, short enough that the query it drives stays
+/// bounded regardless of how old the install is.
+const kSignalWinnersLookbackDays = 400;
+
+/// A stored id is skipped unless the device still DECLARES that signal, the
+/// same filter [SignalPriorityScreen] applies when it renders an order: a row
+/// left behind by a forgotten device has no adapter to serve the window, and
+/// the resolver passes over it too (it has no coverage to own). [fallback]
+/// answers a signal with no usable row — the ladder's choice, which the
+/// caller already has in hand.
+///
+/// A device with real `device_coverage` rows for [sig] but no stored priority
+/// row (paired after the user last customized ranking for this signal) is
+/// unioned in below the stored order, sorted — the same fix
+/// `_resolveOwnership` got in derivation_engine.dart (kAlgoVersion 91):
+/// otherwise this caption disagrees with the engine's actual answer for the
+/// exact population that bump was written for. Coverage is read over the
+/// last [kSignalWinnersLookbackDays] days, not all of history — a `from: 0`
+/// scan over `device_coverage` (never pruned) grows unbounded with an
+/// install's age, and this runs on the UI isolate on every metric-detail
+/// load; a device that stopped covering this signal a year ago is also a
+/// worse answer for "who is CURRENTLY feeding this metric" than "absent".
+Future<Map<InputSignal, String?>> signalWinners(
+  List<HealthSource> sources, {
+  required Set<InputSignal> requires,
+  required Map<String, List<String>> stored,
+  String? fallback,
+}) async {
+  final now = DateTime.now();
+  // Calendar subtraction on the DateTime constructor, not `* 86400` or
+  // `Duration(days:)` — a day is not always 86400s across a DST transition
+  // (AGENTS.md §3.7), and this file is under lib/ui2's token boundary, where
+  // a raw `Duration(` is reserved for animation timing gated through
+  // `motion(context, …)` (ui2_tokens_test.dart).
+  final from = DateTime(now.year, now.month, now.day - kSignalWinnersLookbackDays);
+  final nowSec = now.millisecondsSinceEpoch ~/ 1000;
+  final fromSec = from.millisecondsSinceEpoch ~/ 1000;
+  // Only a signal with a customized (non-empty) stored order needs real
+  // coverage — an empty one resolves to the primary device with no query at
+  // all. Fetched together, not one per signal inside the loop below: a
+  // four-signal metric like readiness would otherwise fire four sequential
+  // DB round trips on the UI isolate on every metric-detail load.
+  final needsCoverage = [
+    for (final sig in requires)
+      if ((stored[sig.name] ?? const <String>[]).isNotEmpty) sig,
+  ];
+  final coverageBySig = Map.fromIterables(
+    needsCoverage,
+    await Future.wait([
+      for (final sig in needsCoverage) LocalDb.coverageIntervals(sig, fromSec, nowSec),
+    ]),
+  );
+
+  final out = <InputSignal, String?>{};
+  for (final sig in requires) {
+    final declaring = declaringDeviceIds(sources, sig);
+    final rawPriority = stored[sig.name] ?? const <String>[];
+    // Mirrors `_resolveOwnership`'s empty-priority rule: no stored row means
+    // the primary device owns this window, never "let every covering device
+    // in unranked" — a customized-but-narrower order still gets the coverage
+    // union below, only a NEVER-customized one gets this fixed default.
+    // Flag-off devices dropped, as the engine does (rule R6).
+    final order = rawPriority.isEmpty
+        ? const [LocalDb.kPrimaryDeviceId]
+        : await flagOnOrPrimary([
+            ...rawPriority,
+            ...{for (final iv in coverageBySig[sig] ?? const []) iv.deviceId}
+                .difference(rawPriority.toSet())
+                .toList()
+              ..sort(),
+          ]);
+    String? winner;
+    for (final id in order) {
+      if (declaring.contains(id)) {
+        winner = id;
+        break;
+      }
+    }
+    out[sig] = winner ?? fallback;
+  }
+  return out;
+}
+
+/// The device winning EVERY signal in [winners], or null when they disagree —
+/// and null for an empty map, which is "nothing resolved", not agreement.
+///
+/// Null is therefore not "no preference": a caller showing one device's name
+/// must ALSO know whether the winners were split, or it labels a split
+/// configuration with whatever its no-preference placeholder happens to say.
+String? unanimousWinner(Map<InputSignal, String?> winners) {
+  final distinct = winners.values.toSet();
+  return distinct.length == 1 ? distinct.first : null;
+}
+
+/// Signals TWO OR MORE paired devices declare. The whole content of the
+/// priority editor, and the reason it is usually empty: only a handful of the
+/// declared signals ever contend, so the table is tens of rows forever
+/// (final-plan §4.5).
+List<InputSignal> contendedSignals(AppState app) =>
+    contendedSignalsOf(liveSources(app));
+
+/// The pure half of [contendedSignals] — see [candidatesFromSources].
+List<InputSignal> contendedSignalsOf(List<HealthSource> sources) {
+  final n = <InputSignal, int>{};
+  for (final s in sources) {
+    final id = deviceIdOf(s);
+    if (id == null) continue;
+    for (final sig in rankableSignals(s)) {
+      n[sig] = (n[sig] ?? 0) + 1;
+    }
+  }
+  // Only what a derive arbitrates: two watches both declaring steps or
+  // stages do not contend, since neither is ever resolved by rank.
+  return [
+    for (final s in InputSignal.values)
+      if (kRankedSignals.contains(s) && (n[s] ?? 0) >= 2) s,
+  ];
+}
+
+/// Bands the owner has personally held and cross-confirmed. Everything else is
+/// publicly EXPERIMENTAL, however well its fixtures pass — a fixture proves
+/// determinism and physiological sanity, never correctness, and a decoder with
+/// a 2× scale error reads a resting 50 bpm as 100 and passes every generic
+/// bound. Hardware in his hands is the only promotion path.
+///
+/// ponytail: a const set here until the CODEOWNERS-gated `_verified.dart`
+/// exists (ASSUMPTIONS E5). Move it there and delete this — it must never
+/// become a CI rule, which would hand the key to the PR author.
+const Set<String> kOwnerConfirmedBandIds = {'gen4', 'gen5'};
+// gen5 promoted 2026-08-23: WHOOP 5 worn by the owner, paired, connected,
+// live HR streaming, and a full historical drain completed (the trim token
+// reached `sync_cursor`, so the band was told it may release that flash).
+// 249,596 decoded seconds and 151,595 beats stamped `device_family='gen5'`
+// on his own export. That is the promotion path in ASSUMPTIONS E5 — hardware
+// in his hands — not a fixture passing.
+
+/// A device family this app does NOT speak today, and why.
+///
+/// [permanence] is the load-bearing half. It is a plain phrase, never a date —
+/// "being built" and "not a matter of time" are different promises and a user
+/// is owed the difference.
+class NotYet {
+  final String name, reason, permanence;
+  final IconData icon;
+  const NotYet(this.name, this.reason, this.permanence, this.icon);
+}
+
+/// The honest other half of this screen.
+///
+/// Short on purpose: a list gets checked, and every row on it is a claim
+/// someone can hold us to. These three are the ones already decided.
+const List<NotYet> kNotYet = [
+  NotYet(
+    'Polar 360 and Loop',
+    'Screenless, no subscription, worn around the clock, with beat-to-beat '
+        'intervals the vendor documents. Nobody has written the driver.',
+    'Planned',
+    LucideIcons.watch,
+  ),
+  NotYet(
+    'Fitbit, Withings, Xiaomi and Zepp bands',
+    'Their pairing key is issued by the vendor’s own server. A driver would '
+        'work only while their app stayed installed and signed in, and would '
+        'stop the day they changed it — so the band would be ours to support '
+        'and theirs to switch off.',
+    'Not a matter of time',
+    LucideIcons.cloudOff,
+  ),
+];
+
+/// One thing that can produce measurements.
+class HealthSource {
+  final String name, kind;
+
+  /// Only application-owned fallback names may be translated.
+  final bool nameIsFallback;
+  String displayName(BuildContext c) => nameIsFallback ? uiText(c, name) : name;
+  String displayKind(BuildContext c) =>
+      kind.split(' · ').map((part) => uiText(c, part)).join(' · ');
+
+  /// Where this source sits on the quality ladder, or NULL when it has no
+  /// place on it.
+  ///
+  /// Null is not "unknown", it is "none": a device whose `tier` column is
+  /// blank has no measurement quality to rank. Filing it under the phone's
+  /// rung would have told someone their ring was reporting steps.
+  final SourceTier? tier;
+  final IconData icon;
+  final bool connected;
+
+  /// Records are landing right now. Narrower than [connected] — an idle link
+  /// is not a sync, and a multi-minute offload used to look identical to one.
+  final bool syncing;
+  final double? batteryPct;
+  final bool charging;
+
+  /// The battery pack's own charge, while one sits on the band. Null when
+  /// there is no pack, or no live link to say so.
+  final double? batteryPackPct;
+  final DateTime? lastData;
+
+  /// True for the PRIMARY band — the only source the offload engine drives,
+  /// and the only one with band controls (rename, find, battery forecast).
+  ///
+  /// FALSE for a paired sensor, deliberately. A chest strap is a better beat
+  /// detector than the band and a worse everything-else: it measures nothing
+  /// while a workout is not running. Letting one satisfy `hasBand` would take
+  /// the "No band is paired" card off a screen belonging to someone whose
+  /// sleep, recovery and temperature are all still abstaining.
+  final bool isBand;
+
+  /// The `device` row this source is, for a paired sensor. Null for the
+  /// primary band (whose row is `LocalDb.kPrimaryDeviceId`, `''`) and for the
+  /// phone. It is the `device_id` every measurement this source wrote carries,
+  /// which is what makes forgetting it possible without touching the data.
+  final String? deviceId;
+
+  /// The ingest-stamped sensor family (`'gen4'` / `'gen5'`), or null when the
+  /// link has not said yet. Not cosmetic: it is the key every sensor-dependent
+  /// metric looks its own constants up under, and null is a refusal.
+  final String? family;
+
+  /// A paired sensor behind a flag that is off (rule R6): listed, but ranked
+  /// for no signal ([rankableSignals]).
+  final bool flagOff;
+
+  /// Publicly EXPERIMENTAL — this band is decoded but the owner has never held
+  /// one (see [kOwnerConfirmedBandIds]). Not a quality tier and not a
+  /// confidence: it says who has checked, not how good the numbers are.
+  /// NOT gated on [isBand]. A paired sensor is the case this exists for — it
+  /// is the one nobody here has held — and requiring `isBand` would have hidden
+  /// the label on exactly those rows while showing it on the band the owner
+  /// wears daily.
+  bool get experimental =>
+      family != null && !kOwnerConfirmedBandIds.contains(family);
+
+  const HealthSource({
+    required this.name,
+    this.nameIsFallback = false,
+    required this.kind,
+    required this.tier,
+    required this.icon,
+    this.connected = false,
+    this.syncing = false,
+    this.batteryPct,
+    this.charging = false,
+    this.batteryPackPct,
+    this.lastData,
+    this.isBand = false,
+    this.deviceId,
+    this.family,
+    this.flagOff = false,
+  });
+}
+
+/// The one-row device disclosure (MT-12 / CV-04a).
+///
+/// Metrics whose correct behaviour depends on the sensor carry their own
+/// per-family constants, so a gen4 strap and a gen5 strap can land on different
+/// tiers for identical physiology. If that asymmetry is nowhere on screen the
+/// tier stops meaning anything — so it lives on the band's own page, as one
+/// row, next to the battery.
+///
+/// Returns null for a non-band source: the phone reports steps and nothing that
+/// is calibrated per sensor.
+(String value, String sub)? calibrationDisclosure(HealthSource s) {
+  if (!s.isBand) return null;
+  final label = bandLabelFor(s.family);
+  if (label != null) {
+    return (
+      label,
+      'Metrics that depend on the sensor use this band’s own constants, so two '
+          'different bands can land on different tiers for the same physiology.'
+    );
+  }
+  // Null is the honest majority case, not an error: every row banked before
+  // the stamp existed, every import and every raw replay carries no family,
+  // and those metrics abstain rather than borrow gen4's numbers. A family this
+  // build has no registry entry for lands here too — an unknown band is not a
+  // WHOOP 4.
+  return (
+    'Not stated yet',
+    'This band has not said which generation it is, and imported or older '
+        'days never will. Metrics that depend on the sensor abstain rather '
+        'than borrow another band’s numbers.'
+  );
+}
+
+/// The glyph for a paired sensor. A ring is not a chest strap and the row is
+/// the only place a user can tell two paired sensors apart at a glance.
+IconData sensorIcon(String? adapterId) => switch (adapterId) {
+      'oura' || 'colmi' => LucideIcons.circleDot,
+      'polar_pmd' => LucideIcons.activity,
+      'coros' => LucideIcons.timer,
+      'ultrahuman' => LucideIcons.circle,
+      'thermometer' => LucideIcons.thermometer,
+      'miscale_bc' || 'miscale2' => LucideIcons.scale,
+      'garmin' || 'miband234' || 'pebble' => LucideIcons.watch,
+      _ => LucideIcons.heartPulse,
+    };
+
+/// The tier named by a `device.tier` column, or null when the column is blank
+/// or holds a name this build does not have.
+///
+/// Null is a refusal, the same way a null `adapter_id` is: a row written by a
+/// future version naming a rung this build cannot draw must not be quietly
+/// filed under the nearest one it knows.
+SourceTier? tierNamed(Object? name) {
+  for (final t in SourceTier.values) {
+    if (t.name == name) return t;
+  }
+  return null;
+}
+
+/// The sources that actually exist right now. Nothing is listed that cannot
+/// produce a number today — everything else is in [kNotYet], with its reason.
+///
+/// [liveAdapterIds] names which paired sensors' links are up THIS INSTANT, by
+/// `adapter_id`. It is passed in rather than read off the links here because
+/// it changes on every beat: routing it through [AppState] would notify every
+/// listener in the app at 1 Hz for the duration of a workout, which is the
+/// rebuild storm this screen has already been fixed for once.
+List<HealthSource> liveSources(AppState app,
+        {Set<String> liveAdapterIds = const {}}) => [
+  if (app.isPaired)
+    HealthSource(
+      name: app.strapName ?? 'Your band',
+      nameIsFallback: app.strapName == null,
+      // The registry's own word for this band, or just what it is when the
+      // link has not said. Never an assertion that an unnamed band is a
+      // WHOOP 4.
+          kind: [
+            ?bandLabelFor(app.device.generation),
+            'wrist optical',
+          ].join(' · '),
+          tier: SourceTier.wristOptical,
+          icon: LucideIcons.watch,
+          connected: app.isConnected,
+          syncing: app.syncingNow,
+          batteryPct: app.device.batteryPct,
+          charging: app.device.charging ?? false,
+          batteryPackPct: app.device.batteryPackPct,
+          lastData: app.lastRecordAt,
+          isBand: true,
+          // The stored generation when no link has come up this launch, so a
+          // disconnected band keeps its family-gated rows (Worn on, signals).
+          family: app.device.generation ?? app.paired?.generation,
+        ),
+      // Sensors paired alongside the band. One row each, ranked by their own
+      // tier like everything else — a beat-to-beat strap sorts ABOVE the wrist
+      // band, which is the whole point of the ladder being quality-first.
+      for (final r in app.sensors)
+        HealthSource(
+          // The advertised name the user picked, then the registry's word for
+          // what it is. Never a placeholder — `cleanDeviceLabel` already
+          // refused anything junk at pairing.
+          name: (r['label'] as String?) ??
+              bandLabelFor(r['adapter_id'] as String?) ??
+              'Paired sensor',
+          kind: bandLabelFor(r['adapter_id'] as String?) ??
+              'Not supported by this version',
+          nameIsFallback: r['label'] == null,
+          // Null when the column is blank (a source with nothing to rank) or
+          // names a rung this build does not have. Either way it is a refusal,
+          // never the nearest rung we happen to know.
+          tier: tierNamed(r['tier']),
+          icon: sensorIcon(r['adapter_id'] as String?),
+          // `liveAdapterIds` is keyed by adapter so a live PPI stream never
+          // marks an unrelated paired Oura row as connected just because
+          // some sensor happens to be live right now.
+          connected: liveAdapterIds.contains(r['adapter_id']),
+          batteryPct: (r['battery_pct'] as num?)?.toDouble(),
+          // Last time a sync committed data (or the pairing, before any).
+          lastData: r['last_seen'] == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(
+                  (r['last_seen'] as num).toInt() * 1000),
+          isBand: false,
+          deviceId: r['id'] as String?,
+          family: r['adapter_id'] as String?,
+          flagOff: app.flagOffSensorIds.contains(r['id']),
+        ),
+      if (app.phoneStepsEnabled)
+        HealthSource(
+          name: 'This phone',
+          nameIsFallback: true,
+          kind: 'Motion coprocessor',
+          tier: SourceTier.phone,
+          icon: LucideIcons.smartphone,
+          // NOT the toggle. On iOS `requestAuthorization` reports success even
+          // when the user denied READ, so the toggle sits on while every read
+          // comes back empty — this row used to hardcode `true` and claim a
+          // source that was measuring nothing. Steps actually banked is the
+          // only evidence the phone is a source.
+          connected: app.phoneStepsLastSyncedDays != null &&
+              (app.phoneStepsLastTotal ?? 0) > 0,
+        ),
+    ];
+
+/// Quality first, then recency, then the name. The inverse of last-writer-wins.
+///
+/// THE DEFAULT ORDER, and only that. There was a `preferred` list here that no
+/// caller ever passed and no screen could set — the card above it told the user
+/// their own preference was "the last word", which was a mechanism that did not
+/// exist. That is what died, and the reason it died was last-writer-wins plus a
+/// preference nothing could write. Neither has come back.
+///
+/// What HAS come back is a user order, and it does not live here: it lives in
+/// `signal_priority`, per SIGNAL, written from `SignalPriorityScreen` and from
+/// the metric screen's own "Prefer this device" row. This function is
+/// precedence rule 3 of three — consulted only where that table is silent, and
+/// it is silent for every install with one device.
+List<HealthSource> rankSources(List<HealthSource> sources) {
+  final out = [...sources];
+  out.sort((a, b) {
+    // An unranked source sorts BELOW every ranked one — it is not competing
+    // for precedence, because it supplies nothing to compete with.
+    final byTier = (a.tier?.rank ?? 99).compareTo(b.tier?.rank ?? 99);
+    if (byTier != 0) return byTier;
+    final at = a.lastData, bt = b.lastData;
+    if (at != null && bt != null && at != bt) return bt.compareTo(at);
+    if (at != null) return -1;
+    if (bt != null) return 1;
+    return a.name.compareTo(b.name);
+  });
+  return out;
+}
+
+// ══════════════════ MY DEVICES ══════════════════
+
+class MyDevices extends StatelessWidget {
+  const MyDevices({super.key});
+
+  @override
+  Widget build(BuildContext c) {
+    final app = c.watch<AppState>();
+    // Each live reading is subscribed HERE and nowhere higher. It moves on
+    // every beat, so a listener on AppState would rebuild the whole app at
+    // 1 Hz for the length of a workout; this rebuilds one screen. Nested
+    // rather than merged into one listenable because the two links are
+    // independent — either, both, or neither can be armed for a workout.
+    return ValueListenableBuilder<HrsReading?>(
+      valueListenable: HrsLink.instance.reading,
+      builder: (c, hrsReading, _) => ValueListenableBuilder<HrsReading?>(
+        valueListenable: PolarPmdLink.instance.reading,
+        builder: (c, polarReading, _) => _build(c, app, {
+          if (hrsReading != null) kBleHrs.id,
+          if (polarReading != null) kPolarPmd.id,
+        }),
+      ),
+    );
+  }
+
+  Widget _build(BuildContext c, AppState app, Set<String> liveAdapterIds) {
+    return MyDevicesView(
+      sources: rankSources(liveSources(app, liveAdapterIds: liveAdapterIds)),
+      // The band row's dot says connected or not. That covers six different
+      // problems with six different fixes, and a user cannot fix a problem the
+      // app will not name — so the engine's own verdict rides alongside it.
+      status: app.isPaired ? app.engine.bandStatus : null,
+      // This used to clear a preference and nothing else — the gate that
+      // renders the pairing step is MaterialApp.home, underneath this pushed
+      // screen, so the button appeared completely inert. And the gate is no
+      // longer an option regardless: an onboarded user is never routed back
+      // into first-run pairing (that was the bug where forgetting a band threw
+      // months of data behind an onboarding screen), which makes this the only
+      // way back to pairing. So push it.
+      onPair: () => goto(c, const RePair()),
+      onAddSensor: () => addSensor(c),
+      contendedSignals: contendedSignals(app),
+      onSignalPriority: () => goto(c, const SignalPriorityScreen()),
+    );
+  }
+}
+
+/// Every sensor that can be paired from this screen — a second device
+/// alongside the band, never a replacement for it.
+///
+/// Data, not a switch statement, because the ONLY thing that differs between
+/// them is which entry the picker filters on and what has to happen once the
+/// user taps one. `PairSensorScreen` is generic over exactly that.
+final List<({BandEntry entry, String blurb, Future<String?> Function(BluetoothDevice)? pick})>
+    kPairableSensors = [
+  (
+    entry: kBleHrs,
+    blurb: 'A chest strap or armband. Beat timing measured electrically, '
+        'which a wrist pulse cannot match. Runs during a workout.',
+    // Null means the plain notify-class pairing, which is the whole of what a
+    // heart-rate sensor needs.
+    pick: null,
+  ),
+  (
+    entry: kOura,
+    blurb: 'Reads the ring directly, with no Oura account and no subscription. '
+        'Either factory reset the ring FIRST (remove/unpair it in the Oura '
+        'app) so this app can give it a key of its own, or paste the key the '
+        'Oura app already uses and pair without a reset. Pairing with a new '
+        'key replaces the Oura app\'s key, so that app stops working with the '
+        'ring. Close the Oura app before pairing here.',
+    pick: pairOuraRing,
+  ),
+  (
+    entry: kPolarPmd,
+    blurb: 'A Polar Verity Sense or OH1. Beat timing measured optically, '
+        'streamed during a workout, same as a chest strap.',
+    // Null: no handshake and no key — the START/STOP toggle this sensor
+    // needs belongs to the workout session, not to pairing. Same as
+    // [kBleHrs].
+    pick: null,
+  ),
+  (
+    entry: kThermometer,
+    blurb: 'A Bluetooth thermometer, such as the Femometer Vinca 2 basal '
+        'thermometer. Sets its clock and saves each reading as a body '
+        'temperature. No account or key needed.',
+    pick: null,
+  ),
+  (
+    entry: kMiScaleComposition,
+    blurb: 'The Mi Body Composition Scale. Saves each settled weight and '
+        'its bio-impedance reading. Step on it with the app open.',
+    pick: null,
+  ),
+  (
+    entry: kMiScale2,
+    blurb: 'The Mi Smart Scale 2. Saves each settled weight and reads back '
+        'the weights the scale stored while the phone was away.',
+    pick: null,
+  ),
+  (
+    entry: kCoros,
+    blurb: 'A Coros sports watch. Reads battery, model/serial/firmware and '
+        'live heart rate. Disconnect it from the COROS app first; newer '
+        'firmware may ask to pair. Recorded runs, sleep and steps '
+        'stay on the watch; there is no public way to pull them off yet.',
+    // Null means the plain notify-class pairing — no key needed before the
+    // row can be written.
+    pick: null,
+  ),
+  (
+    entry: kGarmin,
+    blurb: 'A Garmin sports watch. Before pairing here, put the watch into '
+        'its own Settings → Sensors & Accessories → Phone → Pair Phone '
+        'screen — it will not accept a new connection otherwise. Reads its '
+        'model, firmware and battery, and the health files it stores: heart '
+        'rate, steps, sleep stages and HRV status. On iPhone the watch is '
+        'found only if it advertises its Garmin service; if the list stays '
+        'empty, this watch cannot be paired here yet.',
+    // Null means the plain notify-class pairing — no key exchange this pass
+    // implements. The Multi-Link/GFDI handshake runs inside the adapter's
+    // own session, once connected.
+    pick: null,
+  ),
+  (
+    entry: kUltrahuman,
+    blurb: 'Reads the ring directly. No account, no key exchange — just pair '
+        'it like a chest strap.',
+    // Null: this wire has no auth at all, so there is no key/handshake step
+    // beyond the plain notify-class pairing — same as `kBleHrs`.
+    pick: null,
+  ),
+  (
+    entry: kMiBand234,
+    blurb: 'A Mi Band 2 or 3. It must have no key installed yet — one '
+        'still bound to Mi Fit or Zepp will refuse to pair. Unpair it from '
+        'that app first, or use a factory-reset unit. If the band buzzes '
+        'while pairing, tap it to confirm. Syncs its stored heart '
+        'rate, steps and sleep. (Mi Band 4 needs the vendor pairing and is '
+        'not supported.)',
+    pick: pairMiBand234,
+  ),
+  (
+    entry: kPebble,
+    blurb: 'Pebble 2 or Pebble 2 SE only — older Pebbles need Bluetooth '
+        'Classic, which this app cannot reach. Syncs the watch\'s health log: '
+        'steps and sleep, and heart rate on a Pebble 2 (the SE has no '
+        'heart-rate sensor).',
+    // Same generic notify-class pairing as the chest strap above — no key,
+    // no pre-pairing step.
+    pick: null,
+  ),
+  (
+    entry: kColmi,
+    blurb: 'A Colmi ring. No account, no handshake. Syncs heart rate, sleep '
+        'stages, steps, SpO2, HRV and stress; values the ring computes '
+        "itself are labelled as Colmi's. Experimental.",
+    // Null: no auth step, so the plain notify-class pairing is the whole of
+    // what this ring needs — same as [kBleHrs].
+    pick: null,
+  ),
+];
+
+/// Choose which kind of sensor to pair, then hand off to the pairing screen.
+Future<void> addSensor(BuildContext c) async {
+  // Count paired secondary devices (the `device` table minus the primary row).
+  //
+  // PAIRED ROWS, NOT LIVE SLOTS, and deliberately: admission here is a
+  // question about the sensors this phone manages, not about who holds a GATT
+  // link in this instant. Live slot state is transient — `OuraLink` holds one
+  // only from connect through `stop()`, `HrsLink` only for a workout — so
+  // reading it would admit or refuse the same pairing depending on the second
+  // it was tapped, and a slot freed a moment later cannot un-refuse anything.
+  // The same constant bounds both because the number is the same number; the
+  // sentence below states the PAIRING rule, which is the one enforced here.
+  final secondaryCount = (await LocalDb.deviceRows())
+      .where((r) => r['id'] != LocalDb.kPrimaryDeviceId)
+      .length;
+  if (secondaryCount >= kMaxConcurrentSecondaryLinks) {
+    if (!c.mounted) return;
+    // DERIVED FROM THE CONSTANT the check above uses. Hardcoded, the sentence
+    // states a different rule from the one enforced the moment the cap moves.
+    await showReasonSheet(
+        c,
+        AppLocalizations.of(c)
+                ?.devicesSensorLimit(kMaxConcurrentSecondaryLinks) ??
+            'This phone will pair at most $kMaxConcurrentSecondaryLinks '
+                'sensors alongside your band. Remove one to add another.');
+    return;
+  }
+  if (!c.mounted) return;
+  // `includeBand: false` — this phone already has its one primary band;
+  // re-pairing it is `RePair`'s job, not a row beside a chest strap here.
+  await goto(c, const DevicePickerScreen(includeBand: false));
+  // The picker's own sub-screens write a `device` row; nothing tells
+  // AppState that happened.
+  if (c.mounted) await c.read<AppState>().refreshSensors();
+}
+
+/// Ask for a SECOND framed band. iOS cannot show the system pairing sheet while a
+/// CBCentralManager exists in the process, and on an already-paired install
+/// flutter_blue_plus creates one during start-up and never releases it — so the
+/// sheet can only be shown on the next launch, before start-up touches the radio.
+/// This writes the request; `AppState._initSteps` performs it.
+///
+/// NOT surfaced from any visible button in M4 — no second framed band exists yet
+/// to provision against (see MULTIDEVICE_PROGRESS.md's M4 notes). This wires the
+/// plumbing and its test only.
+Future<void> addFramedBand(BuildContext c) async {
+  // ACKED, not fire-and-forget. `Prefs.setBool` updates the cache
+  // OPTIMISTICALLY and never rolls it back (see prefs.dart), and this flag's
+  // whole purpose is to survive the restart the sheet below asks for — a
+  // write that did not land would leave the user following correct
+  // instructions to no effect.
+  final saved = await Prefs.setBoolAcked(Prefs.kAskAddPendingKey, true);
+  if (!c.mounted) return;
+  if (!saved) {
+    await showReasonSheet(
+        c,
+        AppLocalizations.of(c)?.devicesRequestNotSaved ??
+            'That request could not be saved. Please try again.');
+    return;
+  }
+  await showRestartRequiredSheet(c);
+}
+
+/// One-sentence sheet: the ASK ordering constraint, stated where the user is.
+Future<void> showRestartRequiredSheet(BuildContext c) async {
+  final p = P.of(c);
+  await showModalBottomSheet<void>(
+    context: c,
+    backgroundColor: p.card,
+    showDragHandle: true,
+    builder: (sheet) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(S.x4, S.x2, S.x4, S.x4),
+        child: Text(
+          uiText(
+            c,
+            'iOS shows the pairing sheet only before the app has used Bluetooth. Close OpenStrap completely, then reopen it to see the sheet.',
+          ),
+          style: F.body.copyWith(color: p.ink),
+        ),
+      ),
+    ),
+  );
+}
+
+/// One-sentence sheet giving a reason a requested action was refused.
+Future<void> showReasonSheet(BuildContext c, String reason) async {
+  final p = P.of(c);
+  await showModalBottomSheet<void>(
+    context: c,
+    backgroundColor: p.card,
+    showDragHandle: true,
+    builder: (sheet) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(S.x4, S.x2, S.x4, S.x4),
+        child: Text(reason, style: F.body.copyWith(color: p.ink)),
+      ),
+    ),
+  );
+}
+
+/// Pairing, pushed rather than gated.
+///
+/// The onboarding gate is what used to take the pairing screen away once a
+/// band answered. A pushed copy has no gate under it, so it closes itself —
+/// otherwise it sits there on "Paired · Continue", whose button re-runs the
+/// scan.
+///
+/// Once, and only down to itself. `isPaired` stays true through every notify
+/// the connect and handshake fire after it, and this route keeps building
+/// through its own exit transition — a pop per rebuild walks on down into
+/// Devices and Profile.
+class RePair extends StatefulWidget {
+  const RePair({super.key});
+
+  @override
+  State<RePair> createState() => _RePairState();
+}
+
+class _RePairState extends State<RePair> {
+  bool _closing = false;
+
+  @override
+  Widget build(BuildContext c) {
+    if (c.watch<AppState>().isPaired && !_closing) {
+      _closing = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final route = mounted ? ModalRoute.of(context) : null;
+        if (route == null || !route.isActive) return;
+        Navigator.of(context)
+          ..popUntil((r) => r == route)
+          ..pop();
+      });
+    }
+    // NO `onSkip`. That argument is first-run onboarding's "Skip for now",
+    // and its note says the app opens without a band and nothing is measured
+    // — a sentence about a decision this user made long ago. A re-pair backs
+    // out through `NavBar`'s own back button, exactly as `addSensor` does.
+    return const DevicePickerScreen();
+  }
+}
+
+class MyDevicesView extends StatelessWidget {
+  final List<HealthSource> sources;
+  final VoidCallback? onPair, onAddSensor;
+
+  /// The band's own state, from `bandStatusFor`. Null when nothing is paired.
+  final BandStatus? status;
+
+  /// Signals two or more paired devices declare — from `contendedSignals`.
+  /// Empty on every single-device install, which keeps the priority-editor
+  /// entry row absent by default (final-plan §4.5).
+  final List<InputSignal> contendedSignals;
+  final VoidCallback? onSignalPriority;
+
+  const MyDevicesView({
+    super.key,
+    this.sources = const [],
+    this.onPair,
+    this.onAddSensor,
+    this.status,
+    this.contendedSignals = const [],
+    this.onSignalPriority,
+  });
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final localizedStatus =
+        status == null ? null : localizedBandStatus(c, status!);
+    final fault = localizedStatus?.isFault == true ? localizedStatus : null;
+    // A BAND, not "a source". The phone is a source and it is not a substitute
+    // for one: gating this on `sources.isEmpty` meant a phone counting steps
+    // hid the only route back to pairing, and forgetting a band left the user
+    // stranded with a steps row and no way to add another.
+    final hasBand = sources.any((s) => s.isBand);
+
+    // THE PHONE ROW IS LISTED WHENEVER THE TOGGLE IS ON, connected or not —
+    // `connected` there is "steps have actually been banked", because on iOS
+    // the toggle sits on while a denied READ permission returns nothing. So
+    // "a source exists" was the wrong test for this card: it told a user
+    // whose phone was measuring nothing that "the phone counts steps".
+    final phoneCounting = sources.any((s) => !s.isBand && s.connected);
+    final l = AppLocalizations.of(c);
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: S.x4),
+            child: NavBar(l?.devicesMySources ?? 'My sources'),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
+              children: [
+                // FIRST, in the tier-2 slot the missing band would occupy —
+                // not appended under the phone. Someone who has just forgotten
+                // a band is here to add one, and the row they can see is not
+                // the one they came for.
+                if (!hasBand) ...[
+                  StatusCard(
+                    phoneCounting
+                        ? (l?.devicesNoBandPaired ?? 'No band is paired')
+                        : (l?.devicesNothingMeasuringYet ??
+                            'Nothing is measuring yet'),
+                    phoneCounting
+                        ? (l?.devicesPhoneCountingBody ??
+                            'The phone counts steps and nothing else. Heart '
+                                'rate, sleep, recovery and temperature all abstain '
+                                'until a band is paired.')
+                        : (l?.devicesNothingMeasuringBody ??
+                            'No band is paired and no phone steps are arriving, '
+                                'so every metric in the app will abstain rather '
+                                'than estimate.'),
+                    fix: l?.devicesPairABand ?? 'Pair a band',
+                    icon: LucideIcons.watch,
+                    onFix: onPair,
+                  ),
+                  if (sources.isNotEmpty) const SizedBox(height: S.x3),
+                ],
+                // LIVE — the first of the two buckets. Only drawn when there is
+                // something in it: a heading over nothing is the empty rung
+                // problem again, one level up.
+                if (sources.isNotEmpty) ...[
+                  Text(l?.devicesLive ?? 'LIVE', style: F.over.copyWith(color: p.ink3)),
+                  const SizedBox(height: S.x3),
+                ],
+                for (final s in sources) ...[
+                  SourceRow(s, onTap: () => goto(c, DeviceDetail(s))),
+                  if (s.isBand && fault != null) ...[
+                    const SizedBox(height: S.x2),
+                    StatusCard(fault.title, fault.reason,
+                        fix: fault.fix ?? '',
+                        icon: LucideIcons.bluetoothOff),
+                  ],
+                  const SizedBox(height: S.x3),
+                ],
+                // At the foot of LIVE, because that is what it adds to. Not
+                // gated on having a band: a sensor is a second source, and
+                // someone with no band at all is exactly who benefits most
+                // from being able to pair one.
+                if (onAddSensor != null)
+                  Surface(
+                    pad: const EdgeInsets.symmetric(horizontal: S.x4),
+                    child: SetRow(LucideIcons.plus, C.green,
+                        l?.devicesAddASensor ?? 'Add a sensor',
+                        sub: l?.devicesAddASensorSub ??
+                            'A heart-rate strap or a ring, alongside the band',
+                        onTap: onAddSensor),
+                  ),
+                // ONLY when something can actually contend. A reorder screen
+                // over one device is a control with nothing to order, which is
+                // the empty-rung problem this screen already refuses (§6.5).
+                if (contendedSignals.isNotEmpty && onSignalPriority != null) ...[
+                  const SizedBox(height: S.x3),
+                  Surface(
+                    pad: const EdgeInsets.symmetric(horizontal: S.x4),
+                    child: SetRow(LucideIcons.arrowUpDown, C.blue,
+                        l?.devicesWhichSourceWins ?? 'Which source wins',
+                        sub: l?.devicesWhichSourceWinsSub ??
+                            'When two of your devices measure the same thing',
+                        onTap: onSignalPriority),
+                  ),
+                ],
+                // NOT YET — removed from this screen per product decision
+                // (owner's call, live review). `kNotYet`/`NotYet` still hold
+                // the reasons and permanences below; only the render is gone.
+                const SizedBox(height: S.x5),
+                Text(l?.devicesQualityLadder ?? 'THE QUALITY LADDER',
+                    style: F.over.copyWith(color: p.ink3)),
+                const SizedBox(height: S.x3),
+                for (final t in SourceTier.values)
+                  // Every rung is drawn now, filled or not. The tier-1 rung
+                  // used to be hidden because nothing could reach it and an
+                  // unreachable empty rung is just something to go hunting
+                  // for; "Add a sensor" above is how it is reached, so an
+                  // empty one is now a genuine invitation rather than a dead
+                  // end.
+                  ...[
+                    TierRow(t, filled: sources.any((s) => s.tier == t)),
+                    const SizedBox(height: S.x3),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The one line under a source's name.
+///
+/// "Not connected" is a statement about a radio link, and the phone has none:
+/// it is either handing steps over or it is not, which is exactly the failure
+/// the row used to hide behind a hardcoded "Connected".
+// Kept context-free and directly tested (see ui2_router_test.dart,
+// device_sources_test.dart) — this is the tier/connection LOGIC, not just
+// copy. `_localizedSourceState` below is what the UI actually renders.
+String sourceState(HealthSource s) {
+  // A PAIRED SENSOR IS TESTED FOR FIRST, before the tier is consulted at all.
+  // It is armed by a workout and only by a workout, so "not connected" is its
+  // resting state and not a fault — and a sensor whose tier could not be named
+  // falls back to the phone's rung, where this function would otherwise have
+  // told the user their chest strap was reporting steps.
+  if (s.deviceId != null) {
+    if (s.connected) return 'Streaming beats';
+    // A source with no rung supplies no signal, so there is nothing for a
+    // workout to arm and nothing being derived. Say that, rather than promise
+    // a stream that will never start.
+    return s.tier == null ? 'Paired · storing what it sends' : 'Waiting for a workout';
+  }
+  if (s.tier == SourceTier.phone) {
+    return s.connected ? 'Reporting steps' : 'No steps arriving';
+  }
+  if (s.syncing) return 'Syncing';
+  return s.connected ? 'Connected' : 'Not connected';
+}
+
+String _localizedSourceState(BuildContext c, HealthSource s) {
+  final l = AppLocalizations.of(c);
+  if (s.deviceId != null) {
+    if (s.connected) return l?.devicesStreamingBeats ?? 'Streaming beats';
+    return s.tier == null
+        ? (l?.devicesStoringWhatItSends ?? 'Paired · storing what it sends')
+        : (l?.devicesWaitingForWorkout ?? 'Waiting for a workout');
+  }
+  if (s.tier == SourceTier.phone) {
+    return s.connected
+        ? (l?.devicesReportingSteps ?? 'Reporting steps')
+        : (l?.devicesNoStepsArriving ?? 'No steps arriving');
+  }
+  if (s.syncing) return l?.devicesSyncing ?? 'Syncing';
+  return s.connected
+      ? (l?.devicesConnected ?? 'Connected')
+      : (l?.devicesNotConnected ?? 'Not connected');
+}
+
+/// One connected source.
+class SourceRow extends StatelessWidget {
+  final HealthSource s;
+  final VoidCallback? onTap;
+  const SourceRow(this.s, {super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final battery = s.batteryPct;
+    final stacked = bigText(c);
+    final tierBadge = s.tier == null
+        ? null
+        : Pill(
+            AppLocalizations.of(c)?.devicesTierRank(s.tier!.rank) ??
+                'Tier ${s.tier!.rank}',
+            s.tier!.accent,
+            wrap: stacked,
+          );
+    return Surface(
+      onTap: onTap,
+      child: Row(children: [
+        Container(
+          width: 52,
+          height: 52,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: p.card2, borderRadius: R.rMd),
+          child: Icon(s.icon, size: 24, color: p.ink2),
+        ),
+          const SizedBox(width: S.x3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  s.displayName(c),
+                style: F.body
+                    .copyWith(color: p.ink, fontWeight: FontWeight.w600),
+                ),
+                Text(s.displayKind(c), style: F.over.copyWith(color: p.ink3)),
+                const SizedBox(height: 5),
+                // Wrap, not Row: at 2x text "Not connected · 78%" is wider than
+                // the card and a Flex would simply clip the battery away.
+                Wrap(
+                  spacing: S.x3,
+                  runSpacing: S.x1,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                      color: s.connected ? p.on(C.green) : p.ink3,
+                      shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 5),
+                // Flexible because this string is not fixed: "Not connected"
+                // and "No steps arriving" are 10 px wider than the column at
+                // 390 pt, and an unflexed Text in a Wrap simply overflows.
+                Flexible(
+                  child: Text(_localizedSourceState(c, s),
+                      style: F.over.copyWith(
+                          color: s.connected ? p.on(C.green) : p.ink3)),
+                ),
+              ]),
+              if (battery != null)
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(
+                      s.charging
+                          ? LucideIcons.batteryCharging
+                          : LucideIcons.battery,
+                      size: 13,
+                      color: p.ink3),
+                  const SizedBox(width: 3),
+                  Text('${battery.round()}%',
+                      style: F.over.copyWith(color: p.ink3)),
+                ]),
+              // IN THE WRAP, not a second trailing pill: this line already
+              // wraps at accessibility sizes, and a pill column beside it does
+              // not. The band's own page carries the explanation.
+              if (s.experimental)
+                Text(AppLocalizations.of(c)?.devicesExperimental ?? 'Experimental',
+                    style: F.over.copyWith(color: p.on(C.orange))),
+                  ],
+                ),
+                if (stacked && tierBadge != null) ...[
+                  const SizedBox(height: S.x1),
+                  tierBadge,
+                ],
+              ],
+            ),
+          ),
+          if (!stacked && tierBadge != null) ...[
+            const SizedBox(width: S.x2),
+            tierBadge,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// One rung of the ladder, filled or not. An empty rung is information.
+class TierRow extends StatelessWidget {
+  final SourceTier tier;
+  final bool filled;
+  const TierRow(this.tier, {super.key, this.filled = false});
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    return Surface(
+      elevation: 0,
+      color: filled ? p.wash(tier.accent) : p.card2,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(filled ? LucideIcons.badgeCheck : LucideIcons.circleDashed,
+            size: 20, color: filled ? p.on(tier.accent) : p.ink3),
+        const SizedBox(width: S.x3),
+        Expanded(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+                AppLocalizations.of(c)?.devicesTierRankLabel(
+                        tier.rank, sourceTierLabel(c, tier)) ??
+                    'Tier ${tier.rank} · ${tier.label}',
+                style: F.body.copyWith(
+                    color: filled ? p.ink : p.ink2,
+                    fontWeight: FontWeight.w600)),
+            const SizedBox(height: S.x1),
+            Text(sourceTierDetail(c, tier),
+                style: F.cap.copyWith(color: p.ink3, height: 1.5)),
+            if (!filled) ...[
+              const SizedBox(height: S.x1),
+              // A dashed circle and a paler wash are not a statement. Without
+              // a word here an empty rung reads exactly like the tier you do
+              // have — including to a screen reader, which sees neither.
+              Text(AppLocalizations.of(c)?.devicesNothingHereYet ?? 'Nothing here yet',
+                  style: F.over.copyWith(color: p.ink3)),
+            ],
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+// ══════════════════ DEVICE DETAIL ══════════════════
+
+class DeviceDetail extends StatefulWidget {
+  final HealthSource s;
+  const DeviceDetail(this.s, {super.key});
+
+  @override
+  State<DeviceDetail> createState() => _DeviceDetailState();
+}
+
+class _DeviceDetailState extends State<DeviceDetail> {
+  /// Held, not rebuilt: this screen watches AppState, so a FutureBuilder given
+  /// a fresh `batteryHealth()` on every build would rescan the sample table on
+  /// every connection tick.
+  Map<String, dynamic>? _health;
+  /// `device.wearing`, loaded once like `_health`.
+  int? _wornOn;
+  bool _wornOnUnknown = false;
+
+  /// The same projection the overnight charge warning fires on, read here
+  /// rather than recomputed: this screen is where someone asks "how long have I
+  /// got", and the answer was already being calculated and only ever spent on a
+  /// notification they may have dismissed.
+  BatteryForecast? _forecast;
+
+  /// This page shows the band's live BPM, so it owns the HR stream while
+  /// mounted. Captured for `dispose`, which must not read `context`.
+  AppState? _liveHrOwner;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.s.isBand) return;
+    _liveHrOwner = context.read<AppState>()..retainLiveHrView();
+    LocalDb.batteryHealth().then((h) {
+      if (mounted) setState(() => _health = h);
+    }).catchError((_) {});
+    LocalDb.deviceWearingRaw().then((raw) {
+      if (!mounted) return;
+      setState(() {
+        _wornOnUnknown = raw != null && !Wearing.known.contains(raw);
+        _wornOn = _wornOnUnknown ? raw : Wearing.parse(raw);
+      });
+    }).catchError((_) {});
+    _loadForecast();
+  }
+
+  @override
+  void dispose() {
+    _liveHrOwner?.releaseLiveHrView();
+    super.dispose();
+  }
+
+  Future<void> _loadForecast() async {
+    try {
+      final rows = await LocalDb.recentBandBatterySamples(limit: 400);
+      final now = DateTime.now();
+      final f = const BatteryForecaster().forecast(
+        samples: [
+          for (final r in rows)
+            if (r['battery_pct'] != null && r['ts'] != null)
+              BatterySample(
+                tsSec: (r['ts'] as num).toInt(),
+                pct: (r['battery_pct'] as num).toDouble(),
+                charging: (r['charging'] as num?)?.toInt() == 1,
+              ),
+        ],
+        now: now,
+        // Only `predictedEmptyAt` is read below, and it does not depend on the
+        // wake time — the projection to a wake time is the notification's
+        // question, not this screen's.
+        wakeAt: now,
+      );
+      if (mounted) setState(() => _forecast = f);
+    } catch (_) {
+      // A projection is a nicety. The screen's real job is the band's state.
+    }
+  }
+
+  @override
+  Widget build(BuildContext c) {
+    final s = widget.s;
+    final app = s.isBand ? c.watch<AppState>() : null;
+    return DeviceDetailView(
+      s,
+      status: app?.engine.bandStatus,
+      wornOn: _wornOn,
+      wornOnUnknown: _wornOnUnknown,
+      // Only the gen5 counter is calibrated per wearing location.
+      onWearing: s.family != 'gen5'
+          ? null
+          : () async {
+              final w = await _pickWearing(c);
+              if (w != null && mounted) {
+                setState(() {
+                  _wornOn = w;
+                  _wornOnUnknown = false;
+                });
+              }
+            },
+      health: _health,
+      forecast: _forecast,
+      onFind: app?.buzzBand,
+      liveHr: s.isBand ? app?.liveHr : null,
+      onRename: (app != null && app.isConnected)
+          ? () => _renameBand(c, app, s.name)
+          : null,
+      // A sensor is forgotten through its own path: `unpair()` tears down the
+      // primary band's link, its restore identity and its trim cursor, none of
+      // which a sensor has — pointing this at it would have unpaired the
+      // WHOOP from a chest strap's page.
+      onSync: switch (s.family) {
+        'oura' => () => _syncRing(c, s.family),
+        'coros' => () => _syncCorosWatch(c),
+        'garmin' => () => _syncGarminWatch(c),
+        'ultrahuman' => () => _syncUltrahumanRing(c),
+        'miband234' => () => _syncMiband(c),
+        'pebble' => () => _syncPebble(c),
+        'colmi' => () => _syncColmiRing(c),
+        'thermometer' || 'miscale_bc' || 'miscale2' =>
+          () => _syncSensor(c, SessionLink.forId(s.family)!.sync),
+        _ => null,
+      },
+      onForget: s.deviceId != null
+          ? () => _confirmForgetSensor(c, s)
+          : app == null
+              ? null
+              : () => _confirmForget(c, app, s.name),
+    );
+  }
+}
+
+/// Drain the ring, now, because the user asked. The result is a sentence
+/// either way: a sync that silently did nothing is indistinguishable from a
+/// ring that had nothing to give, and those need different remedies.
+///
+/// [family] picks WHICH ring's link runs — a plain equality dispatch rather
+/// than a generic "ring link" interface, because there are only a handful of
+/// these today and a lot more makes this a `switch`, not an abstraction.
+Future<void> _syncRing(BuildContext c, String? family) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(
+      SnackBar(content: Text(l?.devicesSyncingTheRing ?? 'Syncing the ring…')));
+  final ok = switch (family) {
+    _ => await OuraLink.instance.sync(),
+  };
+  if (!c.mounted) return;
+  // OURA ONLY: the other ring families have no category seam, and their
+  // `false` keeps its existing generic sentence. Oura's `false` names its
+  // OWN category — the adapter reported WHY the session ended, and the
+  // honest sentence differs per cause: a refused key is not an unreachable
+  // ring, a storage failure is not a pairing problem, and a protocol
+  // timeout must never recommend a reset.
+  final ouraCategory =
+      (family == null || family == 'oura') ? OuraLink.instance.lastSyncCategory : null;
+  final message = ok
+      ? (l?.devicesSynced ?? 'Synced.')
+      : switch (ouraCategory) {
+          OuraSyncCategory.authRefused =>
+            (l?.devicesOuraKeyRefused ??
+                'The ring rejected the key. Re-pair it to install a key it '
+                    'accepts.'),
+          OuraSyncCategory.storageFailed =>
+            (l?.devicesOuraStorageFailed ??
+                'The sync could not be saved completely. Please try '
+                    'syncing again.'),
+          OuraSyncCategory.checkpointUnconfirmed =>
+            (l?.devicesOuraCheckpointUnconfirmed ??
+                'The sync could not be completed. Please try syncing '
+                    'again.'),
+          OuraSyncCategory.protocolTimeout =>
+            (l?.devicesOuraProtocolTimeout ??
+                'The ring stopped answering mid-sync. Please try syncing '
+                    'again.'),
+          // A refused write does not say WHY (range, another app, transport),
+          // so the message claims only that the command was not sent.
+          OuraSyncCategory.writeRefused =>
+            (l?.devicesOuraWriteRefused ??
+                'Could not send a command to the ring. Please try syncing '
+                    'again.'),
+          _ => (l?.devicesCouldNotReachRing ??
+              'Could not reach the ring. It has to be nearby, and not '
+                  'connected to another app.'),
+        };
+  messenger?.showSnackBar(SnackBar(content: Text(message)));
+}
+
+/// Hold a session with the paired watch, now, because the user asked. There
+/// is no history to drain here — see `coros_link.dart`'s own header — so this
+/// just refreshes the battery/identity status and banks whatever heart rate
+/// arrives during it.
+Future<void> _syncCorosWatch(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(SnackBar(content: Text(uiText(c, 'Syncing…'))));
+  final ok = await CorosLink.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        // Its OWN string, not the ring's — `devicesCouldNotReachRing` names
+        // the device in its text, and a watch synced through here is not one.
+        : (l?.devicesCouldNotReachCorosWatch ??
+            'Could not reach it. It has to be nearby, and not connected to '
+                'another app.')),
+  ));
+}
+
+/// Hold a session with the paired watch, now, because the user asked: reopen
+/// the GFDI channel, download the health files not yet read and bank their
+/// samples, plus the device-info push and one battery answer (see
+/// `garmin_link.dart`'s own header).
+Future<void> _syncGarminWatch(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(SnackBar(content: Text(uiText(c, 'Syncing…'))));
+  final ok = await GarminLink.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        // The device-neutral string: the ring's names a ring.
+        : (l?.devicesCouldNotReachCorosWatch ??
+            'Could not reach it. It has to be nearby, and not connected to '
+                'another app.')),
+  ));
+}
+
+/// Drain the Ultrahuman ring, now, because the user asked. Same shape as
+/// [_syncRing] — a separate function rather than a shared one parametrised on
+/// the link, because the two links are two distinct types with nothing to
+/// abstract over for a single button's tap handler.
+Future<void> _syncUltrahumanRing(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(
+      SnackBar(content: Text(l?.devicesSyncingTheRing ?? 'Syncing the ring…')));
+  final ok = await UltrahumanLink.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        : (l?.devicesCouldNotReachRing ??
+            'Could not reach the ring. It has to be nearby, and not connected '
+                'to another app.')),
+  ));
+}
+
+/// Drain the Mi Band, now, because the user asked. Same shape as
+/// [_syncRing]: a bounded-window snapshot (no cursor, see
+/// `MiBand234Link`'s own header), so "synced" here means "connected and
+/// collected what the window allowed", not "drained everything".
+Future<void> _syncMiband(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(
+      SnackBar(content: Text(l?.devicesSyncing ?? 'Syncing')));
+  final ok = await MiBand234Link.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        : 'Could not reach the band. It has to be nearby, and not '
+            'connected to another app.'),
+  ));
+}
+
+/// Drain the watch, now, because the user asked: one bounded window (see
+/// `pebble_link.dart`), whose HR, steps and sleep land like any wearable's.
+Future<void> _syncPebble(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(
+      SnackBar(content: Text(l?.devicesSyncing ?? 'Syncing')));
+  final ok = await PebbleLink.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        // The device-neutral string.
+        : (l?.devicesCouldNotReachCorosWatch ??
+            'Could not reach it. It has to be nearby, and not connected to '
+                'another app.')),
+  ));
+}
+
+/// Drain any other paired sensor family, now, because the user asked. Same
+/// promise as [_syncRing], generalized past the ring-specific wording — a
+/// thermometer is not a ring.
+Future<void> _syncSensor(BuildContext c, Future<bool> Function() sync) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(SnackBar(
+      content:
+          Text(l?.devicesSyncingTheSensor ?? 'Syncing the sensor…')));
+  final ok = await sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        : (l?.devicesCouldNotReachSensor ??
+            'Could not reach the sensor. It has to be nearby, and not '
+                'connected to another app.')),
+  ));
+}
+
+/// Same as [_syncRing], for a paired Colmi ring — the "sync now" affordance
+/// this device was missing entirely (it paired and never synced again).
+/// Shares the ring-generic strings above rather than minting Colmi-specific
+/// copy for the same sentence.
+Future<void> _syncColmiRing(BuildContext c) async {
+  final l = AppLocalizations.of(c);
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  messenger?.showSnackBar(
+      SnackBar(content: Text(l?.devicesSyncingTheRing ?? 'Syncing the ring…')));
+  final ok = await ColmiLink.instance.sync();
+  if (!c.mounted) return;
+  messenger?.showSnackBar(SnackBar(
+    content: Text(ok
+        ? (l?.devicesSynced ?? 'Synced.')
+        : (l?.devicesCouldNotReachRing ??
+            'Could not reach the ring. It has to be nearby, and not connected '
+                'to another app.')),
+  ));
+}
+
+/// Forget a paired sensor. Same promise as forgetting the band — the source
+/// goes, the measurements stay — and it is true for the same reason: every row
+/// the sensor wrote keeps its own `device_id`, and nothing here touches them.
+Future<void> _confirmForgetSensor(BuildContext c, HealthSource s) async {
+  final id = s.deviceId;
+  if (id == null) return;
+  final app = c.read<AppState>();
+  final l = AppLocalizations.of(c);
+  final ok = await showDialog<bool>(
+    context: c,
+    builder: (d) => AlertDialog(
+      title: Text(
+        l?.devicesForgetSensor(s.displayName(c)) ?? 'Forget ${s.name}?',
+      ),
+      content: Text(
+        withIosUninstallWarning(c, l?.devicesForgetSensorBody ??
+            'It stops being used in workouts and has to be paired again. Everything already saved on this phone stays.'),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.of(d).pop(false),
+            child: Text(l?.devicesKeepItPaired ?? 'Keep it paired')),
+        TextButton(
+            onPressed: () => Navigator.of(d).pop(true),
+            child: Text(l?.devicesForgetIt ?? 'Forget it')),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  await HrsLink.forgetDevice(id);
+  await app.refreshSensors();
+  if (c.mounted) backToRoot(c);
+}
+
+/// Rename the strap.
+///
+/// This was in the old UI and did not survive the rebuild, which left the
+/// advertising name readable and not writable — and it is the one label a user
+/// with two straps needs, since both otherwise read "Your band".
+///
+/// The band's own limits are the field's limits, checked here so a refusal is
+/// immediate instead of a silent truncation 20 characters in: 20 ASCII
+/// characters, the charset `cleanDeviceLabel` accepts on the way back, and at
+/// least one letter or digit. Anything the strap would reject or mangle is
+/// rejected in the sheet, where the user can still fix it.
+Future<void> _renameBand(BuildContext c, AppState app, String current) async {
+  // Captured before the dialog: `c` is not safe to touch after the await.
+  final messenger = ScaffoldMessenger.maybeOf(c);
+  final l = AppLocalizations.of(c);
+  final ctl = TextEditingController(text: current);
+  final err = ValueNotifier<String?>(null);
+  final name = await showDialog<String>(
+    context: c,
+    builder: (d) => AlertDialog(
+      title: Text(l?.devicesNameThisBand ?? 'Name this band'),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        ValueListenableBuilder<String?>(
+          valueListenable: err,
+          builder: (_, e, _) => TextField(
+            controller: ctl,
+            autofocus: true,
+            maxLength: 20,
+            decoration: InputDecoration(
+              hintText: l?.devicesYourBand ?? 'Your band',
+              errorText: e,
+              helperText: l?.devicesNameCharset ??
+                  "Letters, numbers, space, and ' . _ -",
+            ),
+          ),
+        ),
+      ]),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.of(d).pop(),
+            child: Text(l?.actionCancel ?? 'Cancel')),
+        TextButton(
+          onPressed: () {
+            final v = ctl.text.trim();
+            if (v.isEmpty) {
+              err.value = l?.devicesGiveItAName ?? 'Give it a name';
+            } else if (cleanDeviceLabel(v) == null) {
+              err.value = l?.devicesNameCharsetError ??
+                  "Only letters, numbers, space, and ' . _ -";
+            } else {
+              Navigator.of(d).pop(v);
+            }
+          },
+          child: Text(l?.actionSave ?? 'Save'),
+        ),
+      ],
+    ),
+  );
+  ctl.dispose();
+  err.dispose();
+  if (name == null) return;
+  try {
+    await app.renameStrap(name);
+    messenger?.showSnackBar(
+        SnackBar(content: Text(l?.devicesRenamedTo(name) ?? 'Renamed to $name')));
+  } catch (e) {
+    // The write goes to the strap, so a dropped link loses it. Say that,
+    // rather than leaving the old name on screen with no explanation.
+    messenger?.showSnackBar(SnackBar(
+        content: Text(l?.devicesCouldNotRename(e.toString()) ??
+            'Could not rename the band: $e')));
+  }
+}
+
+/// Forgetting a band is destructive — it ends the only connection to the one
+/// sensor in the app that measures anything continuously — and it used to
+/// happen on a single tap with no confirmation, leaving this screen still
+/// showing the band's battery afterwards. Mirrors the reset confirmation in
+/// settings.dart, including the pop: `unpair()` changes the gate underneath
+/// this pushed screen, so without it the user is left reading a device page
+/// for a device that is gone.
+Future<void> _confirmForget(BuildContext c, AppState app, String name) async {
+  final l = AppLocalizations.of(c);
+  final ok = await showDialog<bool>(
+    context: c,
+    builder: (d) => AlertDialog(
+      title: Text(l?.devicesForgetBand(name) ?? 'Forget $name?'),
+      content: Text(
+        withIosUninstallWarning(c, l?.devicesForgetBandBody ??
+            'The band stops syncing until you pair it again. Everything already saved on this phone stays.'),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.of(d).pop(false),
+            child: Text(l?.devicesKeepItPaired ?? 'Keep it paired')),
+        TextButton(
+            onPressed: () => Navigator.of(d).pop(true),
+            child: Text(l?.devicesForgetIt ?? 'Forget it')),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  await app.unpair();
+  if (c.mounted) backToRoot(c);
+}
+
+class DeviceDetailView extends StatelessWidget {
+  final HealthSource s;
+  final VoidCallback? onFind, onForget, onSync;
+
+  /// The beat arriving right now, or null when nothing fresh is streaming.
+  /// Passed IN rather than read from a provider here: this view is rendered in
+  /// tests with no Provider above it, which is the point of it being a view.
+  final int? liveHr;
+
+  /// Rename the band. Null when there is nothing to rename (the phone) or no
+  /// link to carry the write — the name lives on the strap, not on the phone,
+  /// so an offline rename would be a lie the next connect quietly undoes.
+  final VoidCallback? onRename;
+
+  /// The band's own state, from `bandStatusFor`. Null for a non-band source.
+  final BandStatus? status;
+
+  /// `device.wearing`; null until loaded (shown as the wrist default).
+  final int? wornOn;
+
+  /// The stored code is one this build does not know; shown as "Unknown".
+  final bool wornOnUnknown;
+
+  /// Opens the wearing sheet. Null hides the row.
+  final VoidCallback? onWearing;
+  /// `LocalDb.batteryHealth()` — the recent `band_battery` series, which is the
+  /// one table nothing prunes. Null until it loads, and on a non-band source.
+  final Map<String, dynamic>? health;
+
+  /// `BatteryForecaster.forecast` over the same series. Null until it loads and
+  /// on a non-band source; an ABSTAINING forecast is a valid value and draws
+  /// nothing.
+  final BatteryForecast? forecast;
+
+  const DeviceDetailView(this.s,
+      {super.key,
+      this.onFind,
+      this.onForget,
+      this.onSync,
+      this.onRename,
+      this.liveHr,
+      this.status,
+      this.wornOn,
+      this.wornOnUnknown = false,
+      this.onWearing,
+      this.health,
+      this.forecast});
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    final localizedStatus =
+        status == null ? null : localizedBandStatus(c, status!);
+    final battery = s.batteryPct;
+    final last = s.lastData;
+    final fault =
+        localizedStatus?.isFault == true ? localizedStatus : null;
+    final calibration = calibrationDisclosure(s);
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        child: Column(children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: S.x4),
+            child: NavBar(''),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
+              children: [
+                Center(
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    alignment: Alignment.center,
+                    decoration:
+                        BoxDecoration(color: p.card2, borderRadius: R.rXxl),
+                    child: Icon(s.icon, size: 54, color: p.ink2),
+                  ),
+                ),
+                  const SizedBox(height: S.x5),
+                  Center(
+                    child: Text(
+                      s.displayName(c),
+                      style: F.t2.copyWith(color: p.ink),
+                    ),
+                  ),
+                  const SizedBox(height: S.x2),
+                  // A fault names itself in the card below; repeating its title
+                  // here would say the same thing twice in two type sizes.
+                if (fault == null)
+                  Center(
+                      child: Text(
+                          localizedStatus?.title ?? _localizedSourceState(c, s),
+                          style: F.cap.copyWith(
+                              color: s.connected ? p.on(C.green) : p.ink3))),
+                const SizedBox(height: S.x6),
+                if (fault != null) ...[
+                  StatusCard(fault.title, fault.reason,
+                      fix: fault.fix ?? '', icon: LucideIcons.bluetoothOff),
+                  const SizedBox(height: S.x5),
+                ],
+                if (s.tier case final t?) ...[
+                  TierRow(t, filled: true),
+                  const SizedBox(height: S.x5),
+                ],
+                // A PAIRED SENSOR'S OWN CARD, not the band block below. It has
+                // no advertising name it owns, no battery this app reads and
+                // nothing to buzz — and it has the one thing a user needs
+                // before they trust the row at all: what is captured, and what
+                // is calculated from it. Today the answer to the second is
+                // "nothing unless its experimental flag is on" (R6), and that
+                // has to be on the screen rather than inferred from a metric
+                // quietly still abstaining.
+                if (!s.isBand && s.deviceId != null) ...[
+                  Surface(
+                    pad: const EdgeInsets.symmetric(horizontal: S.x4),
+                    child: Column(children: [
+                      SetRow(LucideIcons.flaskConical, C.orange,
+                          l?.devicesSupport ?? 'Support',
+                          value: l?.devicesExperimental ?? 'Experimental',
+                          sub: l?.devicesSensorExperimentalSub ??
+                              'Decoded from the protocol, never checked '
+                                  'against the hardware — nobody here owns one.',
+                          chevron: false),
+                      Divider(color: p.line, height: 1),
+                      SetRow(LucideIcons.database, C.teal,
+                          l?.devicesWhatItDoes ?? 'What it does',
+                          sub: s.tier == null
+                              ? (l?.devicesWhatItDoesStored ??
+                                  'Everything it sends is saved under its name. Scores from it are experimental and off until it’s been checked against the hardware.')
+                              : (l?.devicesWhatItDoesBeats ??
+                                  'Heartbeat timing is saved under its name, during workouts and a few minutes after. Scoring workouts from it is experimental and off for now.'),
+                          chevron: false),
+                      Divider(color: p.line, height: 1),
+                      SetRow(LucideIcons.refreshCw, C.purple,
+                          l?.devicesLastData ?? 'Last data',
+                          value: last == null ? '' : formatDayTime(last, l),
+                          sub: last == null
+                              ? (l?.devicesNothingBankedYet ?? 'Nothing banked yet')
+                              : '',
+                          chevron: false),
+                      // A wearable with a column in the metric x device
+                      // table: what we measure from it, and its own values.
+                      // Developer mode only, as the wearable flags are (R6).
+                      if (columnFor(s.family) != null &&
+                          Prefs.getBool(Prefs.devMode, false)) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.chartColumn, C.green,
+                            l?.wearableDayTitle ?? "Today's numbers",
+                            sub: l?.wearableDayRowSub ??
+                                'What we measure from it, beside its own '
+                                    'values',
+                            onTap: () => goto(
+                                c,
+                                WearableDayScreen(
+                                    deviceId: s.deviceId!,
+                                    adapterId: s.family!))),
+                      ],
+                      // MANUAL, and only for a sensor that holds history.
+                      // A strap has no flash and nothing to fetch; a ring
+                      // does, and putting it on a schedule would have it
+                      // contending for the radio with the band's own link
+                      // for no reason a user asked for.
+                      if (onSync != null) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.downloadCloud, C.blue,
+                            l?.devicesSyncNow ?? 'Sync now',
+                            // Only Oura genuinely fetches held history off a
+                            // cursor; every other `onSync` wired today is a
+                            // bounded listen window with no request and no
+                            // stored-history drain — see e.g.
+                            // `SessionLink.sync()`.
+                            // Claiming a "fetch" for those would be a promise
+                            // the connect does not keep.
+                            sub: s.family == 'oura'
+                                ? (l?.devicesSyncNowSub ??
+                                    'Fetch whatever it has been holding')
+                                : (l?.devicesSyncNowSubListen ??
+                                    'Listen for whatever it sends right now'),
+                              onTap: onSync,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: S.x5),
+                    if (s.family case final family?)
+                      DeviceUseSwitch(
+                          deviceId: s.deviceId!, adapterId: family),
+                  ],
+                  // Band rows only. The phone has no radio link and no battery
+                  // this app can read, so "Not reported since the last
+                  // connection" named a connection it does not have — on the
+                  // exact screen someone lands on when phone steps are silently
+                  // failing, where the answer is the permission, not a battery.
+                  if (s.isBand)
+                    Surface(
+                      pad: const EdgeInsets.symmetric(horizontal: S.x4),
+                      child: Column(
+                        children: [
+                          // The name is the band's own advertising name, written
+                          // to the strap — not a phone-side label. So it is only
+                          // editable on a live link, and the row says so rather
+                          // than opening an editor whose save cannot land.
+                          SetRow(
+                            LucideIcons.tag,
+                            C.blue,
+                            l?.devicesName ?? 'Name',
+                            value: s.displayName(c),
+                          sub: onRename == null
+                              ? (l?.devicesConnectToRename ??
+                                  'Connect to the band to change it')
+                              : '',
+                          chevron: onRename != null,
+                          onTap: onRename),
+                      Divider(color: p.line, height: 1),
+                      if (onWearing != null) ...[
+                        SetRow(LucideIcons.personStanding, C.teal,
+                            l?.devicesWornOn ?? 'Worn on',
+                            value: wornOnUnknown
+                                ? (l?.devicesWornUnknown ?? 'Unknown')
+                                : wornName(c, wornOn ?? Wearing.wrist),
+                            sub: l?.devicesWornOnSub ??
+                                'Where the band sits. Used to calibrate '
+                                'steps.',
+                            onTap: onWearing),
+                        Divider(color: p.line, height: 1),
+                      ],
+                      SetRow(LucideIcons.batteryMedium, C.green,
+                          l?.devicesBattery ?? 'Battery',
+                          value: battery == null ? '' : '${battery.round()}%',
+                          // L11 — the band's own charge history, on the row
+                          // that already exists rather than a new one. Within
+                          // THIS band only: `charge_cycles` counts times it went
+                          // on the charger, not full cycles, and the millivolts
+                          // are the highest reading seen while charging — so
+                          // neither is ever put against a cell spec, turned
+                          // into a percentage of original capacity, or read as
+                          // "replace the battery".
+                          //
+                          // Both were structurally blank until schema 45: the
+                          // voltage had no writer at all, so this line has shown
+                          // nothing on every install there has ever been.
+                          sub: battery == null
+                              ? (l?.devicesBatteryNotReported ??
+                                  'Not reported since the last connection')
+                              : [
+                                  if (s.charging) (l?.devicesCharging ?? 'Charging'),
+                                  ?_timeLeft(forecast),
+                                  ?_chargeHistory(health),
+                                ].join(' · '),
+                          chevron: false),
+                      Divider(color: p.line, height: 1),
+                      if (s.batteryPackPct case final pack?) ...[
+                        SetRow(LucideIcons.batteryCharging, C.green,
+                            l?.devicesBatteryPack ?? 'Battery pack',
+                            value: '${pack.round()}%',
+                            sub: l?.devicesBatteryPackSub ??
+                                'Reported by the band about every 10 minutes',
+                            chevron: false),
+                        Divider(color: p.line, height: 1),
+                      ],
+                      // Live, not a stored reading: present only while the
+                      // band is actually streaming, and gone the moment it
+                      // stops.
+                      if (liveHr != null) ...[
+                        SetRow(LucideIcons.heartPulse, C.red,
+                            l?.devicesHeartRate ?? 'Heart rate',
+                            value: '$liveHr bpm',
+                            sub: l?.devicesRightNow ?? 'Right now',
+                            chevron: false),
+                        Divider(color: p.line, height: 1),
+                      ],
+                      SetRow(LucideIcons.refreshCw, C.purple,
+                          l?.devicesLastData ?? 'Last data',
+                          value: last == null ? '' : formatDayTime(last, l),
+                          sub: last == null
+                              ? (l?.devicesNothingBankedYet ?? 'Nothing banked yet')
+                              : '',
+                          chevron: false),
+                      if (calibration != null) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.sliders, C.teal,
+                            l?.devicesCalibration ?? 'Calibration',
+                            value: calibration.$1,
+                            sub: calibration.$2,
+                            chevron: false),
+                      ],
+                      // WHO HAS CHECKED, not how good the numbers are. Said
+                      // here rather than only as a word on the list row,
+                      // because "experimental" without the reason reads as a
+                      // disclaimer instead of a fact about this band.
+                      if (s.experimental) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.flaskConical, C.orange,
+                            l?.devicesSupport ?? 'Support',
+                            value: l?.devicesExperimental ?? 'Experimental',
+                            sub: l?.devicesBandExperimentalSub ??
+                                'This band is decoded but nobody here has worn '
+                                    'one. Its numbers have not been checked against '
+                                    'the hardware, only against the protocol.',
+                            chevron: false),
+                      ],
+                      if (onFind != null) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.bellRing, C.orange,
+                            l?.devicesBuzzTheBand ?? 'Buzz the band',
+                            sub: l?.devicesFindItByFeel ?? 'Find it by feel',
+                            chevron: false,
+                            onTap: onFind),
+                      ],
+                    ]),
+                  ),
+                const SizedBox(height: S.x5),
+                if (onForget != null)
+                  Surface(
+                    pad: const EdgeInsets.symmetric(horizontal: S.x4),
+                    child: SetRow(LucideIcons.trash2, C.red,
+                        l?.devicesForgetThisBand ?? 'Forget this band',
+                        danger: true, chevron: false, onTap: onForget),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "about 2 days left" — or null on an abstention, which is most of the time
+/// and is meant to be: the forecaster refuses on the charger, on too few
+/// samples, on too short a span and on an implausible rate, and a battery
+/// number the user can read for themselves is better than a made-up deadline.
+///
+/// Deliberately coarse. The estimate is a median slope through a percentage
+/// that only moves in whole points, so it does not support a time of day, and
+/// printing one would claim a precision this cannot carry. "About" is doing
+/// real work in that sentence.
+String? _timeLeft(BatteryForecast? f) {
+  final empty = f?.predictedEmptyAt;
+  if (empty == null) return null;
+  final left = empty.difference(DateTime.now());
+  if (left.isNegative) return null;
+  if (left.inHours < 1) return 'under an hour left';
+  if (left.inHours < 36) return 'about ${left.inHours} h left';
+  return 'about ${(left.inHours / 24).round()} days left';
+}
+
+/// "12 charges logged, up to 4,180 mV" — or null when there is no history to
+/// report yet. Two facts about this band and nothing derived from them: nothing
+/// here knows the pack's design capacity, and going on the charger is not a
+/// cycle.
+String? _chargeHistory(Map<String, dynamic>? h) {
+  final cycles = (h?['charge_cycles'] as num?)?.toInt() ?? 0;
+  if (cycles <= 0) return null;
+  final mv = (h?['full_charge_mv'] as num?)?.toInt();
+  return '$cycles charge${cycles == 1 ? '' : 's'} logged'
+      '${mv == null ? '' : ', up to $mv mV'}';
+}
+
+String wornName(BuildContext c, int w) {
+  final l = AppLocalizations.of(c);
+  return switch (w) {
+    Wearing.bicep => l?.devicesWornBicep ?? 'Upper arm',
+    Wearing.other => l?.devicesWornOther ?? 'Somewhere else',
+    _ => l?.devicesWornWrist ?? 'Wrist',
+  };
+}
+
+/// One tap saves; returns the saved code, or null if nothing was saved.
+Future<int?> _pickWearing(BuildContext c) async {
+  final p = P.of(c);
+  final l = AppLocalizations.of(c);
+  final chosen = await showModalBottomSheet<int>(
+    context: c,
+    backgroundColor: p.card,
+    showDragHandle: true,
+    builder: (sheet) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x4),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(l?.devicesWornSheetTitle ?? 'Where do you wear it?',
+              style: F.t2.copyWith(color: p.ink)),
+          const SizedBox(height: S.x3),
+          for (final (code, title, sub) in [
+            (
+              Wearing.wrist,
+              l?.devicesWornWrist ?? 'Wrist',
+              l?.devicesWornWristSub ??
+                  'The default. Best step accuracy the band can give.'
+            ),
+            (
+              Wearing.bicep,
+              l?.devicesWornBicep ?? 'Upper arm',
+              l?.devicesWornBicepSub ??
+                  'Under-counts steps — the arm swings less than the wrist.'
+            ),
+            (
+              Wearing.other,
+              l?.devicesWornOther ?? 'Somewhere else',
+              l?.devicesWornOtherSub ??
+                  'A pocket or bag. The band cannot see gait well there.'
+            ),
+          ])
+            Padding(
+              padding: const EdgeInsets.only(bottom: S.x2),
+              child: Surface(
+                onTap: () => Navigator.of(sheet).pop(code),
+                child: SetRow(LucideIcons.personStanding, C.teal, title,
+                    sub: sub, chevron: false),
+              ),
+            ),
+        ]),
+      ),
+    ),
+  );
+  if (chosen == null) return null;
+  // 0 rows = the device row is gone (an unpair raced the sheet).
+  final saved = await LocalDb.setDeviceWearing(chosen);
+  return saved > 0 ? chosen : null;
+}
+
+/// "Thu 4 Sep, 07:12" — local, which is what every day label in this app is.
+///
+/// It used to render `4/9, 07:12`, which a US reader reads as 9 April. The
+/// month name is the whole point; `formatDay` already writes one.
+String formatDayTime(DateTime d, [AppLocalizations? l]) =>
+    '${formatDay(d, l)}, ${formatClockOf(d)}';
