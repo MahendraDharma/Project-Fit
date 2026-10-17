@@ -31,6 +31,7 @@ import 'ecg.dart' show EcgEntryCard, pairedIsMaverickOf;
 import 'findings_log.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
+import 'monthly_report.dart';
 import 'metric_detail.dart';
 import 'wellness_screen.dart';
 
@@ -943,6 +944,18 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
                 : (l?.healthWellbeingAllSub ??
                     'Breathing, mood, the journal, habits and medication'),
             () => go(c, const WellnessScreen(initialTab: 0))),
+      ),
+
+      // The month against the one before it: what moved past day-to-day noise.
+      Section(
+        l?.monthlyReportTitle ?? 'Your month',
+        detailLinkRow(
+            c,
+            LucideIcons.calendarRange,
+            l?.monthlyReportSub ?? 'Last 30 days against the 30 before',
+            l?.monthlyReportLinkSub ??
+                'What moved, and what was only day-to-day noise',
+            () => go(c, const MonthlyReportScreen())),
       ),
 
       // THERE IS NO "BODY COMPOSITION" SECTION, AND THE NEXT PERSON SHOULD NOT

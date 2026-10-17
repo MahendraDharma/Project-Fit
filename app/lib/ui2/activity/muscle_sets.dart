@@ -60,36 +60,42 @@ class MuscleSetsCard extends StatelessWidget {
           for (final e in rows) ...[
             Row(
               children: [
-                SizedBox(
-                  width: 96,
+                // Flexible, not fixed widths: at large text sizes a fixed
+                // label column overflows long muscle names.
+                Expanded(
+                  flex: 2,
                   child: Text(
                     e.key,
                     style: F.cap.copyWith(color: p.ink2),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: S.x2),
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: R.rPill,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FractionallySizedBox(
-                        widthFactor: top > 0 ? e.value / top : 0,
-                        child: Container(height: 8, color: p.on(C.orange)),
+                  flex: 3,
+                  // A fixed height: Align would otherwise ask for all the
+                  // height it is offered, which inside a scroll view is none.
+                  child: SizedBox(
+                    height: 8,
+                    child: ClipRRect(
+                      borderRadius: R.rPill,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: top > 0 ? e.value / top : 0,
+                          heightFactor: 1,
+                          child: ColoredBox(color: p.on(C.orange)),
+                        ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: S.x2),
-                SizedBox(
-                  width: 64,
-                  child: Text(
-                    v.hardSetsByMuscle == null
-                        ? fmt(e.value)
-                        : '${fmt(e.value)} · ${fmt(v.hardSetsByMuscle![e.key] ?? 0)}',
-                    textAlign: TextAlign.right,
-                    style: F.cap.copyWith(color: p.ink),
-                  ),
+                Text(
+                  v.hardSetsByMuscle == null
+                      ? fmt(e.value)
+                      : '${fmt(e.value)} · ${fmt(v.hardSetsByMuscle![e.key] ?? 0)}',
+                  style: F.cap.copyWith(color: p.ink),
                 ),
               ],
             ),

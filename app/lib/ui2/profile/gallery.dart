@@ -30,6 +30,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:projectfit_analytics/onehz.dart' show muscleVolume;
 import 'package:share_plus/share_plus.dart';
 
 import '../../coach/coach_config.dart';
@@ -47,6 +48,7 @@ import '../../models/activity_suggestion.dart';
 import '../screens/detected_activities.dart';
 import '../activity/catalogue.dart';
 import '../activity/live.dart';
+import '../activity/muscle_sets.dart';
 import '../activity/picker.dart' show ActivityPicker, ActivityRow;
 import '../activity/poster.dart'
     show PosterCard, PosterFormat, PosterStatRow, kPosterMapH, kPosterMapW;
@@ -1595,6 +1597,8 @@ Map<String, Widget> _listCases() => {
       ),
       ..._dayTimelineCases(),
       ..._monthGridCases(),
+      ..._monthlyReportCases(),
+      ..._muscleSetsCases(),
       ..._whatChangedCases(),
     };
 
@@ -1753,6 +1757,41 @@ Map<String, Widget> _monthGridCases() => {
         gridRow('strain', _gridPoints(4, 12, days: 2)),
       ]),
     };
+
+List<double?> _monthOf(double prev, double cur, {int curDays = 30}) => [
+      for (var i = 0; i < 30; i++) prev + (i.isEven ? 3 : -3),
+      for (var i = 0; i < 30; i++)
+        i < 30 - curDays ? null : cur + (i.isEven ? 3 : -3),
+    ];
+
+// Every row state at once: a change each way, a steady month, and a metric
+// still short of days in the newer month.
+Map<String, Widget> _monthlyReportCases() => {
+      'monthly_report': Column(children: [
+        for (final r in [
+          monthlyRow('sleep', _monthOf(410, 432)),
+          monthlyRow('readiness', _monthOf(62, 62.4)),
+          monthlyRow('hrv', _monthOf(48, 44)),
+          monthlyRow('steps', _monthOf(8200, 9100, curDays: 6)),
+        ]) ...[MonthlyRowTile(r), const SizedBox(height: S.x2)],
+      ]),
+    };
+
+// Rated and unrated: hard sets beside total sets, and the prompt to rate.
+Map<String, Widget> _muscleSetsCases() {
+  final at = DateTime(2026, 10, 1);
+  return {
+    'muscle_sets': MuscleSetsCard(muscleVolume(strengthSetInputs(StrengthLog([
+      for (var i = 0; i < 4; i++)
+        LoggedSet('bench_press', 8, loadKg: 60, rpe: 6 + i, at: at),
+      for (var i = 0; i < 3; i++)
+        LoggedSet('back_squat', 5, loadKg: 100, rpe: 8, at: at),
+    ]))).value!),
+    'muscle_sets_unrated': MuscleSetsCard(muscleVolume(strengthSetInputs(
+            StrengthLog([LoggedSet('bench_press', 8, loadKg: 60, at: at)])))
+        .value!),
+  };
+}
 
 // ── what changed ──────────────────────────────────────────────────────────
 

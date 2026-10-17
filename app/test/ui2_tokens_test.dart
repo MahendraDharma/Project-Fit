@@ -203,6 +203,9 @@ const _notComponents = {
   // phase by phase.
   'EcgEntryCard', 'EcgHomeScreen', 'EcgCaptureScreen', 'EcgDetailScreen',
   'EcgWristSheet',
+  // The monthly report route reads the repository; its rows are
+  // MonthlyRowTile, which the gallery holds.
+  'MonthlyReportScreen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',
   'ProfileSetupScreen', 'ProfileSetupView',

@@ -1707,6 +1707,15 @@
     "description": "Month grid: right-edge axis label for the most recent day."
   },
   "whatChangedTitle": "What changed",
+  "monthlyReportTitle": "Your month",
+  "monthlyReportSub": "LAST 30 DAYS AGAINST THE 30 BEFORE",
+  "monthlyReportLinkSub": "What moved, and what was only day-to-day noise",
+  "monthlyReportFootnote": "A change is named only when it is bigger than 0.2 of your usual day-to-day spread in the earlier month (Hopkins). Smaller differences are day-to-day noise and read as steady.",
+  "monthlyReportNotEnough": "Not enough days yet",
+  "monthlyReportNotEnoughDetail": "{have} of {need} measured days in the thinner month",
+  "@monthlyReportNotEnoughDetail": {"placeholders": {"have": {"type": "int"}, "need": {"type": "int"}}},
+  "monthlyReportWas": "was {previous} · {currentDays} and {previousDays} days measured",
+  "@monthlyReportWas": {"placeholders": {"previous": {"type": "String"}, "currentDays": {"type": "int"}, "previousDays": {"type": "int"}}},
   "@whatChangedTitle": {
     "description": "What Changed screen: nav bar title."
   },
