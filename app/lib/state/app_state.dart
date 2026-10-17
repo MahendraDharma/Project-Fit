@@ -4321,6 +4321,7 @@ class AppState extends ChangeNotifier {
     int? minute,
     bool? enabled,
     int? smartWindowMinutes,
+    bool? sleepGoal,
   }) async {
     final current = _schedule.firstWhere(
       (e) => e.weekday == weekday,
@@ -4335,6 +4336,7 @@ class AppState extends ChangeNotifier {
       minute: minute,
       enabled: enabled,
       smartWindowMinutes: smartWindowMinutes,
+      sleepGoal: sleepGoal,
     );
     await LocalDb.setAlarmScheduleDay(
       weekday: next.weekday,
@@ -4342,6 +4344,7 @@ class AppState extends ChangeNotifier {
       minute: next.minute,
       enabled: next.enabled,
       smartWindowMinutes: next.smartWindowMinutes,
+      sleepGoal: next.sleepGoal,
     );
     await _loadAlarmSchedule();
     notifyListeners();
@@ -4415,6 +4418,11 @@ class AppState extends ChangeNotifier {
   /// the band again on every tick once light sleep is first seen.
   int? _smartWakeFiredForEpoch;
 
+  /// Sleep-goal wake reads hours of 1 Hz rows and runs the rest-window rule;
+  /// once every [_sleepGoalCheckEvery] is plenty for a goal measured in hours.
+  DateTime? _sleepGoalCheckedAt;
+  static const _sleepGoalCheckEvery = Duration(minutes: 5);
+
   /// Smart Wake Window's periodic check, run from [BleEngine.onKeepAlive] —
   /// the engine's existing 30 s keep-alive tick, not a new timer.
   ///
@@ -4436,6 +4444,36 @@ class AppState extends ChangeNotifier {
       final now = DateTime.now();
       if (!inSmartWakeWindow(
           windowEnd: armed.windowEnd, minutes: armed.minutes, now: now)) {
+        return;
+      }
+      if (armed.sleepGoal) {
+        // Sleep-goal mode replaces the light-sleep trigger rather than adding
+        // to it: an early buzz before the goal is exactly what it promises
+        // not to do. Short of the goal, the fallback arm at the window's end
+        // fires as it always does.
+        if (_sleepGoalCheckedAt != null &&
+            now.difference(_sleepGoalCheckedAt!) < _sleepGoalCheckEvery) {
+          return;
+        }
+        _sleepGoalCheckedAt = now;
+        final r = repo;
+        if (r == null) return;
+        final needSec = _learnedSleepNeedSec(await r.getInsights());
+        if (needSec == null) return;
+        final rows = await LocalDb.onehzHrAccelBetween(
+          now.subtract(const Duration(hours: 14)).millisecondsSinceEpoch ~/
+              1000,
+          now.millisecondsSinceEpoch ~/ 1000,
+        );
+        final restSec = restSecondsSoFar([
+          for (final r in rows)
+            (recTs: (r['rec_ts'] as num).toInt(), s: SmartWakeSample.fromRow(r)),
+        ]);
+        if (!sleepGoalReached(restSec: restSec, needSec: needSec)) return;
+        _smartWakeFiredForEpoch = epoch; // set BEFORE the write, as below
+        await engine.runAlarm();
+        _log('[smart-wake] sleep goal reached (${restSec! ~/ 60} of '
+            '${needSec ~/ 60} min) inside the window — early buzz.');
         return;
       }
       final recentRows = await LocalDb.onehzHrAccelBetween(
@@ -4464,6 +4502,16 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       _log('[smart-wake] check failed (fallback alarm is unaffected): $e');
     }
+  }
+
+  /// Tonight's learned sleep need in seconds from the cross-day insights, or
+  /// null while it is still being learned (or the insights are stale).
+  static int? _learnedSleepNeedSec(Map<String, dynamic> insights) {
+    final coach = insights['sleep_coach'];
+    final need = coach is Map ? coach['need'] : null;
+    final value = need is Map ? need['value'] : null;
+    final sec = value is Map ? value['need_sec'] : null;
+    return sec is num ? sec.round() : null;
   }
 
   /// Whether the currently-armed alarm — from either source, the schedule

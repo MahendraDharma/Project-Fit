@@ -22,6 +22,8 @@
 
 import 'dart:math' as math;
 
+import 'package:projectfit_analytics/onehz.dart' as ana;
+
 /// One second of the signal this reads: HR (bpm) + the raw accel vector
 /// `decoded_onehz` already stores (roughly unit-magnitude at rest, in g).
 class SmartWakeSample {
@@ -75,4 +77,28 @@ double _median(List<double> xs) {
   return sorted.length.isOdd
       ? sorted[mid]
       : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+/// Seconds of rest so far in tonight's rest window, for sleep-goal wake.
+///
+/// The van Hees / GGIR rest window (analytics `vanHeesSleepWindow`, the same
+/// rule the sleep accounting uses) over [samples] — the last several hours of
+/// `decoded_onehz` — counting only the seconds it asserts immobile inside that
+/// window. The last few minutes cannot be certified yet (the rule needs future
+/// data) and are not counted, so this runs slightly behind, never ahead.
+///
+/// Null when no rest window is found: "unknown", which never triggers a buzz.
+int? restSecondsSoFar(List<({int recTs, SmartWakeSample s})> samples) {
+  if (samples.isEmpty) return null;
+  final w = ana.vanHeesSleepWindow([
+    for (final x in samples)
+      ana.AccelSample(x.recTs * 1000.0, x.s.ax, x.s.ay, x.s.az),
+  ]);
+  final v = w.value;
+  if (v == null) return null;
+  var n = 0;
+  for (var i = v.onsetIdx; i <= v.offsetIdx && i < v.immobile.length; i++) {
+    if (v.immobile[i]) n++;
+  }
+  return (n * v.cadenceSec).round();
 }

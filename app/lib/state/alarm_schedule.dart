@@ -26,12 +26,20 @@ class AlarmScheduleEntry {
   /// arm; see smart_wake.dart.
   final int smartWindowMinutes;
 
+  /// Sleep-goal wake. Only meaningful with a smart window: inside it, the
+  /// early buzz waits for tonight's rest time to reach the learned sleep need
+  /// instead of for light sleep. The fallback arm at `hour`:`minute` is still
+  /// never touched, so a night that never reaches the goal ends exactly as a
+  /// plain alarm does.
+  final bool sleepGoal;
+
   const AlarmScheduleEntry({
     required this.weekday,
     required this.hour,
     required this.minute,
     this.enabled = true,
     this.smartWindowMinutes = 0,
+    this.sleepGoal = false,
   });
 
   AlarmScheduleEntry copyWith({
@@ -39,6 +47,7 @@ class AlarmScheduleEntry {
     int? minute,
     bool? enabled,
     int? smartWindowMinutes,
+    bool? sleepGoal,
   }) =>
       AlarmScheduleEntry(
         weekday: weekday,
@@ -46,6 +55,7 @@ class AlarmScheduleEntry {
         minute: minute ?? this.minute,
         enabled: enabled ?? this.enabled,
         smartWindowMinutes: smartWindowMinutes ?? this.smartWindowMinutes,
+        sleepGoal: sleepGoal ?? this.sleepGoal,
       );
 
   factory AlarmScheduleEntry.fromRow(Map<String, Object?> row) =>
@@ -55,6 +65,7 @@ class AlarmScheduleEntry {
         minute: row['minute'] as int,
         enabled: (row['enabled'] as int) != 0,
         smartWindowMinutes: (row['smart_window_minutes'] as int?) ?? 0,
+        sleepGoal: ((row['sleep_goal'] as int?) ?? 0) != 0,
       );
 
   @override
@@ -64,16 +75,18 @@ class AlarmScheduleEntry {
       other.hour == hour &&
       other.minute == minute &&
       other.enabled == enabled &&
-      other.smartWindowMinutes == smartWindowMinutes;
+      other.smartWindowMinutes == smartWindowMinutes &&
+      other.sleepGoal == sleepGoal;
 
   @override
   int get hashCode =>
-      Object.hash(weekday, hour, minute, enabled, smartWindowMinutes);
+      Object.hash(weekday, hour, minute, enabled, smartWindowMinutes, sleepGoal);
 
   @override
   String toString() =>
       'AlarmScheduleEntry(weekday: $weekday, hour: $hour, minute: $minute, '
-      'enabled: $enabled, smartWindowMinutes: $smartWindowMinutes)';
+      'enabled: $enabled, smartWindowMinutes: $smartWindowMinutes, '
+      'sleepGoal: $sleepGoal)';
 }
 
 /// Whether a smart-wake early-fire attempt should happen right now.
@@ -103,7 +116,7 @@ bool inSmartWakeWindow({
 /// Extracted so `AppState._checkSmartWake` and
 /// `HighFreqWakeWindow`'s callers share one lookup instead of each doing
 /// their own weekday-entry matching.
-({DateTime windowEnd, int minutes})? armedSmartWakeWindow({
+({DateTime windowEnd, int minutes, bool sleepGoal})? armedSmartWakeWindow({
   required int? epoch,
   required List<AlarmScheduleEntry> schedule,
 }) {
@@ -115,8 +128,20 @@ bool inSmartWakeWindow({
         AlarmScheduleEntry(weekday: 0, hour: 0, minute: 0, enabled: false),
   );
   if (entry.smartWindowMinutes <= 0) return null;
-  return (windowEnd: windowEnd, minutes: entry.smartWindowMinutes);
+  return (
+    windowEnd: windowEnd,
+    minutes: entry.smartWindowMinutes,
+    sleepGoal: entry.sleepGoal,
+  );
 }
+
+/// Whether tonight's rest so far has reached the learned sleep need.
+///
+/// False whenever either side is unknown: no rest window found yet, or no
+/// sleep need learned yet (the app has no 8 h default, by design). False means
+/// "no early buzz", and the band's own fallback alarm still fires on time.
+bool sleepGoalReached({required int? restSec, required int? needSec}) =>
+    restSec != null && needSec != null && needSec > 0 && restSec >= needSec;
 
 /// The default slot for a weekday nobody has configured yet: 07:00, off. A
 /// made-up ON default would arm a wake alarm nobody asked for; the honest

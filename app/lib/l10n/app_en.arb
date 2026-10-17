@@ -266,6 +266,8 @@
     "description": "Settings group: the 7-day alarm schedule."
   },
   "alarmWakeTimeRowTitle": "Wake time",
+  "alarmSleepGoalRowTitle": "Wake at sleep goal",
+  "alarmSleepGoalRowSub": "Buzz early once tonight’s rest reaches your sleep need, instead of on light sleep. Needs a learned sleep need.",
   "@alarmWakeTimeRowTitle": {
     "description": "Row: a weekday's configured wake time."
   },

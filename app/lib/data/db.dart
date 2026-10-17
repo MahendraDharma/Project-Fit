@@ -473,7 +473,7 @@ class LocalDb {
   /// pass it: sqflite throws `ArgumentError('onCreate must be null if no
   /// version is specified')` BEFORE opening anything when `onCreate` is given
   /// without `version` (sqflite_common database_mixin.dart).
-  static const int schemaVersion = 58;
+  static const int schemaVersion = 59;
 
   /// SQLite caps host parameters per statement (`SQLITE_MAX_VARIABLE_NUMBER` —
   /// only 999 on the builds shipped with older Android/iOS). Any `IN (?, ?, …)`
@@ -1228,6 +1228,14 @@ class LocalDb {
           // A band's own hypnogram (`vendor_staged`). New table only.
           await _createVendorSleepEpoch(db);
         }
+        if (oldV < 59) {
+          // Sleep-goal wake: one additive column, default 0 (off), the same
+          // shape as smart_window_minutes at v52. Not a health metric, so no
+          // kAlgoVersion bump.
+          await _addColumnIfMissing(
+            db, 'alarm_schedule', 'sleep_goal', 'INTEGER NOT NULL DEFAULT 0',
+          );
+        }
       },
       onOpen: (db) async {
         await _repairOpenSchema(db);
@@ -1323,6 +1331,9 @@ class LocalDb {
     await _addColumnIfMissing(
       db, 'alarm_schedule', 'smart_window_minutes',
       'INTEGER NOT NULL DEFAULT 0',
+    );
+    await _addColumnIfMissing(
+      db, 'alarm_schedule', 'sleep_goal', 'INTEGER NOT NULL DEFAULT 0',
     );
     await _createEcgTables(db);
     await _addColumnIfMissing(
@@ -1927,6 +1938,7 @@ class LocalDb {
         minute  INTEGER NOT NULL,
         enabled INTEGER NOT NULL DEFAULT 1,
         smart_window_minutes INTEGER NOT NULL DEFAULT 0,
+        sleep_goal INTEGER NOT NULL DEFAULT 0,
         PRIMARY KEY (weekday)
       )
     ''');
@@ -2287,6 +2299,7 @@ class LocalDb {
     required int minute,
     required bool enabled,
     int smartWindowMinutes = 0,
+    bool sleepGoal = false,
   }) async {
     final db = await instance;
     await db.insert(
@@ -2297,6 +2310,7 @@ class LocalDb {
         'minute': minute,
         'enabled': enabled ? 1 : 0,
         'smart_window_minutes': smartWindowMinutes,
+        'sleep_goal': sleepGoal ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );

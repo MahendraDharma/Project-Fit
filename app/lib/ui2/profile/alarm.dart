@@ -201,6 +201,8 @@ class AlarmScreen extends StatelessWidget {
           app.setScheduleDay(weekday: weekday, hour: hour, minute: minute),
       onSetSmartWindow: (weekday, minutes) =>
           app.setScheduleDay(weekday: weekday, smartWindowMinutes: minutes),
+      onSetSleepGoal: (weekday, on) =>
+          app.setScheduleDay(weekday: weekday, sleepGoal: on),
       onTest: app.testAlarmBuzz,
       onCancel: app.disableAlarm,
     );
@@ -231,6 +233,7 @@ class AlarmScreenView extends StatelessWidget {
   final Future<void> Function(int weekday, int hour, int minute)?
       onSetDayTime;
   final Future<void> Function(int weekday, int minutes)? onSetSmartWindow;
+  final Future<void> Function(int weekday, bool on)? onSetSleepGoal;
   final Future<void> Function()? onTest, onCancel;
 
   const AlarmScreenView({
@@ -244,6 +247,7 @@ class AlarmScreenView extends StatelessWidget {
     this.onToggleDay,
     this.onSetDayTime,
     this.onSetSmartWindow,
+    this.onSetSleepGoal,
     this.onTest,
     this.onCancel,
   });
@@ -335,6 +339,21 @@ class AlarmScreenView extends StatelessWidget {
                                 : '${day.smartWindowMinutes} min early',
                             chevron: false,
                             onTap: () => _pickSmartWindow(c, day)),
+                        // Only inside a smart window: sleep-goal wake moves the
+                        // early buzz, it never moves the alarm itself.
+                        if (day.smartWindowMinutes > 0)
+                          SetRow(LucideIcons.target, C.green,
+                              l?.alarmSleepGoalRowTitle ?? 'Wake at sleep goal',
+                              sub: l?.alarmSleepGoalRowSub ??
+                                  'Buzz early once tonight’s rest reaches '
+                                      'your sleep need, instead of on light '
+                                      'sleep. Needs a learned sleep need.',
+                              value: day.sleepGoal
+                                  ? (l?.stateOn ?? 'On')
+                                  : (l?.stateOff ?? 'Off'),
+                              chevron: false,
+                              onTap: () => onSetSleepGoal?.call(
+                                  day.weekday, !day.sleepGoal)),
                       ],
                     ],
                   ]),
