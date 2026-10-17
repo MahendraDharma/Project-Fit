@@ -8934,6 +8934,10 @@
   "@workoutTonnageFootnoteOutro": {
     "description": "Closing sentence of the tonnage chart footnote"
   },
+  "workoutMuscleSetsTitle": "Sets per muscle, last 7 days",
+  "workoutMuscleSetsFootnote": "A set counts 1 for the muscles an exercise mainly works and 0.5 for the ones it assists. ",
+  "workoutMuscleSetsNoRpe": "Rate sets with RPE to see how many were hard.",
+  "workoutMuscleSetsHard": "The second number is hard sets: RPE 7 or more, counted only where you rated the set.",
   "workoutOverreachHeadline": "Your last 7 days of load are {ratio}× your usual six weeks, and resting heart rate ran high on {nightsElevated} of {nightsConsidered} nights.",
   "@workoutOverreachHeadline": {
     "description": "Overreach coincidence card headline, ratio is a formatted decimal string",

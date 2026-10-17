@@ -17,6 +17,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:projectfit_analytics/onehz.dart'
+    show MuscleVolume, StrengthSetInput, muscleVolume;
 import 'package:provider/provider.dart';
 
 import '../../data/db.dart';
@@ -33,6 +35,7 @@ import '../../state/units_controller.dart';
 import '../activity/catalogue.dart';
 import '../activity/day_strain.dart';
 import '../activity/live.dart';
+import '../activity/muscle_sets.dart';
 import '../activity/picker.dart';
 import '../activity/poster.dart' show PosterStatRow;
 import '../activity/setup.dart';
@@ -245,6 +248,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
           if (d.tonnage7.any((v) => v != null)) ...[
             const SizedBox(height: S.x3),
             _tonnageCard(c, p, d),
+          ],
+          if (d.muscleWeek != null &&
+              d.muscleWeek!.setsByMuscle.isNotEmpty) ...[
+            const SizedBox(height: S.x3),
+            MuscleSetsCard(d.muscleWeek!),
           ],
         ]),
         // TS-02 — the door onto the day's own strain trace. `getDayStrain` and
@@ -1905,6 +1913,10 @@ class _WorkoutData {
   /// Whether any set in that week was logged without a load, which makes every
   /// bar above a floor rather than a total.
   final bool tonnagePartial;
+
+  /// Sets per muscle group over the same seven days, or null when nothing was
+  /// lifted. See analytics `muscle_volume.dart` for the counting rule.
+  final MuscleVolume? muscleWeek;
   final List<_PastWorkout> workouts;
   final Set<int> weekDays; // 0 = Monday
   final int weekCount;
@@ -1952,6 +1964,7 @@ class _WorkoutData {
     this.trimpEnd,
     this.tonnage7 = const [],
     this.tonnagePartial = false,
+    this.muscleWeek,
     this.workouts = const [],
     this.weekDays = const {},
     this.weekCount = 0,
@@ -2123,6 +2136,9 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
     // cache here.
     final tonnage7 = List<double?>.filled(7, null);
     var tonnagePartial = false;
+    // TS-08b — the same week's sets, counted per muscle. Read off the rows the
+    // tonnage loop already fetches, so it costs no extra query.
+    final weekSets = <StrengthSetInput>[];
     final tonnageJobs = <Future<void>>[];
     for (final w in past) {
       final slot = _daySlot(w.start, end);
@@ -2130,6 +2146,7 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
       tonnageJobs.add(LocalDb.strengthSets(w.id).then((rows) {
         if (rows.isEmpty) return;
         final log = _logFrom(rows);
+        weekSets.addAll(strengthSetInputs(log));
         if (log.hasUnloadedSets) tonnagePartial = true;
         final v = log.volumeKg;
         if (v == null) return; // bodyweight-only session: no kilos to add
@@ -2188,6 +2205,7 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
       trimpEnd: end,
       tonnage7: tonnage7,
       tonnagePartial: tonnagePartial,
+      muscleWeek: muscleVolume(weekSets).value,
       workouts: past,
       // Imported days light a dot too. This strip says "you trained", not
       // "this band measured you", and a Sunday run left dark because the watch
