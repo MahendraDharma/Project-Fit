@@ -15,8 +15,8 @@ Legenda: ✅ setara · 🟡 sebagian · ❌ belum ada · ⛔ tidak bisa dibuat j
 
 | Status | Jumlah | Fitur |
 |---|---|---|
-| ✅ | 11 | Recovery, Strain 0–21, Strain target, Sleep performance, Sleep need & debt, konsistensi tidur, Journal, deteksi aktivitas, rekap mingguan, Coach AI, langkah |
-| 🟡 | 7 | Restorative sleep, Sleep Planner, alarm haptic, Stress Monitor, Health Monitor, siklus menstruasi, Heart Screener (ECG) |
+| ✅ | 12 | Recovery, Strain 0–21, Strain target, Sleep performance, Sleep need & debt, konsistensi tidur, Journal, deteksi aktivitas, zona HR, rekap mingguan, Coach AI, langkah |
+| 🟡 | 8 | Restorative sleep, Sleep Planner, alarm haptic, Stress Monitor, Health Monitor (HR/HRV/RHR/napas ada; SpO₂ & suhu belum), siklus menstruasi, Heart Screener (ECG), Advanced Labs |
 | ❌ | 3 | Strength Trainer (beban otot), Monthly Performance Assessment, mode alarm "bangun saat target tercapai" |
 | ⛔ | 3 | Healthspan / WHOOP Age, SpO₂ & suhu kulit WHOOP 4.0 (sampai field-nya teridentifikasi), Blood Pressure Insights |
 
