@@ -8942,6 +8942,21 @@
     "description": "Conditional clause inserted into the tonnage footnote when some sets had no weight"
   },
   "workoutTonnageFootnoteOutro": "Exact for what you typed and worthless across exercises — kept out of strain and recovery for that reason.",
+  "workoutLoadRatioLabel": "Load ratio",
+  "workoutLoadZoneLow": "low",
+  "workoutLoadZoneOptimal": "optimal",
+  "workoutLoadZoneHigh": "high",
+  "workoutLoadZoneVeryHigh": "very high",
+  "workoutLoadRatioFootnote": "Load ratio is your last 7 days of load against the last six weeks (Gabbett zones: 0.8–1.3 optimal). It describes the week; it does not predict injury.",
+  "hrvStatusTitle": "HRV status",
+  "hrvStatusBalanced": "Inside your range",
+  "hrvStatusAbove": "Above your range",
+  "hrvStatusBelow": "Below your range",
+  "hrvStatusWeek": "7-night average {week} ms · your usual range {low}–{high} ms",
+  "@hrvStatusWeek": {"placeholders": {"week": {"type": "String"}, "low": {"type": "String"}, "high": {"type": "String"}}},
+  "hrvStatusFootnote": "This week’s overnight HRV against the 60 nights before it. Training, illness, alcohol and travel can all move it, and this cannot tell them apart.",
+  "hrvStatusLearningTitle": "HRV status is still learning",
+  "hrvStatusLearningBody": "It needs four nights this week and two weeks of nights before them.",
   "@workoutTonnageFootnoteOutro": {
     "description": "Closing sentence of the tonnage chart footnote"
   },

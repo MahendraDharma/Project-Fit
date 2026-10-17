@@ -9,6 +9,7 @@ import '../../l10n/display_text.dart';
 // app that are absolute.
 
 import 'package:flutter/material.dart';
+import 'package:projectfit_analytics/onehz.dart' show hrvStatus;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,7 @@ import 'ecg.dart' show EcgEntryCard, pairedIsMaverickOf;
 import 'findings_log.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
+import 'hrv_status_card.dart';
 import 'monthly_report.dart';
 import 'metric_detail.dart';
 import 'wellness_screen.dart';
@@ -894,6 +896,10 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
           ]),
         ),
       for (final g in gaps) ...[const SizedBox(height: S.x3), g],
+      // HRV status: this week's overnight HRV against the 60 nights before it
+      // (7 + 60 slots of the stored nightly series).
+      const SizedBox(height: S.x3),
+      HrvStatusCard(hrvStatus(d.spark('hrv', 67))),
       // The active wearable's heart rows, each with its class, source line
       // and reason. Nothing on a WHOOP-only install, nor when handed data.
       if (widget.data == null) const WearableCells(kHealthWearableRows),

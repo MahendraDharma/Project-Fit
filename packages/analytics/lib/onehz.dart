@@ -35,6 +35,8 @@ export 'src/onehz/clinical/stress_si.dart';
 export 'src/onehz/clinical/irregular_rhythm.dart';
 export 'src/onehz/clinical/cardiac_coherence.dart';
 export 'src/onehz/clinical/vo2max.dart';
+export 'src/onehz/clinical/hrv_status.dart';
+export 'src/onehz/clinical/load_ratio.dart';
 
 // Metric families (each a self-contained barrel over the foundations + clinical).
 export 'src/onehz/sleep/sleep.dart';

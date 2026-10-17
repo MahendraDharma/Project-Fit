@@ -18,7 +18,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:projectfit_analytics/onehz.dart'
-    show MuscleVolume, StrengthSetInput, muscleVolume;
+    show MuscleVolume, StrengthSetInput, loadRatio, muscleVolume;
 import 'package:provider/provider.dart';
 
 import '../../data/db.dart';
@@ -411,6 +411,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
         InlineMetrics([
           (loc?.workoutFatigueLabel ?? 'Fatigue',
               ld.atl?.round().toString() ?? notYet, C.orange),
+          // Acute:chronic ratio (Gabbett's zones). Absent without both loads.
+          (
+            loc?.workoutLoadRatioLabel ?? 'Load ratio',
+            switch (loadRatio(atl: ld.atl, ctl: ld.ctl).value) {
+              final r? => '${r.ratio.toStringAsFixed(2)} · '
+                  '${_loadZone(c, r.zone)}',
+              null => notYet,
+            },
+            C.blue
+          ),
           (
             loc?.workoutFormLabel ?? 'Form',
             ld.tsb == null
@@ -419,9 +429,31 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
             C.purple
           ),
         ]),
+        const SizedBox(height: S.x3),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+          loc?.workoutLoadRatioFootnote ??
+              'Load ratio is your last 7 days of load against the last six '
+                  'weeks (Gabbett zones: 0.8–1.3 optimal). It describes the '
+                  'week; it does not predict injury.',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
+        ),
         ],
       ),
     );
+  }
+
+  /// Gabbett (2016) acute:chronic zones, named.
+  String _loadZone(BuildContext c, String zone) {
+    final loc = AppLocalizations.of(c);
+    return switch (zone) {
+      'low' => loc?.workoutLoadZoneLow ?? 'low',
+      'optimal' => loc?.workoutLoadZoneOptimal ?? 'optimal',
+      'high' => loc?.workoutLoadZoneHigh ?? 'high',
+      _ => loc?.workoutLoadZoneVeryHigh ?? 'very high',
+    };
   }
 
   /// Coggan's form bands, named rather than numbered.

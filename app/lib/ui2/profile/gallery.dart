@@ -30,7 +30,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:projectfit_analytics/onehz.dart' show muscleVolume;
+import 'package:projectfit_analytics/onehz.dart'
+    show hrvStatus, muscleVolume;
 import 'package:share_plus/share_plus.dart';
 
 import '../../coach/coach_config.dart';
@@ -1599,6 +1600,7 @@ Map<String, Widget> _listCases() => {
       ..._monthGridCases(),
       ..._monthlyReportCases(),
       ..._muscleSetsCases(),
+      ..._hrvStatusCases(),
       ..._whatChangedCases(),
     };
 
@@ -1792,6 +1794,19 @@ Map<String, Widget> _muscleSetsCases() {
         .value!),
   };
 }
+
+List<double?> _hrvNights(double base, double week, {int weekNights = 7}) => [
+      for (var i = 0; i < 60; i++) base * (i.isEven ? 1.1 : 0.9),
+      for (var i = 0; i < 7; i++) i < 7 - weekNights ? null : week,
+    ];
+
+// Inside, below, and still learning (too few nights this week).
+Map<String, Widget> _hrvStatusCases() => {
+      'hrv_status_balanced': HrvStatusCard(hrvStatus(_hrvNights(52, 52))),
+      'hrv_status_below': HrvStatusCard(hrvStatus(_hrvNights(52, 40))),
+      'hrv_status_learning':
+          HrvStatusCard(hrvStatus(_hrvNights(52, 52, weekNights: 2))),
+    };
 
 // ── what changed ──────────────────────────────────────────────────────────
 
