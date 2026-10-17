@@ -85,8 +85,10 @@ scratch_*
 **/scratch_test*.dart
 **/*_db2.dart
 /fetch_apps.js
-#adding firebase_options back so that we dont commit it accidentally in future releases
-lib/firebase_options.dart 
+# lib/firebase_options.dart IS tracked here: it is a stub with no keys that
+# makes initialisation throw, so telemetry stays off (see the file). A real
+# one from `flutterfire configure` must not be committed over it; put your
+# own project's file in place locally and keep it out of commits.
 
 # Local agent worktrees and execution ledgers.
 /.worktrees/
