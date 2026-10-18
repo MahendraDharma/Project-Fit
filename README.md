@@ -1,4 +1,20 @@
-# ProjectFit
+<p align="center">
+  <img src="docs/assets/logo.png" alt="ProjectFit" width="128" height="128">
+</p>
+
+<h1 align="center">ProjectFit</h1>
+
+<p align="center">
+  <strong>Aplikasi kebugaran local-first untuk WHOOP &amp; Garmin</strong><br>
+  Kesiapan · Beban · Tidur · Beban latihan — semua dihitung di HP Anda
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="Lisensi AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-blue"></a>
+  <img alt="Flutter 3.41.6" src="https://img.shields.io/badge/Flutter-3.41.6-02569B?logo=flutter">
+  <img alt="iOS dan Android" src="https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey">
+  <a href="docs/IOS_SIDELOAD.md"><img alt="Pasang di iPhone" src="https://img.shields.io/badge/iPhone-sideload-black?logo=apple"></a>
+</p>
 
 Aplikasi kebugaran local-first yang menggabungkan fondasi **OpenStrap**, model harian ala
 **WHOOP** (kesiapan → beban → tidur), dan sisi latihan ala **Garmin Connect**. Semua data
