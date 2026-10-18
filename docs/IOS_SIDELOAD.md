@@ -43,6 +43,11 @@ Waktu: ±15 menit. Butuh Wi-Fi.
 1. Pasang **LocalDevVPN** dari App Store (gratis), buka, lalu sambungkan VPN-nya. VPN ini hanya
    bekerja di dalam iPhone dan tidak mengirim lalu lintas internet Anda ke luar.
 2. Buka **SideInstaller** dan login dengan Apple ID.
+   > **Wi-Fi wajib, tapi hanya sekali.** Saat pertama kali, SideInstaller memasangkan (*pairing*)
+   > iPhone dengan dirinya sendiri lewat jaringan Wi-Fi, jadi tanpa Wi-Fi muncul pesan
+   > **"Wi-Fi required"**. Tidak punya Wi-Fi? Sambungkan ke **hotspot HP orang lain** (Personal
+   > Hotspot) atau Wi-Fi umum (kafe, kantor, kampus). Hotspot dari iPhone Anda sendiri tidak
+   > bisa dipakai. Setelah pairing tersimpan, Wi-Fi tidak dibutuhkan lagi.
 3. Ketuk **Install SideStore** dan tunggu sampai selesai.
 4. Percayai Apple ID Anda di **VPN & Manajemen Perangkat** (sama seperti A1 langkah 3), lalu
    buka **SideStore**.
