@@ -8,7 +8,9 @@ on:
 
 concurrency:
   group: test-${{ github.ref }}
-  cancel-in-progress: true
+  # Only a PR's superseded runs are cancelled; every commit on main gets a
+  # finished result instead of a "cancelled" mark when the next push lands.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # Read-only: this workflow only builds and tests code from pull requests.
 permissions:
