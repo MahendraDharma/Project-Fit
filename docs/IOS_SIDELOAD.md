@@ -22,6 +22,7 @@ Tenang, cukup ikuti langkahnya satu per satu.
 |---|---|---|
 | **27 ke atas** | 👉 [**Tutorial A** — cukup pakai iPhone](#tutorial-a--cukup-pakai-iphone-ios-27-ke-atas) | ❌ Tidak |
 | **15 sampai 26** | 👉 [**Tutorial B** — pakai komputer](#tutorial-b--pakai-komputer-ios-15-sampai-26) | ✅ Ya |
+| Punya **Mac**, dan cara A/B ditolak Apple | 👉 [**Tutorial C** — Mac + Xcode](#tutorial-c--mac--xcode-paling-pasti) | ✅ Mac |
 
 **2. Siapkan:**
 - ✅ **Apple ID.** Disarankan **Apple ID kedua** khusus untuk ini (gratis, buat di
@@ -172,6 +173,81 @@ Klik: **[⬇️ ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/re
 
 ---
 
+## Tutorial C — Mac + Xcode (paling pasti)
+
+Pakai cara ini kalau Tutorial A atau B gagal karena login Apple ditolak (misalnya *"Apple's login
+server refused"*, *"-20970"*, atau *"could not retrieve anisette data"*). Xcode adalah alat
+resmi Apple, jadi login Apple ID gratis lewat Xcode tidak terkena blokir itu. Bonusnya,
+**aplikasi Apple Watch ikut terpasang**.
+
+**Yang dibutuhkan:** Mac, kabel iPhone, ±25 GB ruang kosong, dan ±1 jam untuk pertama kali.
+Selanjutnya cukup beberapa menit.
+
+### Langkah 1 — Pasang Xcode
+1. Buka **App Store** di Mac, cari **Xcode**, lalu klik **Dapatkan**. Ukurannya besar, jadi
+   tunggu sampai selesai.
+2. Buka Xcode sekali, lalu klik **Agree** / **Install** kalau diminta. Kalau Xcode menawarkan
+   komponen **iOS**, centang lalu unduh.
+3. Masuk ke **Xcode → Settings → Accounts**, klik **+** → **Apple ID**, lalu login. Akan muncul
+   tim bernama **"(Personal Team)"**.
+
+### Langkah 2 — Pasang alat pendukung (sekali saja)
+Buka aplikasi **Terminal** (Cmd+Spasi, ketik *Terminal*). Salin dan tempel **satu baris setiap
+kali**, tekan Enter, lalu tunggu sampai selesai:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Perintah di atas memasang Homebrew. Ikuti petunjuknya, termasuk 2 baris `echo … >> ~/.zprofile`
+yang ditampilkan di akhir. Setelah itu tutup Terminal dan buka lagi.
+
+```bash
+brew install cocoapods
+git clone -b 3.41.6 --depth 1 https://github.com/flutter/flutter.git ~/flutter
+echo 'export PATH="$HOME/flutter/bin:$PATH"' >> ~/.zprofile && source ~/.zprofile
+flutter --version
+```
+✅ Berhasil kalau baris terakhir menampilkan **Flutter 3.41.6**.
+
+### Langkah 3 — Unduh ProjectFit dan siapkan tanda tangan
+```bash
+git clone https://github.com/MahendraDharma/Project-Fit.git ~/Project-Fit
+cd ~/Project-Fit/app && flutter pub get && cd ios && pod install
+defaults read com.apple.dt.Xcode IDEProvisioningTeams | grep -E "teamID|teamName"
+```
+Baris terakhir menampilkan **teamID** milik Personal Team Anda (10 huruf/angka, misalnya
+`AB12CD34EF`). Masukkan ID itu ke perintah berikut, **ganti `TEAMID_ANDA`**:
+
+```bash
+printf 'APPLE_DEVELOPMENT_TEAM = TEAMID_ANDA\n' > ~/Project-Fit/app/ios/Config/Signing.xcconfig
+```
+
+### Langkah 4 — Pasang ke iPhone
+1. Colokkan iPhone ke Mac dengan kabel, buka kuncinya, lalu ketuk **Percayai**.
+2. Pastikan **Mode Pengembang** di iPhone sudah menyala (**Pengaturan → Privasi & Keamanan →
+   Mode Pengembang**).
+3. Di Terminal:
+   ```bash
+   cd ~/Project-Fit/app && flutter run --release
+   ```
+   Kalau ditanya perangkat, pilih nomor iPhone Anda. Proses pertama memakan ±10–20 menit.
+4. Kalau iPhone menolak membuka aplikasi: **Pengaturan → Umum → VPN & Manajemen Perangkat** →
+   ketuk Apple ID Anda → **Percayai**.
+
+✅ **Selesai!** Lanjut ke [Mulai pakai](#-mulai-pakai).
+
+**Perpanjang setiap 7 hari:** colokkan iPhone, lalu jalankan lagi
+`cd ~/Project-Fit/app && git pull && flutter run --release`. Perintah yang sama sekaligus
+memperbarui ke versi terbaru, dan data tidak hilang.
+
+> [!NOTE]
+> Kalau muncul error soal **Watch**, **provisioning profile**, atau **bundle identifier**,
+> kirim screenshot-nya lewat [Issues](https://github.com/MahendraDharma/Project-Fit/issues).
+> Apple ID gratis kadang perlu bundle ID yang berbeda, dan itu bisa diatur di
+> `Signing.xcconfig` yang sama.
+
+---
+
 ## 🚀 Mulai pakai
 
 1. **Putuskan WHOOP dari aplikasi resmi WHOOP** dulu (atau tutup paksa aplikasinya). Satu strap
@@ -192,6 +268,7 @@ dan bisa dipakai lagi setelah diperpanjang.
 |---|---|
 | **Tutorial A** | Nyalakan **LocalDevVPN** → buka **SideStore** → tab **My Apps** → ketuk **Refresh All** |
 | **Tutorial B** | Ulangi **Langkah 3 dan 4** Tutorial B |
+| **Tutorial C** | Colokkan iPhone, lalu jalankan `cd ~/Project-Fit/app && flutter run --release` |
 
 > [!CAUTION]
 > **Jangan hapus aplikasinya** untuk memperpanjang. Menghapus aplikasi = menghapus data di
@@ -222,7 +299,8 @@ Versi baru terpasang di atas versi lama, dan data tetap ada.
 | **ProjectFit tidak bisa dibuka** setelah beberapa hari | Masa 7 hari habis | [Perpanjang](#-perpanjang-setiap-7-hari) |
 | **"Reset your Apple Account password"** | Apple mengunci Apple ID karena terlalu sering login | Buka [iforgot.apple.com](https://iforgot.apple.com), reset password, lalu login ulang |
 | **"Maximum number of apps"** | Batas 3 aplikasi Apple ID gratis | Hapus aplikasi sideload lain yang tidak dipakai |
-| Sideloadly: **"Login failed (-20970)" / "account information was entered incorrectly"**, padahal password benar | Login Apple dari Sideloadly ditolak (sering soal *anisette*, bukan password) | 1) Perbarui Sideloadly ke versi terbaru. 2) Klik **Advanced options**, ubah **Anisette Authentication** dari *Local* ke *Remote* (atau sebaliknya), tutup Sideloadly lalu buka lagi. 3) Login sekali di [appleid.apple.com](https://appleid.apple.com) dan [developer.apple.com](https://developer.apple.com/account), setujui syarat yang muncul. 4) Masih gagal? Pakai Apple ID lain |
+| Sideloadly: **"Login failed (-20970)" / "account information was entered incorrectly"**, padahal password benar | Login Apple dari Sideloadly ditolak (sering soal *anisette*, bukan password) | 1) Perbarui Sideloadly ke versi terbaru. 2) Klik **Advanced options**, ubah **Anisette Authentication** dari *Local* ke *Remote* (atau sebaliknya), tutup Sideloadly lalu buka lagi. 3) Login sekali di [appleid.apple.com](https://appleid.apple.com) dan [developer.apple.com](https://developer.apple.com/account), setujui syarat yang muncul. 4) Masih gagal? Punya Mac? Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
+| AltServer: **"could not retrieve anisette data value machineID"** | Plug-in Mail milik AltServer belum aktif | Buka **Mail → Settings → General → Manage Plug-ins**, centang **AltPlugin**, klik Apply, lalu tutup dan buka lagi Mail serta AltServer. Masih gagal? Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
 | Sideloadly **tidak menemukan iPhone** | Koneksi kabel atau iTunes | Ganti kabel atau port, buka kunci iPhone, ketuk **Percayai**. Di Windows, pakai iTunes dari situs Apple |
 | Mode Pengembang **tidak ada di menu** | Belum ada aplikasi sideload | Muncul setelah aplikasi pertama terpasang. Lanjutkan dulu, lalu kembali ke langkah ini |
 
