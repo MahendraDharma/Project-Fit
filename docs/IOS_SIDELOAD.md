@@ -1,20 +1,80 @@
 # Tutorial: unduh dan pasang ProjectFit di iPhone
 
-ProjectFit tidak ada di App Store. Jalur ini **gratis**: Anda mengunduh file aplikasi (`.ipa`),
-lalu alat pemasang menandatanganinya dengan **Apple ID Anda sendiri**. Tidak perlu akun
-developer berbayar. Jailbreak juga tidak perlu.
+ProjectFit tidak ada di App Store. Jalur di bawah ini **gratis**: aplikasi ditandatangani dengan
+**Apple ID Anda sendiri**. Tidak perlu akun developer berbayar. Jailbreak juga tidak perlu.
 
-**Yang dibutuhkan**
-- iPhone dengan iOS 15 atau lebih baru.
-- Kabel data iPhone (Lightning/USB-C).
-- Komputer **Windows atau Mac** untuk pemasangan pertama.
-- Apple ID. Disarankan Apple ID kedua khusus untuk ini (lihat [Tanya jawab](#tanya-jawab)).
+**Pilih jalur sesuai versi iOS** (cek di **Pengaturan → Umum → Mengenai**):
 
-Waktu: ±15 menit untuk pertama kali.
+| Versi iOS | Jalur | Butuh komputer? |
+|---|---|---|
+| **iOS 27 ke atas** | [Jalur A — iPhone saja](#jalur-a--iphone-saja-ios-27) | Tidak |
+| iOS 15 – 26 | [Jalur B — dengan komputer](#jalur-b--dengan-komputer-windowsmac) | Ya, Windows atau Mac |
+
+Untuk kedua jalur, disarankan memakai **Apple ID kedua** khusus sideload (lihat
+[Tanya jawab](#tanya-jawab)).
 
 ---
 
-## Langkah 1 — Unduh aplikasi
+## Jalur A — iPhone saja (iOS 27+)
+
+Jalur ini memakai dua aplikasi gratis:
+- **SideInstaller** memasang SideStore langsung dari iPhone, tanpa komputer.
+- **SideStore** memasang ProjectFit dan memperpanjangnya setiap 7 hari, juga dari iPhone.
+
+> ⚠️ **Hanya unduh SideInstaller dari sumber resminya:** **https://sideinstaller.net** atau
+> https://github.com/FrizzleM/SideInstaller. Aplikasi ini meminta password Apple ID, dan
+> pembuatnya sendiri memperingatkan ada salinan palsu (misalnya situs *sideinstaller.com*) yang
+> bisa mencuri akun. ProjectFit tidak terafiliasi dengan SideInstaller maupun SideStore.
+
+Waktu: ±15 menit. Butuh Wi-Fi.
+
+### A1 — Pasang SideInstaller
+1. Di iPhone, buka **Safari** lalu kunjungi **https://sideinstaller.net**.
+2. Ikuti tombol pasang di halaman itu. SideInstaller dipasang memakai sertifikat yang disediakan
+   pembuatnya, bukan Apple ID Anda. Sertifikat itu bisa dicabut Apple sewaktu-waktu. Kalau
+   gagal, coba sertifikat lain yang ditawarkan di halaman yang sama.
+3. Buka **Settings → General → VPN & Device Management**
+   (**Pengaturan → Umum → VPN & Manajemen Perangkat**), lalu percayai (Trust) profil
+   SideInstaller.
+4. Nyalakan **Developer Mode**: **Settings → Privacy & Security → Developer Mode**
+   (**Privasi & Keamanan → Mode Pengembang**) → nyalakan → **Restart** → **Turn On**.
+
+### A2 — Pasang SideStore lewat SideInstaller
+1. Pasang **LocalDevVPN** dari App Store (gratis), buka, lalu sambungkan VPN-nya. VPN ini hanya
+   bekerja di dalam iPhone dan tidak mengirim lalu lintas internet Anda ke luar.
+2. Buka **SideInstaller** dan login dengan Apple ID.
+3. Ketuk **Install SideStore** dan tunggu sampai selesai.
+4. Percayai Apple ID Anda di **VPN & Manajemen Perangkat** (sama seperti A1 langkah 3), lalu
+   buka **SideStore**.
+
+### A3 — Pasang ProjectFit dari SideStore
+1. Di SideStore buka tab **Sources**, ketuk **+**, lalu tempel alamat ini:
+   ```
+   https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json
+   ```
+2. Buka sumber **ProjectFit**, lalu ketuk **Get / Install**.
+3. Buka ProjectFit dan izinkan **Bluetooth**. Lanjutkan ke [Mulai pakai](#mulai-pakai).
+
+Cara lain untuk langkah 1–2: unduh
+[ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa)
+di Safari, buka tab **My Apps** di SideStore, ketuk **+**, lalu pilih file itu dari folder
+Unduhan.
+
+### A4 — Perpanjang setiap 7 hari, dari iPhone
+Buka SideStore dengan LocalDevVPN tersambung, lalu ketuk **Refresh All** di tab **My Apps**.
+Lakukan sebelum 7 hari lewat. Data di ProjectFit tidak hilang selama aplikasinya tidak dihapus.
+Pembaruan ProjectFit juga muncul di SideStore.
+
+---
+
+## Jalur B — dengan komputer (Windows/Mac)
+
+Untuk iOS 15–26, atau kalau Jalur A gagal.
+
+**Yang dibutuhkan:** kabel data iPhone (Lightning/USB-C), komputer **Windows atau Mac**, dan
+Apple ID. Waktu: ±15 menit untuk pertama kali.
+
+### Langkah B1 — Unduh aplikasi
 
 Di komputer, unduh file ini:
 
@@ -24,7 +84,7 @@ Bisa juga lewat halaman [Releases](https://github.com/MahendraDharma/Project-Fit
 buka rilis teratas, lalu di bagian **Assets** klik `ProjectFit.ipa`. Simpan di tempat yang
 mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
 
-## Langkah 2 — Pasang Sideloadly di komputer
+### Langkah B2 — Pasang Sideloadly di komputer
 
 1. Unduh Sideloadly dari situs resminya: **https://sideloadly.io**. Pilih versi Windows atau
    macOS, lalu pasang seperti aplikasi biasa.
@@ -32,14 +92,14 @@ mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
    dari Microsoft Store. Tautannya ada di halaman unduh Sideloadly. Kalau sudah terpasang
    versi Microsoft Store, hapus dulu, lalu pasang versi situs Apple.
 
-## Langkah 3 — Sambungkan iPhone
+### Langkah B3 — Sambungkan iPhone
 
 1. Colokkan iPhone ke komputer dengan kabel.
 2. Buka kunci iPhone. Kalau muncul **Trust This Computer?** / **Percayai Komputer Ini?**,
    ketuk **Trust** / **Percayai** lalu masukkan kode sandi iPhone.
 3. Buka Sideloadly. Nama iPhone Anda harus muncul di kolom **iDevice**.
 
-## Langkah 4 — Pasang aplikasinya
+### Langkah B4 — Pasang aplikasinya
 
 1. Seret file `ProjectFit.ipa` ke ikon IPA di kiri atas jendela Sideloadly. Cara lain: klik
    ikon itu lalu pilih filenya.
@@ -48,9 +108,9 @@ mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
 4. Masukkan kata sandi Apple ID. Kalau diminta kode verifikasi dua langkah, kode itu muncul di
    iPhone atau perangkat Apple Anda yang lain.
 5. Tunggu sampai muncul tulisan **Done**. Ikon ProjectFit kini ada di layar iPhone, tapi belum
-   bisa dibuka. Lanjut ke langkah 5.
+   bisa dibuka. Lanjut ke langkah B5.
 
-## Langkah 5 — Izinkan aplikasi di iPhone
+### Langkah B5 — Izinkan aplikasi di iPhone
 
 1. Buka **Settings → General → VPN & Device Management**
    (**Pengaturan → Umum → VPN & Manajemen Perangkat**).
@@ -58,10 +118,12 @@ mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
 3. **iOS 16 ke atas**: buka **Settings → Privacy & Security → Developer Mode**
    (**Privasi & Keamanan → Mode Pengembang**). Nyalakan, lalu ketuk **Restart**. Setelah
    iPhone menyala lagi, ketuk **Turn On** / **Nyalakan** dan masukkan kode sandi.
-   *Menu Developer Mode baru muncul setelah langkah 4 selesai.*
+   *Menu Developer Mode baru muncul setelah langkah B4 selesai.*
 4. Buka ProjectFit. Izinkan akses **Bluetooth** saat diminta.
 
-## Langkah 6 — Mulai pakai
+---
+
+## Mulai pakai
 
 1. **Lepaskan WHOOP dari aplikasi resmi WHOOP** dulu (atau tutup paksa aplikasinya). Satu strap
    hanya bisa tersambung ke satu aplikasi.
@@ -74,33 +136,35 @@ mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
 
 ## Penting: perpanjang setiap 7 hari
 
-Dengan Apple ID gratis, aplikasi **berhenti bisa dibuka setelah 7 hari**. Untuk
-memperpanjangnya, ulangi **langkah 3 dan 4** dengan file `.ipa` yang sama atau versi
-terbaru. **Jangan hapus aplikasinya dulu**: dengan cara ini data Anda tetap aman.
+Dengan Apple ID gratis, aplikasi **berhenti bisa dibuka setelah 7 hari**. Perpanjang sebelum itu:
 
-Ingin perpanjangan otomatis tanpa komputer? Pakai **SideStore** (lihat di bawah).
+- **Jalur A:** buka SideStore (LocalDevVPN tersambung) → **My Apps** → **Refresh All**.
+- **Jalur B:** ulangi **langkah B3 dan B4** dengan file `.ipa` yang sama atau versi terbaru.
+
+**Jangan hapus aplikasinya dulu.** Dengan cara ini data Anda tetap aman.
 
 ## Memperbarui ke versi baru
 
-Unduh lagi [ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa),
-lalu ulangi langkah 3 dan 4. Versi baru terpasang di atas versi lama, dan data tetap ada.
+- **Jalur A:** pembaruan muncul di SideStore (tab **My Apps**). Ketuk **Update**.
+- **Jalur B:** unduh lagi
+  [ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa),
+  lalu ulangi langkah B3 dan B4.
 
-## Alternatif: SideStore (tanpa komputer setelah setup)
+Versi baru terpasang di atas versi lama, dan data tetap ada.
 
-SideStore memperpanjang aplikasi langsung dari iPhone. Komputer hanya dibutuhkan sekali, saat
-pemasangan awal SideStore.
+## SideStore di iOS 15–26
 
-1. Ikuti panduan resmi: **https://docs.sidestore.io**.
-2. Di SideStore, buka tab **Sources**, ketuk **+**, lalu masukkan:
-   `https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json`
-3. Pasang ProjectFit dari sumber itu. Pembaruan akan muncul otomatis di SideStore.
+Di bawah iOS 27, SideInstaller belum bisa dipakai. SideStore tetap bisa dipasang, tetapi
+pemasangan awalnya butuh komputer sekali (panduan resmi: **https://docs.sidestore.io**). Setelah
+itu langkah A3 dan A4 berlaku, dan perpanjangan dilakukan dari iPhone tanpa komputer.
 
-AltStore juga bisa memakai sumber yang sama, tetapi AltServer di komputer harus menyala di
-Wi-Fi yang sama setiap kali perpanjangan.
+AltStore juga bisa memakai sumber `apps.json` yang sama. Bedanya, AltServer di komputer harus
+menyala di Wi-Fi yang sama setiap kali memperpanjang.
 
 ## Batasan Apple ID gratis
 
-- Paling banyak **3 aplikasi** sideload aktif sekaligus.
+- Paling banyak **3 aplikasi** sideload aktif sekaligus. Di Jalur A, SideStore sendiri memakai
+  satu slot.
 - **Aplikasi Apple Watch tidak ikut terpasang.** Bagian Watch dibuang dari file `.ipa` karena
   tidak bisa ditandatangani ulang dengan Apple ID gratis.
 - **Widget, Live Activity dan pintasan Siri mungkin tidak jalan.** Kalau Sideloadly gagal
@@ -111,11 +175,13 @@ Wi-Fi yang sama setiap kali perpanjangan.
 
 ## Tanya jawab
 
-**Aman memasukkan Apple ID ke Sideloadly?** Sideloadly login ke Apple untuk membuat sertifikat
-pengembang gratis atas nama Anda. Supaya lebih tenang, buat **Apple ID kedua** khusus untuk
+**Aman memasukkan Apple ID ke SideInstaller, SideStore atau Sideloadly?** Alat-alat ini login ke Apple untuk
+membuat sertifikat pengembang gratis atas nama Anda. Menurut pembuat SideInstaller, password
+hanya dipakai di iPhone dan tidak dikirim ke server mereka. Ini hanya berlaku untuk unduhan dari
+sumber resmi. Supaya lebih tenang, buat **Apple ID kedua** khusus untuk
 sideload. Apple ID di iPhone tidak perlu diganti.
 
-**Muncul "Unable to Verify App" / "Untrusted Developer".** Ulangi langkah 5.1–5.2. HP harus
+**Muncul "Unable to Verify App" / "Untrusted Developer".** Ulangi langkah B5.1–B5.2 (Jalur A: A1 langkah 3). HP harus
 tersambung ke internet saat menekan Trust.
 
 **Aplikasi tiba-tiba tidak bisa dibuka.** Masa 7 hari sudah lewat. Lihat

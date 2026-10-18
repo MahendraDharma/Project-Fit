@@ -27,14 +27,16 @@ izin eksplisit.
 
 ## Pasang di iPhone
 
-1. Unduh **[ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa)**
-   di komputer (Windows/Mac).
-2. Pasang ke iPhone dengan [Sideloadly](https://sideloadly.io) dan Apple ID gratis.
-3. Di iPhone, izinkan aplikasinya: **Pengaturan → Umum → VPN & Manajemen Perangkat**. Untuk iOS
-   16 ke atas, nyalakan juga **Mode Pengembang**.
+Gratis, dengan Apple ID sendiri. Tidak perlu App Store, akun developer, maupun jailbreak.
 
-Tutorial lengkap langkah demi langkah, cara perpanjang setiap 7 hari, dan opsi tanpa
-komputer: **[docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md)**.
+- **iOS 27 ke atas, cukup iPhone:** pasang [SideInstaller](https://sideinstaller.net) → SideStore,
+  lalu tambahkan sumber `https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json`.
+- **iOS 15–26:** unduh
+  **[ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa)**
+  di komputer, lalu pasang dengan [Sideloadly](https://sideloadly.io).
+
+Tutorial langkah demi langkah, cara perpanjang setiap 7 hari, dan tanya jawab:
+**[docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md)**.
 
 ## Struktur repo
 
