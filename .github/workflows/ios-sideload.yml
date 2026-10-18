@@ -7,8 +7,14 @@ name: ios-sideload
 #
 # Run it by hand from the Actions tab (workflow_dispatch), or push a v* tag to
 # also attach the .ipa and an AltStore source (apps.json) to a GitHub release.
+# A manual run with `release_tag` set does the same, creating that tag.
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Publish a release with this tag (e.g. v0.11.3); empty = artifact only'
+        required: false
+        default: ''
   push:
     tags: ['v*']
 
@@ -22,6 +28,8 @@ concurrency:
 jobs:
   ipa:
     runs-on: macos-latest
+    env:
+      RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.release_tag }}
     permissions:
       contents: write # only used to attach to a release on tag pushes
     defaults:
@@ -92,8 +100,8 @@ jobs:
       - name: Package unsigned IPA
         id: ipa
         run: |
-          REF="${GITHUB_REF_NAME}"
-          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then REF="$(git rev-parse --short HEAD)"; fi
+          REF="${RELEASE_TAG}"
+          if [ -z "$REF" ]; then REF="$(git rev-parse --short HEAD)"; fi
           NAME="projectfit-${REF}-unsigned.ipa"
           cd ios/build/dd/Build/Products/Release-iphoneos
           rm -rf Payload && mkdir Payload
@@ -109,19 +117,21 @@ jobs:
           retention-days: 30
 
       - name: Generate AltStore source
-        if: github.ref_type == 'tag'
+        if: env.RELEASE_TAG != ''
         working-directory: .
         run: |
           python3 .github/scripts/gen_altstore_source.py \
-            "${{ steps.ipa.outputs.name }}" apps.json "${{ github.repository }}" "${{ github.ref_name }}"
+            "${{ steps.ipa.outputs.name }}" apps.json "${{ github.repository }}" "$RELEASE_TAG"
           # A fixed name too, so releases/latest/download/ProjectFit.ipa is a
           # download link that never changes (docs/IOS_SIDELOAD.md uses it).
           cp "${{ steps.ipa.outputs.name }}" ProjectFit.ipa
 
       - name: Attach IPA + AltStore source to the release
-        if: github.ref_type == 'tag'
+        if: env.RELEASE_TAG != ''
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
           files: |
             ${{ steps.ipa.outputs.name }}
             ProjectFit.ipa
