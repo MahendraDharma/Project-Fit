@@ -25,6 +25,17 @@ izin eksplisit.
 > [`NOTICE.md`](NOTICE.md) untuk atribusi dan daftar perubahan. Tidak berafiliasi dengan
 > OpenStrap, WHOOP, maupun Garmin. Metrik di aplikasi ini adalah perkiraan, bukan alat medis.
 
+## Pasang di iPhone
+
+1. Unduh **[ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa)**
+   di komputer (Windows/Mac).
+2. Pasang ke iPhone dengan [Sideloadly](https://sideloadly.io) dan Apple ID gratis.
+3. Di iPhone, izinkan aplikasinya: **Pengaturan → Umum → VPN & Manajemen Perangkat**. Untuk iOS
+   16 ke atas, nyalakan juga **Mode Pengembang**.
+
+Tutorial lengkap langkah demi langkah, cara perpanjang setiap 7 hari, dan opsi tanpa
+komputer: **[docs/IOS_SIDELOAD.md](docs/IOS_SIDELOAD.md)**.
+
 ## Struktur repo
 
 | Folder | Isi |

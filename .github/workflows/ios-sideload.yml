@@ -114,6 +114,9 @@ jobs:
         run: |
           python3 .github/scripts/gen_altstore_source.py \
             "${{ steps.ipa.outputs.name }}" apps.json "${{ github.repository }}" "${{ github.ref_name }}"
+          # A fixed name too, so releases/latest/download/ProjectFit.ipa is a
+          # download link that never changes (docs/IOS_SIDELOAD.md uses it).
+          cp "${{ steps.ipa.outputs.name }}" ProjectFit.ipa
 
       - name: Attach IPA + AltStore source to the release
         if: github.ref_type == 'tag'
@@ -121,4 +124,9 @@ jobs:
         with:
           files: |
             ${{ steps.ipa.outputs.name }}
+            ProjectFit.ipa
             apps.json
+          body: |
+            File aplikasi iPhone (tanpa tanda tangan) untuk dipasang dengan Apple ID gratis.
+            Unduh **ProjectFit.ipa** lalu ikuti tutorial:
+            https://github.com/${{ github.repository }}/blob/main/docs/IOS_SIDELOAD.md

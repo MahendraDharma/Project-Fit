@@ -1,69 +1,143 @@
-# Memasang ProjectFit di iPhone tanpa akun developer berbayar
+# Tutorial: unduh dan pasang ProjectFit di iPhone
 
-TestFlight dan App Store butuh Apple Developer Program (USD 99/tahun). Jalur ini gratis:
-GitHub membangun file `.ipa` **tanpa tanda tangan**, lalu aplikasi sideloading menandatanganinya
-dengan **Apple ID gratis Anda sendiri** saat dipasang. OpenStrap memakai jalur yang sama.
+ProjectFit tidak ada di App Store. Jalur ini **gratis**: Anda mengunduh file aplikasi (`.ipa`),
+lalu alat pemasang menandatanganinya dengan **Apple ID Anda sendiri**. Tidak perlu akun
+developer berbayar. Jailbreak juga tidak perlu.
 
-## 1. Ambil file `.ipa`
+**Yang dibutuhkan**
+- iPhone dengan iOS 15 atau lebih baru.
+- Kabel data iPhone (Lightning/USB-C).
+- Komputer **Windows atau Mac** untuk pemasangan pertama.
+- Apple ID. Disarankan Apple ID kedua khusus untuk ini (lihat [Tanya jawab](#tanya-jawab)).
 
-1. Buka https://github.com/MahendraDharma/Project-Fit/actions/workflows/ios-sideload.yml
-2. Klik **Run workflow** (kalau tombolnya belum ada, workflow terakhir yang sukses juga bisa dipakai).
-3. Tunggu sekitar 15–25 menit sampai selesai (centang hijau).
-4. Buka run tersebut → bagian **Artifacts** → unduh `projectfit-ipa` (berisi zip; ekstrak untuk
-   mendapatkan `projectfit-…-unsigned.ipa`).
+Waktu: ±15 menit untuk pertama kali.
 
-Untuk rilis bertag (`v0.1.0` dst.), file `.ipa` dan `apps.json` (sumber AltStore) juga ditempel
-di halaman **Releases**.
+---
 
-## 2. Pilih alat pemasang
+## Langkah 1 — Unduh aplikasi
 
-| Alat | Butuh komputer? | Cocok untuk |
-|---|---|---|
-| **Sideloadly** | Ya (Windows/Mac), setiap kali pasang ulang | Paling mudah untuk percobaan pertama |
-| **AltStore** | Ya, AltServer di Windows/Mac harus menyala di Wi-Fi yang sama untuk refresh mingguan | Pemakaian rutin dengan komputer di rumah |
-| **SideStore** | Hanya sekali saat setup awal; setelah itu refresh langsung dari iPhone | Pemakaian rutin tanpa komputer |
+Di komputer, unduh file ini:
 
-### Sideloadly (disarankan untuk mulai)
-1. Pasang Sideloadly dari https://sideloadly.io dan iTunes versi situs Apple (bukan Microsoft
-   Store) kalau di Windows.
-2. Sambungkan iPhone dengan kabel, buka kunci, pilih **Trust This Computer**.
-3. Seret file `.ipa` ke Sideloadly, isi Apple ID, klik **Start**.
-4. Di iPhone: **Settings → General → VPN & Device Management** → percayai Apple ID Anda.
-5. iOS 16 ke atas: **Settings → Privacy & Security → Developer Mode** → nyalakan, lalu restart.
+**➡️ [ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa)**
 
-### SideStore (tanpa komputer setelah setup)
-Ikuti panduan resmi https://docs.sidestore.io. Setelah terpasang, buka file `.ipa` dengan
-SideStore. Untuk update otomatis dari rilis bertag, tambahkan sumber:
-`https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json`
+Bisa juga lewat halaman [Releases](https://github.com/MahendraDharma/Project-Fit/releases):
+buka rilis teratas, lalu di bagian **Assets** klik `ProjectFit.ipa`. Simpan di tempat yang
+mudah ditemukan, misalnya Desktop. Jangan ganti nama atau ekstrak filenya.
 
-## 3. Batasan Apple ID gratis
+## Langkah 2 — Pasang Sideloadly di komputer
 
-- **Kedaluwarsa 7 hari.** Aplikasi berhenti terbuka setelah 7 hari kecuali di-*refresh*
-  (AltStore/SideStore melakukannya otomatis; Sideloadly: pasang ulang). Data di dalam aplikasi
-  tidak hilang selama aplikasi tidak dihapus.
-- **Maksimal 3 aplikasi** sideload aktif sekaligus, dan batas jumlah App ID per minggu.
-  Ekstensi (widget, Siri) ikut menghabiskan App ID; kalau kena batas, matikan opsi ekstensi di
-  alat pemasangnya.
-- **Apple Watch tidak ikut.** Aplikasi Watch dibuang dari `.ipa` karena tidak bisa bertahan saat
-  ditandatangani ulang dengan Apple ID gratis.
-- **Widget, Live Activity, dan pintasan Siri mungkin tidak berfungsi**, karena App Group ikut
-  berganti saat ditandatangani ulang.
-- **Apple Health (HealthKit)** belum diverifikasi di jalur ini. Kalau izin Health tidak muncul,
-  fitur inti (Bluetooth WHOOP, perhitungan, layar) tetap jalan.
-- Disarankan memakai **Apple ID kedua** khusus untuk sideloading, karena alat-alat ini meminta
-  kata sandi Apple ID.
+1. Unduh Sideloadly dari situs resminya: **https://sideloadly.io**. Pilih versi Windows atau
+   macOS, lalu pasang seperti aplikasi biasa.
+2. **Khusus Windows**: Sideloadly butuh iTunes dan iCloud **versi dari situs Apple**, bukan
+   dari Microsoft Store. Tautannya ada di halaman unduh Sideloadly. Kalau sudah terpasang
+   versi Microsoft Store, hapus dulu, lalu pasang versi situs Apple.
 
-## 4. Setelah terpasang
+## Langkah 3 — Sambungkan iPhone
 
-1. Jangan hubungkan WHOOP ke aplikasi resmi WHOOP selama memakai ProjectFit (satu strap hanya
-   bisa terhubung ke satu aplikasi; update firmware bisa mengubah protokol).
-2. Buka ProjectFit → pasangkan WHOOP 4.0.
-3. Data lama dari OpenStrap bisa dibawa masuk: **Profile → Export and backup**, lalu pilih file
-   ekspor OpenStrap (`.db`). Sudah diuji dengan ekspor OpenStrap asli (skema v58): semua data per
-   detik, interval detak jantung, metrik dan latihan masuk utuh.
+1. Colokkan iPhone ke komputer dengan kabel.
+2. Buka kunci iPhone. Kalau muncul **Trust This Computer?** / **Percayai Komputer Ini?**,
+   ketuk **Trust** / **Percayai** lalu masukkan kode sandi iPhone.
+3. Buka Sideloadly. Nama iPhone Anda harus muncul di kolom **iDevice**.
 
-## Alternatif lain
+## Langkah 4 — Pasang aplikasinya
 
-- **Build dari source dengan Mac + Xcode** (Apple ID gratis): satu-satunya cara agar aplikasi
-  Apple Watch ikut terpasang. Tetap kedaluwarsa 7 hari.
-- **HP Android**: tidak ada batasan di atas; `.apk` bisa dipasang langsung.
+1. Seret file `ProjectFit.ipa` ke ikon IPA di kiri atas jendela Sideloadly. Cara lain: klik
+   ikon itu lalu pilih filenya.
+2. Isi kolom **Apple account** dengan email Apple ID Anda.
+3. Klik **Start**.
+4. Masukkan kata sandi Apple ID. Kalau diminta kode verifikasi dua langkah, kode itu muncul di
+   iPhone atau perangkat Apple Anda yang lain.
+5. Tunggu sampai muncul tulisan **Done**. Ikon ProjectFit kini ada di layar iPhone, tapi belum
+   bisa dibuka. Lanjut ke langkah 5.
+
+## Langkah 5 — Izinkan aplikasi di iPhone
+
+1. Buka **Settings → General → VPN & Device Management**
+   (**Pengaturan → Umum → VPN & Manajemen Perangkat**).
+2. Di bagian **Developer App**, ketuk email Apple ID Anda, lalu ketuk **Trust** / **Percayai**.
+3. **iOS 16 ke atas**: buka **Settings → Privacy & Security → Developer Mode**
+   (**Privasi & Keamanan → Mode Pengembang**). Nyalakan, lalu ketuk **Restart**. Setelah
+   iPhone menyala lagi, ketuk **Turn On** / **Nyalakan** dan masukkan kode sandi.
+   *Menu Developer Mode baru muncul setelah langkah 4 selesai.*
+4. Buka ProjectFit. Izinkan akses **Bluetooth** saat diminta.
+
+## Langkah 6 — Mulai pakai
+
+1. **Lepaskan WHOOP dari aplikasi resmi WHOOP** dulu (atau tutup paksa aplikasinya). Satu strap
+   hanya bisa tersambung ke satu aplikasi.
+2. Di ProjectFit, ikuti layar awal untuk memasangkan WHOOP 4.0.
+3. Punya data lama dari OpenStrap? Buka **Profile → Export and backup** di ProjectFit, lalu
+   pilih file ekspor OpenStrap (`.db`). Sudah diuji dengan ekspor OpenStrap asli: semua data
+   per detik, detak jantung, metrik dan latihan masuk utuh.
+
+---
+
+## Penting: perpanjang setiap 7 hari
+
+Dengan Apple ID gratis, aplikasi **berhenti bisa dibuka setelah 7 hari**. Untuk
+memperpanjangnya, ulangi **langkah 3 dan 4** dengan file `.ipa` yang sama atau versi
+terbaru. **Jangan hapus aplikasinya dulu**: dengan cara ini data Anda tetap aman.
+
+Ingin perpanjangan otomatis tanpa komputer? Pakai **SideStore** (lihat di bawah).
+
+## Memperbarui ke versi baru
+
+Unduh lagi [ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/releases/latest/download/ProjectFit.ipa),
+lalu ulangi langkah 3 dan 4. Versi baru terpasang di atas versi lama, dan data tetap ada.
+
+## Alternatif: SideStore (tanpa komputer setelah setup)
+
+SideStore memperpanjang aplikasi langsung dari iPhone. Komputer hanya dibutuhkan sekali, saat
+pemasangan awal SideStore.
+
+1. Ikuti panduan resmi: **https://docs.sidestore.io**.
+2. Di SideStore, buka tab **Sources**, ketuk **+**, lalu masukkan:
+   `https://github.com/MahendraDharma/Project-Fit/releases/latest/download/apps.json`
+3. Pasang ProjectFit dari sumber itu. Pembaruan akan muncul otomatis di SideStore.
+
+AltStore juga bisa memakai sumber yang sama, tetapi AltServer di komputer harus menyala di
+Wi-Fi yang sama setiap kali perpanjangan.
+
+## Batasan Apple ID gratis
+
+- Paling banyak **3 aplikasi** sideload aktif sekaligus.
+- **Aplikasi Apple Watch tidak ikut terpasang.** Bagian Watch dibuang dari file `.ipa` karena
+  tidak bisa ditandatangani ulang dengan Apple ID gratis.
+- **Widget, Live Activity dan pintasan Siri mungkin tidak jalan.** Kalau Sideloadly gagal
+  karena batas App ID, buka **Advanced options** dan pilih opsi untuk membuang ekstensi aplikasi
+  (*app extensions*).
+- **Apple Health** belum diuji di jalur ini. Fitur inti tetap jalan tanpanya: Bluetooth WHOOP,
+  perhitungan, dan semua layar.
+
+## Tanya jawab
+
+**Aman memasukkan Apple ID ke Sideloadly?** Sideloadly login ke Apple untuk membuat sertifikat
+pengembang gratis atas nama Anda. Supaya lebih tenang, buat **Apple ID kedua** khusus untuk
+sideload. Apple ID di iPhone tidak perlu diganti.
+
+**Muncul "Unable to Verify App" / "Untrusted Developer".** Ulangi langkah 5.1–5.2. HP harus
+tersambung ke internet saat menekan Trust.
+
+**Aplikasi tiba-tiba tidak bisa dibuka.** Masa 7 hari sudah lewat. Lihat
+[Penting: perpanjang setiap 7 hari](#penting-perpanjang-setiap-7-hari).
+
+**Sideloadly tidak menemukan iPhone.** Ganti kabel atau port USB, buka kunci iPhone, lalu
+pastikan sudah menekan Trust. Di Windows, pastikan iTunes yang terpasang versi situs Apple.
+
+**Punya Mac dan Xcode?** Aplikasi bisa dibangun langsung dari source code. Hanya cara ini yang
+ikut memasang aplikasi Apple Watch. Masa berlakunya tetap 7 hari.
+
+---
+
+<details>
+<summary>Untuk pengembang: dari mana file <code>.ipa</code> berasal</summary>
+
+File dibangun oleh GitHub Actions di runner macOS
+([`ios-sideload.yml`](../.github/workflows/ios-sideload.yml)) **tanpa tanda tangan**:
+
+- Setiap tag `v*` membuat rilis yang berisi `ProjectFit.ipa`, file versi bernama
+  `projectfit-<tag>-unsigned.ipa`, dan `apps.json` (sumber AltStore/SideStore).
+- Workflow juga bisa dijalankan manual dari tab Actions (**Run workflow**). Hasilnya menjadi
+  *artifact* `projectfit-ipa` yang disimpan 30 hari.
+
+</details>
