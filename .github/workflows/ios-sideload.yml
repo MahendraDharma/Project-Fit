@@ -137,6 +137,19 @@ jobs:
             ProjectFit.ipa
             apps.json
           body: |
-            File aplikasi iPhone (tanpa tanda tangan) untuk dipasang dengan Apple ID gratis.
-            Unduh **ProjectFit.ipa** lalu ikuti tutorial:
-            https://github.com/${{ github.repository }}/blob/main/docs/IOS_SIDELOAD.md
+            ## 📲 Cara pasang di iPhone
+
+            ProjectFit dipasang **gratis** dengan Apple ID sendiri, tanpa App Store dan tanpa jailbreak.
+
+            | iPhone Anda | Cara |
+            |---|---|
+            | **iOS 27 ke atas** (cukup iPhone) | Pasang SideStore, lalu tambahkan sumber `https://github.com/${{ github.repository }}/releases/latest/download/apps.json` |
+            | **iOS 15 – 26** (pakai komputer) | Unduh **ProjectFit.ipa** di bawah, lalu pasang dengan Sideloadly |
+
+            👉 **[Tutorial lengkap langkah demi langkah](https://github.com/${{ github.repository }}/blob/main/docs/IOS_SIDELOAD.md)**
+
+            ### ⬇️ File di rilis ini
+            - **ProjectFit.ipa**: file aplikasinya. Ini yang Anda unduh.
+            - `projectfit-…-unsigned.ipa`: file yang sama, dengan nomor versi di namanya.
+            - `apps.json`: sumber untuk SideStore/AltStore. Tidak perlu diunduh.
+            - *Source code*: untuk pengembang.
