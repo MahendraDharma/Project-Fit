@@ -53,5 +53,35 @@ void main() {
       expect(decoded[1]!.ts, decoded[0]!.ts + 1);
       expect(decoded[2]!.ts, decoded[0]!.ts + 2);
     });
+
+    test('parseV25Waveform reads the waveform field map', () {
+      final a = parseV25Waveform(hexToBytes(_innerHex(records[0])))!;
+      final b = parseV25Waveform(hexToBytes(_innerHex(records[1])))!;
+      expect(a.counter, 26624);
+      expect(a.tsEpoch, 1781202813);
+      expect(b.tsEpoch, a.tsEpoch + 1);
+      expect(a.burstIndex, 9);
+      expect(b.burstIndex, 9);
+      // Counts down ~1268 ticks of 1/32768 s per record.
+      expect(a.subsecTicks - b.subsecTicks, 1272);
+      expect(a.opticalLevel, 209219);
+      expect(a.samples, hasLength(kV25SamplesPerRecord));
+      expect(a.samples.take(3), [638, 613, 698]);
+      expect(a.samples.last, 5497);
+      expect(a.motion, closeTo(0.01305, 1e-5));
+    });
+
+    test('parseV25Waveform reads the optical level as signed', () {
+      final bytes = hexToBytes(_innerHex(records[0]));
+      bytes.setAll(15, [0x71, 0xfc, 0xff, 0xff]); // from a real record
+      expect(parseV25Waveform(bytes)!.opticalLevel, -911);
+    });
+
+    test('parseV25Waveform rejects other versions and short records', () {
+      final bytes = hexToBytes(_innerHex(records[0]));
+      expect(parseV25Waveform(bytes.sublist(0, 75)), isNull);
+      bytes[1] = 24;
+      expect(parseV25Waveform(bytes), isNull);
+    });
   });
 }

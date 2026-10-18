@@ -15,14 +15,16 @@ State at the end of the last session, and what to pick up.
   whoop, garmin, fitness, hrv, sleep-tracking, flutter, bluetooth-low-energy, local-first, health, wearables.
 - Settings → Social preview → upload `docs/assets/social-preview.png`.
 
+Done: WHOOP 4.0 v25 records are decoded (`parseV25Waveform`). They carry one optical
+channel, so they do not unlock SpO₂ or skin temperature; see `docs/WHOOP_PARITY.md`.
+
 ## Open work, in order
-1. Decode WHOOP 4.0 `undecodable_rec_v25` (76-byte) records from an OpenStrap export.
-2. Garmin account export: run
+1. Garmin account export: run
    `python3 -I tools/garmin_inventory/inventory.py <zip> -o garmin_report.md --json garmin_report.json`
    outside the repo, then plan the Garmin import path (FIT + Apple Health).
-3. Body Battery from FIT field 227/3 in the decoder.
-4. Skin temperature / SpO₂ field identification on WHOOP 4.0 (needs reference measurements).
-5. "Wake when recovery is green".
-6. Verify the sideloaded app on a real iPhone.
+2. Body Battery from FIT field 227/3 in the decoder.
+3. Skin temperature / SpO₂ field identification on WHOOP 4.0 (needs reference measurements).
+4. "Wake when recovery is green".
+5. Verify the sideloaded app on a real iPhone.
 
 Personal health exports never go in the repository (`.gitignore` covers them).

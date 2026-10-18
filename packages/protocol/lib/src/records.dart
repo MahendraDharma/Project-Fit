@@ -274,6 +274,7 @@ ByteData _view(Uint8List b) =>
 ///
 /// Respiratory rate, HRV, SpO2 and perfusion index were each tested against
 /// this waveform and each failed. Nothing derived belongs in this function.
+/// The waveform's own field map is [parseV25Waveform].
 R24? _parseV25(Uint8List inner) {
   // Only inner[3:11] is read below, but a real v25 burst record is ~76 bytes;
   // anything shorter is a truncated frame, and this floor keeps them out.
@@ -300,6 +301,81 @@ R24? _parseV25(Uint8List inner) {
     // that were supposed to be a snapshot of parse time.
     rawTailBytes:
         inner.length > 13 ? Uint8List.fromList(inner.sublist(13)) : Uint8List(0),
+  );
+}
+
+/// Waveform samples carried by one v25 record.
+const int kV25SamplesPerRecord = 24;
+
+/// The field map of a v25 record body, for waveform work. [parseR24] keeps
+/// returning the timestamp-only [R24] for v25; this is the layer under it.
+///
+/// Established on 11,440 real v25 records (286 bursts) from one WHOOP 4.0,
+/// checked against that strap's own v24 records for the same seconds:
+///
+///   - a burst is exactly 40 records, one every ~19.25 min, day and night;
+///   - [samples] is ONE optical channel, AC-coupled: lag-1 autocorrelation
+///     0.82 within a record AND across record boundaries, no per-slot pattern
+///     (so not two interleaved wavelengths), and 76% of its power in the
+///     0.5–3.5 Hz cardiac band. Its spectral peak lands within 5 bpm of the v24
+///     heart rate in 92% of the bursts where [motion] < 0.01;
+///   - [subsecTicks] counts down by ~1268 per record and wraps at 0 (when it
+///     wraps the unix second repeats), so a record spans ~0.961 s and the
+///     samples run at ~24.96 Hz;
+///   - [motion] tracks wrist movement: Spearman 0.83 against the change in the
+///     v24 gravity vector over the same second. Its unit is not established.
+///
+/// One wavelength means no SpO2: a ratio-of-ratios needs red AND infrared.
+/// inner[71:76] (a flag-like u32, then a zero byte) is left unnamed.
+class V25Waveform {
+  final int counter; // u32 @ inner[3]
+  final int tsEpoch; // unix seconds @ inner[7]
+  final int subsecTicks; // u16 @ inner[11], see class doc
+  final int burstIndex; // u16 @ inner[13]: rises by one per burst, then resets
+
+  /// i32 @ inner[15]: a slow optical level that moves smoothly from record to
+  /// record, ~0.7–3e5 on the wrist. It is SIGNED: in 6 of the 286 bursts it
+  /// sits within a few thousand of zero and dips below it — read unsigned,
+  /// those became levels in the billions.
+  final int opticalLevel;
+
+  /// [kV25SamplesPerRecord] signed 16-bit samples @ inner[19:67].
+  final Int16List samples;
+
+  /// float32 @ inner[67]; see class doc.
+  final double motion;
+
+  const V25Waveform({
+    required this.counter,
+    required this.tsEpoch,
+    required this.subsecTicks,
+    required this.burstIndex,
+    required this.opticalLevel,
+    required this.samples,
+    required this.motion,
+  });
+}
+
+/// Decode a v25 record body (`inner` starts at the packet-type byte), or null
+/// when it is not a full v25 record.
+V25Waveform? parseV25Waveform(Uint8List inner) {
+  if (!_isRecordPacket(inner) || inner.length < 76 || inner[1] != 25) {
+    return null;
+  }
+  final view = _view(inner);
+  final motion = view.getFloat32(67, Endian.little);
+  if (!motion.isFinite) return null;
+  return V25Waveform(
+    counter: view.getUint32(3, Endian.little),
+    tsEpoch: view.getUint32(7, Endian.little),
+    subsecTicks: view.getUint16(11, Endian.little),
+    burstIndex: view.getUint16(13, Endian.little),
+    opticalLevel: view.getInt32(15, Endian.little),
+    samples: Int16List.fromList([
+      for (var i = 0; i < kV25SamplesPerRecord; i++)
+        view.getInt16(19 + 2 * i, Endian.little)
+    ]),
+    motion: motion,
   );
 }
 

@@ -34,6 +34,9 @@ export 'src/records.dart'
     show
         R24,
         parseR24,
+        V25Waveform,
+        parseV25Waveform,
+        kV25SamplesPerRecord,
         FirmwareAwareR24Decoder,
         R24DecodeStrategy,
         // The historical versions parseR24 can actually decode. Exported so a

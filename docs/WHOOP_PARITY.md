@@ -52,7 +52,7 @@ Ini target reverse engineering nomor satu.
 |---|---|---|---|
 | **Stress Monitor** 0–3 + breathwork | Skor dari HRV & HR, sesi napas | Baevsky Stress Index (`clinical/stress_si.dart`) + layar napas terpandu (`calm_breathing.dart`), skala berbeda | 🟡 |
 | **Health Monitor**: HR, RHR, HRV, laju napas | Rentang normal pribadi + peringatan | Ada, termasuk deteksi anomali & sakit (`wellness/anomaly.dart`, `clinical/illness_cusum.dart`) | ✅ |
-| **Health Monitor**: SpO₂ | Ada | **Tidak bisa di WHOOP 4.0.** Byte "red" dan "IR" ternyata satu sinyal yang sama; rasio apa pun mengukur drift, bukan oksigen (`protocol/lib/src/records.dart`) | ⛔ sampai teridentifikasi |
+| **Health Monitor**: SpO₂ | Ada | **Tidak bisa di WHOOP 4.0.** Byte "red" dan "IR" ternyata satu sinyal yang sama; rasio apa pun mengukur drift, bukan oksigen (`protocol/lib/src/records.dart`). Rekaman v25 juga sudah dibongkar (`parseV25Waveform`): isinya **satu** kanal optik, jadi tetap tidak ada pasangan merah/inframerah untuk SpO₂ | ⛔ sampai teridentifikasi |
 | **Health Monitor**: suhu kulit | Ada | **Tidak bisa di WHOOP 4.0.** Field yang dikira suhu berubah 5–10 angka/detik, jauh lebih cepat dari suhu kulit mana pun (`records.dart`, `skinTempRaw` deprecated) | ⛔ sampai teridentifikasi |
 | **Siklus menstruasi** | Insight siklus & hormon | Dihitung dari tanggal yang dicatat pengguna; estimasi ovulasi dari suhu sengaja tidak ditampilkan (salah satuan) (`cycle_screen.dart`) | 🟡 |
 | **Heart Screener** (ECG, WHOOP MG) | ECG on-demand | Modul ECG ada (`lib/ecg/`), hanya untuk perangkat dengan ECG | 🟡 tidak berlaku untuk WHOOP 4.0 |
@@ -113,3 +113,15 @@ Nomor 2, 3 dan 5 sudah selesai. Nomor 1 paling berdampak, tetapi butuh data dari
 - WHOOP Recovery (podcast 40): https://www.whoop.com/thelocker/podcast-40-whoop-recovery-maximize-readiness/
 - Ulasan WHOOP 4.0 (Sleep Planner, alarm, Strength Trainer, Stress & Health Monitor): https://connectthewatts.com/2022/06/09/whoop-review-4-0/ , https://wareable.com/wearable-tech/whoop-4-review-8654
 - Bukti field WHOOP 4.0: `packages/protocol/lib/src/records.dart`, `OpenStrap/research/PROTOCOL.md`
+
+## Rekaman v25 WHOOP 4.0 (sudah dibongkar)
+
+Diuji pada 11.440 rekaman v25 dari satu WHOOP 4.0, dibandingkan dengan rekaman v24 di detik yang sama:
+
+- Setiap ~19,25 menit, siang dan malam, strap mengirim satu burst berisi tepat 40 rekaman.
+- Satu rekaman berisi 24 sampel gelombang optik (~24,96 Hz). Ada juga level optik lambat (bilangan bertanda) dan satu angka gerakan.
+- Angka gerakan itu cocok dengan perubahan akselerometer di detik yang sama (Spearman 0,83).
+- Gelombangnya adalah denyut jantung. Saat diam, puncak spektrumnya berada dalam 5 bpm dari HR v24 pada 92% burst. Saat banyak bergerak, angka ini turun ke 22–38%.
+- **Hanya satu panjang gelombang**: tidak ada pola bergantian antar-slot. Jadi v25 tidak membuka SpO₂ maupun suhu kulit.
+- HR dari v25 tidak menambah informasi, karena v24 sudah mengirim HR setiap detik.
+- Dekoder field ada di `packages/protocol` (`parseV25Waveform`). Tidak ada metrik yang diturunkan darinya.
