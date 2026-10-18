@@ -222,6 +222,7 @@ Versi baru terpasang di atas versi lama, dan data tetap ada.
 | **ProjectFit tidak bisa dibuka** setelah beberapa hari | Masa 7 hari habis | [Perpanjang](#-perpanjang-setiap-7-hari) |
 | **"Reset your Apple Account password"** | Apple mengunci Apple ID karena terlalu sering login | Buka [iforgot.apple.com](https://iforgot.apple.com), reset password, lalu login ulang |
 | **"Maximum number of apps"** | Batas 3 aplikasi Apple ID gratis | Hapus aplikasi sideload lain yang tidak dipakai |
+| Sideloadly: **"Login failed (-20970)" / "account information was entered incorrectly"**, padahal password benar | Login Apple dari Sideloadly ditolak (sering soal *anisette*, bukan password) | 1) Perbarui Sideloadly ke versi terbaru. 2) Klik **Advanced options**, ubah **Anisette Authentication** dari *Local* ke *Remote* (atau sebaliknya), tutup Sideloadly lalu buka lagi. 3) Login sekali di [appleid.apple.com](https://appleid.apple.com) dan [developer.apple.com](https://developer.apple.com/account), setujui syarat yang muncul. 4) Masih gagal? Pakai Apple ID lain |
 | Sideloadly **tidak menemukan iPhone** | Koneksi kabel atau iTunes | Ganti kabel atau port, buka kunci iPhone, ketuk **Percayai**. Di Windows, pakai iTunes dari situs Apple |
 | Mode Pengembang **tidak ada di menu** | Belum ada aplikasi sideload | Muncul setelah aplikasi pertama terpasang. Lanjutkan dulu, lalu kembali ke langkah ini |
 
