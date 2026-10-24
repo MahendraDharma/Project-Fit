@@ -318,6 +318,18 @@ List<(int, double)> fitRespiration(List<FitMessage> m) => [
           (x.timestamp!, x.num_(0)! / 100),
     ];
 
+/// The watch's Body Battery 0-100: field 3 of the stress-level message, which
+/// the published profile leaves unnamed and the community calls
+/// `body_energy`. Garmin's own number, from its own (unpublished) model;
+/// values outside 0-100 dropped. Its own time is field 1 when present.
+List<(int, int)> fitBodyBattery(List<FitMessage> m) => [
+      for (final x in m)
+        if (x.global == kFitMsgStressLevel)
+          if (x.num_(3)?.toInt() case final v? when v >= 0 && v <= 100)
+            if ((x.num_(1)?.toInt() ?? x.timestamp) case final t?)
+              (x.num_(1) != null ? t + kFitEpochOffset : t, v),
+    ];
+
 /// The watch's stress score 0-100 (field 0); negative values (no reading,
 /// activity) dropped. Its own time is field 1 when present.
 List<(int, int)> fitStress(List<FitMessage> m) => [

@@ -27,7 +27,7 @@
 // WHAT BECOMES WHAT: monitoring HR -> sparse samples (the day's substrate
 // only while the watch is the enabled active wearable, rule R6); steps -> a daily `steps` observation; the watch's sleep
 // stages -> its hypnogram plus stage minutes; HRV status, resting HR, SpO2,
-// respiration and stress -> attributed vendor observations.
+// respiration, stress and Body Battery -> attributed vendor observations.
 //
 // EXACTLY ONE RESPONSE for every inbound message other than a RESPONSE — an
 // unanswered message leaves the watch stalled. A type with its own reply
@@ -628,6 +628,9 @@ List<BandEvent> _decodeFit(
     ...dailyMeans(fitSpo2(m), 'spo2_avg', '%'),
     ...dailyMeans(fitRespiration(m), 'respiration_avg', 'br/min'),
     ...dailyMeans(fitStress(m), 'stress_avg', ''),
+    // Every Body Battery sample, not a daily mean: the day's curve is the
+    // whole point of the number. Garmin's, attributed, never one of ours.
+    for (final (t, v) in fitBodyBattery(m)) obs(at(t), 'body_battery', v, '%'),
   ];
   if (stages.isNotEmpty) {
     final minutes = <String, int>{};

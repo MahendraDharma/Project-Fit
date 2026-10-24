@@ -112,4 +112,16 @@ void main() {
     final bad = Uint8List.fromList(good)..[4] = good[4] - 2;
     expect(() => parseFit(bad), throwsFormatException);
   });
+
+  group('Body Battery (stress_level field 3)', () {
+    test('kept with its own time, out-of-range values dropped', () {
+      final m = [
+        const FitMessage(kFitMsgStressLevel, {0: 20, 1: 1000, 3: 57}, null),
+        const FitMessage(kFitMsgStressLevel, {0: 20, 3: 101}, 1700000000),
+        const FitMessage(kFitMsgStressLevel, {0: -1, 3: 12}, 1700000180),
+        const FitMessage(kFitMsgStressLevel, {0: 30}, 1700000360),
+      ];
+      expect(fitBodyBattery(m), [(1000 + kFitEpochOffset, 57), (1700000180, 12)]);
+    });
+  });
 }

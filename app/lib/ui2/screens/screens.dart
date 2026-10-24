@@ -13,6 +13,7 @@ export 'home_vitals.dart';
 export 'detail_v4.dart';
 export 'vo2_screen.dart';
 export 'month_calendar.dart';
+export 'body_battery.dart';
 export 'external_vitals.dart';
 export 'calm_breathing.dart';
 export 'cycle_screen.dart';

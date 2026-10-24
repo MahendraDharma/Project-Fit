@@ -145,5 +145,21 @@
   "@vo2CohortMale": {"placeholders": {"lo": {"type": "int"}, "hi": {"type": "int"}}},
   "calendarPrevMonth": "Bulan sebelumnya",
   "calendarNextMonth": "Bulan berikutnya",
-  "calendarEmptyNote": "Lingkaran kosong berarti hari tanpa data, bukan nol."
+  "calendarEmptyNote": "Lingkaran kosong berarti hari tanpa data, bukan nol.",
+  "bbTitle": "Body Battery",
+  "bbNote": "Angka milik {source} sendiri, dibaca dari jam. Metodenya tidak dipublikasikan, dan ProjectFit tidak menghitungnya sendiri.",
+  "@bbNote": {"placeholders": {"source": {"type": "String"}}},
+  "bbNoneTitle": "Belum ada Body Battery untuk hari ini",
+  "bbNoneBody": "Datanya dari jam Garmin yang dipasangkan di Perangkat: jam menyimpannya di filenya sendiri, dan file itu dibaca lewat Bluetooth saat sinkron.",
+  "bbPeak": "Tertinggi hari ini: {value}% pukul {time}",
+  "@bbPeak": {"placeholders": {"value": {"type": "int"}, "time": {"type": "String"}}},
+  "bbCharged": "Terisi",
+  "bbDrained": "Terkuras",
+  "bbLevel": "Level sepanjang hari",
+  "bbUsualSame": "Kurang lebih seperti biasanya pada pukul {at}.",
+  "@bbUsualSame": {"placeholders": {"at": {"type": "String"}}},
+  "bbUsualHigher": "{n} poin lebih tinggi dari biasanya pada pukul {at}.",
+  "@bbUsualHigher": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}},
+  "bbUsualLower": "{n} poin lebih rendah dari biasanya pada pukul {at}.",
+  "@bbUsualLower": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}}
 }

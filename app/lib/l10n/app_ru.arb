@@ -7667,5 +7667,21 @@
   "@vo2CohortMale": {"placeholders": {"lo": {"type": "int"}, "hi": {"type": "int"}}},
   "calendarPrevMonth": "Предыдущий месяц",
   "calendarNextMonth": "Следующий месяц",
-  "calendarEmptyNote": "Пустое кольцо — день без данных, а не ноль."
+  "calendarEmptyNote": "Пустое кольцо — день без данных, а не ноль.",
+  "bbTitle": "Body Battery",
+  "bbNote": "Собственный показатель {source}, прочитанный с часов. Метод не опубликован, и ProjectFit его не вычисляет.",
+  "@bbNote": {"placeholders": {"source": {"type": "String"}}},
+  "bbNoneTitle": "За этот день Body Battery нет",
+  "bbNoneBody": "Он приходит с часов Garmin, подключённых в разделе «Устройства»: часы хранят его в своих файлах, и они читаются по Bluetooth при синхронизации.",
+  "bbPeak": "Максимум сегодня: {value}% в {time}",
+  "@bbPeak": {"placeholders": {"value": {"type": "int"}, "time": {"type": "String"}}},
+  "bbCharged": "Заряжено",
+  "bbDrained": "Потрачено",
+  "bbLevel": "Уровень в течение дня",
+  "bbUsualSame": "Примерно как обычно в {at}.",
+  "@bbUsualSame": {"placeholders": {"at": {"type": "String"}}},
+  "bbUsualHigher": "На {n} пунктов выше обычного в {at}.",
+  "@bbUsualHigher": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}},
+  "bbUsualLower": "На {n} пунктов ниже обычного в {at}.",
+  "@bbUsualLower": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}}
 }

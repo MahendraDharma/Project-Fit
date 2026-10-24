@@ -15949,5 +15949,21 @@
   "@vo2CohortMale": {"placeholders": {"lo": {"type": "int"}, "hi": {"type": "int"}}},
   "calendarPrevMonth": "Previous month",
   "calendarNextMonth": "Next month",
-  "calendarEmptyNote": "An empty ring is a day with nothing stored, not a zero."
+  "calendarEmptyNote": "An empty ring is a day with nothing stored, not a zero.",
+  "bbTitle": "Body Battery",
+  "bbNote": "{source}'s own number, read from the watch. Its method is not published, and ProjectFit does not compute one.",
+  "@bbNote": {"placeholders": {"source": {"type": "String"}}},
+  "bbNoneTitle": "No Body Battery for this day",
+  "bbNoneBody": "It comes from a Garmin watch paired on Devices: the watch keeps it in its own files, and they are read over Bluetooth when it syncs.",
+  "bbPeak": "Highest today: {value}% at {time}",
+  "@bbPeak": {"placeholders": {"value": {"type": "int"}, "time": {"type": "String"}}},
+  "bbCharged": "Charged",
+  "bbDrained": "Drained",
+  "bbLevel": "Level through the day",
+  "bbUsualSame": "About where it usually is at {at}.",
+  "@bbUsualSame": {"placeholders": {"at": {"type": "String"}}},
+  "bbUsualHigher": "{n} points higher than usual at {at}.",
+  "@bbUsualHigher": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}},
+  "bbUsualLower": "{n} points lower than usual at {at}.",
+  "@bbUsualLower": {"placeholders": {"n": {"type": "int"}, "at": {"type": "String"}}}
 }

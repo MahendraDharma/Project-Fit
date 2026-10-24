@@ -2962,6 +2962,24 @@ class LocalDb {
   ///
   /// Ordered by `attribution, name` so the same day renders in the same order
   /// on every build.
+  /// One vendor's named series in `[fromMs, toMs)`, oldest first: every
+  /// stored sample, each with its attribution. Display only.
+  static Future<List<Map<String, Object?>>> vendorSeries(
+    String vendorKey,
+    int fromMs,
+    int toMs,
+  ) async {
+    final db = await instance;
+    return db.query(
+      'observation',
+      columns: ['ts_ms', 'value', 'attribution'],
+      where: "vendor_key = ? AND source_kind = 'vendor' AND ts_ms >= ? AND ts_ms < ? "
+          'AND value IS NOT NULL',
+      whereArgs: [vendorKey, fromMs, toMs],
+      orderBy: 'ts_ms ASC',
+    );
+  }
+
   static Future<List<Map<String, Object?>>> observationsForDay(
     String date,
   ) async {

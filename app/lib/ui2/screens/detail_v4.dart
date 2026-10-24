@@ -27,6 +27,7 @@ import 'external_vitals.dart';
 import 'home_screen.dart';
 import 'home_vitals.dart';
 import 'metric_detail.dart';
+import 'body_battery.dart';
 import 'month_calendar.dart';
 import 'vo2_screen.dart';
 
@@ -843,6 +844,17 @@ Future<List<OtherReading>> loadOtherReadings({DateTime? now}) async {
   // A week back: older than that is history, not "today's" picture.
   final from = DateTime(t.year, t.month, t.day - 7).millisecondsSinceEpoch ~/ 1000;
   final out = <OtherReading>[];
+  // Garmin's Body Battery, read from the watch itself: today's newest sample.
+  final bb = await LocalDb.vendorSeries(kBodyBatteryKey,
+      DateTime(t.year, t.month, t.day).millisecondsSinceEpoch, t.millisecondsSinceEpoch + 1);
+  if (bb.isNotEmpty) {
+    out.add((
+      kind: kBodyBatteryKey,
+      value: (bb.last['value'] as num).toDouble(),
+      source: bb.last['attribution'] as String,
+      ts: (bb.last['ts_ms'] as num).toInt() ~/ 1000,
+    ));
+  }
   for (final k in kReadingKindOrder) {
     final rows = await LocalDb.importedMeasurementsBetween(
         k, from, t.millisecondsSinceEpoch ~/ 1000 + 1);
@@ -896,7 +908,11 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> {
           for (var i = 0; i < r.length; i++) ...[
             if (i > 0) Divider(color: p.line, height: S.x5),
             Pressable(
-              onTap: r[i].kind == kKindVo2 ? () => go(c, const Vo2MaxScreen()) : null,
+              onTap: switch (r[i].kind) {
+                kKindVo2 => () => go(c, const Vo2MaxScreen()),
+                kBodyBatteryKey => () => go(c, const BodyBatteryScreen()),
+                _ => null,
+              },
               child: Row(children: [
                 Icon(readingIcon(r[i].kind), size: 18, color: p.ink3),
                 const SizedBox(width: S.x2),
@@ -921,7 +937,8 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> {
                         ]),
                   ),
                 ),
-                if (r[i].kind == kKindVo2) Icon(LucideIcons.chevronRight, size: 16, color: p.ink3),
+                if (r[i].kind == kKindVo2 || r[i].kind == kBodyBatteryKey)
+                  Icon(LucideIcons.chevronRight, size: 16, color: p.ink3),
               ]),
             ),
           ],

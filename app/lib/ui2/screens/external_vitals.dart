@@ -36,6 +36,7 @@ String readingLabel(String kind, AppLocalizations? l) => switch (kind) {
       kKindSleepDeep => l?.readingSleepDeep ?? 'Deep sleep',
       kKindSleepRem => l?.readingSleepRem ?? 'REM sleep',
       kKindStepsDay => l?.readingSteps ?? 'Steps',
+      'body_battery' => l?.bbTitle ?? 'Body Battery',
       _ => kind,
     };
 
@@ -47,12 +48,13 @@ IconData readingIcon(String kind) => switch (kind) {
       kKindResp => LucideIcons.wind,
       kKindSleepMin || kKindSleepDeep || kKindSleepRem => LucideIcons.moon,
       kKindStepsDay => LucideIcons.footprints,
+      'body_battery' => LucideIcons.batteryCharging,
       _ => LucideIcons.circle,
     };
 
 String readingUnit(String kind) => switch (kind) {
       kKindVo2 => 'mL/kg/min',
-      kKindSpo2 => '%',
+      kKindSpo2 || 'body_battery' => '%',
       kKindHrvSdnn => 'ms',
       kKindRhr => 'bpm',
       kKindResp => 'rpm',
