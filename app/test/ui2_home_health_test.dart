@@ -229,7 +229,7 @@ Future<void> _loadType() async {
   final files = Directory(
     'assets/fonts/Manrope',
   ).listSync().whereType<File>().where((f) => f.path.endsWith('.ttf'));
-  for (final family in const ['Manrope', '.SF Pro Text', 'Menlo']) {
+  for (final family in const ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay', 'Menlo']) {
     final loader = FontLoader(family);
     for (final f in files) {
       loader.addFont(

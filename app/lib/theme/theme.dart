@@ -7,15 +7,9 @@
 // Why two voices: a hero number (Readiness, Strain, Sleep score) and a
 // plain-language sentence (an AI briefing, an insight caption) are two
 // different KINDS of information and should read that way.
-//  - `hero`/`display`/`metric`/`metricSm` (the big tabular figures) use
-//    Barlow Condensed at heavy weight + slight tracking — confident and
-//    kinetic, athletic-brand register. BUNDLED locally (assets/fonts/
-//    BarlowCondensed/*.ttf, declared in pubspec.yaml's `flutter.fonts`) —
-//    this app is local-first/offline by design, and the readiness ring's
-//    numeral is the last thing that should be able to flicker or fall back
-//    on a cold offline launch, which a google_fonts runtime HTTP fetch can
-//    do on first use. SIL Open Font License (OFL.txt ships alongside the
-//    .ttf files).
+//  - `hero`/`display`/`metric`/`metricSm` (the big tabular figures) use the
+//    system display face (SF Pro Display on iOS), falling back to the bundled
+//    Manrope; ui2/theme.dart's `F` is the live type scale and says why.
 //  - Everything else (`h1`/`h2`/`title`/`body`/`bodySoft`/`label`/`caption`/
 //    `overline`) uses Manrope, bundled the same way (assets/fonts/Manrope/
 //    *.ttf, OFL.txt alongside). It used to resolve through google_fonts,
@@ -74,7 +68,7 @@ class AppText {
 
   static const _tnum = [FontFeature.tabularFigures()];
 
-  // ── Display / numerics — Barlow Condensed: heavy, tight, tabular, kinetic ──
+  // ── Display / numerics — the system display face, tabular ──
   // Bundled as a local asset (pubspec.yaml `flutter.fonts`), NOT fetched at
   // runtime via google_fonts — see the file header. `_barlow` is a thin
   // TextStyle helper standing in for GoogleFonts.barlowCondensed(...); same
@@ -85,7 +79,8 @@ class AppText {
     required double height,
     required double letterSpacing,
   }) => TextStyle(
-    fontFamily: 'Barlow Condensed',
+    fontFamily: 'CupertinoSystemDisplay',
+    fontFamilyFallback: const ['Manrope'],
     fontSize: fontSize,
     fontWeight: fontWeight,
     height: height,

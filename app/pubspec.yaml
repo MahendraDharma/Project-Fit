@@ -122,8 +122,8 @@ dependencies:
   latlong2: ^0.9.1
   geolocator: ^13.0.2
 
-  # Type: Manrope + Barlow Condensed are BUNDLED under assets/fonts/ (declared
-  # in flutter.fonts below), not pulled at runtime — see the note there.
+  # Type: SF Pro (the system face) on iOS; Manrope is BUNDLED under
+  # assets/fonts/ as the fallback elsewhere, not pulled at runtime.
 
   # Declarative motion (flutter_animate) and the five-pack icon mix that
   # backed lib/ui/kit/os_icons.dart went with lib/ui. lib/ui2 has one icon
@@ -277,12 +277,6 @@ flutter:
   # SIL Open Font License (OFL.txt alongside the .ttf files, from
   # https://github.com/google/fonts).
   fonts:
-    - family: Barlow Condensed
-      fonts:
-        - asset: assets/fonts/BarlowCondensed/BarlowCondensed-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/BarlowCondensed/BarlowCondensed-ExtraBold.ttf
-          weight: 800
     - family: Manrope
       fonts:
         - asset: assets/fonts/Manrope/Manrope-400.ttf

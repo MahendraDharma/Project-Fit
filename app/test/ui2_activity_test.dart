@@ -125,7 +125,7 @@ Future<void> _loadType() async {
       .listSync()
       .whereType<File>()
       .where((f) => f.path.endsWith('.ttf'));
-  for (final family in const ['Manrope', '.SF Pro Text']) {
+  for (final family in const ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay']) {
     final loader = FontLoader(family);
     for (final f in files) {
       loader.addFont(f

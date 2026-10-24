@@ -261,32 +261,35 @@ class P {
 
 /// ── TYPE ── 7 steps, 3 weights, tabular figures on anything that changes ──
 ///
-/// The family is the platform's own text face where it exists, falling back to
-/// the bundled Manrope (assets/fonts/Manrope) everywhere else — so Android and
-/// the golden tests render the same shapes the design was drawn in rather than
-/// silently landing on Roboto.
+/// ONE family, the iPhone's own: SF Pro, the face Bevel is set in, which the
+/// owner picked. `CupertinoSystemText` and `CupertinoSystemDisplay` are the
+/// names Flutter's iOS engine resolves to SF Pro Text and SF Pro Display (the
+/// old private `.SF Pro Text` name is deprecated there). Display takes
+/// the big steps, Text the rest, as Apple sizes them. Elsewhere — Android, the
+/// tests — both fall back to the bundled Manrope.
 class F {
-  static const _f = '.SF Pro Text';
+  static const _f = 'CupertinoSystemText';
+  static const _d = 'CupertinoSystemDisplay';
   static const _fb = ['Manrope'];
   static const _tab = [FontFeature.tabularFigures()];
 
   // The 7 steps.
   static const display = TextStyle(
-      fontFamily: _f,
+      fontFamily: _d,
       fontFamilyFallback: _fb,
       fontSize: 34,
       height: 40 / 34,
       fontWeight: FontWeight.w700,
       letterSpacing: -.8);
   static const t1 = TextStyle(
-      fontFamily: _f,
+      fontFamily: _d,
       fontFamilyFallback: _fb,
       fontSize: 28,
       height: 34 / 28,
       fontWeight: FontWeight.w700,
       letterSpacing: -.5);
   static const t2 = TextStyle(
-      fontFamily: _f,
+      fontFamily: _d,
       fontFamilyFallback: _fb,
       fontSize: 22,
       height: 28 / 22,
@@ -343,21 +346,17 @@ class F {
   // Numerals — a parallel display ramp. Tabular, so a live value never jitters
   // its own layout as digits change.
   //
-  // The three big steps are set in the bundled Barlow Condensed: a score read
-  // from across a room wants a tall, tight, heavy figure, and a condensed face
-  // gives that weight without the width (a four-digit step count still fits a
-  // half-width tile at large text). n17 stays in the text face because it sits
-  // inline with running text. Sizes match the text-face ramp they replace, so
-  // where the condensed face is missing the fallback lays out exactly as before.
-  // (So do the letter-spacings.)
-  static const _num = 'Barlow Condensed';
+  // The three big steps are in the display face, the same family as every
+  // other word on screen: one face, as Bevel does it. n17 stays in the text
+  // face because it sits inline with running text.
+  static const _num = _d;
   static const n48 = TextStyle(
       fontFamily: _num,
       fontFamilyFallback: _fb,
       fontSize: 48,
       height: 1,
       letterSpacing: -1.8,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w700,
       fontFeatures: _tab);
   static const n34 = TextStyle(
       fontFamily: _num,
@@ -365,7 +364,7 @@ class F {
       fontSize: 34,
       height: 1,
       letterSpacing: -1.2,
-      fontWeight: FontWeight.w800,
+      fontWeight: FontWeight.w700,
       fontFeatures: _tab);
   static const n24 = TextStyle(
       fontFamily: _num,
@@ -373,7 +372,7 @@ class F {
       fontSize: 24,
       height: 1,
       letterSpacing: -.7,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       fontFeatures: _tab);
   static const n17 = TextStyle(
       fontFamily: _f,
@@ -512,7 +511,7 @@ ThemeData buildTheme(Brightness b) {
     scaffoldBackgroundColor: p.bg,
     colorScheme:
         ColorScheme.fromSeed(seedColor: C.green, brightness: b, surface: p.card),
-    fontFamily: '.SF Pro Text',
+    fontFamily: 'CupertinoSystemText',
     fontFamilyFallback: const ['Manrope'],
     splashFactory: NoSplash.splashFactory,
     highlightColor: const Color(0x00000000),
