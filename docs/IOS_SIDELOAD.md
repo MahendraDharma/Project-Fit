@@ -183,6 +183,8 @@ Klik: **[⬇️ ProjectFit.ipa](https://github.com/MahendraDharma/Project-Fit/re
 
 ## Tutorial C — Mac + Xcode (paling pasti)
 
+✅ **Sudah terbukti berhasil** di iPhone iOS 27 dengan Apple ID gratis (Oktober 2026).
+
 Pakai cara ini kalau Tutorial A atau B gagal karena login Apple ditolak (misalnya *"Apple's login
 server refused"*, *"-20970"*, atau *"could not retrieve anisette data"*). Xcode adalah alat
 resmi Apple, jadi login Apple ID gratis lewat Xcode tidak terkena blokir itu. Bonusnya,
@@ -311,6 +313,7 @@ Versi baru terpasang di atas versi lama, dan data tetap ada.
 | Sideloadly: **"Login failed (-20970)" / "account information was entered incorrectly"**, padahal password benar | Login Apple dari Sideloadly ditolak (sering soal *anisette*, bukan password) | 1) Perbarui Sideloadly ke versi terbaru. 2) Klik **Advanced options**, ubah **Anisette Authentication** dari *Local* ke *Remote* (atau sebaliknya), tutup Sideloadly lalu buka lagi. 3) Login sekali di [appleid.apple.com](https://appleid.apple.com) dan [developer.apple.com](https://developer.apple.com/account), setujui syarat yang muncul. 4) Masih gagal? Punya Mac? Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
 | **"-80045" / "This action cannot be completed at this time"** | Apple sedang memblokir login dari alat sideload (Oktober 2026) | Berhenti mencoba supaya Apple ID tidak terkunci. Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
 | AltServer: **"could not retrieve anisette data value machineID"** | Plug-in Mail milik AltServer belum aktif | Buka **Mail → Settings → General → Manage Plug-ins**, centang **AltPlugin**, klik Apply, lalu tutup dan buka lagi Mail serta AltServer. Masih gagal? Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
+| `flutter run`: **"No space left on device"** | Disk Mac penuh (build berhasil, penyalinan gagal) | Kosongkan ±5 GB: hapus `~/Library/Developer/Xcode/DerivedData`, simulator iOS di **Xcode → Settings → Components**, lalu kosongkan Trash. Jalankan ulang |
 | Sideloadly **tidak menemukan iPhone** | Koneksi kabel atau iTunes | Ganti kabel atau port, buka kunci iPhone, ketuk **Percayai**. Di Windows, pakai iTunes dari situs Apple |
 | Mode Pengembang **tidak ada di menu** | Belum ada aplikasi sideload | Muncul setelah aplikasi pertama terpasang. Lanjutkan dulu, lalu kembali ke langkah ini |
 

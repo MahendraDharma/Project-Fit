@@ -30,28 +30,19 @@ State at the end of the last session, and what to pick up.
   from the UI or with the MCP `actions_run_trigger` tool. Pushing a `v*` tag also works, but
   this session's git proxy refuses tag pushes (403).
 
-## The app is NOT on the owner's iPhone yet
-The owner's devices are an iPhone on iOS 27.0.1, a Mac, a WHOOP 4.0 and a Garmin Forerunner 55.
+## The app runs on the owner's iPhone (Tutorial C)
+Installed with Xcode and a free Personal Team (team ID in the owner's gitignored
+`app/ios/Config/Signing.xcconfig`) on iOS 27.0.1. Renewal every 7 days is
+`cd ~/Project-Fit/app && git pull && flutter run --release` on the owner's Mac. Sideloadly and
+AltServer fail on Apple's October 2026 login block (`-80045`); see `docs/IOS_SIDELOAD.md`.
 
-Every sideload attempt so far failed:
-- **Sideloadly 0.71 (Mac):**
-  - Fake Anisette gave `-20970`, then "Apple's login server refused".
-  - Remote anisette is Patreon-only.
-- **AltServer (Mac):**
-  - First failed with `could not retrieve anisette data value "machineID"`.
-  - After updating it failed with `-80045`, Apple's October 2026 block on sideload-tool logins.
-- **SideInstaller (iPhone):**
-  - Blocked at "Wi-Fi required". Its first pairing needs a Wi-Fi interface; another phone's
-    hotspot works.
-  - Not yet tried with a Windows-ADI anisette server, e.g. "jkcoxson (Windows ADI)".
-- **Xcode (Tutorial C):**
-  - Not tried. The owner is on mobile data and Xcode costs about 5–14 GB.
-  - Signing needs only `app/ios/Config/Signing.xcconfig` (gitignored), containing
-    `APPLE_DEVELOPMENT_TEAM = <TEAMID>`.
-
-Next step is the owner's choice: SideInstaller on a borrowed hotspot with Windows-ADI
-anisette, or Xcode once on Wi-Fi. Advise stopping after any `-80045`, since repeated failed
-logins can lock the Apple ID.
+## UI redesign (requested, not started)
+The owner finds the UI identical to OpenStrap and wants a WHOOP- or Bevel-inspired look (style
+only — no WHOOP/Bevel logos, assets or trade dress). Two Home mockups were rendered on real data:
+A = WHOOP-like (black, condensed bold numerals, three rings, stat rows with sparklines), B =
+Bevel-like (light, white rounded cards, half-ring gauges, gradient insight card, 2×2 biomarker
+tiles, floating pill nav). Await the owner's pick, then: tokens in `app/lib/ui2/theme.dart`
+first, then Home, Sleep, Recovery, Strain, Health, keeping the gallery/overflow/l10n tests green.
 
 ## Rendering screens from a real export (no device needed)
 The previous session did this with a throwaway widget test that was deleted afterwards. To
@@ -76,8 +67,7 @@ redo it:
 - Settings → Social preview → upload `docs/assets/social-preview.png`.
 
 ## Open work, in order
-1. Get the app onto the owner's iPhone (see above). Update `docs/IOS_SIDELOAD.md` with what
-   actually worked.
+1. UI redesign (see above).
 2. Garmin account export (the owner requested it; up to 48 h). Run
    `python3 -I tools/garmin_inventory/inventory.py <zip> -o garmin_report.md --json garmin_report.json`
    outside the repo, then plan the Garmin import path (FIT + Apple Health).
