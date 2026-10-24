@@ -97,6 +97,7 @@ import '../notify/notification_event.dart';
 import '../notify/notification_prefs.dart';
 import '../gestures/gesture_settings.dart';
 import '../health/auto_workout_import.dart';
+import '../health/health_readings_import.dart';
 import '../health/health_export.dart';
 import '../health/phone_pedometer.dart';
 import '../import/noop_import.dart';
@@ -2068,6 +2069,9 @@ class AppState extends ChangeNotifier {
       // cadence is the trigger: workouts are not live data, and this never
       // prompts.
       unawaited(AutoWorkoutImport.maybeRun());
+      // Vitals other devices put in Health (Garmin, a watch): display-only,
+      // once the user has said yes on a tap, at most hourly, never prompting.
+      unawaited(HealthReadingsImporter.maybeRun());
       await _maybeGenerateBriefing();
       unawaited(_checkSchemaHealth()); // throttled internally to 24h
       // Staleness-escalation meta-layer: the SAME check the headless path

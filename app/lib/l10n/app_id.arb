@@ -70,5 +70,22 @@
   "homeDashCalories": "Energi aktif",
   "devicesWhatItDoesStored": "Semua yang dikirim perangkat ini disimpan atas namanya. Skor darinya masih eksperimental dan nonaktif sampai sudah dicek terhadap perangkat kerasnya.",
   "devicesWhatItDoesBeats": "Waktu detak jantung disimpan atas namanya, selama latihan dan beberapa menit sesudahnya. Menilai latihan darinya masih eksperimental dan nonaktif untuk sementara.",
-  "pairSensorExplainerWearable": "Catatannya sendiri disimpan dan diberi label sebagai miliknya. Menghitung angka kami darinya (tidur, detak jantung istirahat, strain) masih eksperimental dan nonaktif untuk sementara."
+  "pairSensorExplainerWearable": "Catatannya sendiri disimpan dan diberi label sebagai miliknya. Menghitung angka kami darinya (tidur, detak jantung istirahat, strain) masih eksperimental dan nonaktif untuk sementara.",
+  "phoneImportOtherDevices": "Dari perangkat Anda yang lain",
+  "phoneImportOtherDevicesBody": "Garmin, jam tangan atau timbangan yang menulis ke {store}. Datanya mengisi hari dan angka yang tidak diukur band, dengan nama perangkatnya di setiap angka.",
+  "@phoneImportOtherDevicesBody": {"placeholders": {"store": {"type": "String"}}},
+  "phoneImportOtherDevicesLimit": "Hanya ditampilkan. Tidak pernah dipakai untuk recovery, strain, tidur, atau baseline Anda.",
+  "phoneImportReadAll": "Ambil semua dari {store}",
+  "@phoneImportReadAll": {"placeholders": {"store": {"type": "String"}}},
+  "readingVo2": "VO₂ max",
+  "readingSpo2": "Oksigen darah",
+  "readingHrvSdnn": "HRV (SDNN)",
+  "readingRhr": "Detak istirahat",
+  "readingResp": "Laju napas",
+  "readingSleep": "Waktu tidur",
+  "readingSleepDeep": "Tidur deep",
+  "readingSleepRem": "Tidur REM",
+  "readingSteps": "Langkah",
+  "dataFrom": "Data dari {source}",
+  "@dataFrom": {"placeholders": {"source": {"type": "String"}}}
 }

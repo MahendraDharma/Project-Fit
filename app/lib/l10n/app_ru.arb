@@ -7592,5 +7592,22 @@
   "homeDashRestingHr": "Пульс в покое",
   "homeDashSteps": "Шаги",
   "homeDashRespRate": "Частота дыхания",
-  "homeDashCalories": "Активные калории"
+  "homeDashCalories": "Активные калории",
+  "phoneImportOtherDevices": "С других ваших устройств",
+  "phoneImportOtherDevicesBody": "Garmin, часы или весы, которые пишут в {store}. Их показания заполняют дни и значения, которых нет у браслета, и на каждом указано устройство.",
+  "@phoneImportOtherDevicesBody": {"placeholders": {"store": {"type": "String"}}},
+  "phoneImportOtherDevicesLimit": "Только для показа. Никогда не используется в восстановлении, нагрузке, сне или ваших базовых значениях.",
+  "phoneImportReadAll": "Прочитать всё из {store}",
+  "@phoneImportReadAll": {"placeholders": {"store": {"type": "String"}}},
+  "readingVo2": "VO₂ max",
+  "readingSpo2": "Кислород в крови",
+  "readingHrvSdnn": "ВСР (SDNN)",
+  "readingRhr": "Пульс в покое",
+  "readingResp": "Частота дыхания",
+  "readingSleep": "Время сна",
+  "readingSleepDeep": "Глубокий сон",
+  "readingSleepRem": "Фаза REM",
+  "readingSteps": "Шаги",
+  "dataFrom": "Данные: {source}",
+  "@dataFrom": {"placeholders": {"source": {"type": "String"}}}
 }

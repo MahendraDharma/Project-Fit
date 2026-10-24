@@ -2668,6 +2668,22 @@ class LocalDb {
     );
   }
 
+  /// Imported readings of one kind with `ts` in `[fromTs, toTs)`, oldest
+  /// first. Display only, like [importedMeasurements].
+  static Future<List<Map<String, dynamic>>> importedMeasurementsBetween(
+    String kind,
+    int fromTs,
+    int toTs,
+  ) async {
+    final db = await instance;
+    return db.query(
+      'imported_measurement',
+      where: 'kind = ? AND ts >= ? AND ts < ?',
+      whereArgs: [kind, fromTs, toTs],
+      orderBy: 'ts ASC',
+    );
+  }
+
   // ── DEVICES (the things that measure) ─────────────────────────────────────
   /// The devices this phone knows about, one row each.
   ///

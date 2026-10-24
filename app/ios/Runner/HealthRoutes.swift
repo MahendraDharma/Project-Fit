@@ -72,10 +72,68 @@ enum HealthRouteBridge {
           routes(from: from, to: to, completion: reply)
         }
 
+      // VO₂ max (HKQuantityTypeIdentifierVO2Max), which the `health` plugin has
+      // no type for. Same shape as routes: the tap may ask, a background pass
+      // reads with what was already decided.
+      case "vo2max":
+        guard HKHealthStore.isHealthDataAvailable(),
+          let type = HKQuantityType.quantityType(forIdentifier: .vo2Max)
+        else {
+          result([])
+          return
+        }
+        let args = call.arguments as? [String: Any] ?? [:]
+        guard let fromMs = args["fromMs"] as? Int, let toMs = args["toMs"] as? Int else {
+          result([])
+          return
+        }
+        let from = Date(timeIntervalSince1970: Double(fromMs) / 1000)
+        let to = Date(timeIntervalSince1970: Double(toMs) / 1000)
+        let reply: ([[String: Any]]) -> Void = { payload in
+          DispatchQueue.main.async { result(payload) }
+        }
+        guard args["prompt"] as? Bool == true else {
+          vo2(type: type, from: from, to: to, completion: reply)
+          return
+        }
+        store.requestAuthorization(toShare: [], read: [type]) { _, _ in
+          vo2(type: type, from: from, to: to, completion: reply)
+        }
+
       default:
         result(FlutterMethodNotImplemented)
       }
     }
+  }
+
+  /// VO₂ max samples in the window as `[{uuid, ts, value, source, sourceId}]`,
+  /// `value` in mL/(kg·min) and `ts` the sample's end in epoch ms.
+  private static func vo2(
+    type: HKQuantityType, from: Date, to: Date,
+    completion: @escaping ([[String: Any]]) -> Void
+  ) {
+    let predicate = HKQuery.predicateForSamples(withStart: from, end: to, options: [])
+    let unit = HKUnit(from: "ml/kg*min")
+    let query = HKSampleQuery(
+      sampleType: type, predicate: predicate,
+      limit: HKObjectQueryNoLimit, sortDescriptors: nil
+    ) { _, samples, error in
+      guard let qs = samples as? [HKQuantitySample], error == nil else {
+        completion([])
+        return
+      }
+      completion(
+        qs.map { q in
+          [
+            "uuid": q.uuid.uuidString,
+            "ts": Int(q.endDate.timeIntervalSince1970 * 1000),
+            "value": q.quantity.doubleValue(for: unit),
+            "source": q.sourceRevision.source.name,
+            "sourceId": q.sourceRevision.source.bundleIdentifier,
+          ]
+        })
+    }
+    store.execute(query)
   }
 
   /// Every workout in the window that HAS a route, as

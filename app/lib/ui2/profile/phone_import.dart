@@ -36,8 +36,10 @@ import 'package:projectfit_analytics/onehz.dart' as ana;
 import '../../data/db.dart';
 import '../../health/health_import_state.dart';
 import '../../health/health_measurement_import.dart';
+import '../../health/health_readings_import.dart';
 import '../../health/health_rhr_seed.dart';
 import '../../l10n/app_localizations.dart';
+import '../screens/external_vitals.dart';
 import '../ui2.dart';
 import 'devices.dart' show formatDayTime;
 
@@ -89,7 +91,10 @@ class _PhoneImportState extends State<PhoneImport> {
   Future<void> _refresh() async {
     final compare = await RhrSeedImporter.compareAgainstBand();
     final latest = <String, Map<String, dynamic>>{};
-    for (final (kind, _) in kImportedKindLabels) {
+    for (final kind in [
+      for (final (k, _) in kImportedKindLabels) k,
+      ...kReadingKindOrder,
+    ]) {
       final rows = await LocalDb.importedMeasurements(kind, limit: 1);
       if (rows.isNotEmpty) latest[kind] = rows.first;
     }
@@ -157,6 +162,32 @@ class _PhoneImportState extends State<PhoneImport> {
     );
   }
 
+  Future<(String, bool)> _syncReadings() async {
+    final l = AppLocalizations.of(context);
+    final importer = HealthReadingsImporter();
+    if (!await importer.requestPermission()) {
+      return (
+        l?.phoneImportMeasurementsDenied(storeName) ??
+            '$storeName did not grant those readings. Nothing was read.',
+        true,
+      );
+    }
+    final n = await importer.sync(prompt: true);
+    return n == 0
+        ? (
+            l?.phoneImportNothingCameBack(storeName) ??
+                'Nothing came back. $storeName holds no readings of these kinds, '
+                    'or none inside the window it will share.',
+            false,
+          )
+        : (
+            l?.phoneImportReadingsStored(n) ??
+                '$n reading${n == 1 ? '' : 's'} stored, each with the app that '
+                    'recorded it.',
+            false,
+          );
+  }
+
   Future<(String, bool)> _syncMeasurements() async {
     final l = AppLocalizations.of(context);
     final importer = ImportedMeasurementImporter();
@@ -203,6 +234,50 @@ class _PhoneImportState extends State<PhoneImport> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
                 children: [
+                  // ── other devices (Garmin, a watch) ─────────────────────────
+                  Section(
+                    l?.phoneImportOtherDevices ?? 'From your other devices',
+                    Surface(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l?.phoneImportOtherDevicesBody(storeName) ??
+                                'A Garmin, a watch or a scale that writes to $storeName. Its readings fill the days and the numbers the band did not take, with the device named on each.',
+                            style: F.body.copyWith(color: p.ink2, height: 1.4),
+                          ),
+                          const SizedBox(height: S.x3),
+                          Text(
+                            l?.phoneImportOtherDevicesLimit ??
+                                'Display only. Never used in recovery, strain, sleep or any of your baselines.',
+                            style: F.cap.copyWith(color: p.ink3, height: 1.5),
+                          ),
+                          const SizedBox(height: S.x4),
+                          BigButton(
+                            l?.phoneImportReadAll(storeName) ??
+                                'Read all from $storeName',
+                            icon: LucideIcons.watch,
+                            color: C.blue,
+                            soft: true,
+                            onTap: _busy ? null : () => _run(_syncReadings),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  for (final kind in kReadingKindOrder)
+                    if (_latest[kind] case final row?) ...[
+                      const SizedBox(height: S.x3),
+                      MetricRow(
+                        readingIcon(kind),
+                        C.blue,
+                        readingLabel(kind, l),
+                        formatReading(kind, (row['value'] as num).toDouble()),
+                        unit: readingUnit(kind),
+                        sub: _sourceLine(row),
+                      ),
+                    ],
+                  const SizedBox(height: S.x6),
                   // ── seed-baselines ──────────────────────────────────────────
                   Section(
                     l?.phoneImportRhrSection ?? 'Resting heart rate',
