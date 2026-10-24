@@ -269,6 +269,8 @@ Map<String, Widget> componentCases() => {
           now: DateTime(2026, 10, 24, 20)),
       'body_map': const BodyMap({'Quads': 55, 'Chest': 30, 'Lats': 92}),
       'recovery_bar': const RecoveryBar(64),
+      'draw_in': DrawIn(
+          builder: (c, t) => LinearProgressIndicator(value: .7 * t, minHeight: 8)),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',

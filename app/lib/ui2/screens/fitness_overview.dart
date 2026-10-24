@@ -188,15 +188,19 @@ class _GaugeCard extends StatelessWidget {
         const SizedBox(height: S.x2),
         AspectRatio(
           aspectRatio: 1.4,
-          child: CustomPaint(
-            painter: _Dial(acute, chronic, ratio == null ? color : wc, p),
-            child: Center(
+          child: Stack(fit: StackFit.expand, children: [
+            DrawIn(
+              builder: (_, t) => CustomPaint(
+                painter: _Dial(acute == null ? null : acute * t, chronic, ratio == null ? color : wc, p),
+              ),
+            ),
+            Center(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(acute == null ? '–' : '${acute.round()}', style: F.n34.copyWith(color: p.ink)),
               ),
             ),
-          ),
+          ]),
         ),
         if (chronic != null) ...[
           const SizedBox(height: S.x2),

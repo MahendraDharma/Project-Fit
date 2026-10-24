@@ -436,6 +436,12 @@ class Motion {
   static const base = Duration(milliseconds: 180);
   static const slow = Duration(milliseconds: 280);
 
+  /// A card arriving: fade in and settle up from a few points below.
+  static const reveal = Duration(milliseconds: 420);
+
+  /// A ring filling, a line drawing itself in, a bar growing.
+  static const draw = Duration(milliseconds: 900);
+
   /// The session clock. A live workout counts REAL seconds, so this is the one
   /// duration that must NOT pass through [motion] — reduced motion silences
   /// animation, it does not stop time. It lives here because theme.dart is the

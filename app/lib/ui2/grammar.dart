@@ -242,10 +242,12 @@ class Surface extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
+    // The reveal sits INSIDE the Pressable, so the card's semantics node and
+    // tap target stay where they always were.
     return Pressable(
       onTap: onTap,
       semanticLabel: semanticLabel,
-      child: Container(
+      child: _Reveal(Container(
         width: double.infinity,
         padding: pad,
         decoration: BoxDecoration(
@@ -254,7 +256,7 @@ class Surface extends StatelessWidget {
           boxShadow: p.el(elevation),
         ),
         child: child,
-      ),
+      )),
     );
   }
 }
@@ -329,6 +331,46 @@ class Section extends StatelessWidget {
         ),
         child,
       ],
+    );
+  }
+}
+
+/// Draws its child in: [builder] gets 0 → 1 over [Motion.draw] the first
+/// time it is built, eased out, and 1 at once under reduced motion. For rings
+/// filling, lines drawing themselves and bars growing.
+class DrawIn extends StatelessWidget {
+  final Widget Function(BuildContext, double t) builder;
+  const DrawIn({super.key, required this.builder});
+
+  @override
+  Widget build(BuildContext c) => TweenAnimationBuilder<double>(
+        tween: Tween(begin: Motion.enabled(c) ? 0 : 1, end: 1),
+        duration: motion(c, Motion.draw),
+        curve: Curves.easeOutCubic,
+        builder: (c, t, _) => builder(c, t),
+      );
+}
+
+/// A card arriving: faded in and settled up from a few points below, once.
+class _Reveal extends StatelessWidget {
+  final Widget child;
+  const _Reveal(this.child);
+
+  @override
+  Widget build(BuildContext c) {
+    if (!Motion.enabled(c)) return child;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Motion.reveal,
+      curve: Curves.easeOutCubic,
+      child: child,
+      // Read by a screen reader from the first frame: an arriving card is
+      // still there to be read.
+      builder: (c, t, child) => Opacity(
+        opacity: t,
+        alwaysIncludeSemantics: true,
+        child: Transform.translate(offset: Offset(0, (1 - t) * S.x3), child: child),
+      ),
     );
   }
 }

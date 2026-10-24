@@ -1165,8 +1165,17 @@ class _Dial extends StatelessWidget {
             // "6 of 14" draws as 14 divisions with 6 filled.
             ? DashedRing(r.frac ?? 0, r.arc(p), p.track,
                 stroke: stroke, segments: r.need ?? 24)
-            : Ring(r.frac ?? 0, r.arc(p), p.track,
-                stroke: stroke, t: animate(c, 1), solid: r.measured),
+            : null,
+        // Drawn in on arrival (DrawIn holds it at 1 under reduced motion).
+        child: r.calibrating
+            ? null
+            : DrawIn(
+                builder: (_, t) => CustomPaint(
+                  size: Size.infinite,
+                  painter: Ring(r.frac ?? 0, r.arc(p), p.track,
+                      stroke: stroke, t: t, solid: r.measured),
+                ),
+              ),
       ),
       if (value && r.why != null)
         // Absent: a dash where the number goes. The reason is on the row

@@ -332,7 +332,9 @@ class DetailHero extends StatelessWidget {
                 label: '${ring.value}${ring.suffix} ${ring.label}',
                 excludeSemantics: true,
                 child: Stack(alignment: Alignment.center, children: [
-                  Positioned.fill(child: CustomPaint(painter: _HeroRing(ring, p))),
+                  Positioned.fill(
+                    child: DrawIn(builder: (_, t) => CustomPaint(painter: _HeroRing(ring, p, t))),
+                  ),
                   FractionallySizedBox(
                     widthFactor: .56,
                     child: FittedBox(
@@ -405,7 +407,10 @@ class _Sky extends CustomPainter {
 class _HeroRing extends CustomPainter {
   final HeroRingSpec r;
   final P p;
-  _HeroRing(this.r, this.p);
+
+  /// How far drawn in, 0-1.
+  final double t;
+  _HeroRing(this.r, this.p, [this.t = 1]);
 
   @override
   void paint(Canvas c, Size s) {
@@ -429,10 +434,10 @@ class _HeroRing extends CustomPainter {
             Paint()
               ..style = PaintingStyle.stroke
               ..strokeWidth = st
-              ..color = i < r.filled ? r.colors.last : p.card2);
+              ..color = i < (r.filled * t).round() ? r.colors.last : p.card2);
       }
     } else if ((r.frac ?? 0) > 0) {
-      final sweep = 2 * math.pi * r.frac!.clamp(0.0, 1.0);
+      final sweep = 2 * math.pi * r.frac!.clamp(0.0, 1.0) * t;
       c.drawArc(
           rr,
           -math.pi / 2,
@@ -726,9 +731,11 @@ class MetricTrendCard extends StatelessWidget {
     ]);
     final chart = SizedBox(
       height: 72,
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: _Spark(row.points, row.band, color, p, row.key),
+      child: DrawIn(
+        builder: (_, t) => CustomPaint(
+          size: Size.infinite,
+          painter: _Spark(row.points, row.band, color, p, row.key, t),
+        ),
       ),
     );
     return Surface(
@@ -787,7 +794,10 @@ class _Spark extends CustomPainter {
   final Color color;
   final P p;
   final String metric;
-  _Spark(this.pts, this.band, this.color, this.p, this.metric);
+
+  /// How much of the line is drawn, left to right, 0-1.
+  final double t;
+  _Spark(this.pts, this.band, this.color, this.p, this.metric, [this.t = 1]);
 
   /// A point's colour: its band's, for a metric with bands of its own
   /// (recovery, strain, stress), else the metric's colour.
@@ -830,7 +840,8 @@ class _Spark extends CustomPainter {
       ..strokeWidth = 2.2
       ..strokeJoin = StrokeJoin.round
       ..color = color;
-    for (var i = 1; i < pts.length; i++) {
+    final shown = (pts.length * t).ceil().clamp(1, pts.length);
+    for (var i = 1; i < shown; i++) {
       final a = pts[i - 1], b = pts[i];
       // A gap of more than a day is a gap, not a line.
       if (DateTime.parse(b.day).difference(DateTime.parse(a.day)).inHours > 36) continue;
@@ -838,7 +849,7 @@ class _Spark extends CustomPainter {
       c.drawLine(Offset(x(a.day), y(a.value)), Offset(x(b.day), y(b.value)),
           line..color = (a.source ?? b.source) == null ? seg : seg.withValues(alpha: .5));
     }
-    for (var i = 0; i < pts.length; i++) {
+    for (var i = 0; i < shown; i++) {
       final pt = pts[i];
       final o = Offset(x(pt.day), y(pt.value));
       final lastOne = i == pts.length - 1;

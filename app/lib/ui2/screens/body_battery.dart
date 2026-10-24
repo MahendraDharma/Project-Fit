@@ -258,9 +258,10 @@ class _Battery extends StatelessWidget {
                 borderRadius: R.rLg,
                 child: Stack(fit: StackFit.expand, children: [
                   ColoredBox(color: col.withValues(alpha: .18)),
-                  FractionallySizedBox(
+                  DrawIn(
+                    builder: (_, t) => FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: (v / 100).clamp(0.0, 1.0),
+                    widthFactor: (v / 100 * t).clamp(0.0, 1.0),
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -270,6 +271,7 @@ class _Battery extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
                   ),
                   Center(
                     child: Row(
