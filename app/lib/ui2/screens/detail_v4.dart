@@ -226,9 +226,9 @@ class _DetailTopState extends State<DetailTop> {
           final left = math.max(0, need - (v.recoveryHave ?? 0));
           return v.hrv == null
               ? (l?.detailCoachCalibrating(left) ??
-                  'Recovery is scored once your baseline has $left more nights.')
+                  'Recovery is scored once it has learned your normal: $left more nights.')
               : (l?.detailCoachCalibratingHrv(left, '${v.hrv!.round()}') ??
-                  'Recovery is scored once your baseline has $left more nights. Last night\'s HRV was ${v.hrv!.round()} ms.');
+                  'Recovery is scored once it has learned your normal: $left more nights. Last night\'s HRV was ${v.hrv!.round()} ms.');
         }
         return null;
       case DetailKind.sleep:

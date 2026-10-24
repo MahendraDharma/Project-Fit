@@ -249,7 +249,7 @@ class _PhoneImportState extends State<PhoneImport> {
                           const SizedBox(height: S.x3),
                           Text(
                             l?.phoneImportOtherDevicesLimit ??
-                                'Display only. Never used in recovery, strain, sleep or any of your baselines.',
+                                'Display only. Never used in recovery, strain, sleep or any of your usual ranges.',
                             style: F.cap.copyWith(color: p.ink3, height: 1.5),
                           ),
                           const SizedBox(height: S.x4),
