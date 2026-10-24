@@ -37,6 +37,7 @@ String readingLabel(String kind, AppLocalizations? l) => switch (kind) {
       kKindSleepRem => l?.readingSleepRem ?? 'REM sleep',
       kKindStepsDay => l?.readingSteps ?? 'Steps',
       'body_battery' => l?.bbTitle ?? 'Body Battery',
+      'stress_level' => l?.gsTitleGarmin ?? 'Stress (Garmin)',
       _ => kind,
     };
 
@@ -49,6 +50,7 @@ IconData readingIcon(String kind) => switch (kind) {
       kKindSleepMin || kKindSleepDeep || kKindSleepRem => LucideIcons.moon,
       kKindStepsDay => LucideIcons.footprints,
       'body_battery' => LucideIcons.batteryCharging,
+      'stress_level' => LucideIcons.gauge,
       _ => LucideIcons.circle,
     };
 

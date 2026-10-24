@@ -28,6 +28,7 @@ import 'home_screen.dart';
 import 'home_vitals.dart';
 import 'metric_detail.dart';
 import 'body_battery.dart';
+import 'garmin_stress.dart';
 import 'month_calendar.dart';
 import 'vo2_screen.dart';
 
@@ -580,7 +581,11 @@ class TrendRow {
   final String key;
   final List<TrendPoint> points;
   final UsualRange? band;
-  const TrendRow(this.key, this.points, this.band);
+
+  /// A name that is not the metric spec's — another device's series under a
+  /// key ProjectFit also uses ("Garmin stress" is not our stress).
+  final String? title;
+  const TrendRow(this.key, this.points, this.band, {this.title});
 }
 
 /// The 30 days a card draws, ending [until].
@@ -684,7 +689,7 @@ class MetricTrendCard extends StatelessWidget {
         Icon(spec.icon, size: 16, color: p.ink3),
         const SizedBox(width: S.x2),
         Expanded(
-          child: Text(uiText(c, spec.title), style: F.body.copyWith(color: p.ink3)),
+          child: Text(row.title ?? uiText(c, spec.title), style: F.body.copyWith(color: p.ink3)),
         ),
       ]),
       const SizedBox(height: S.x3),
@@ -718,7 +723,7 @@ class MetricTrendCard extends StatelessWidget {
     );
     return Surface(
       onTap: onTap,
-      semanticLabel: '${uiText(c, spec.title)}, ${metricValue(spec.unit, last.value)} $unit, $stText',
+      semanticLabel: '${row.title ?? uiText(c, spec.title)}, ${metricValue(spec.unit, last.value)} $unit, $stText',
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (big) ...[left, const SizedBox(height: S.x3), chart]
         else
@@ -855,6 +860,17 @@ Future<List<OtherReading>> loadOtherReadings({DateTime? now}) async {
       ts: (bb.last['ts_ms'] as num).toInt() ~/ 1000,
     ));
   }
+  // Garmin's stress level: today's mean so far, over its samples.
+  final st = await LocalDb.vendorSeries(kGarminStressKey,
+      DateTime(t.year, t.month, t.day).millisecondsSinceEpoch, t.millisecondsSinceEpoch + 1);
+  if (st.isNotEmpty) {
+    out.add((
+      kind: kGarminStressKey,
+      value: st.fold<double>(0, (a, r) => a + (r['value'] as num)) / st.length,
+      source: st.last['attribution'] as String,
+      ts: (st.last['ts_ms'] as num).toInt() ~/ 1000,
+    ));
+  }
   for (final k in kReadingKindOrder) {
     final rows = await LocalDb.importedMeasurementsBetween(
         k, from, t.millisecondsSinceEpoch ~/ 1000 + 1);
@@ -911,6 +927,7 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> {
               onTap: switch (r[i].kind) {
                 kKindVo2 => () => go(c, const Vo2MaxScreen()),
                 kBodyBatteryKey => () => go(c, const BodyBatteryScreen()),
+                kGarminStressKey => () => go(c, const GarminStressScreen()),
                 _ => null,
               },
               child: Row(children: [
@@ -937,7 +954,9 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> {
                         ]),
                   ),
                 ),
-                if (r[i].kind == kKindVo2 || r[i].kind == kBodyBatteryKey)
+                if (r[i].kind == kKindVo2 ||
+                    r[i].kind == kBodyBatteryKey ||
+                    r[i].kind == kGarminStressKey)
                   Icon(LucideIcons.chevronRight, size: 16, color: p.ink3),
               ]),
             ),

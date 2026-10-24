@@ -242,6 +242,8 @@ Map<String, Widget> componentCases() => {
         (kind: 'spo2', value: 96.2, source: 'Connect', ts: 1792800000),
         (kind: 'rhr_ext', value: 53.0, source: 'Connect', ts: 1792800000),
       ]),
+      'streak_chip': StreakChip(
+          streak: WearStreak.from({'2026-10-23': 600, '2026-10-24': 500}, DateTime(2026, 10, 24))),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',

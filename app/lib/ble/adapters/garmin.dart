@@ -631,6 +631,9 @@ List<BandEvent> _decodeFit(
     // Every Body Battery sample, not a daily mean: the day's curve is the
     // whole point of the number. Garmin's, attributed, never one of ours.
     for (final (t, v) in fitBodyBattery(m)) obs(at(t), 'body_battery', v, '%'),
+    // The same for the watch's stress level: the day's curve and its time in
+    // each of Garmin's bands are made of the samples, not of a mean.
+    for (final (t, v) in fitStress(m)) obs(at(t), 'stress_level', v, ''),
   ];
   if (stages.isNotEmpty) {
     final minutes = <String, int>{};

@@ -207,7 +207,8 @@ const _notComponents = {
   // MonthlyRowTile, which the gallery holds.
   'MonthlyReportScreen',
   // Whole screens, pushed, each with its own scaffold.
-  'Vo2MaxScreen', 'MonthCalendarScreen', 'BodyBatteryScreen',
+  'Vo2MaxScreen', 'MonthCalendarScreen', 'BodyBatteryScreen', 'GarminStressScreen',
+  'StreakScreen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',
   'ProfileSetupScreen', 'ProfileSetupView',

@@ -71,6 +71,7 @@ import '../../state/units_controller.dart';
 import '../../theme/theme_switcher.dart' show themedRoute;
 import '../activity/day_strain.dart' show DayStrainDetail;
 import 'detail_v4.dart' show OtherDevicesCard;
+import 'wear_streak.dart' show StreakChip;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
 import 'workout_screen.dart' show activityHost;
@@ -1956,7 +1957,11 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
             child: Align(
               alignment: Alignment.centerRight,
               widthFactor: 1,
-              child: batteryLine(c) ?? const SizedBox.shrink(),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                // The wear streak, the owner's call (see wear_streak.dart).
+                if (widget.data == null) ...[const StreakChip(), const SizedBox(width: S.x2)],
+                batteryLine(c) ?? const SizedBox.shrink(),
+              ]),
             ),
           ),
         ]),
