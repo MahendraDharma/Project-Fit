@@ -17,6 +17,7 @@ export 'body_battery.dart';
 export 'garmin_stress.dart';
 export 'wear_streak.dart';
 export 'fitness_overview.dart';
+export 'muscle_recovery.dart';
 export 'external_vitals.dart';
 export 'calm_breathing.dart';
 export 'cycle_screen.dart';

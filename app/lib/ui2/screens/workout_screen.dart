@@ -48,6 +48,7 @@ import '../revision.dart';
 import '../theme.dart';
 import '../../data/day_label.dart' show calendarDaysBetween;
 import 'fitness_overview.dart';
+import 'muscle_recovery.dart' show MuscleDose;
 import 'log_workout.dart';
 import 'metric_detail.dart' show MetricDetail, detailLinkRow;
 import 'nutrition_screen.dart';
@@ -2185,6 +2186,7 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
     // overview's muscular gauge and muscle list: the same rows, read once.
     final tonnageByDay = <DateTime, double>{};
     final lastTrained = <String, DateTime>{};
+    final doses = <MuscleDose>[];
     final tonnageJobs = <Future<void>>[];
     for (final w in past) {
       if (w.id.isEmpty || w.importedFrom != null) continue;
@@ -2193,11 +2195,22 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
         if (rows.isEmpty) return;
         final log = _logFrom(rows);
         final inputs = strengthSetInputs(log);
+        final dose = <String, double>{};
+        final failure = <String>{};
         for (final i in inputs) {
           for (final m in i.primaryMuscles) {
             final prev = lastTrained[m];
             if (prev == null || w.start.isAfter(prev)) lastTrained[m] = w.start;
+            dose[m] = (dose[m] ?? 0) + 1;
+            if ((i.rpe ?? 0) >= 9) failure.add(m);
           }
+          for (final m in i.secondaryMuscles) {
+            dose[m] = (dose[m] ?? 0) + .5;
+            if ((i.rpe ?? 0) >= 9) failure.add(m);
+          }
+        }
+        for (final e in dose.entries) {
+          doses.add((muscle: e.key, at: w.start, sets: e.value, toFailure: failure.contains(e.key)));
         }
         final v = log.volumeKg;
         final day = DateTime(w.start.year, w.start.month, w.start.day);
@@ -2259,6 +2272,7 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
       past: past,
       tonnageByDay: tonnageByDay,
       lastTrained: lastTrained,
+      doses: doses,
       week: muscleVolume(weekSets).value,
       tonnage7: tonnage7,
     );
@@ -2298,6 +2312,7 @@ Future<FitnessSummary> _fitnessSummary({
   required List<_PastWorkout> past,
   required Map<DateTime, double> tonnageByDay,
   required Map<String, DateTime> lastTrained,
+  required List<MuscleDose> doses,
   required MuscleVolume? week,
   required List<double?> tonnage7,
 }) async {
@@ -2374,5 +2389,6 @@ Future<FitnessSummary> _fitnessSummary({
     volumeKg: volume,
     lastTrained: lastTrained,
     weekSets: week?.setsByMuscle ?? const {},
+    doses: doses,
   );
 }

@@ -214,5 +214,10 @@
   "fitReady": "Siap",
   "fitRecovering": "Pemulihan",
   "fitSets": "{n} set",
-  "@fitSets": {"placeholders": {"n": {"type": "String"}}}
+  "@fitSets": {"placeholders": {"n": {"type": "String"}}},
+  "fitRecovered": "Pulih",
+  "fitFatigued": "Lelah",
+  "fitDepleted": "Terkuras",
+  "fitMuscleFreshness": "Kesegaran otot",
+  "fitRecoveryNote": "Perkiraan dari set yang Anda catat: kelelahan tiap sesi berkurang separuh setiap 24 jam, 36 jam kalau set sampai gagal (failure)."
 }

@@ -16018,5 +16018,10 @@
   "fitReady": "Ready",
   "fitRecovering": "Recovering",
   "fitSets": "{n} sets",
-  "@fitSets": {"placeholders": {"n": {"type": "String"}}}
+  "@fitSets": {"placeholders": {"n": {"type": "String"}}},
+  "fitRecovered": "Recovered",
+  "fitFatigued": "Fatigued",
+  "fitDepleted": "Depleted",
+  "fitMuscleFreshness": "Muscle freshness",
+  "fitRecoveryNote": "An estimate from your logged sets: each session's fatigue halves every 24 hours, 36 when sets went to failure."
 }

@@ -44,3 +44,30 @@ limited to the movements listed in `app/tool/wger_weightlifting_selection.dart`.
 entry is available under CC BY-SA 3.0, CC BY-SA 4.0 or CC0, and each row keeps its
 source UUID and the author/license credits of its base data and translations. This
 data stays under those licenses, separate from the AGPL-licensed code.
+
+## Body map shapes
+
+`app/lib/ui2/body_map_data.dart` contains the anterior and posterior muscle polygons from
+[react-body-highlighter](https://github.com/giavinh79/react-body-highlighter) 2.0.5,
+under the MIT License:
+
+> MIT License
+>
+> Copyright (c) 2020 GV79
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this
+> software and associated documentation files (the "Software"), to deal in the Software
+> without restriction, including without limitation the rights to use, copy, modify,
+> merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+> permit persons to whom the Software is furnished to do so, subject to the following
+> conditions:
+>
+> The above copyright notice and this permission notice shall be included in all copies
+> or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+> INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+> PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+> CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+> OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

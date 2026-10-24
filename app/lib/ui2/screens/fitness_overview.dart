@@ -8,9 +8,8 @@
 // the green arc. Cardio uses the pipeline's ATL/CTL; muscular uses tonnage,
 // the last seven days against the mean week of the 28 before them.
 //
-// There is no "% recovered" per muscle. That would be a decay model nobody
-// has validated; what is stored is when each muscle was last trained and how
-// many sets it got this week, and that is what is shown.
+// Each muscle's "% recovered" is an estimate from its logged sets, with the
+// whole model stated in muscle_recovery.dart; the card says it is one.
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -21,6 +20,7 @@ import '../../l10n/decimal_text.dart';
 import '../../l10n/display_text.dart';
 import '../ui2.dart';
 import 'home_screen.dart' show go, hm, thousands;
+import 'muscle_recovery.dart';
 import 'vo2_screen.dart';
 
 /// Acute over chronic, and the window it should sit in.
@@ -49,6 +49,9 @@ class FitnessSummary {
   final Map<String, DateTime> lastTrained;
   final Map<String, double> weekSets;
 
+  /// Every session's work per muscle in the window, for the recovery estimate.
+  final List<MuscleDose> doses;
+
   const FitnessSummary({
     this.cardio,
     this.muscular,
@@ -64,6 +67,7 @@ class FitnessSummary {
     this.volumeKg,
     this.lastTrained = const {},
     this.weekSets = const {},
+    this.doses = const [],
   });
 }
 
@@ -353,7 +357,7 @@ class _ZoneBars extends StatelessWidget {
   }
 }
 
-/// Each trained muscle: when, and this week's sets. Ordered most recent first.
+/// The body, each muscle filled by its estimated recovery, then the list.
 class _MuscleCard extends StatelessWidget {
   final FitnessSummary s;
   final DateTime now;
@@ -363,49 +367,54 @@ class _MuscleCard extends StatelessWidget {
   Widget build(BuildContext c) {
     final p = P.of(c);
     final l = AppLocalizations.of(c);
-    final rows = s.lastTrained.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final rec = muscleRecovery(s.doses, now);
+    final rows = rec.entries.toList()..sort((a, b) => a.value.compareTo(b.value));
+    String word(MuscleState st) => switch (st) {
+          MuscleState.recovered => l?.fitRecovered ?? 'Recovered',
+          MuscleState.fatigued => l?.fitFatigued ?? 'Fatigued',
+          MuscleState.depleted => l?.fitDepleted ?? 'Depleted',
+        };
     return Surface(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(l?.fitMuscles ?? 'Muscles', style: F.head.copyWith(color: p.ink)),
-        const SizedBox(height: S.x1),
-        Text(l?.fitMusclesNote ?? 'When each was last trained. 48 hours is the usual guide for the same muscle again.',
-            style: F.cap.copyWith(color: p.ink3)),
+        Text(l?.fitMuscleFreshness ?? 'Muscle freshness', style: F.head.copyWith(color: p.ink)),
+        const SizedBox(height: S.x3),
+        BodyMap(rec),
+        const SizedBox(height: S.x3),
+        Text(
+          l?.fitRecoveryNote ??
+              'An estimate from your logged sets: each session\'s fatigue halves every 24 hours, 36 when sets went to failure.',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
         for (final e in rows) ...[
           const SizedBox(height: S.x3),
           Builder(builder: (c) {
-            final h = now.difference(e.value).inHours;
-            final fresh = h >= 48;
-            final when = h < 24
-                ? (l?.fitToday ?? 'Today')
-                : (l?.fitDaysAgo(h ~/ 24) ?? '${h ~/ 24} d ago');
-            final sets = s.weekSets[e.key];
+            final st = muscleState(e.value);
+            final col = p.on(kMuscleStateColor[st]!);
+            final last = s.lastTrained[e.key];
+            final h = last == null ? null : now.difference(last).inHours;
+            final when = h == null
+                ? null
+                : (h < 24 ? (l?.fitToday ?? 'Today') : (l?.fitDaysAgo(h ~/ 24) ?? '${h ~/ 24} d ago'));
             return Row(children: [
-              Icon(LucideIcons.dumbbell, size: 18, color: fresh ? p.on(C.green) : p.on(C.orange)),
-              const SizedBox(width: S.x3),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(uiText(c, _title(e.key)), style: F.body.copyWith(color: p.ink)),
-                  Text(
-                    [
-                      fresh ? (l?.fitReady ?? 'Ready') : (l?.fitRecovering ?? 'Recovering'),
-                      when,
-                      if (sets != null)
-                        l?.fitSets(sets == sets.roundToDouble() ? '${sets.round()}' : displayFixed(sets, 1)) ??
-                            '$sets sets',
-                    ].join(' · '),
-                    style: F.cap.copyWith(color: fresh ? p.on(C.green) : p.on(C.orange)),
+                  Text(uiText(c, e.key), style: F.body.copyWith(color: p.ink, fontWeight: FontWeight.w600)),
+                  Text.rich(
+                    TextSpan(children: [
+                      TextSpan(text: word(st), style: TextStyle(color: col)),
+                      TextSpan(text: ' · ${e.value.round()}%'),
+                      if (when != null) TextSpan(text: ' · $when'),
+                    ]),
+                    style: F.cap.copyWith(color: p.ink2),
                   ),
                 ]),
               ),
+              const SizedBox(width: S.x2),
+              RecoveryBar(e.value),
             ]);
           }),
         ],
       ]),
     );
-  }
-
-  String _title(String key) {
-    final w = key.replaceAll('_', ' ');
-    return w.isEmpty ? key : '${w[0].toUpperCase()}${w.substring(1)}';
   }
 }

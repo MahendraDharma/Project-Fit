@@ -7736,5 +7736,10 @@
   "fitReady": "Готова",
   "fitRecovering": "Восстанавливается",
   "fitSets": "{n} подх.",
-  "@fitSets": {"placeholders": {"n": {"type": "String"}}}
+  "@fitSets": {"placeholders": {"n": {"type": "String"}}},
+  "fitRecovered": "Восстановлена",
+  "fitFatigued": "Утомлена",
+  "fitDepleted": "Истощена",
+  "fitMuscleFreshness": "Свежесть мышц",
+  "fitRecoveryNote": "Оценка по записанным подходам: утомление от каждой тренировки уменьшается вдвое каждые 24 часа, 36 — если подходы были до отказа."
 }
