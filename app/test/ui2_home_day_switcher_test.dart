@@ -131,6 +131,10 @@ void main() {
     final row = find.text('Breakdown of your day');
     await t.scrollUntilVisible(row, 300,
         scrollable: find.byType(Scrollable).first);
+    // Into the middle, clear of the floating tab bar over the bottom edge.
+    await t.ensureVisible(row);
+    await t.drag(find.byType(Scrollable).first, const Offset(0, -200));
+    await _settle(t);
     await t.tap(row);
     await _settle(t);
     expect(t.widget<DayTimelineScreen>(find.byType(DayTimelineScreen)).day,

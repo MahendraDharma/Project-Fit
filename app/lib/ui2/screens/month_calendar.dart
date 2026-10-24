@@ -22,9 +22,9 @@ typedef CalendarDay = ({double frac, Color color});
 (String, CalendarDay Function(double)) calendarSpec(CalendarMetric m,
     {double sleepNeedMin = 480, int stepGoal = kDefaultStepGoal, double stressMax = 100}) =>
     switch (m) {
-      CalendarMetric.strain => ('strain', (v) => (frac: v / 21, color: C.blue)),
-      CalendarMetric.recovery => ('recovery', (v) => (frac: v / 100, color: readinessBand(v).color)),
-      CalendarMetric.sleep => ('sleep', (v) => (frac: v / sleepNeedMin, color: C.indigo)),
+      CalendarMetric.strain => ('strain', (v) => (frac: v / 21, color: strainColor(v))),
+      CalendarMetric.recovery => ('recovery', (v) => (frac: v / 100, color: recoveryColor(v))),
+      CalendarMetric.sleep => ('sleep', (v) => (frac: v / sleepNeedMin, color: sleepColor(v / sleepNeedMin * 100))),
       CalendarMetric.stress => ('stress', (v) => (frac: v / stressMax, color: C.purple)),
       CalendarMetric.steps => ('steps', (v) => (frac: v / stepGoal, color: C.green)),
     };

@@ -485,7 +485,10 @@ class CoachFigure extends StatelessWidget {
     final inks = [C.blue, C.orange, C.teal, C.purple, C.green];
     final grid = LayoutBuilder(
       builder: (_, box) {
-        final w = (box.maxWidth - S.x3) / 2;
+        // One per row at large text: two half-width cards do not fit the
+        // roomier card padding at 3x.
+        final big = MediaQuery.textScalerOf(c).scale(10) > 24;
+        final w = big ? box.maxWidth : (box.maxWidth - S.x3) / 2;
         return Wrap(
           spacing: S.x3,
           runSpacing: S.x3,

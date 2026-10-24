@@ -115,7 +115,7 @@ class _DetailTopState extends State<DetailTop> {
       ),
       if (tiles.isNotEmpty)
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: S.x4),
+          padding: const EdgeInsets.fromLTRB(S.x4, S.x2, S.x4, 0),
           child: DetailTiles(tiles),
         ),
       if (coach != null)
@@ -135,7 +135,8 @@ class _DetailTopState extends State<DetailTop> {
           final band = readinessBand(r, l);
           return HeroRingSpec(
               frac: r / 100,
-              colors: [C.greenD, band.color],
+              colors: [C.red, if (r >= 34) C.yellow, recoveryColor(r)],
+              labelColor: recoveryColor(r),
               value: '${r.round()}',
               suffix: '%',
               label: band.label);
@@ -155,7 +156,8 @@ class _DetailTopState extends State<DetailTop> {
         if (s != null && need != null && need > 0) {
           return HeroRingSpec(
               frac: s / need,
-              colors: const [C.indigo, C.blueSoft],
+              colors: [C.sky, sleepColor(s / need * 100)],
+              labelColor: sleepColor(s / need * 100),
               value: '${(s / need * 100).round()}',
               suffix: '%',
               label: l?.detailOfNeed ?? 'of your need');
@@ -170,7 +172,8 @@ class _DetailTopState extends State<DetailTop> {
         if (s == null) return HeroRingSpec(label: l?.detailNoStrain ?? 'No strain yet');
         return HeroRingSpec(
             frac: s / 21,
-            colors: const [C.yellow, C.orange, C.red],
+            colors: [C.yellow, if (s >= 7) C.orange, if (s >= 14) C.red, strainColor(s)],
+            labelColor: strainColor(s),
             value: displayFixed(s.toDouble(), 1),
             label: l?.homeStrainOf21 ?? 'of 21');
     }
@@ -266,7 +269,11 @@ class HeroRingSpec {
   final int? dashes;
   final int filled;
   final String value, suffix, label;
+
+  /// The label under the number in its band's colour; null for the quiet ink.
+  final Color? labelColor;
   const HeroRingSpec({
+    this.labelColor,
     this.frac,
     this.colors = const [C.n400, C.n400],
     this.dashes,
@@ -341,7 +348,10 @@ class DetailHero extends StatelessWidget {
                                 Text(ring.suffix, style: F.n24.copyWith(color: p.ink)),
                             ]),
                         if (ring.label.isNotEmpty)
-                          Text(ring.label, style: F.cap.copyWith(color: p.ink3)),
+                          Text(ring.label,
+                              style: F.cap.copyWith(
+                                  color: ring.labelColor == null ? p.ink3 : p.on(ring.labelColor!),
+                                  fontWeight: FontWeight.w600)),
                       ]),
                     ),
                   ),
@@ -686,10 +696,10 @@ class MetricTrendCard extends StatelessWidget {
 
     final left = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
-        Icon(spec.icon, size: 16, color: p.ink3),
+        Icon(spec.icon, size: 16, color: color),
         const SizedBox(width: S.x2),
         Expanded(
-          child: Text(row.title ?? uiText(c, spec.title), style: F.body.copyWith(color: p.ink3)),
+          child: Text(row.title ?? uiText(c, spec.title), style: F.body.copyWith(color: p.ink2)),
         ),
       ]),
       const SizedBox(height: S.x3),
@@ -718,7 +728,7 @@ class MetricTrendCard extends StatelessWidget {
       height: 72,
       child: CustomPaint(
         size: Size.infinite,
-        painter: _Spark(row.points, row.band, color, p),
+        painter: _Spark(row.points, row.band, color, p, row.key),
       ),
     );
     return Surface(
@@ -776,7 +786,15 @@ class _Spark extends CustomPainter {
   final UsualRange? band;
   final Color color;
   final P p;
-  _Spark(this.pts, this.band, this.color, this.p);
+  final String metric;
+  _Spark(this.pts, this.band, this.color, this.p, this.metric);
+
+  /// A point's colour: its band's, for a metric with bands of its own
+  /// (recovery, strain, stress), else the metric's colour.
+  Color _at(double v) => switch (rangeColorFor(metric, v)) {
+        final c? => p.on(c),
+        null => color,
+      };
 
   @override
   void paint(Canvas c, Size s) {
@@ -816,23 +834,25 @@ class _Spark extends CustomPainter {
       final a = pts[i - 1], b = pts[i];
       // A gap of more than a day is a gap, not a line.
       if (DateTime.parse(b.day).difference(DateTime.parse(a.day)).inHours > 36) continue;
+      final seg = _at((a.value + b.value) / 2);
       c.drawLine(Offset(x(a.day), y(a.value)), Offset(x(b.day), y(b.value)),
-          line..color = (a.source ?? b.source) == null ? color : color.withValues(alpha: .5));
+          line..color = (a.source ?? b.source) == null ? seg : seg.withValues(alpha: .5));
     }
     for (var i = 0; i < pts.length; i++) {
       final pt = pts[i];
       final o = Offset(x(pt.day), y(pt.value));
       final lastOne = i == pts.length - 1;
+      final pc = _at(pt.value);
       if (lastOne) {
         c.drawCircle(o, 10,
-            Paint()..color = color.withValues(alpha: .3)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+            Paint()..color = pc.withValues(alpha: .3)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
       }
       final r = lastOne ? 6.0 : 3.0;
       if (pt.source == null && !lastOne) {
-        c.drawCircle(o, r, Paint()..color = color);
+        c.drawCircle(o, r, Paint()..color = pc);
       } else {
         c.drawCircle(o, r, Paint()..color = p.card);
-        c.drawCircle(o, r, Paint()..style = PaintingStyle.stroke..strokeWidth = 2..color = color);
+        c.drawCircle(o, r, Paint()..style = PaintingStyle.stroke..strokeWidth = 2..color = pc);
       }
     }
   }

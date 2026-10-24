@@ -872,8 +872,11 @@ class _ActivitySummaryState extends State<ActivitySummary> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         color: p.wash(a.color), borderRadius: R.rMd),
-                    child: Text('${row * 5 + i + 1}',
-                        style: F.n17.copyWith(color: p.on(a.color))),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text('${row * 5 + i + 1}',
+                          style: F.n17.copyWith(color: p.on(a.color))),
+                    ),
                   ),
                 ),
               ),
@@ -882,11 +885,15 @@ class _ActivitySummaryState extends State<ActivitySummary> {
         ],
         const SizedBox(height: S.x3),
         Row(children: [
-          Text(l?.activitySummaryRpeVeryEasy ?? '1 · very easy',
-              style: F.over.copyWith(color: p.ink3)),
-          const Spacer(),
-          Text(l?.activitySummaryRpeMaximal ?? '10 · maximal',
-              style: F.over.copyWith(color: p.ink3)),
+          Flexible(
+            child: Text(l?.activitySummaryRpeVeryEasy ?? '1 · very easy',
+                style: F.over.copyWith(color: p.ink3)),
+          ),
+          const SizedBox(width: S.x2),
+          Flexible(
+            child: Text(l?.activitySummaryRpeMaximal ?? '10 · maximal',
+                style: F.over.copyWith(color: p.ink3), textAlign: TextAlign.end),
+          ),
         ]),
         const SizedBox(height: S.x2),
         Align(

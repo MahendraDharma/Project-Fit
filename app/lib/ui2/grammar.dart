@@ -232,7 +232,7 @@ class Surface extends StatelessWidget {
   const Surface({
     super.key,
     required this.child,
-    this.pad = const EdgeInsets.all(S.x4),
+    this.pad = const EdgeInsets.symmetric(horizontal: S.x4 + 2, vertical: S.x5),
     this.onTap,
     this.color,
     this.elevation = 1,
@@ -283,7 +283,9 @@ class Section extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(S.x1, S.x5, S.x1, S.x2),
+          // Air above a section and a clear step to its content: the owner
+          // found the old 20/8 too tight next to Bevel's.
+          padding: const EdgeInsets.fromLTRB(S.x1, S.x8, S.x1, S.x3),
           child: Row(
             // spaceBetween owns the gap, so the action sits on the right edge
             // however short the title is. Previously the title was Expanded
@@ -297,7 +299,7 @@ class Section extends StatelessWidget {
               Flexible(
                 child: Text(
                   title,
-                  style: F.head.copyWith(color: p.ink),
+                  style: F.t2.copyWith(color: p.ink),
                   maxLines: wrapTitle ? null : 2,
                   overflow: wrapTitle
                       ? TextOverflow.visible

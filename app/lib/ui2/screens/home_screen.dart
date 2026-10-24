@@ -1085,7 +1085,7 @@ _RingState _ringOf(HomeRingKind k, HomeData d, AppLocalizations? l,
       return v == null
           ? _gap(k, l?.homeRingStrain ?? 'Strain', LucideIcons.zap, C.blue,
               d.strain, l?.homeRingNoStrain ?? 'No strain', l, unit: 'days')
-          : _RingState(k, l?.homeRingStrain ?? 'Strain', LucideIcons.zap, C.blue,
+          : _RingState(k, l?.homeRingStrain ?? 'Strain', LucideIcons.zap, strainColor(v),
               value: v.toStringAsFixed(1), sub: l?.homeStrainOf21 ?? 'of 21', frac: v / 21);
     case HomeRingKind.sleep:
       final v = d.sleepMin.value;
@@ -1095,7 +1095,8 @@ _RingState _ringOf(HomeRingKind k, HomeData d, AppLocalizations? l,
               d.sleepMin, l?.homeRingNoSleep ?? 'No sleep', l,
               fallbackWhy: l?.homeSleepGapFallback ??
                   'No night long enough to score was recorded.')
-          : _RingState(k, l?.homeRingSleep ?? 'Sleep', LucideIcons.moon, C.blueSoft,
+          : _RingState(k, l?.homeRingSleep ?? 'Sleep', LucideIcons.moon,
+              need == null || need <= 0 ? C.blueSoft : sleepColor(v / need * 100),
               value: hm(v),
               // No computed need means no denominator. The hardcoded 480 in
               // the sleep bundle is not this user's need and must never be

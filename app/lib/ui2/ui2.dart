@@ -13,6 +13,7 @@ export 'grammar.dart';
 export 'live_hr.dart';
 export 'ecg_widgets.dart';
 export 'paint_activity.dart';
+export 'ranges.dart';
 export 'revision.dart';
 export 'scroll_hint.dart';
 export 'theme.dart';

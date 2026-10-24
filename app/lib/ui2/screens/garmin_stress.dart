@@ -185,6 +185,7 @@ class _GarminStressScreenState extends State<GarminStressScreen> {
         ring: HeroRingSpec(
           frac: mean / 100,
           colors: [C.teal, kStressBandColors[band]],
+          labelColor: kStressBandColors[band],
           value: '${mean.round()}',
           label: names[band],
         ),

@@ -189,7 +189,7 @@ class _GaugeCard extends StatelessWidget {
         AspectRatio(
           aspectRatio: 1.4,
           child: CustomPaint(
-            painter: _Dial(acute, chronic, color, p),
+            painter: _Dial(acute, chronic, ratio == null ? color : wc, p),
             child: Center(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -198,7 +198,8 @@ class _GaugeCard extends StatelessWidget {
             ),
           ),
         ),
-        if (chronic != null)
+        if (chronic != null) ...[
+          const SizedBox(height: S.x2),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -208,6 +209,7 @@ class _GaugeCard extends StatelessWidget {
               style: F.cap.copyWith(color: p.ink3),
             ),
           ),
+        ],
       ]),
     );
   }
