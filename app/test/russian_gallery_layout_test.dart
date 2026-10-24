@@ -24,6 +24,18 @@ void main() {
       }
       await loader.load();
     }
+    // The big numerals are set in the bundled condensed face. Without it the
+    // test engine falls back to a far wider face and reports overflows the
+    // app cannot have.
+    final condensed = FontLoader('Barlow Condensed');
+    for (final file in Directory('assets/fonts/BarlowCondensed')
+        .listSync()
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.ttf'))) {
+      condensed.addFont(file.readAsBytes().then(
+          (bytes) => ByteData.sublistView(Uint8List.fromList(bytes))));
+    }
+    await condensed.load();
   });
 
   for (final (width, scale) in [(320.0, 1.0), (320.0, 2.0), (390.0, 3.1)]) {

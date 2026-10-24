@@ -151,6 +151,48 @@ const _night = <SleepStage>[
   ...[SleepStage.light, SleepStage.rem, SleepStage.light, SleepStage.awake],
 ];
 
+/// Home's data-dense cards, every field present: the shape of an ordinary day
+/// once the first nights are in. The heart line has a gap (a strap off the
+/// wrist mid-afternoon) so the gap is photographed as a gap.
+const _vitals = HomeVitals(
+  hrv: 90,
+  rhr: 51,
+  resp: 14.6,
+  stress: 13,
+  skinTempZ: -0.2,
+  hrAvg: 75,
+  hrMin: 44,
+  hrMax: 186,
+  hr: [(t: 0, v: 58.0), (t: 1800, v: 55.0), (t: 3600, v: 52.0), (t: 5400, v: 50.0), (t: 7200, v: 49.0), (t: 9000, v: 51.0), (t: 10800, v: 50.0), (t: 12600, v: 53.0), (t: 14400, v: 52.0), (t: 16200, v: 54.0), (t: 18000, v: 51.0), (t: 19800, v: 56.0), (t: 21600, v: 62.0), (t: 23400, v: 74.0), (t: 25200, v: 82.0), (t: 27000, v: 90.0), (t: 28800, v: 96.0), (t: 30600, v: 104.0), (t: 32400, v: 98.0), (t: 34200, v: 88.0), (t: 36000, v: 92.0), (t: 37800, v: 85.0), (t: 61200, v: 120.0), (t: 63000, v: 148.0), (t: 64800, v: 166.0), (t: 66600, v: 180.0), (t: 68400, v: 140.0), (t: 70200, v: 110.0), (t: 72000, v: 95.0), (t: 73800, v: 88.0)],
+  zoneMin: [97, 20, 3, 32, 13],
+  zoneLower: [97, 116, 135, 155, 174],
+  stages: _night,
+  onsetTs: 600,
+  wakeTs: 34200,
+  sleepMin: 507,
+  efficiency: .91,
+  deepMin: 76,
+  remMin: 114,
+  needMin: 660,
+  debtMin: 153,
+  cycles: 4,
+  regularity: 86,
+  watchHave: 3,
+  watchNeed: 7,
+  bedtimeMin: 1220,
+  wakeMin: 498,
+  nightsRecorded: 4,
+  recoveryHave: 0,
+  recoveryNeed: 7,
+  dash: {
+    'hrv': (today: 90, before: 98),
+    'resting_hr': (today: 51, before: 53),
+    'steps': (today: 14128, before: 4988),
+    'resp_rate': (today: 14.6, before: 13.7),
+    'calories': (today: 1155, before: 980),
+  },
+);
+
 /// Everything, in the order the gallery lists it.
 Map<String, Widget> galleryCases() => {...componentCases(), ...extraCases()};
 
@@ -171,6 +213,15 @@ Map<String, Widget> componentCases() => {
       // screen which can say more — including the one absence nothing
       // explained, which says exactly that.
       'rings_absent': const RingTrio(d: _ringsAbsent),
+      // Home's data-dense half, each card on the same full day.
+      'vital_chips': const VitalChips(_vitals),
+      'day_heart': const DayHeartCard(_vitals),
+      'night_card': const NightCard(_vitals),
+      'health_monitor': const HealthMonitorCard(_vitals),
+      'dashboard_rows': const DashboardRows(_vitals),
+      'recovery_calibration': const RecoveryCalibrationCard(_vitals),
+      'my_day': const MyDayCard(_vitals),
+      'tonight': const TonightCard(_vitals),
       // The ONE card, both faces: the map as the background, and a photograph
       // as the background with the route dissolved into its corner.
       'share_card': _shareCard(photo: false),

@@ -135,20 +135,27 @@ class P {
 
   static P of(BuildContext c) => P(Theme.of(c).brightness == Brightness.dark);
 
-  Color get bg => dark ? const Color(0xFF0B1017) : C.n50;
-  Color get card => dark ? const Color(0xFF151C26) : C.white;
-  Color get card2 => dark ? const Color(0xFF1D2632) : C.n100;
-  Color get line => dark ? const Color(0xFF232D3B) : C.n200;
-  Color get track => dark ? const Color(0xFF232D3B) : C.n200;
+  // Two looks, one token set. DARK is the performance look: a deep slate page
+  // with slate cards a step lighter, so the scores and rings carry the colour.
+  // LIGHT is the calm look: a cool off-white page with white, softly lifted
+  // cards.
+  Color get bg => dark ? const Color(0xFF1E2328) : const Color(0xFFF3F4F8);
+  Color get card => dark ? const Color(0xFF2C3238) : C.white;
+  Color get card2 => dark ? const Color(0xFF363D44) : const Color(0xFFECEEF3);
+  Color get line => dark ? const Color(0xFF3B434B) : const Color(0xFFE3E6EC);
+  Color get track => dark ? const Color(0xFF3B434B) : const Color(0xFFE3E6EC);
 
-  Color get ink => dark ? const Color(0xFFF1F5F9) : C.n900;
-  Color get ink2 => dark ? const Color(0xFF94A3B8) : C.n600;
+  Color get ink => dark ? const Color(0xFFF5F7FA) : const Color(0xFF15171C);
+  Color get ink2 => dark ? const Color(0xFFC2C9D0) : const Color(0xFF5B6170);
 
   /// The muted caption ink. Hand-solved to clear 4.5:1 on [card2], the darkest
   /// (light theme) / lightest (dark theme) surface it can sit on — so it is
   /// legible on every surface, not just the one it was eyeballed against.
-  /// The values it replaces measured 4.34:1 and 3.21:1 respectively.
-  Color get ink3 => dark ? const Color(0xFF7F8DA0) : const Color(0xFF627188);
+  /// 4.78:1 (dark) and 5.03:1 (light) on that surface.
+  Color get ink3 => dark ? const Color(0xFFA3ACB5) : const Color(0xFF5E6575);
+
+  /// A card's corners. Crisp on the dark look, soft and round on the light one.
+  BorderRadius get cardRadius => dark ? R.rLg : R.rXl;
 
   /// The ink that goes on top of a [fill]. White by construction — [fill]
   /// darkens the accent until white clears AA on it.
@@ -195,11 +202,14 @@ class P {
         ),
       ];
     }
+    // Light cards float: a wide, faint, slightly lowered shadow rather than a
+    // tight edge, so the card reads as lifted off the page, not outlined.
     return [
       BoxShadow(
-        color: C.n900.withValues(alpha: .04 + level * .015),
-        blurRadius: 5.0 * level,
-        offset: Offset(0, level * 1.2),
+        color: const Color(0xFF1B2340).withValues(alpha: .035 + level * .015),
+        blurRadius: 14.0 * level + 4,
+        spreadRadius: -2,
+        offset: Offset(0, 3.0 * level + 1),
       ),
     ];
   }
@@ -305,31 +315,65 @@ class F {
       fontWeight: FontWeight.w600,
       letterSpacing: .5);
 
+  /// The dashboard voice for card headings and labels: tracked capitals. Set
+  /// on the caller's string with `toUpperCase()`; the tracking is here.
+  static const label = TextStyle(
+      fontFamily: _f,
+      fontFamilyFallback: _fb,
+      fontSize: 13,
+      height: 18 / 13,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1.8);
+  /// The app's name at the top of Home: thin, widely tracked capitals.
+  static const wordmark = TextStyle(
+      fontFamily: _f,
+      fontFamilyFallback: _fb,
+      fontSize: 16,
+      height: 20 / 16,
+      fontWeight: FontWeight.w300,
+      letterSpacing: 6);
+  static const labelSm = TextStyle(
+      fontFamily: _f,
+      fontFamilyFallback: _fb,
+      fontSize: 10,
+      height: 14 / 10,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1.2);
+
   // Numerals — a parallel display ramp. Tabular, so a live value never jitters
   // its own layout as digits change.
+  //
+  // The three big steps are set in the bundled Barlow Condensed: a score read
+  // from across a room wants a tall, tight, heavy figure, and a condensed face
+  // gives that weight without the width (a four-digit step count still fits a
+  // half-width tile at large text). n17 stays in the text face because it sits
+  // inline with running text. Sizes match the text-face ramp they replace, so
+  // where the condensed face is missing the fallback lays out exactly as before.
+  // (So do the letter-spacings.)
+  static const _num = 'Barlow Condensed';
   static const n48 = TextStyle(
-      fontFamily: _f,
+      fontFamily: _num,
       fontFamilyFallback: _fb,
       fontSize: 48,
       height: 1,
-      fontWeight: FontWeight.w700,
       letterSpacing: -1.8,
+      fontWeight: FontWeight.w800,
       fontFeatures: _tab);
   static const n34 = TextStyle(
-      fontFamily: _f,
+      fontFamily: _num,
       fontFamilyFallback: _fb,
       fontSize: 34,
       height: 1,
-      fontWeight: FontWeight.w700,
       letterSpacing: -1.2,
+      fontWeight: FontWeight.w800,
       fontFeatures: _tab);
   static const n24 = TextStyle(
-      fontFamily: _f,
+      fontFamily: _num,
       fontFamilyFallback: _fb,
       fontSize: 24,
       height: 1,
-      fontWeight: FontWeight.w700,
       letterSpacing: -.7,
+      fontWeight: FontWeight.w700,
       fontFeatures: _tab);
   static const n17 = TextStyle(
       fontFamily: _f,

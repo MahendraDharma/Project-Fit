@@ -23,7 +23,7 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Release v0.11.3 has `ProjectFit.ipa`, `projectfit-v0.11.3-unsigned.ipa` and `apps.json`.
+- Release v0.12.0 has `ProjectFit.ipa`, `projectfit-v0.12.0-unsigned.ipa` and `apps.json`.
   - Fixed download link: `releases/latest/download/ProjectFit.ipa`.
   - SideStore/AltStore source: `releases/latest/download/apps.json`.
 - To cut a release, run **Actions → ios-sideload → Run workflow** with `release_tag`, either
@@ -36,13 +36,24 @@ Installed with Xcode and a free Personal Team (team ID in the owner's gitignored
 `cd ~/Project-Fit/app && git pull && flutter run --release` on the owner's Mac. Sideloadly and
 AltServer fail on Apple's October 2026 login block (`-80045`); see `docs/IOS_SIDELOAD.md`.
 
-## UI redesign (requested, not started)
-The owner finds the UI identical to OpenStrap and wants a WHOOP- or Bevel-inspired look (style
-only — no WHOOP/Bevel logos, assets or trade dress). Two Home mockups were rendered on real data:
-A = WHOOP-like (black, condensed bold numerals, three rings, stat rows with sparklines), B =
-Bevel-like (light, white rounded cards, half-ring gauges, gradient insight card, 2×2 biomarker
-tiles, floating pill nav). Await the owner's pick, then: tokens in `app/lib/ui2/theme.dart`
-first, then Home, Sleep, Recovery, Strain, Health, keeping the gallery/overflow/l10n tests green.
+## UI redesign (done in v0.12.0: mockup v3)
+The owner picked mockup v3, a WHOOP-inspired, data-dense Home (style only: no WHOOP logos,
+assets or trade dress).
+- Tokens live in `app/lib/ui2/theme.dart`:
+  - dark: slate `#1E2328`, Barlow Condensed numerals
+  - light: Bevel-like
+- The tab bar is a floating pill.
+- Home has:
+  - a top bar with avatar, wordmark and battery, then rings with the value inside
+  - vital chips and a day heart-rate card with zones
+  - the recovery calibration card
+  - My Day: activities, last night, tonight, health monitor
+  - Dashboard rows comparing today against the 30-day mean
+- The cards are in `app/lib/ui2/screens/home_vitals.dart` and are listed in the gallery.
+- Indonesian (`app_id.arb`) is partial: tabs, rings, the new Home cards and some device copy.
+  Other strings fall back to English.
+- Not done: Sleep, Recovery, Strain and Health in the new style; the daytime stress chart that
+  was offered; the full Indonesian translation.
 
 ## Rendering screens from a real export (no device needed)
 The previous session did this with a throwaway widget test that was deleted afterwards. To
@@ -67,7 +78,7 @@ redo it:
 - Settings → Social preview → upload `docs/assets/social-preview.png`.
 
 ## Open work, in order
-1. UI redesign (see above).
+1. Restyle the detail screens to match the v3 Home.
 2. Garmin account export (the owner requested it; up to 48 h). Run
    `python3 -I tools/garmin_inventory/inventory.py <zip> -o garmin_report.md --json garmin_report.json`
    outside the repo, then plan the Garmin import path (FIT + Apple Health).

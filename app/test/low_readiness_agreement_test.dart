@@ -52,8 +52,18 @@ void main() {
   // Today's night, scored (so the ring shows today's overnight), with NO
   // readiness of its own; the crossday rollup says today is settled.
   Future<void> seed({required bool nullRow}) async {
-    final wakeSec =
-        DateTime.now().millisecondsSinceEpoch ~/ 1000 - 13 * 3600;
+    // Thirteen hours back, unless that lands in the small hours. Run at 15:40
+    // UTC (wake 02:40) both cases below failed on nothing but the time of day,
+    // while a wake at 09:40 or at 22:40 the evening before passed. 22:00 the
+    // evening before is further back still, so the night stays settled.
+    final now = DateTime.now();
+    var wakeSec = now.millisecondsSinceEpoch ~/ 1000 - 13 * 3600;
+    if (DateTime.fromMillisecondsSinceEpoch(wakeSec * 1000).hour < 4) {
+      wakeSec = DateTime(now.year, now.month, now.day)
+                  .subtract(const Duration(hours: 2))
+                  .millisecondsSinceEpoch ~/
+              1000;
+    }
     final db = await LocalDb.instance;
     await db.delete('day_result');
     await db.delete('metric_series');

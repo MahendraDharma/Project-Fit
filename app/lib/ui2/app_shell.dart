@@ -171,14 +171,22 @@ class _TabBar extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    return Container(
-      decoration: BoxDecoration(
-        color: p.card,
-        border: Border(top: BorderSide(color: p.line)),
-      ),
+    // A floating pill rather than a full-width strip: inset from the edges and
+    // the home indicator, rounded, on the page colour.
+    return ColoredBox(
+      color: p.bg,
       child: SafeArea(
         top: false,
-        child: IntrinsicHeight(
+        minimum: const EdgeInsets.fromLTRB(S.x3, 0, S.x3, S.x2),
+        child: Container(
+          decoration: BoxDecoration(
+            color: p.card,
+            borderRadius: R.rXl,
+            border: Border.all(color: p.line),
+            boxShadow: p.el(2),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: S.x1),
+          child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -191,6 +199,7 @@ class _TabBar extends StatelessWidget {
                   ),
                 ),
             ],
+          ),
           ),
         ),
       ),
@@ -208,7 +217,7 @@ class _Tab extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    final ink = on ? p.on(domain.accent) : p.ink3;
+    final ink = on ? p.ink : p.ink3;
     final label = domain.title(c);
     return Semantics(
       selected: on,
