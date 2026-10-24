@@ -9,6 +9,8 @@
 // Every metric goes through THIS screen. Forty bespoke detail screens is how
 // the old UI ended up with forty different opinions about what a chart is.
 
+import 'dart:ui' as ui;
+
 import '../../l10n/display_text.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -1945,26 +1947,60 @@ class _StepGoalGaugeState extends State<_StepGoalGauge> {
 /// in one function is the reason the back affordance is in the same place on
 /// all of them.
 Widget detailScaffold(BuildContext c, String title, List<Widget> body,
-    {String sub = '', Widget? trailing}) {
+    {String sub = '', Widget? trailing, Widget Function(double topInset)? hero}) {
   final p = P.of(c);
+  final nav = NavBar(title,
+      sub: sub, trailing: trailing, onBack: () => Navigator.of(c).maybePop());
+  if (hero == null) {
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: S.x4),
+            child: nav,
+          ),
+          Expanded(
+            child: ListView(
+                padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x12),
+                children: body),
+          ),
+        ]),
+      ),
+    );
+  }
+  // The hero runs full-bleed under a frosted bar, the way its sky is meant to
+  // be seen; everything after it keeps the usual side margins.
+  final top = MediaQuery.paddingOf(c).top + S.x12 + S.x1;
   return Scaffold(
     backgroundColor: p.bg,
-    body: SafeArea(
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: S.x4),
-          child: NavBar(title,
-              sub: sub,
-              trailing: trailing,
-              onBack: () => Navigator.of(c).maybePop()),
-        ),
-        Expanded(
-          child: ListView(
-              padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x12),
-              children: body),
-        ),
+    body: Stack(children: [
+      ListView(padding: const EdgeInsets.only(bottom: S.x12), children: [
+        hero(top),
+        for (final w in body)
+          Padding(padding: const EdgeInsets.symmetric(horizontal: S.x4), child: w),
       ]),
-    ),
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+            child: ColoredBox(
+              color: p.bg.withValues(alpha: .35),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: S.x4),
+                  child: nav,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ]),
   );
 }
 

@@ -19,6 +19,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/metric.dart';
 import '../../models/payloads.dart' show todayHeadlineOf;
 import '../ui2.dart';
+import 'detail_v4.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'metric_detail.dart';
@@ -169,6 +170,9 @@ class _ReadinessDetailState extends State<ReadinessDetail> {
     // No date in the nav bar. It named the held-over night, and the headline
     // can no longer BE that night — a date up here now would be labelling
     // today's number with somebody else's day.
+    // The sky and the trends read the repository themselves; a screen handed
+    // its data (a golden, a test) keeps the plain layout.
+    final live = widget.data == null && repoOf(c) != null;
     return detailScaffold(c, l?.readinessDetailTitle ?? 'Recovery', [
       if (_loading && _d == null) ...[
         const SizedBox(height: S.x8),
@@ -324,8 +328,9 @@ class _ReadinessDetailState extends State<ReadinessDetail> {
         ),
         const SizedBox(height: S.x5),
         investigateRow(c, () => go(c, const Investigate('readiness'))),
+        if (live) const TrendSection(kRecoveryTrends),
       ],
-    ]);
+    ], hero: live ? (t) => DetailTop(DetailKind.recovery, topInset: t) : null);
   }
 
   /// The last 90 CALENDAR days, trimmed to start at the first day that

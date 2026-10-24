@@ -154,6 +154,17 @@ const _night = <SleepStage>[
 /// Home's data-dense cards, every field present: the shape of an ordinary day
 /// once the first nights are in. The heart line has a gap (a strap off the
 /// wrist mid-afternoon) so the gap is photographed as a gap.
+final _trendPts = <TrendPoint>[
+  (day: '2026-10-14', value: 50.1, source: null),
+  (day: '2026-10-15', value: 49.0, source: null),
+  (day: '2026-10-16', value: 55.0, source: 'Connect'),
+  (day: '2026-10-17', value: 51.0, source: null),
+];
+final _spo2Pts = <TrendPoint>[
+  (day: '2026-10-16', value: 96.0, source: 'Connect'),
+  (day: '2026-10-17', value: 95.0, source: 'Connect'),
+];
+
 const _vitals = HomeVitals(
   hrv: 90,
   rhr: 51,
@@ -222,6 +233,22 @@ Map<String, Widget> componentCases() => {
       'recovery_calibration': const RecoveryCalibrationCard(_vitals),
       'my_day': const MyDayCard(_vitals),
       'tonight': const TonightCard(_vitals),
+      'detail_top': DetailTop(DetailKind.sleep,
+          data: DetailTopData(
+              HomeData(dayId: '2026-10-17', sleepMin: Metric(value: 507), sleepNeedMin: Metric(value: 660)),
+              _vitals)),
+      'detail_hero': const DetailHero(
+          tint: C.green,
+          date: 'Sat 17 Oct',
+          ring: HeroRingSpec(dashes: 7, filled: 3, colors: [C.greenD, C.green], value: '3/7', label: 'nights calibrating')),
+      'detail_tiles': const DetailTiles([
+        DetailTile(icon: LucideIcons.activity, label: 'Resting HRV', value: '90', unit: 'ms'),
+        DetailTile(icon: LucideIcons.heart, label: 'Resting HR', value: '51', unit: 'bpm'),
+      ]),
+      'coaching': const CoachingCard('You slept 8h 27m of the 11h you needed. Aim to be in bed around 20:20 tonight.'),
+      'metric_trend_card': MetricTrendCard(TrendRow('resting_hr', _trendPts, const UsualRange(48, 55))),
+      'trend_section': TrendSection(kRecoveryTrends,
+          rows: [TrendRow('resting_hr', _trendPts, null), TrendRow('spo2', _spo2Pts, null)]),
       // The ONE card, both faces: the map as the background, and a photograph
       // as the background with the route dissolved into its corner.
       'share_card': _shareCard(photo: false),

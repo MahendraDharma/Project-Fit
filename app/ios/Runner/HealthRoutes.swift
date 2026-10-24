@@ -123,7 +123,7 @@ enum HealthRouteBridge {
         return
       }
       completion(
-        qs.map { q in
+        qs.map { q -> [String: Any] in
           [
             "uuid": q.uuid.uuidString,
             "ts": Int(q.endDate.timeIntervalSince1970 * 1000),

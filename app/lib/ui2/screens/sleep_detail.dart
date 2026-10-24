@@ -31,6 +31,7 @@ import '../../models/metric.dart';
 import '../profile/devices.dart' show DeviceFilter;
 import '../profile/profile.dart' show ProfileAvatar;
 import '../ui2.dart';
+import 'detail_v4.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'metric_detail.dart';
@@ -395,23 +396,40 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
   /// The pushed screen's scaffold, or the tab's own header and footer.
   Widget _frame(BuildContext c, String title, List<Widget> body,
       {String sub = ''}) {
-    if (!widget.embedded) return detailScaffold(c, title, body, sub: sub);
+    // The sky and the trends read the repository themselves; a screen handed
+    // its data (a golden, a test) keeps the plain layout.
+    final live = widget.data == null && repoOf(c) != null && _d != null;
+    final day = _d?.day;
+    final trends = [
+      if (live) TrendSection(kSleepTrends, key: ValueKey('t$day'), until: day),
+    ];
+    Widget hero(double t) =>
+        DetailTop(DetailKind.sleep, key: ValueKey('h$day'), day: day, topInset: t);
+    if (!widget.embedded) {
+      return detailScaffold(c, title, [...body, ...trends],
+          sub: sub, hero: live ? hero : null);
+    }
     final p = P.of(c);
+    const side = EdgeInsets.symmetric(horizontal: S.x4);
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(S.x4, S.x4, S.x4, S.x16),
+        padding: const EdgeInsets.fromLTRB(0, S.x4, 0, S.x16),
         children: [
-          ScreenTitle(title,
-              trailing: const ProfileAvatar(accent: C.domSleep)),
+          Padding(
+            padding: side,
+            child: ScreenTitle(title,
+                trailing: const ProfileAvatar(accent: C.domSleep)),
+          ),
           if (sub.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(left: S.x1, bottom: S.x2),
+              padding: const EdgeInsets.fromLTRB(S.x4 + S.x1, 0, S.x4, S.x2),
               child: Text(sub, style: F.over.copyWith(color: p.ink3)),
             ),
-          ...body,
-          ...widget.footer,
+          if (live) hero(0),
+          for (final w in [...body, ...trends, ...widget.footer])
+            Padding(padding: side, child: w),
         ],
       ),
     );

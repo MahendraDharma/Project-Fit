@@ -78,8 +78,9 @@ typedef ExternalDay = ({double value, String source});
 /// and its name is the one shown. Never mixed with the band's own values.
 Future<Map<String, ExternalDay>> loadExternalDays(String kind,
     {required String until, int days = 90}) async {
-  final end = DateTime.parse(until).add(const Duration(days: 1));
-  final start = end.subtract(Duration(days: days));
+  final u = DateTime.parse(until);
+  final end = DateTime(u.year, u.month, u.day + 1);
+  final start = DateTime(u.year, u.month, u.day + 1 - days);
   final rows = await LocalDb.importedMeasurementsBetween(
       kind, start.millisecondsSinceEpoch ~/ 1000, end.millisecondsSinceEpoch ~/ 1000);
   return externalDaysFrom(rows);

@@ -10,6 +10,8 @@ export 'findings_log.dart';
 export 'health_screen.dart';
 export 'home_screen.dart';
 export 'home_vitals.dart';
+export 'detail_v4.dart';
+export 'external_vitals.dart';
 export 'calm_breathing.dart';
 export 'cycle_screen.dart';
 export 'day_steps.dart';

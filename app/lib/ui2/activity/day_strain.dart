@@ -27,6 +27,7 @@ import '../../l10n/app_localizations.dart';
 import '../../l10n/date_text.dart';
 import '../../models/metric.dart' show whyFromNote;
 import '../screens/home_screen.dart' show repoOf;
+import '../screens/detail_v4.dart';
 import '../screens/metric_detail.dart' show detailScaffold;
 import '../ui2.dart';
 import 'catalogue.dart' show zonesWhy;
@@ -218,6 +219,7 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
         ? (l?.dayStrainToday ?? 'TODAY')
         : localizedDate(day, l?.localeName ?? 'en', pattern: 'd MMMM');
 
+    final live = widget.data == null && repoOf(c) != null;
     return detailScaffold(
       c,
       l?.dayStrainTitle ?? 'Day strain',
@@ -230,9 +232,16 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
           ..._zones(p, l, d),
           Section(l?.dayStrainInputsSection ?? 'What this is made of',
               _inputs(p, l, d)),
+          if (live)
+            TrendSection(kStrainTrends,
+                key: ValueKey(day), until: day == null ? null : dayLabelOf(day)),
         ],
       ],
       sub: sub,
+      hero: live
+          ? (t) => DetailTop(DetailKind.strain,
+              key: ValueKey(day), day: day == null ? null : dayLabelOf(day), topInset: t)
+          : null,
     );
   }
 
