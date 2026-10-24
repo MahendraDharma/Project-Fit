@@ -16,6 +16,7 @@ export 'month_calendar.dart';
 export 'body_battery.dart';
 export 'garmin_stress.dart';
 export 'wear_streak.dart';
+export 'fitness_overview.dart';
 export 'external_vitals.dart';
 export 'calm_breathing.dart';
 export 'cycle_screen.dart';

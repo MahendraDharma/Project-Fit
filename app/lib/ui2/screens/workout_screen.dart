@@ -26,6 +26,7 @@ import '../../gps/gps_source.dart';
 import '../../gps/route_models.dart';
 import '../../health/health_import_state.dart';
 import '../../health/auto_workout_import.dart';
+import '../../health/health_readings_import.dart' show kKindVo2;
 import '../../health/health_workout_import.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/metric.dart';
@@ -46,6 +47,7 @@ import '../grammar.dart';
 import '../revision.dart';
 import '../theme.dart';
 import '../../data/day_label.dart' show calendarDaysBetween;
+import 'fitness_overview.dart';
 import 'log_workout.dart';
 import 'metric_detail.dart' show MetricDetail, detailLinkRow;
 import 'nutrition_screen.dart';
@@ -140,6 +142,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
     final p = P.of(c);
     final loc = AppLocalizations.of(c);
     return [
+      if (d.fitness case final f?) ...[
+        FitnessOverview(f),
+        const SizedBox(height: S.x5),
+      ],
       StartCard(
         label: loc?.workoutStartSessionLabel ?? 'START A SESSION',
         count: allActivities.length,
@@ -1988,6 +1994,9 @@ class _WorkoutData {
   /// one — see health_import_state.dart for why the store cannot be asked.
   final DateTime? importedLast;
 
+  /// The Bevel-style overview at the top of For you; null with no repo.
+  final FitnessSummary? fitness;
+
   const _WorkoutData({
     this.weightKg,
     this.load,
@@ -2009,6 +2018,7 @@ class _WorkoutData {
     this.morningAfter = const [],
     this.suggestions = const [],
     this.importedLast,
+    this.fitness,
   });
 
   const _WorkoutData.empty() : this();
@@ -2171,16 +2181,30 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
     // TS-08b — the same week's sets, counted per muscle. Read off the rows the
     // tonnage loop already fetches, so it costs no extra query.
     final weekSets = <StrengthSetInput>[];
+    // The whole month's kilos by day and each muscle's last session, for the
+    // overview's muscular gauge and muscle list: the same rows, read once.
+    final tonnageByDay = <DateTime, double>{};
+    final lastTrained = <String, DateTime>{};
     final tonnageJobs = <Future<void>>[];
     for (final w in past) {
+      if (w.id.isEmpty || w.importedFrom != null) continue;
       final slot = _daySlot(w.start, end);
-      if (slot == null || w.id.isEmpty || w.importedFrom != null) continue;
       tonnageJobs.add(LocalDb.strengthSets(w.id).then((rows) {
         if (rows.isEmpty) return;
         final log = _logFrom(rows);
-        weekSets.addAll(strengthSetInputs(log));
-        if (log.hasUnloadedSets) tonnagePartial = true;
+        final inputs = strengthSetInputs(log);
+        for (final i in inputs) {
+          for (final m in i.primaryMuscles) {
+            final prev = lastTrained[m];
+            if (prev == null || w.start.isAfter(prev)) lastTrained[m] = w.start;
+          }
+        }
         final v = log.volumeKg;
+        final day = DateTime(w.start.year, w.start.month, w.start.day);
+        if (v != null) tonnageByDay[day] = (tonnageByDay[day] ?? 0) + v;
+        if (slot == null) return;
+        weekSets.addAll(inputs);
+        if (log.hasUnloadedSets) tonnagePartial = true;
         if (v == null) return; // bodyweight-only session: no kilos to add
         tonnage7[slot] = (tonnage7[slot] ?? 0) + v;
       }));
@@ -2229,6 +2253,16 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
     // them.
     final history = await loadSetHistory();
 
+    final fitness = await _fitnessSummary(
+      end: end,
+      load: note == null ? load : null,
+      past: past,
+      tonnageByDay: tonnageByDay,
+      lastTrained: lastTrained,
+      week: muscleVolume(weekSets).value,
+      tonnage7: tonnage7,
+    );
+
     return _WorkoutData(
       weightKg: weight,
       load: load,
@@ -2238,6 +2272,7 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
       tonnage7: tonnage7,
       tonnagePartial: tonnagePartial,
       muscleWeek: muscleVolume(weekSets).value,
+      fitness: fitness,
       workouts: past,
       // Imported days light a dot too. This strip says "you trained", not
       // "this band measured you", and a Sunday run left dark because the watch
@@ -2254,4 +2289,90 @@ Future<_WorkoutData> _loadWorkoutData(AppState app) async {
       suggestions: await activeSuggestions(),
       importedLast: await lastImportAt(HealthImport.workouts),
     );
+}
+
+/// The overview's figures, all from rows this loader already read.
+Future<FitnessSummary> _fitnessSummary({
+  required DateTime end,
+  required _Load? load,
+  required List<_PastWorkout> past,
+  required Map<DateTime, double> tonnageByDay,
+  required Map<String, DateTime> lastTrained,
+  required MuscleVolume? week,
+  required List<double?> tonnage7,
+}) async {
+  final monday = DateTime(end.year, end.month, end.day - (end.weekday - 1));
+  final lastMonday = DateTime(monday.year, monday.month, monday.day - 7);
+  List<double> perDay(DateTime from, int days, double Function(_PastWorkout) f) => [
+        for (var i = 0; i < days; i++)
+          past
+              .where((w) {
+                final d = DateTime(w.start.year, w.start.month, w.start.day);
+                return d == DateTime(from.year, from.month, from.day + i);
+              })
+              .fold(0.0, (a, w) => a + f(w)),
+      ];
+  final today = end.weekday; // days of this week so far, Monday = 1
+  final zones = List<double>.filled(5, 0);
+  for (final w in past) {
+    if (w.start.isBefore(monday) || w.zoneMinutes.length != 5) continue;
+    for (var i = 0; i < 5; i++) {
+      zones[i] += w.zoneMinutes[i];
+    }
+  }
+  int? hrr;
+  for (final w in past) {
+    if (w.hrr60 != null) {
+      hrr = w.hrr60;
+      break;
+    }
+  }
+  double? vo2;
+  String? vo2Source;
+  try {
+    final r = await LocalDb.importedMeasurements(kKindVo2, limit: 1);
+    if (r.isNotEmpty) {
+      vo2 = (r.first['value'] as num).toDouble();
+      vo2Source = r.first['source'] as String?;
+    }
+  } catch (_) {}
+  if (vo2 == null) {
+    for (final w in past) {
+      if (w.vo2max != null) {
+        vo2 = w.vo2max;
+        vo2Source = 'ProjectFit';
+        break;
+      }
+    }
+  }
+  // Muscular: the last seven days against the mean week of the 28 before,
+  // only once lifting reaches back three weeks.
+  double sumKg(int fromBack, int toBack) => [
+        for (var i = fromBack; i < toBack; i++)
+          tonnageByDay[DateTime(end.year, end.month, end.day - i)] ?? 0.0,
+      ].fold(0.0, (a, b) => a + b);
+  final firstLift = tonnageByDay.keys.isEmpty
+      ? null
+      : tonnageByDay.keys.reduce((a, b) => a.isBefore(b) ? a : b);
+  final chronicKg = firstLift != null &&
+          !firstLift.isAfter(DateTime(end.year, end.month, end.day - 21))
+      ? sumKg(7, 35) / 4
+      : null;
+  final volume = tonnage7.whereType<double>().fold<double?>(null, (a, b) => (a ?? 0) + b);
+  return FitnessSummary(
+    cardio: load == null ? null : (acute: load.atl ?? load.ctl, chronic: load.ctl),
+    muscular: tonnageByDay.isEmpty ? null : (acute: sumKg(0, 7), chronic: chronicKg),
+    activeMinThis: perDay(monday, today, (w) => w.duration.inSeconds / 60),
+    activeMinLast: perDay(lastMonday, 7, (w) => w.duration.inSeconds / 60),
+    kcalThis: perDay(monday, today, (w) => (w.calories ?? 0).toDouble()),
+    kcalLast: perDay(lastMonday, 7, (w) => (w.calories ?? 0).toDouble()),
+    zones: zones,
+    vo2: vo2,
+    vo2Source: vo2Source,
+    hrr: hrr,
+    totalSets: week?.totalSets ?? 0,
+    volumeKg: volume,
+    lastTrained: lastTrained,
+    weekSets: week?.setsByMuscle ?? const {},
+  );
 }

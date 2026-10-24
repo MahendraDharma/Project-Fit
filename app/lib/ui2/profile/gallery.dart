@@ -244,6 +244,24 @@ Map<String, Widget> componentCases() => {
       ]),
       'streak_chip': StreakChip(
           streak: WearStreak.from({'2026-10-23': 600, '2026-10-24': 500}, DateTime(2026, 10, 24))),
+      'fitness_overview': FitnessOverview(
+          FitnessSummary(
+            cardio: (acute: 21, chronic: 24),
+            muscular: (acute: 2400, chronic: null),
+            activeMinThis: const [40, 0, 65, 30, 0, 90],
+            activeMinLast: const [30, 45, 0, 60, 30, 0, 120],
+            kcalThis: const [300, 0, 520, 210, 0, 700],
+            kcalLast: const [250, 330, 0, 480, 200, 0, 900],
+            zones: const [40, 70, 55, 30, 8],
+            vo2: 41,
+            vo2Source: 'Connect',
+            hrr: 41,
+            totalSets: 18,
+            volumeKg: 2400,
+            lastTrained: {'quadriceps': DateTime(2026, 10, 23), 'chest': DateTime(2026, 10, 20)},
+            weekSets: const {'quadriceps': 9, 'chest': 6},
+          ),
+          now: DateTime(2026, 10, 24, 20)),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',
