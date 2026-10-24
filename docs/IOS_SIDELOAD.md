@@ -220,6 +220,7 @@ flutter --version
 ### Langkah 3 — Unduh ProjectFit dan siapkan tanda tangan
 ```bash
 git clone https://github.com/MahendraDharma/Project-Fit.git ~/Project-Fit
+flutter precache --ios
 cd ~/Project-Fit/app && flutter pub get && cd ios && pod install
 defaults read com.apple.dt.Xcode IDEProvisioningTeams | grep -E "teamID|teamName"
 ```
