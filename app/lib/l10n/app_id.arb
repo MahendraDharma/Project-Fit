@@ -222,5 +222,9 @@
   "fitRecoveryNote": "Perkiraan dari set yang Anda catat: kelelahan tiap sesi berkurang separuh setiap 24 jam, 36 jam kalau set sampai gagal (failure).",
   "profilePhotoAdd": "Tambah foto",
   "profilePhotoChange": "Ganti foto",
-  "profilePhotoRemove": "Hapus"
+  "profilePhotoRemove": "Hapus",
+  "homeStressEnergy": "Stres & energi",
+  "homeFromGarminWatch": "Dari jam Garmin yang dipasangkan",
+  "hrDayNoneTitle": "Belum ada detak jantung untuk hari ini",
+  "hrDayNoneBody": "Band tidak merekam apa pun pada hari ini."
 }

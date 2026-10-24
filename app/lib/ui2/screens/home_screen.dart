@@ -70,7 +70,8 @@ import '../../state/clock_format.dart' show formatClockOf;
 import '../../state/units_controller.dart';
 import '../../theme/theme_switcher.dart' show themedRoute;
 import '../activity/day_strain.dart' show DayStrainDetail;
-import 'detail_v4.dart' show OtherDevicesCard;
+import 'detail_v4.dart' show OtherDevicesCard, StressEnergyRow;
+import 'heart_day.dart';
 import 'wear_streak.dart' show StreakChip;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
@@ -2094,7 +2095,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
         if (_v case final v?) ...[
           if (v.hasVitals) ...[VitalChips(v), const SizedBox(height: S.x3)],
           if (v.hasHeart) ...[
-            DayHeartCard(v, onTap: () => go(c, DayStrainDetail(day: isToday ? null : _day))),
+            DayHeartCard(v, onTap: () => go(c, HeartRateDayScreen(day: isToday ? null : _day))),
             const SizedBox(height: S.x3),
           ],
           if (RecoveryCalibrationCard.shows(v)) ...[
@@ -2135,8 +2136,10 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
         ],
 
         // ── what other devices recorded (Garmin, a watch), named ──
-        if (isToday && widget.data == null && repoOf(c) != null)
+        if (isToday && widget.data == null && repoOf(c) != null) ...[
+          const StressEnergyRow(),
           const OtherDevicesCard(),
+        ],
 
         // ── the rollup was withheld, not absent ──
         if (stale != null) ...[const SizedBox(height: S.x3), stale],

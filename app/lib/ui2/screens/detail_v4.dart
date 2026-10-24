@@ -1015,3 +1015,123 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> {
     );
   }
 }
+
+/// Today's stress and energy, side by side: Garmin's stress level (its mean
+/// so far) and its Body Battery (the newest sample), each a ring that opens
+/// its screen. Always shown, so the screens are always one tap away; a card
+/// with nothing yet says where its number comes from.
+class StressEnergyRow extends StatefulWidget {
+  final double? stress, battery;
+  final bool preloaded;
+  const StressEnergyRow({super.key, this.stress, this.battery}) : preloaded = stress != null || battery != null;
+
+  @override
+  State<StressEnergyRow> createState() => _StressEnergyRowState();
+}
+
+class _StressEnergyRowState extends State<StressEnergyRow> {
+  double? _stress, _battery;
+
+  @override
+  void initState() {
+    super.initState();
+    _stress = widget.stress;
+    _battery = widget.battery;
+    if (!widget.preloaded) {
+      loadOtherReadings().then((r) {
+        if (!mounted) return;
+        setState(() {
+          for (final x in r) {
+            if (x.kind == kGarminStressKey) _stress = x.value;
+            if (x.kind == kBodyBatteryKey) _battery = x.value;
+          }
+        });
+      }, onError: (_) {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext c) {
+    final l = AppLocalizations.of(c);
+    final big = MediaQuery.textScalerOf(c).scale(10) > 14;
+    final a = _RingTile(
+      title: l?.gsTitle ?? 'Stress',
+      value: _stress,
+      color: _stress == null ? null : stressColor(_stress!),
+      frac: _stress == null ? 0 : _stress! / 100,
+      onTap: () => go(c, const GarminStressScreen()),
+    );
+    final b = _RingTile(
+      title: l?.bbTitle ?? 'Body Battery',
+      value: _battery,
+      suffix: '%',
+      color: _battery == null ? null : (_battery! >= 50 ? C.green : (_battery! >= 25 ? C.yellow : C.red)),
+      frac: _battery == null ? 0 : _battery! / 100,
+      onTap: () => go(c, const BodyBatteryScreen()),
+    );
+    return Section(
+      l?.homeStressEnergy ?? 'Stress & energy',
+      big
+          ? Column(children: [a, const SizedBox(height: S.x3), b])
+          : IntrinsicHeight(
+              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Expanded(child: a),
+                const SizedBox(width: S.x3),
+                Expanded(child: b),
+              ]),
+            ),
+    );
+  }
+}
+
+class _RingTile extends StatelessWidget {
+  final String title;
+  final double? value;
+  final String suffix;
+  final Color? color;
+  final double frac;
+  final VoidCallback onTap;
+  const _RingTile(
+      {required this.title, required this.value, this.suffix = '', this.color, required this.frac, required this.onTap});
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    final col = color == null ? p.ink3 : p.on(color!);
+    return Surface(
+      onTap: onTap,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(title, style: F.body.copyWith(color: p.ink, fontWeight: FontWeight.w600))),
+          Icon(LucideIcons.arrowRight, size: 16, color: p.ink3),
+        ]),
+        const SizedBox(height: S.x3),
+        Center(
+          child: SizedBox(
+            width: 84,
+            height: 84,
+            child: Stack(alignment: Alignment.center, children: [
+              DrawIn(
+                builder: (_, t) => CustomPaint(
+                  size: const Size(84, 84),
+                  painter: Ring(frac, col, p.track, stroke: 8, t: t, solid: value != null),
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(value == null ? '–' : '${value!.round()}$suffix',
+                    style: F.n24.copyWith(color: p.ink)),
+              ),
+            ]),
+          ),
+        ),
+        const SizedBox(height: S.x2),
+        Text(
+          value == null ? (l?.homeFromGarminWatch ?? 'From a paired Garmin watch') : 'Garmin',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
+      ]),
+    );
+  }
+}

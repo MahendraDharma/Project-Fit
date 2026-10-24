@@ -16026,5 +16026,9 @@
   "fitRecoveryNote": "An estimate from your logged sets: each session's fatigue halves every 24 hours, 36 when sets went to failure.",
   "profilePhotoAdd": "Add photo",
   "profilePhotoChange": "Change photo",
-  "profilePhotoRemove": "Remove"
+  "profilePhotoRemove": "Remove",
+  "homeStressEnergy": "Stress & energy",
+  "homeFromGarminWatch": "From a paired Garmin watch",
+  "hrDayNoneTitle": "No heart rate for this day",
+  "hrDayNoneBody": "Nothing was recorded from the band on this day."
 }

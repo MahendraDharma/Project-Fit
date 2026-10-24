@@ -11,9 +11,18 @@ import '../../data/local_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/date_text.dart';
 import '../ui2.dart';
+import '../../data/db.dart';
+import '../../theme/theme_switcher.dart' show themedRoute;
+import '../activity/day_strain.dart' show DayStrainDetail;
+import 'body_battery.dart';
+import 'day_steps.dart' show DayStepsDetail;
+import 'garmin_stress.dart';
 import 'home_screen.dart';
+import 'metric_detail.dart' show MetricDetail;
+import 'readiness_detail.dart' show ReadinessDetail;
+import 'sleep_detail.dart' show SleepDetail;
 
-enum CalendarMetric { strain, recovery, sleep, stress, steps }
+enum CalendarMetric { strain, recovery, sleep, stress, steps, bodyBattery }
 
 /// Day → how full its ring is (0–1), and the colour to fill it with.
 typedef CalendarDay = ({double frac, Color color});
@@ -27,7 +36,36 @@ typedef CalendarDay = ({double frac, Color color});
       CalendarMetric.sleep => ('sleep', (v) => (frac: v / sleepNeedMin, color: sleepColor(v / sleepNeedMin * 100))),
       CalendarMetric.stress => ('stress', (v) => (frac: v / stressMax, color: C.purple)),
       CalendarMetric.steps => ('steps', (v) => (frac: v / stepGoal, color: C.green)),
+      CalendarMetric.bodyBattery =>
+        (kBodyBatteryKey, (v) => (frac: v / 100, color: v >= 50 ? C.green : (v >= 25 ? C.yellow : C.red))),
     };
+
+/// The screen a calendar day opens for [m]: that metric, on that day.
+Widget calendarScreenFor(CalendarMetric m, String day, {bool garminStress = false}) {
+  final past = day == todayLabel() ? null : day;
+  return switch (m) {
+    CalendarMetric.recovery => ReadinessDetail(day: past),
+    CalendarMetric.sleep => SleepDetail(day: day),
+    CalendarMetric.strain => DayStrainDetail(day: past),
+    CalendarMetric.stress => garminStress ? GarminStressScreen(day: day) : const MetricDetail('stress'),
+    CalendarMetric.steps => DayStepsDetail(day: past),
+    CalendarMetric.bodyBattery => BodyBatteryScreen(day: day),
+  };
+}
+
+/// Garmin's daily mean of a vendor series, by day.
+Future<Map<String, double>> _vendorDailyMeans(String key) async {
+  final now = DateTime.now();
+  final rows = await LocalDb.vendorSeries(key,
+      DateTime(now.year - 1, now.month, now.day).millisecondsSinceEpoch, now.millisecondsSinceEpoch + 1);
+  final acc = <String, (double, int)>{};
+  for (final r in rows) {
+    final d = dayLabelOf(DateTime.fromMillisecondsSinceEpoch((r['ts_ms'] as num).toInt()));
+    final (s, n) = acc[d] ?? (0.0, 0);
+    acc[d] = (s + (r['value'] as num).toDouble(), n + 1);
+  }
+  return {for (final e in acc.entries) e.key: e.value.$1 / e.value.$2};
+}
 
 class MonthCalendarScreen extends StatefulWidget {
   final CalendarMetric metric;
@@ -63,6 +101,7 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
     return DateTime(d.year, d.month);
   }
   final Map<CalendarMetric, Map<String, CalendarDay>> _days = {};
+  bool _garminStress = false;
 
   @override
   void initState() {
@@ -80,6 +119,23 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
     if (repo == null) return;
     try {
       final profile = await repo.getProfile();
+      // Garmin's stress and Body Battery, when a watch has given any: its own
+      // daily means. ProjectFit's nightly stress index otherwise.
+      if (m == CalendarMetric.stress || m == CalendarMetric.bodyBattery) {
+        final g = await _vendorDailyMeans(
+            m == CalendarMetric.stress ? kGarminStressKey : kBodyBatteryKey);
+        if (g.isNotEmpty || m == CalendarMetric.bodyBattery) {
+          if (m == CalendarMetric.stress) _garminStress = true;
+          final out = <String, CalendarDay>{
+            for (final e in g.entries)
+              e.key: m == CalendarMetric.stress
+                  ? (frac: e.value / 100, color: stressColor(e.value))
+                  : calendarSpec(m).$2(e.value),
+          };
+          if (mounted) setState(() => _days[m] = out);
+          return;
+        }
+      }
       final pts = pointsOf(await repo.getChart(calendarSpec(m).$1));
       // Stress has no fixed top; a ring is the day against the person's own
       // highest stored day.
@@ -112,8 +168,9 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
       (CalendarMetric.strain, l?.homeRingStrain ?? 'Strain'),
       (CalendarMetric.recovery, l?.homeRingRecovery ?? 'Recovery'),
       (CalendarMetric.sleep, l?.homeRingSleep ?? 'Sleep'),
-      (CalendarMetric.stress, l?.homeVitalsStress ?? 'Stress'),
+      (CalendarMetric.stress, l?.gsTitle ?? 'Stress'),
       (CalendarMetric.steps, l?.readingSteps ?? 'Steps'),
+      (CalendarMetric.bodyBattery, l?.bbTitle ?? 'Body Battery'),
     ];
     final sunday = DateTime(2026, 10, 4);
     final weekdays = [
@@ -179,8 +236,10 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
     final v = days[id];
     final today = id == dayLabelOf(now);
     final future = day.isAfter(now);
-    final pick = widget.pickable;
-    final can = pick == null || pick.contains(id);
+    // The picking screen's own metric picks a day for it; any other chip
+    // opens that metric's own screen on the day, in place of the calendar.
+    final own = widget.pickable != null && _m == widget.metric;
+    final can = own ? widget.pickable!.contains(id) : (v != null && !future);
     final chosen = widget.selected == id;
     final cell = Container(
       width: w,
@@ -204,11 +263,16 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
                 fontWeight: FontWeight.w800)),
       ]),
     );
-    if (pick == null) return cell;
     return Opacity(
-      opacity: can ? 1 : .4,
+      opacity: can || future ? 1 : .5,
       child: Pressable(
-        onTap: can ? () => Navigator.of(c).pop(id) : null,
+        onTap: !can
+            ? null
+            : own
+                ? () => Navigator.of(c).pop(id)
+                : () => Navigator.of(c).pushReplacement(themedRoute(
+                      (_) => calendarScreenFor(_m, id, garminStress: _garminStress),
+                      name: 'CalendarDay')),
         semanticLabel: id,
         child: cell,
       ),

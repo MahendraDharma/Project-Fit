@@ -271,6 +271,7 @@ Map<String, Widget> componentCases() => {
       'recovery_bar': const RecoveryBar(64),
       'draw_in': DrawIn(
           builder: (c, t) => LinearProgressIndicator(value: .7 * t, minHeight: 8)),
+      'stress_energy': const StressEnergyRow(stress: 18, battery: 52),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',

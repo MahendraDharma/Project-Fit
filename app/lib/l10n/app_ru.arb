@@ -7744,5 +7744,9 @@
   "fitRecoveryNote": "Оценка по записанным подходам: утомление от каждой тренировки уменьшается вдвое каждые 24 часа, 36 — если подходы были до отказа.",
   "profilePhotoAdd": "Добавить фото",
   "profilePhotoChange": "Сменить фото",
-  "profilePhotoRemove": "Удалить"
+  "profilePhotoRemove": "Удалить",
+  "homeStressEnergy": "Стресс и энергия",
+  "homeFromGarminWatch": "С подключённых часов Garmin",
+  "hrDayNoneTitle": "За этот день пульса нет",
+  "hrDayNoneBody": "В этот день браслет ничего не записал."
 }

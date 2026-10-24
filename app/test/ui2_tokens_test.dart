@@ -208,7 +208,7 @@ const _notComponents = {
   'MonthlyReportScreen',
   // Whole screens, pushed, each with its own scaffold.
   'Vo2MaxScreen', 'MonthCalendarScreen', 'BodyBatteryScreen', 'GarminStressScreen',
-  'StreakScreen',
+  'StreakScreen', 'HeartRateDayScreen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',
   'ProfileSetupScreen', 'ProfileSetupView',
