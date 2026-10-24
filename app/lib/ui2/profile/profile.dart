@@ -9,6 +9,8 @@
 // tier would have to be sold. What replaces them is what this app actually
 // knows — how much it has measured, and from what.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +23,7 @@ import '../screens/coach.dart' show CoachSetup, coachSubtitle;
 import '../screens/home_screen.dart' show deviceBatteryOf;
 import 'data.dart';
 import 'devices.dart';
+import 'profile_photo.dart';
 import 'settings.dart';
 
 // ══════════════════ shared list furniture ══════════════════
@@ -153,7 +156,13 @@ class ProfileAvatar extends StatelessWidget {
   /// The tab's own accent, so the avatar reads as part of the header it sits
   /// in.
   final Color accent;
-  const ProfileAvatar({super.key, this.accent = C.domHome});
+
+  /// Diameter. 40 in a header; the Profile screen draws it large.
+  final double size;
+
+  /// Where a tap goes. Null opens Profile, which is what every header wants.
+  final VoidCallback? onTap;
+  const ProfileAvatar({super.key, this.accent = C.domHome, this.size = 40, this.onTap});
 
   @override
   Widget build(BuildContext c) {
@@ -168,19 +177,30 @@ class ProfileAvatar extends StatelessWidget {
     return Pressable(
       semanticLabel:
           AppLocalizations.of(c)?.homeProfileSettings ?? 'Profile and settings',
-      onTap: () => openProfile(c),
-      child: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(shape: BoxShape.circle, color: p.fill(accent)),
-        child: initial.isEmpty
-            ? Icon(LucideIcons.user, size: 18, color: p.inkOnFill)
-            : ExcludeSemantics(
-                child: Text(initial.characters.first.toUpperCase(),
-                    style: F.body.copyWith(
-                        color: p.inkOnFill, fontWeight: FontWeight.w600)),
-              ),
+      onTap: onTap ?? () => openProfile(c),
+      child: ValueListenableBuilder<File?>(
+        valueListenable: ProfilePhoto.current,
+        builder: (c, photo, _) => Container(
+          width: size,
+          height: size,
+          alignment: Alignment.center,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: p.fill(accent)),
+          child: photo != null
+              ? Image.file(photo,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.cover,
+                  cacheWidth: (size * 3).round(),
+                  errorBuilder: (_, _, _) => Icon(LucideIcons.user, size: size * .45, color: p.inkOnFill))
+              : initial.isEmpty
+                  ? Icon(LucideIcons.user, size: size * .45, color: p.inkOnFill)
+                  : ExcludeSemantics(
+                      child: Text(initial.characters.first.toUpperCase(),
+                          style: (size > 48 ? F.t1 : F.body).copyWith(
+                              color: p.inkOnFill, fontWeight: FontWeight.w600)),
+                    ),
+        ),
       ),
     );
   }
@@ -353,6 +373,8 @@ class ProfileHomeView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
               children: [
                 const SizedBox(height: S.x4),
+                const _PhotoHeader(),
+                const SizedBox(height: S.x4),
                 settingsGroup(c, l?.profileQuickAccessGroup ?? 'Quick access', [
                   // The band's battery rides the devices row: Profile is
                   // where "is my band all right?" is asked from every tab.
@@ -433,4 +455,44 @@ class ProfileHomeView extends StatelessWidget {
     );
   }
 
+}
+
+/// The large avatar at the top of Profile, with the photo's two actions.
+class _PhotoHeader extends StatelessWidget {
+  const _PhotoHeader();
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    String? name;
+    try {
+      name = c.select<AppState, String?>((a) => a.user?['name'] as String?);
+    } catch (_) {}
+    return Column(children: [
+      ProfileAvatar(size: 96, accent: C.domHome, onTap: ProfilePhoto.pick),
+      if ((name ?? '').trim().isNotEmpty) ...[
+        const SizedBox(height: S.x3),
+        Text(name!.trim(), style: F.t2.copyWith(color: p.ink), textAlign: TextAlign.center),
+      ],
+      const SizedBox(height: S.x2),
+      ValueListenableBuilder<File?>(
+        valueListenable: ProfilePhoto.current,
+        builder: (c, photo, _) => Wrap(alignment: WrapAlignment.center, spacing: S.x2, children: [
+          TextButton.icon(
+            onPressed: ProfilePhoto.pick,
+            icon: const Icon(LucideIcons.camera, size: 18),
+            label: Text(photo == null
+                ? (l?.profilePhotoAdd ?? 'Add photo')
+                : (l?.profilePhotoChange ?? 'Change photo')),
+          ),
+          if (photo != null)
+            TextButton(
+              onPressed: ProfilePhoto.remove,
+              child: Text(l?.profilePhotoRemove ?? 'Remove', style: TextStyle(color: p.ink3)),
+            ),
+        ]),
+      ),
+    ]);
+  }
 }

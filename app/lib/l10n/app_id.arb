@@ -219,5 +219,8 @@
   "fitFatigued": "Lelah",
   "fitDepleted": "Terkuras",
   "fitMuscleFreshness": "Kesegaran otot",
-  "fitRecoveryNote": "Perkiraan dari set yang Anda catat: kelelahan tiap sesi berkurang separuh setiap 24 jam, 36 jam kalau set sampai gagal (failure)."
+  "fitRecoveryNote": "Perkiraan dari set yang Anda catat: kelelahan tiap sesi berkurang separuh setiap 24 jam, 36 jam kalau set sampai gagal (failure).",
+  "profilePhotoAdd": "Tambah foto",
+  "profilePhotoChange": "Ganti foto",
+  "profilePhotoRemove": "Hapus"
 }

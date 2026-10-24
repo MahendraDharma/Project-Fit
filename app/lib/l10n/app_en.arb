@@ -16023,5 +16023,8 @@
   "fitFatigued": "Fatigued",
   "fitDepleted": "Depleted",
   "fitMuscleFreshness": "Muscle freshness",
-  "fitRecoveryNote": "An estimate from your logged sets: each session's fatigue halves every 24 hours, 36 when sets went to failure."
+  "fitRecoveryNote": "An estimate from your logged sets: each session's fatigue halves every 24 hours, 36 when sets went to failure.",
+  "profilePhotoAdd": "Add photo",
+  "profilePhotoChange": "Change photo",
+  "profilePhotoRemove": "Remove"
 }
