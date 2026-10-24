@@ -35,8 +35,20 @@ class MonthCalendarScreen extends StatefulWidget {
   /// Preloaded, per metric, for the gallery and tests.
   final Map<CalendarMetric, Map<String, CalendarDay>>? data;
   final DateTime? month;
+
+  /// PICK MODE: the days that may be chosen. Tapping one pops the route with
+  /// its label; every other day is dimmed and inert. Null is the plain view.
+  final Set<String>? pickable;
+
+  /// The day currently shown by the screen that asked, ringed in pick mode.
+  final String? selected;
   const MonthCalendarScreen(
-      {super.key, this.metric = CalendarMetric.recovery, this.data, this.month});
+      {super.key,
+      this.metric = CalendarMetric.recovery,
+      this.data,
+      this.month,
+      this.pickable,
+      this.selected});
 
   @override
   State<MonthCalendarScreen> createState() => _MonthCalendarScreenState();
@@ -44,7 +56,12 @@ class MonthCalendarScreen extends StatefulWidget {
 
 class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
   late CalendarMetric _m = widget.metric;
-  late DateTime _month = widget.month ?? DateTime(DateTime.now().year, DateTime.now().month);
+  late DateTime _month = widget.month ?? _monthOf(widget.selected);
+
+  static DateTime _monthOf(String? day) {
+    final d = DateTime.tryParse(day ?? '') ?? DateTime.now();
+    return DateTime(d.year, d.month);
+  }
   final Map<CalendarMetric, Map<String, CalendarDay>> _days = {};
 
   @override
@@ -162,13 +179,17 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
     final v = days[id];
     final today = id == dayLabelOf(now);
     final future = day.isAfter(now);
-    return Container(
+    final pick = widget.pickable;
+    final can = pick == null || pick.contains(id);
+    final chosen = widget.selected == id;
+    final cell = Container(
       width: w,
       padding: const EdgeInsets.symmetric(vertical: S.x2),
       decoration: BoxDecoration(
-        color: today ? p.card2 : null,
+        color: chosen || today ? p.card2 : null,
         borderRadius: R.rPill,
-        border: Border.all(color: today ? p.ink3 : p.line),
+        border: Border.all(
+            color: chosen ? p.on(C.blue) : (today ? p.ink3 : p.line), width: chosen ? 2 : 1),
       ),
       child: Column(children: [
         SizedBox(
@@ -179,9 +200,18 @@ class _MonthCalendarScreenState extends State<MonthCalendarScreen> {
         const SizedBox(height: S.x1),
         Text('${day.day}',
             style: F.body.copyWith(
-                color: today ? p.on(C.blue) : (future ? p.ink3 : p.ink),
+                color: today ? p.on(C.blue) : (future || !can ? p.ink3 : p.ink),
                 fontWeight: FontWeight.w800)),
       ]),
+    );
+    if (pick == null) return cell;
+    return Opacity(
+      opacity: can ? 1 : .4,
+      child: Pressable(
+        onTap: can ? () => Navigator.of(c).pop(id) : null,
+        semanticLabel: id,
+        child: cell,
+      ),
     );
   }
 }

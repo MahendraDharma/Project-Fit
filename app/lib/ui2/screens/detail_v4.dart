@@ -56,7 +56,13 @@ class DetailTop extends StatefulWidget {
   /// Space reserved above the ring for the screen's own bar.
   final double topInset;
 
-  const DetailTop(this.kind, {super.key, this.day, this.data, this.topInset = 0});
+  /// The days the screen can show, and how it moves to one. With both, the
+  /// date opens the month to pick from; without, it opens the month to look.
+  final List<String>? days;
+  final ValueChanged<String>? onDay;
+
+  const DetailTop(this.kind,
+      {super.key, this.day, this.data, this.topInset = 0, this.days, this.onDay});
 
   @override
   State<DetailTop> createState() => _DetailTopState();
@@ -102,14 +108,20 @@ class _DetailTopState extends State<DetailTop> {
       DetailHero(
         tint: tint,
         topInset: widget.topInset,
-        onDate: () => go(
-            c,
-            MonthCalendarScreen(
-                metric: switch (widget.kind) {
-              DetailKind.recovery => CalendarMetric.recovery,
-              DetailKind.sleep => CalendarMetric.sleep,
-              DetailKind.strain => CalendarMetric.strain,
-            })),
+        onDate: () async {
+          final metric = switch (widget.kind) {
+            DetailKind.recovery => CalendarMetric.recovery,
+            DetailKind.sleep => CalendarMetric.sleep,
+            DetailKind.strain => CalendarMetric.strain,
+          };
+          final days = widget.days, onDay = widget.onDay;
+          if (days == null || onDay == null || days.length < 2) {
+            go(c, MonthCalendarScreen(metric: metric));
+            return;
+          }
+          final picked = await chooseDay(c, days, x?.d.dayId ?? widget.day, metric: metric);
+          if (picked != null) onDay(picked);
+        },
         date: prettyDay(x?.d.dayId ?? widget.day, l),
         ring: x == null ? const HeroRingSpec() : _ring(x, l),
       ),

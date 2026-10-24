@@ -404,7 +404,8 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
       if (live) TrendSection(kSleepTrends, key: ValueKey('t$day'), until: day),
     ];
     Widget hero(double t) =>
-        DetailTop(DetailKind.sleep, key: ValueKey('h$day'), day: day, topInset: t);
+        DetailTop(DetailKind.sleep,
+            key: ValueKey('h$day'), day: day, topInset: t, days: _d?.days, onDay: _goDay);
     if (!widget.embedded) {
       return detailScaffold(c, title, [...body, ...trends],
           sub: sub, hero: live ? hero : null);

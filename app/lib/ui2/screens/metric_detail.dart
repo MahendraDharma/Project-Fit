@@ -26,6 +26,8 @@ import '../../state/app_state.dart';
 import '../ui2.dart';
 import 'advanced.dart';
 import 'day_steps.dart';
+import '../../theme/theme_switcher.dart' show themedRoute;
+import 'month_calendar.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'journal_compose.dart' show OsTextField;
@@ -2039,23 +2041,20 @@ int? _dayBehind(String? dayId) {
 
 /// The calendar, restricted to the days that exist. A picker that offers an
 /// empty day is a dead end, so [days] greys out everything it does not contain.
-Future<String?> chooseDay(
-    BuildContext c, List<String> days, String? current) async {
+Future<String?> chooseDay(BuildContext c, List<String> days, String? current,
+    {CalendarMetric metric = CalendarMetric.recovery}) async {
   if (days.isEmpty) return null;
-  final have = days.toSet();
-  final sorted = [...days]..sort(); // oldest → newest
-  final first = DateTime.parse(sorted.first);
-  final last = DateTime.parse(sorted.last);
-  final want = DateTime.tryParse(current ?? '') ?? last;
-  final picked = await showDatePicker(
-    context: c,
-    initialDate: want.isBefore(first) ? first : (want.isAfter(last) ? last : want),
-    firstDate: first,
-    lastDate: last,
-    selectableDayPredicate: (d) => have.contains(dayLabelOf(d)),
-    helpText: AppLocalizations.of(c)?.metricDetailChooseDayHelp ?? 'Choose a day',
-  );
-  return picked == null ? null : dayLabelOf(picked);
+  // The app's own month view, in pick mode: a ring per day, only the days on
+  // disk tappable — the same calendar the date on Recovery, Sleep and Strain
+  // opens, rather than the platform's stock date dialog.
+  return Navigator.of(c).push<String>(themedRoute(
+    (_) => MonthCalendarScreen(
+      metric: metric,
+      pickable: days.toSet(),
+      selected: current ?? days.first,
+    ),
+    name: 'MonthCalendarScreen',
+  ));
 }
 
 /// The day stepper every single-day screen wears under its nav bar.

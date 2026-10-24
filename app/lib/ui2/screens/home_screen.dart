@@ -2043,8 +2043,8 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
             onOpen: (k) => go(
                 c,
                 switch (k) {
-                  HomeRingKind.recovery => const ReadinessDetail(),
-                  HomeRingKind.strain => const DayStrainDetail(),
+                  HomeRingKind.recovery => ReadinessDetail(day: isToday ? null : _day),
+                  HomeRingKind.strain => DayStrainDetail(day: isToday ? null : _day),
                   // The night the ring was drawn from, not last night. Today
                   // stays null even after the switcher steps back onto it:
                   // today's ring is the held-over night, and only the default
@@ -2094,7 +2094,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
         if (_v case final v?) ...[
           if (v.hasVitals) ...[VitalChips(v), const SizedBox(height: S.x3)],
           if (v.hasHeart) ...[
-            DayHeartCard(v, onTap: () => go(c, const DayStrainDetail())),
+            DayHeartCard(v, onTap: () => go(c, DayStrainDetail(day: isToday ? null : _day))),
             const SizedBox(height: S.x3),
           ],
           if (RecoveryCalibrationCard.shows(v)) ...[

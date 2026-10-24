@@ -121,7 +121,11 @@ class ReadinessData {
 
 class ReadinessDetail extends StatefulWidget {
   final ReadinessData? data;
-  const ReadinessDetail({super.key, this.data});
+
+  /// A past day to open. Null is today, the only day the breakdown below
+  /// the headline is computed for.
+  final String? day;
+  const ReadinessDetail({super.key, this.data, this.day});
 
   @override
   State<ReadinessDetail> createState() => _ReadinessDetailState();
@@ -130,6 +134,10 @@ class ReadinessDetail extends StatefulWidget {
 class _ReadinessDetailState extends State<ReadinessDetail> {
   ReadinessData? _d;
   bool _loading = true;
+  late String? _day = widget.day;
+  List<String> _days = const [];
+
+  void _goDay(String day) => setState(() => _day = day == todayLabel() ? null : day);
 
   /// The history slot under the finger, or null.
   int? _pick;
@@ -153,7 +161,11 @@ class _ReadinessDetailState extends State<ReadinessDetail> {
     }
     try {
       final d = await ReadinessData.load(repo);
-      if (mounted) setState(() => (_d = d, _loading = false));
+      var days = _days;
+      try {
+        days = await repo.availableDays();
+      } catch (_) {}
+      if (mounted) setState(() => (_d = d, _days = days, _loading = false));
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -173,11 +185,22 @@ class _ReadinessDetailState extends State<ReadinessDetail> {
     // The sky and the trends read the repository themselves; a screen handed
     // its data (a golden, a test) keeps the plain layout.
     final live = widget.data == null && repoOf(c) != null;
+    // A past day: its own headline, figures and trends from the stored day,
+    // with the stepper to move on. The breakdown below is today's alone.
+    if (live && _day != null) {
+      final day = _day!;
+      return detailScaffold(c, l?.readinessDetailTitle ?? 'Recovery', [
+        ...dayNavRow(day, _days, _goDay),
+        TrendSection(kRecoveryTrends, key: ValueKey('t$day'), until: day),
+      ], hero: (t) => DetailTop(DetailKind.recovery,
+          key: ValueKey('h$day'), day: day, topInset: t, days: _days, onDay: _goDay));
+    }
     return detailScaffold(c, l?.readinessDetailTitle ?? 'Recovery', [
       if (_loading && _d == null) ...[
         const SizedBox(height: S.x8),
         const Center(child: CircularProgressIndicator()),
       ] else ...[
+        if (live) ...dayNavRow(todayLabel(), _days, _goDay),
         if (v == null) ...[
           // No `why:`. The pipeline records why readiness abstained on every
           // day it does, and the "What was missing" section directly below
@@ -330,7 +353,9 @@ class _ReadinessDetailState extends State<ReadinessDetail> {
         investigateRow(c, () => go(c, const Investigate('readiness'))),
         if (live) const TrendSection(kRecoveryTrends),
       ],
-    ], hero: live ? (t) => DetailTop(DetailKind.recovery, topInset: t) : null);
+    ], hero: live
+        ? (t) => DetailTop(DetailKind.recovery, topInset: t, days: _days, onDay: _goDay)
+        : null);
   }
 
   /// The last 90 CALENDAR days, trimmed to start at the first day that

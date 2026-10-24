@@ -28,7 +28,7 @@ import '../../l10n/date_text.dart';
 import '../../models/metric.dart' show whyFromNote;
 import '../screens/home_screen.dart' show repoOf;
 import '../screens/detail_v4.dart';
-import '../screens/metric_detail.dart' show detailScaffold;
+import '../screens/metric_detail.dart' show dayNavRow, detailScaffold;
 import '../ui2.dart';
 import 'catalogue.dart' show zonesWhy;
 import 'zones.dart' show ZonesDetail;
@@ -94,8 +94,8 @@ class DayStrainData {
 
   bool get hasCurve => curve.any((v) => v != null);
 
-  static Future<DayStrainData> load(LocalRepository repo) async {
-    final asked = todayLabel();
+  static Future<DayStrainData> load(LocalRepository repo, [String? date]) async {
+    final asked = date ?? todayLabel();
     final s = await repo.getDayStrain(asked);
     if (s.isEmpty) return const DayStrainData();
 
@@ -169,7 +169,10 @@ class DayStrainData {
 class DayStrainDetail extends StatefulWidget {
   /// Preloaded, for goldens. Null means read the repo on open.
   final DayStrainData? data;
-  const DayStrainDetail({super.key, this.data});
+
+  /// The day to open. Null is today.
+  final String? day;
+  const DayStrainDetail({super.key, this.data, this.day});
 
   @override
   State<DayStrainDetail> createState() => _DayStrainDetailState();
@@ -178,6 +181,8 @@ class DayStrainDetail extends StatefulWidget {
 class _DayStrainDetailState extends State<DayStrainDetail> {
   DayStrainData? _d;
   bool _loading = true;
+  late String? _day = widget.day;
+  List<String> _days = const [];
 
   @override
   void initState() {
@@ -197,8 +202,12 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
       return;
     }
     try {
-      final d = await DayStrainData.load(repo);
-      if (mounted) setState(() => (_d = d, _loading = false));
+      final d = await DayStrainData.load(repo, _day);
+      List<String> days = _days;
+      try {
+        days = await repo.availableDays();
+      } catch (_) {}
+      if (mounted) setState(() => (_d = d, _days = days, _loading = false));
     } catch (_) {
       if (mounted) setState(() => _loading = false);
     }
@@ -228,6 +237,7 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
           const SizedBox(height: S.x8),
           const Center(child: CircularProgressIndicator()),
         ] else ...[
+          ...dayNavRow(_day ?? (day == null ? null : dayLabelOf(day)), _days, _goDay),
           ..._trace(p, l, d),
           ..._zones(p, l, d),
           Section(l?.dayStrainInputsSection ?? 'What this is made of',
@@ -240,9 +250,22 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
       sub: sub,
       hero: live
           ? (t) => DetailTop(DetailKind.strain,
-              key: ValueKey(day), day: day == null ? null : dayLabelOf(day), topInset: t)
+              key: ValueKey(day),
+              day: day == null ? null : dayLabelOf(day),
+              topInset: t,
+              days: _days,
+              onDay: _goDay)
           : null,
     );
+  }
+
+  /// Another day: the trace, the zones and the hero all follow it.
+  void _goDay(String day) {
+    setState(() {
+      _day = day;
+      _loading = true;
+    });
+    _load();
   }
 
   // ── the curve, and only then the number ────────────────────────────────────
