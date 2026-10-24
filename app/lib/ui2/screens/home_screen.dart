@@ -70,6 +70,7 @@ import '../../state/clock_format.dart' show formatClockOf;
 import '../../state/units_controller.dart';
 import '../../theme/theme_switcher.dart' show themedRoute;
 import '../activity/day_strain.dart' show DayStrainDetail;
+import 'detail_v4.dart' show OtherDevicesCard;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
 import 'workout_screen.dart' show activityHost;
@@ -2117,6 +2118,10 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
             ]),
           ),
         ],
+
+        // ── what other devices recorded (Garmin, a watch), named ──
+        if (isToday && widget.data == null && repoOf(c) != null)
+          const OtherDevicesCard(),
 
         // ── the rollup was withheld, not absent ──
         if (stale != null) ...[const SizedBox(height: S.x3), stale],

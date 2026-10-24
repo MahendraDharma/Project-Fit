@@ -237,6 +237,11 @@ Map<String, Widget> componentCases() => {
           data: DetailTopData(
               HomeData(dayId: '2026-10-17', sleepMin: Metric(value: 507), sleepNeedMin: Metric(value: 660)),
               _vitals)),
+      'other_devices': const OtherDevicesCard(readings: [
+        (kind: 'vo2max', value: 41.0, source: 'Connect', ts: 1792800000),
+        (kind: 'spo2', value: 96.2, source: 'Connect', ts: 1792800000),
+        (kind: 'rhr_ext', value: 53.0, source: 'Connect', ts: 1792800000),
+      ]),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',

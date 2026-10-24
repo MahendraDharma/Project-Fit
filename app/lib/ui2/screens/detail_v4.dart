@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../data/day_label.dart';
+import '../../data/db.dart';
 import '../../data/local_repository.dart';
 import '../../health/health_readings_import.dart';
 import '../../l10n/app_localizations.dart';
@@ -26,6 +27,8 @@ import 'external_vitals.dart';
 import 'home_screen.dart';
 import 'home_vitals.dart';
 import 'metric_detail.dart';
+import 'month_calendar.dart';
+import 'vo2_screen.dart';
 
 enum DetailKind { recovery, sleep, strain }
 
@@ -97,6 +100,14 @@ class _DetailTopState extends State<DetailTop> {
       DetailHero(
         tint: tint,
         topInset: widget.topInset,
+        onDate: () => go(
+            c,
+            MonthCalendarScreen(
+                metric: switch (widget.kind) {
+              DetailKind.recovery => CalendarMetric.recovery,
+              DetailKind.sleep => CalendarMetric.sleep,
+              DetailKind.strain => CalendarMetric.strain,
+            })),
         date: prettyDay(x?.d.dayId ?? widget.day, l),
         ring: x == null ? const HeroRingSpec() : _ring(x, l),
       ),
@@ -270,8 +281,16 @@ class DetailHero extends StatelessWidget {
   final String date;
   final HeroRingSpec ring;
   final double topInset;
+
+  /// Opens the month. Null hides the chevron.
+  final VoidCallback? onDate;
   const DetailHero(
-      {super.key, required this.tint, required this.date, required this.ring, this.topInset = 0});
+      {super.key,
+      required this.tint,
+      required this.date,
+      required this.ring,
+      this.topInset = 0,
+      this.onDate});
 
   @override
   Widget build(BuildContext c) {
@@ -282,7 +301,19 @@ class DetailHero extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.fromLTRB(S.x4, topInset + S.x2, S.x4, S.x8),
         child: Column(children: [
-          Text(date, style: F.head.copyWith(color: p.ink2), textAlign: TextAlign.center),
+          Pressable(
+            onTap: onDate,
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Flexible(
+                child: Text(date,
+                    style: F.head.copyWith(color: p.ink2), textAlign: TextAlign.center),
+              ),
+              if (onDate != null) ...[
+                const SizedBox(width: S.x1),
+                Icon(LucideIcons.calendarDays, size: 18, color: p.ink2),
+              ],
+            ]),
+          ),
           const SizedBox(height: S.x5),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 220),
@@ -802,4 +833,106 @@ class _Spark extends CustomPainter {
 
   @override
   bool shouldRepaint(_Spark o) => true;
+}
+
+/// The newest reading per kind that another device put in the health store.
+typedef OtherReading = ({String kind, double value, String source, int ts});
+
+Future<List<OtherReading>> loadOtherReadings({DateTime? now}) async {
+  final t = now ?? DateTime.now();
+  // A week back: older than that is history, not "today's" picture.
+  final from = DateTime(t.year, t.month, t.day - 7).millisecondsSinceEpoch ~/ 1000;
+  final out = <OtherReading>[];
+  for (final k in kReadingKindOrder) {
+    final rows = await LocalDb.importedMeasurementsBetween(
+        k, from, t.millisecondsSinceEpoch ~/ 1000 + 1);
+    if (rows.isEmpty) continue;
+    final r = rows.last;
+    out.add((
+      kind: k,
+      value: (r['value'] as num).toDouble(),
+      source: r['source'] as String,
+      ts: (r['ts'] as num).toInt(),
+    ));
+  }
+  return out;
+}
+
+/// "From your other devices" on Home: VO₂ max, SpO₂ and the rest, each with
+/// the device that recorded it. Absent when nothing was read.
+class OtherDevicesCard extends StatefulWidget {
+  final List<OtherReading>? readings;
+  const OtherDevicesCard({super.key, this.readings});
+
+  @override
+  State<OtherDevicesCard> createState() => _OtherDevicesCardState();
+}
+
+class _OtherDevicesCardState extends State<OtherDevicesCard> {
+  List<OtherReading>? _r;
+
+  @override
+  void initState() {
+    super.initState();
+    _r = widget.readings;
+    if (_r == null) {
+      loadOtherReadings().then((r) {
+        if (mounted) setState(() => _r = r);
+      }, onError: (_) {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext c) {
+    final r = _r;
+    if (r == null || r.isEmpty) return const SizedBox.shrink();
+    final p = P.of(c);
+    final l = AppLocalizations.of(c);
+    final sources = {for (final x in r) x.source}.toList()..sort();
+    return Section(
+      l?.phoneImportOtherDevices ?? 'From your other devices',
+      Surface(
+        child: Column(children: [
+          for (var i = 0; i < r.length; i++) ...[
+            if (i > 0) Divider(color: p.line, height: S.x5),
+            Pressable(
+              onTap: r[i].kind == kKindVo2 ? () => go(c, const Vo2MaxScreen()) : null,
+              child: Row(children: [
+                Icon(readingIcon(r[i].kind), size: 18, color: p.ink3),
+                const SizedBox(width: S.x2),
+                Expanded(
+                  child: Text(readingLabel(r[i].kind, l), style: F.body.copyWith(color: p.ink)),
+                ),
+                const SizedBox(width: S.x2),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(formatReading(r[i].kind, r[i].value),
+                              style: F.n24.copyWith(color: p.ink)),
+                          if (readingUnit(r[i].kind).isNotEmpty) ...[
+                            const SizedBox(width: S.x1),
+                            Text(readingUnit(r[i].kind), style: F.cap.copyWith(color: p.ink3)),
+                          ],
+                        ]),
+                  ),
+                ),
+                if (r[i].kind == kKindVo2) Icon(LucideIcons.chevronRight, size: 16, color: p.ink3),
+              ]),
+            ),
+          ],
+          const SizedBox(height: S.x3),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(l?.dataFrom(sources.join(', ')) ?? 'Data from ${sources.join(', ')}',
+                style: F.cap.copyWith(color: p.ink3)),
+          ),
+        ]),
+      ),
+    );
+  }
 }

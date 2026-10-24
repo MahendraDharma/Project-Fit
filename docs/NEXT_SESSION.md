@@ -23,7 +23,7 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Release v0.12.0 has `ProjectFit.ipa`, `projectfit-v0.12.0-unsigned.ipa` and `apps.json`.
+- Release v0.13.0 has `ProjectFit.ipa`, `projectfit-v0.13.0-unsigned.ipa` and `apps.json`.
   - Fixed download link: `releases/latest/download/ProjectFit.ipa`.
   - SideStore/AltStore source: `releases/latest/download/apps.json`.
 - To cut a release, run **Actions → ios-sideload → Run workflow** with `release_tag`, either
@@ -54,6 +54,28 @@ assets or trade dress).
   Other strings fall back to English.
 - Not done: Sleep, Recovery, Strain and Health in the new style; the daytime stress chart that
   was offered; the full Indonesian translation.
+
+## Bevel-style detail screens and other devices' data (v0.13.0)
+- Recovery, Sleep and Strain open on a sky hero (`lib/ui2/screens/detail_v4.dart`):
+  - a big ring, two tiles and a coaching sentence built from stored figures
+  - a Trends section with a 30-day sparkline per metric
+  - tapping the date opens the month calendar (`month_calendar.dart`)
+- Screens handed preloaded data (tests, goldens) keep the plain layout.
+- Readings from other devices (`lib/health/health_readings_import.dart`):
+  - Read from Apple Health with the source named: VO₂ max (through the native bridge in
+    `HealthRoutes.swift`), SpO₂, HRV (SDNN), RHR, breathing rate, steps per day and sleep per
+    night.
+  - The owner's Garmin Connect writes to Health.
+  - Read on a tap in Profile › From your phone, then hourly in the foreground.
+  - Display only: never a score input, and never placed against the band's usual range.
+  - Trend cards fill the band's missing days with them, drawn hollow, with "Data from …" on the
+    card.
+- `Vo2MaxScreen` rates VO₂ max on the Cooper Institute table Garmin prints.
+- Home shows "From your other devices" when anything has been read.
+- Not done:
+  - restyling MetricDetail charts like Bevel's 30D/3M/6M/1Y sheet
+  - a Biology tab
+  - a daytime stress chart
 
 ## Rendering screens from a real export (no device needed)
 The previous session did this with a throwaway widget test that was deleted afterwards. To
