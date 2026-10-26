@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- ProjectFit Bridge: hands the watch's own stress, Body Battery, SpO2 and
+     steps to the ProjectFit phone app through Connect IQ, alongside Garmin
+     Connect. The product list is filled in at build time (see
+     .github/workflows/garmin-bridge.yml) from the devices the SDK knows. -->
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="91df5607cc034b408caf988e21936190" type="watch-app" name="@Strings.AppName" entry="BridgeApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="3.2.0">
+        <iq:products>
+            <iq:product id="fr265"/>
+        </iq:products>
+        <iq:permissions>
+            <iq:uses-permission id="Background"/>
+            <iq:uses-permission id="Communications"/>
+            <iq:uses-permission id="SensorHistory"/>
+        </iq:permissions>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>

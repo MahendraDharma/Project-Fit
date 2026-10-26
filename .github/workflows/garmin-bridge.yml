@@ -1,0 +1,83 @@
+name: garmin-bridge
+
+# Builds the ProjectFit Bridge watch app (garmin-bridge/) into one .prg per
+# Forerunner the Connect IQ SDK knows, for sideloading over USB. See
+# docs/GARMIN_BRIDGE.md.
+#
+# The SDK and its device files come from the community ConnectIQ tester image
+# (github.com/matco/connectiq-tester): the SDK manager that fetches device
+# files needs a Garmin login, which CI does not have. Each build signs with a
+# fresh developer key; a sideloaded app is replaced by copying the new file.
+#
+# A manual run with `release` on also attaches the files to the
+# `garmin-bridge` release, so the newest build has a fixed download page.
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Attach the .prg files to the garmin-bridge release'
+        type: boolean
+        default: true
+  push:
+    paths: ['garmin-bridge/**', '.github/workflows/garmin-bridge.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  prg:
+    runs-on: ubuntu-latest
+    container: ghcr.io/matco/connectiq-tester:latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Devices in this SDK
+        run: |
+          D=/root/.Garmin/ConnectIQ/Devices
+          ls "$D" | grep -E '^fr[0-9]' | sort > /tmp/devices.txt
+          echo "Forerunners: $(tr '\n' ' ' < /tmp/devices.txt)"
+          test -s /tmp/devices.txt
+      - name: Build
+        working-directory: garmin-bridge
+        run: |
+          set -u
+          openssl genrsa -out /tmp/key.pem 4096 2>/dev/null
+          openssl pkcs8 -topk8 -inform PEM -outform DER -in /tmp/key.pem -out /tmp/key.der -nocrypt
+          # Every Forerunner into the manifest, then one build per device.
+          products=$(sed 's#.*#            <iq:product id="&"/>#' /tmp/devices.txt | tr '\n' '\r')
+          sed -i "s#            <iq:product id=\"fr265\"/>#${products}#" manifest.xml
+          tr '\r' '\n' < manifest.xml > /tmp/manifest.xml && cp /tmp/manifest.xml manifest.xml
+          mkdir -p ../out
+          ok=0; bad=""
+          for d in $(cat /tmp/devices.txt); do
+            if monkeyc -d "$d" -f monkey.jungle -o "../out/ProjectFit-$d.prg" -y /tmp/key.der -l 0 -w > "/tmp/build-$d.log" 2>&1; then
+              ok=$((ok+1))
+            else
+              bad="$bad $d"
+              echo "::group::$d failed"; cat "/tmp/build-$d.log"; echo "::endgroup::"
+            fi
+          done
+          # Warnings and errors of one device, for the record.
+          echo "::group::first device log"; cat "/tmp/build-$(head -1 /tmp/devices.txt).log"; echo "::endgroup::"
+          echo "built $ok; failed:${bad:- none}"
+          ls ../out
+          rm -f ../out/*.debug.xml ../out/*-settings.json
+          test "$ok" -gt 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ProjectFit-Bridge-prg
+          path: out/*.prg
+      - name: Attach to the garmin-bridge release
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: garmin-bridge
+          name: ProjectFit Bridge (Garmin watch app)
+          body: |
+            The ProjectFit Bridge watch app, one file per Forerunner model.
+            Pick the file named after your watch (for example ProjectFit-fr265.prg)
+            and copy it to the watch's GARMIN/APPS folder over USB.
+            Step by step: docs/GARMIN_BRIDGE.md
+          files: out/*.prg
+          make_latest: false
