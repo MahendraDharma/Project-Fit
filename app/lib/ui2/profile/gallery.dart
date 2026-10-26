@@ -64,7 +64,9 @@ import '../onboarding/welcome.dart' show ImportOutcome, ImportReport;
 import '../screens/screens.dart';
 import '../ui2.dart';
 import 'devices.dart';
+import 'garmin_ciq.dart';
 import 'garmin_session.dart';
+import '../../garmin/connectiq_link.dart' show CiqDevice, CiqSyncReport;
 import '../../ble/garmin_link.dart' show GarminSyncReport;
 import 'profile.dart';
 import 'wearable_numbers.dart';
@@ -245,6 +247,13 @@ Map<String, Widget> componentCases() => {
         (kind: 'spo2', value: 96.2, source: 'Connect', ts: 1792800000),
         (kind: 'rhr_ext', value: 53.0, source: 'Connect', ts: 1792800000),
       ]),
+      'garmin_ciq_new': const GarminConnectIqCard(preview: (devices: [], app: null, report: null)),
+      'garmin_ciq_set': const GarminConnectIqCard(
+          preview: (
+            devices: [CiqDevice('a', 'Forerunner 265', 'Forerunner 265', true)],
+            app: (true, 1),
+            report: CiqSyncReport(atMs: 1792900000000, outcome: 'success', stored: 412, ended: true),
+          )),
       'garmin_session': const GarminSessionCard(
           report: GarminSyncReport(
               atMs: 1792900000000,

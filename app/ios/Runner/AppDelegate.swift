@@ -4,6 +4,7 @@ import AudioToolbox
 import AVFoundation
 import BackgroundTasks
 import CoreMotion
+import ProjectFitConnectIQ
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -119,6 +120,11 @@ import CoreMotion
       HealthRouteBridge.register(messenger: registrar.messenger())
     }
     // HealthKit sleep replace (inBed + Core/Deep/REM). See HealthKitSleepWriter.swift.
+    // The Garmin watch bridge (Connect IQ), beside Garmin Connect. See
+    // ConnectIQBridge/ and lib/garmin/connectiq_link.dart.
+    if let registrar = registry.registrar(forPlugin: "ConnectIQBridge") {
+      ConnectIQBridge.register(messenger: registrar.messenger())
+    }
     if let registrar = registry.registrar(forPlugin: "HealthKitSleepWriter") {
       HealthKitSleepWriter.register(messenger: registrar.messenger())
     }

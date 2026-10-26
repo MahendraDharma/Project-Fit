@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'garmin/connectiq_link.dart';
 import 'ui2/profile/profile_photo.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
@@ -139,6 +140,8 @@ Future<void> main() async {
   // selections (tab, range toggles) in initState with no async flash.
   await _safeInit('Prefs', Prefs.ensureLoaded);
   await _safeInit('ProfilePhoto', ProfilePhoto.load);
+  // The Garmin watch through Connect IQ (lib/garmin/connectiq_link.dart).
+  ConnectIqLink.instance.attach();
 
   // Resolve appearance (persisted choice + OS brightness) BEFORE the first frame
   // so login/signup already paint in the right mode (Ember on Paper / Char).

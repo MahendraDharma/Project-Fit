@@ -86,6 +86,7 @@ import '../../state/clock_format.dart' show formatClockOf;
 import '../pairing/device_picker.dart' show DevicePickerScreen;
 import '../onboarding/profile_setup.dart' show formatDay;
 import '../ui2.dart';
+import 'garmin_ciq.dart';
 import 'garmin_session.dart';
 import 'profile.dart';
 import 'settings.dart' show backToRoot;
@@ -1478,6 +1479,10 @@ class MyDevicesView extends StatelessWidget {
                             'A heart-rate strap or a ring, alongside the band',
                         onTap: onAddSensor),
                   ),
+                // The Garmin watch beside Garmin Connect (iPhone only; absent
+                // elsewhere). See garmin_ciq.dart.
+                const SizedBox(height: S.x5),
+                const GarminConnectIqCard(),
                 // ONLY when something can actually contend. A reorder screen
                 // over one device is a control with nothing to order, which is
                 // the empty-rung problem this screen already refuses (§6.5).

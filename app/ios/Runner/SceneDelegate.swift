@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import ProjectFitConnectIQ
 
 class SceneDelegate: FlutterSceneDelegate {
   override func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
@@ -12,6 +13,15 @@ class SceneDelegate: FlutterSceneDelegate {
     self.window = window
     window.makeKeyAndVisible()
     super.scene(scene, willConnectTo: session, options: connectionOptions)
+  }
+
+  /// Garmin Connect handing back the watches shared with ProjectFit.
+  override func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    var rest = Set<UIOpenURLContext>()
+    for ctx in URLContexts where !ConnectIQBridge.shared.handle(url: ctx.url) {
+      rest.insert(ctx)
+    }
+    if !rest.isEmpty { super.scene(scene, openURLContexts: rest) }
   }
 
   /// Re-submit the BGProcessingTask + BGAppRefreshTask requests every time a

@@ -31,6 +31,23 @@
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<!-- Garmin Connect returns the watches shared with ProjectFit through this
+	     scheme (Connect IQ Mobile SDK; ConnectIQBridge/). -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>connectiq</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>projectfit-ciq</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>gcm-ciq</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>ProjectFit</string>
 	<key>CFBundleExecutable</key>

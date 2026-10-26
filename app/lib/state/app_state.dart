@@ -37,6 +37,7 @@ import '../ble/adapters/whoop_gen4.dart' show WhoopFramedAdapter;
 import '../ble/android_background.dart';
 import '../ble/ble_engine.dart';
 import '../ble/garmin_link.dart';
+import '../garmin/connectiq_link.dart';
 import '../ble/hrs_link.dart';
 import '../ble/polar_pmd_link.dart';
 import '../ble/live_step_runs.dart';
@@ -5382,12 +5383,19 @@ class _AppFullSyncHost implements FullSyncHost {
   bool get deriving => _app.deriving || _app.derivePending;
   @override
   (int, int)? get deriveDays => _app.deriveDays.value;
+  // Connect IQ first: it rides beside Garmin Connect. The direct link is
+  // only for a watch set up that way and not through Connect IQ — it has to
+  // take the watch's channel from Garmin Connect.
   @override
-  Future<bool> garminPaired() async => await GarminLink.pairedRow() != null;
+  Future<bool> garminPaired() async =>
+      await ConnectIqLink.instance.configured() || await GarminLink.pairedRow() != null;
   @override
-  Future<bool> syncGarmin() => GarminLink.instance.sync();
+  Future<bool> syncGarmin() async => await ConnectIqLink.instance.configured()
+      ? ConnectIqLink.instance.sync()
+      : GarminLink.instance.sync();
   @override
-  double? get garminProgress => GarminLink.instance.progress.value;
+  double? get garminProgress =>
+      ConnectIqLink.instance.progress.value ?? GarminLink.instance.progress.value;
   @override
   Future<bool> healthAsked() => HealthReadingsImporter.asked();
   @override

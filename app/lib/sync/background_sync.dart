@@ -26,6 +26,7 @@ import '../ble/colmi_link.dart';
 import '../ble/session_link.dart';
 import '../ble/coros_link.dart';
 import '../ble/garmin_link.dart';
+import '../garmin/connectiq_link.dart';
 import '../ble/miband_link.dart';
 import '../ble/oura_link.dart';
 import '../ble/pebble_link.dart';
@@ -381,8 +382,14 @@ Future<bool> runHeadlessSync({BandLease? lease}) async {
     // Same piggyback, same reasoning: GarminLink.sync() no-ops when nothing
     // is paired and never throws, but this is the one shared headless entry
     // point, so a failure here must not escape either.
+    // With Connect IQ set up, the watch is reached beside Garmin Connect and
+    // the direct link (which takes the watch's channel) stays off.
     try {
-      await GarminLink.instance.sync();
+      if (await ConnectIqLink.instance.configured()) {
+        await ConnectIqLink.instance.sync(wait: const Duration(seconds: 25));
+      } else {
+        await GarminLink.instance.sync();
+      }
     } catch (e) {
       debugPrint('[bgsync] garmin sync skipped: $e');
     }
