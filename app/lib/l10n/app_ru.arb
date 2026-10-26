@@ -7782,5 +7782,19 @@
   "ciqReasonNoAnswer": "часы не прислали данные вовремя",
   "ciqReasonOther": "часы отказали ({code})",
   "@ciqReasonOther": {"placeholders": {"code": {"type": "String"}}},
-  "ciqOpenOnWatch": "Открыть ProjectFit на часах"
+  "ciqOpenOnWatch": "Открыть ProjectFit на часах",
+  "rawTitle": "Запись сырых данных",
+  "rawRowSub": "Для исследования: оптические кадры, движение и пульс браслета в файл",
+  "rawIntro": "Записывает каждый живой кадр браслета — оптику, движение и пульс — в исходном виде, а также оптические настройки, и сохраняет в файл. Держите браслет на руке и этот экран открытым до конца. Ничего в приложении не рассчитывается по этим данным.",
+  "rawMinutes": "{n} мин",
+  "@rawMinutes": {"placeholders": {"n": {"type": "int"}}},
+  "rawStart": "Начать запись",
+  "rawStopSave": "Остановить и сохранить",
+  "rawRecording": "Запись… осталось {left}",
+  "@rawRecording": {"placeholders": {"left": {"type": "String"}}},
+  "rawFrames": "Кадров: {n}",
+  "@rawFrames": {"placeholders": {"n": {"type": "int"}}},
+  "rawNotConnected": "Сначала подключите браслет.",
+  "rawDone": "Запись сохранена",
+  "rawShare": "Поделиться файлом"
 }

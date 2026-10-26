@@ -260,5 +260,19 @@
   "ciqReasonNoAnswer": "jam tidak mengirim datanya tepat waktu",
   "ciqReasonOther": "jam menolak ({code})",
   "@ciqReasonOther": {"placeholders": {"code": {"type": "String"}}},
-  "ciqOpenOnWatch": "Buka ProjectFit di jam"
+  "ciqOpenOnWatch": "Buka ProjectFit di jam",
+  "rawTitle": "Rekam data mentah",
+  "rawRowSub": "Untuk riset: frame optik, gerak dan detak dari band, disimpan ke file",
+  "rawIntro": "Merekam setiap frame live yang dikirim band — optik, gerak dan detak jantung — apa adanya, beserta pengaturan optik dari band, lalu menyimpannya sebagai file yang bisa dibagikan. Pakai band di pergelangan dan biarkan layar ini terbuka sampai selesai. Tidak ada angka di aplikasi yang dihitung dari rekaman ini.",
+  "rawMinutes": "{n} menit",
+  "@rawMinutes": {"placeholders": {"n": {"type": "int"}}},
+  "rawStart": "Mulai rekam",
+  "rawStopSave": "Berhenti dan simpan",
+  "rawRecording": "Merekam… sisa {left}",
+  "@rawRecording": {"placeholders": {"left": {"type": "String"}}},
+  "rawFrames": "{n} frame",
+  "@rawFrames": {"placeholders": {"n": {"type": "int"}}},
+  "rawNotConnected": "Sambungkan band dulu, lalu mulai.",
+  "rawDone": "Rekaman tersimpan",
+  "rawShare": "Bagikan file"
 }

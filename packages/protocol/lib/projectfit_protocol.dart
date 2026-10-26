@@ -173,6 +173,8 @@ export 'src/commands.dart'
         cmdRawDataStart, // 81
         cmdRawDataStop, // 82
         cmdStopHaptics, // 122
+        cmdGetAfeParams, // 62, read-only
+        cmdGetOpticalSetting, // 40/42/44, read-only
         // Filtered reading ("Labrador", R17). The wrong-bodied cmdEcgControl
         // (124 as a bool) and the opcode-126 cmdEcgSendRaw stay deprecated
         // and unexported.

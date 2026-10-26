@@ -973,6 +973,18 @@ Uint8List cmdSetEventPackets(int seq, bool on,
         {BandProfile profile = BandProfile.gen4}) =>
     buildCommand(seq, Cmd.sendEventPackets, [on ? 0x01 : 0x00], profile);
 
+/// Read one optical front-end setting — [Cmd.getLedDrive], [Cmd.getTiaGain]
+/// or [Cmd.getBiasOffset] — `[0x01]`. Read-only, gen4.
+Uint8List cmdGetOpticalSetting(int seq, int opcode,
+    {BandProfile profile = BandProfile.gen4}) {
+  if (opcode != Cmd.getLedDrive &&
+      opcode != Cmd.getTiaGain &&
+      opcode != Cmd.getBiasOffset) {
+    throw ArgumentError.value(opcode, 'opcode', 'not an optical GET');
+  }
+  return buildCommand(seq, opcode, const [0x01], profile);
+}
+
 /// Read the optical front-end (AFE) parameters (0x3E) — `[0x01]`. Read-only;
 /// the SET twin (0x3D) is deliberately not built here.
 Uint8List cmdGetAfeParams(int seq, {BandProfile profile = BandProfile.gen4}) =>

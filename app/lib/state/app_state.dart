@@ -37,6 +37,7 @@ import '../ble/adapters/whoop_gen4.dart' show WhoopFramedAdapter;
 import '../ble/android_background.dart';
 import '../ble/ble_engine.dart';
 import '../ble/garmin_link.dart';
+import '../ble/raw_capture.dart';
 import '../garmin/connectiq_link.dart';
 import '../ble/hrs_link.dart';
 import '../ble/polar_pmd_link.dart';
@@ -1513,6 +1514,44 @@ class AppState extends ChangeNotifier {
 
   /// Days done / queued in the derive pass running now (see DeriveCoordinator).
   ValueListenable<(int, int)?> get deriveDays => _deriveCoordinator.deriveDays;
+
+  RawCapture? _rawCapture;
+
+  /// The raw capture running now, if any (Devices → band → raw data).
+  RawCapture? get rawCapture => _rawCapture;
+
+  /// Start recording every live frame for [minutes]: reads the strap's optics
+  /// first (gen4, read-only) and holds the IMU stream so motion is in the file
+  /// too. One capture at a time; returns the running one if there is.
+  Future<RawCapture> startRawCapture(int minutes) async {
+    final running = _rawCapture;
+    if (running != null && running.running) return running;
+    final c = RawCapture(minutes: minutes);
+    _rawCapture = c;
+    Map<String, String?> optics = const {};
+    try {
+      optics = await engine.readOpticalSettings();
+    } catch (e) {
+      _log('[raw] optics read failed: $e');
+    }
+    String version = '';
+    try {
+      final info = await PackageInfo.fromPlatform();
+      version = '${info.version}+${info.buildNumber}';
+    } catch (_) {}
+    c.start({
+      'app': version,
+      'band': engine.isConnected ? (engine.bandProfile == null ? '' : (engine.bandProfile!.isGen5 ? 'gen5' : 'gen4')) : 'not connected',
+      'optics': optics,
+    });
+    _liveStreamController.setMovementSamplingWindow(true);
+    return c;
+  }
+
+  void stopRawCapture() {
+    _rawCapture?.stop();
+    _liveStreamController.setMovementSamplingWindow(false);
+  }
 
   /// Sync everything — band, derive, Garmin watch, Health readings — with one
   /// progress figure. What Home's sync pill and pull-to-refresh run.
@@ -3139,6 +3178,7 @@ class AppState extends ChangeNotifier {
   // breathing session taps the RR-bearing frames (0x28 compact HR, 0x2B R10)
   // into its in-memory buffer. Cheap-bounded; cleared at each session start.
   void _onLiveFrame(int pt, String hex, int? recTs) {
+    _rawCapture?.add(pt, hex, recTs);
     // NOTE: deliberately do NOT advance _lastRecTs from live frames. Live frames
     // (0x28/0x2B/0x33) are ephemeral and NEVER persisted, and they carry the
     // CURRENT wall-clock time — so bumping _lastRecTs here pinned the "last data"

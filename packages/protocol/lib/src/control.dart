@@ -1081,6 +1081,13 @@ CmdResponse? parseCommandResponse(Uint8List inner,
         statusRaw: payload[29],
       );
     }
+  } else if (op == Cmd.getLedDrive ||
+      op == Cmd.getTiaGain ||
+      op == Cmd.getBiasOffset ||
+      op == Cmd.getAfeParams) {
+    // Kept verbatim: the raw-capture export records the optics the strap
+    // reported; nothing reads a field out of these yet.
+    dec['raw_hex'] = _hex(payload);
   } else if (op == Cmd.reportVersionInfo) {
     dec['version_info'] = <String, dynamic>{
       'payload_len': payload.length,

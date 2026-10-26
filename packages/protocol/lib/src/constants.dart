@@ -97,6 +97,12 @@ class Cmd {
   // advanced/diagnostic. GET is read-only and safe.
   static const int setAfeParams = 0x3D;
   static const int getAfeParams = 0x3E;
+  // Optical front-end reads, named in the WHOOP app's own command table
+  // (GET_LED_DRIVE 40, GET_TIA_GAIN 42, GET_BIAS_OFFSET 44). Read-only; the
+  // SET twins (39/41/43) change the strap's optics and are not built here.
+  static const int getLedDrive = 0x28;
+  static const int getTiaGain = 0x2A;
+  static const int getBiasOffset = 0x2C;
   // GEN4-ONLY: gen5 does not implement 0x3F at all. gen5's realtime-raw entry
   // point is START_RAW_DATA (0x51) / STOP_RAW_DATA (0x52) instead.
   static const int sendR10R11Realtime = 0x3F;

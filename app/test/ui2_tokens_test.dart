@@ -209,6 +209,8 @@ const _notComponents = {
   // Whole screens, pushed, each with its own scaffold.
   'Vo2MaxScreen', 'MonthCalendarScreen', 'BodyBatteryScreen', 'GarminStressScreen',
   'StreakScreen', 'HeartRateDayScreen',
+  // Owns a live BLE capture of the band's raw frames.
+  'RawCaptureScreen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',
   'ProfileSetupScreen', 'ProfileSetupView',

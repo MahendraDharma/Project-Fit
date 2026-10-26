@@ -8581,6 +8581,39 @@ class BleEngine {
   // the branch's gen5 HELLO, which is a different opcode on Maverick.
   Future<void> getBattery() => _pollBatteryIfDue(force: true);
 
+  /// The connected band's wire profile, or null with no session.
+  BandProfile? get bandProfile => _session?.band;
+
+  /// The strap's optical front-end settings, verbatim: each read's reply
+  /// payload as hex, or null when it did not answer. gen4 only (the opcodes
+  /// are the WHOOP app's gen4 table); read-only. For the raw-capture export.
+  Future<Map<String, String?>> readOpticalSettings() async {
+    final session = _session;
+    if (session == null || !session.connected || session.band.isGen5) {
+      return const {};
+    }
+    final out = <String, String?>{};
+    for (final (name, op) in [
+      ('afe_params', Cmd.getAfeParams),
+      ('led_drive', Cmd.getLedDrive),
+      ('tia_gain', Cmd.getTiaGain),
+      ('bias_offset', Cmd.getBiasOffset),
+    ]) {
+      if (_sessionIsStale(session)) break;
+      final sent = await _sendAwaited(
+        op,
+        const <int>[],
+        frameBuilder: (seq) => op == Cmd.getAfeParams
+            ? cmdGetAfeParams(seq, profile: session.band)
+            : cmdGetOpticalSetting(seq, op, profile: session.band),
+        owner: session,
+      );
+      final r = sent.written ? await sent.response : null;
+      out[name] = r == null ? null : '${r.status}:${r.fields['raw_hex'] ?? ''}';
+    }
+    return out;
+  }
+
   /// Ask the band something cheap and wait for the answer. True iff a reply
   /// correlated within [timeout]. For resume paths that find a link quiet
   /// after the process was not listening (iOS, suspended between band

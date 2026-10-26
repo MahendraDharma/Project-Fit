@@ -87,6 +87,7 @@ import '../pairing/device_picker.dart' show DevicePickerScreen;
 import '../onboarding/profile_setup.dart' show formatDay;
 import '../ui2.dart';
 import 'garmin_ciq.dart';
+import 'raw_capture_screen.dart';
 import 'garmin_session.dart';
 import 'profile.dart';
 import 'settings.dart' show backToRoot;
@@ -1823,6 +1824,7 @@ class _DeviceDetailState extends State<DeviceDetail> {
       health: _health,
       forecast: _forecast,
       onFind: app?.buzzBand,
+      onRawCapture: s.isBand ? () => goto(c, const RawCaptureScreen()) : null,
       liveHr: s.isBand ? app?.liveHr : null,
       onRename: (app != null && app.isConnected)
           ? () => _renameBand(c, app, s.name)
@@ -2195,6 +2197,9 @@ class DeviceDetailView extends StatelessWidget {
   final HealthSource s;
   final VoidCallback? onFind, onForget, onSync;
 
+  /// Opens the raw-data recording. Null hides the row (not the band).
+  final VoidCallback? onRawCapture;
+
   /// The beat arriving right now, or null when nothing fresh is streaming.
   /// Passed IN rather than read from a provider here: this view is rendered in
   /// tests with no Provider above it, which is the point of it being a view.
@@ -2228,6 +2233,7 @@ class DeviceDetailView extends StatelessWidget {
   const DeviceDetailView(this.s,
       {super.key,
       this.onFind,
+      this.onRawCapture,
       this.onForget,
       this.onSync,
       this.onRename,
@@ -2501,6 +2507,14 @@ class DeviceDetailView extends StatelessWidget {
                                     'one. Its numbers have not been checked against '
                                     'the hardware, only against the protocol.',
                             chevron: false),
+                      ],
+                      if (onRawCapture != null) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.activity, C.purple,
+                            l?.rawTitle ?? 'Record raw data',
+                            sub: l?.rawRowSub ??
+                                'For research: optical, motion and heart-rate frames to a file',
+                            onTap: onRawCapture),
                       ],
                       if (onFind != null) ...[
                         Divider(color: p.line, height: 1),

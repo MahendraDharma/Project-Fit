@@ -16064,5 +16064,19 @@
   "ciqReasonNoAnswer": "the watch did not send its data back in time",
   "ciqReasonOther": "the watch refused ({code})",
   "@ciqReasonOther": {"placeholders": {"code": {"type": "String"}}},
-  "ciqOpenOnWatch": "Open ProjectFit on the watch"
+  "ciqOpenOnWatch": "Open ProjectFit on the watch",
+  "rawTitle": "Record raw data",
+  "rawRowSub": "For research: the band's optical, motion and heart-rate frames, saved to a file",
+  "rawIntro": "Records every live frame the band sends — optical, motion and heart rate — exactly as it arrives, plus the optical settings the band reports, and saves it as a file you can share. Keep the band on your wrist and this screen open until it finishes. Nothing in the app is scored from it.",
+  "rawMinutes": "{n} min",
+  "@rawMinutes": {"placeholders": {"n": {"type": "int"}}},
+  "rawStart": "Start recording",
+  "rawStopSave": "Stop and save",
+  "rawRecording": "Recording… {left} left",
+  "@rawRecording": {"placeholders": {"left": {"type": "String"}}},
+  "rawFrames": "{n} frames",
+  "@rawFrames": {"placeholders": {"n": {"type": "int"}}},
+  "rawNotConnected": "Connect the band first, then start.",
+  "rawDone": "Recording saved",
+  "rawShare": "Share the file"
 }
