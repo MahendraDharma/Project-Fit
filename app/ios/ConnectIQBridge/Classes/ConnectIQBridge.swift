@@ -49,8 +49,8 @@ public final class ConnectIQBridge: NSObject, IQDeviceEventDelegate, IQAppMessag
     start()
     guard let parsed = ConnectIQ.sharedInstance().parseDeviceSelectionResponse(from: url)
             as? [IQDevice] else { return false }
-    ConnectIQ.sharedInstance().unregisterForAllDeviceEvents(self)
-    ConnectIQ.sharedInstance().unregisterForAllAppMessages(self)
+    ConnectIQ.sharedInstance().unregister(forAllDeviceEvents: self)
+    ConnectIQ.sharedInstance().unregister(forAllAppMessages: self)
     devices = parsed
     saveDevices(parsed)
     for d in parsed { listen(d) }
@@ -59,8 +59,8 @@ public final class ConnectIQBridge: NSObject, IQDeviceEventDelegate, IQAppMessag
   }
 
   private func listen(_ d: IQDevice) {
-    ConnectIQ.sharedInstance().registerForDeviceEvents(d, delegate: self)
-    ConnectIQ.sharedInstance().registerForAppMessages(app(d), delegate: self)
+    ConnectIQ.sharedInstance().register(forDeviceEvents: d, delegate: self)
+    ConnectIQ.sharedInstance().register(forAppMessages: app(d), delegate: self)
   }
 
   private func app(_ d: IQDevice) -> IQApp {
