@@ -16,18 +16,30 @@ permissions:
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    env:
+      PKG: ${{ inputs.package }}
+      UA: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
     steps:
       - name: Install apkeep
         run: |
-          curl -fsSL -o apkeep https://github.com/EFForg/apkeep/releases/latest/download/apkeep-x86_64-unknown-linux-gnu \
-            && chmod +x apkeep && ./apkeep --version \
-            || { cargo install apkeep --locked && cp ~/.cargo/bin/apkeep . ; }
-      - name: Download
+          curl -fsSL -o apkeep https://github.com/EFForg/apkeep/releases/latest/download/apkeep-x86_64-unknown-linux-gnu
+          chmod +x apkeep && ./apkeep --version
+      - name: Download (tries several sources)
         run: |
-          mkdir out
-          ./apkeep -a "${{ inputs.package }}" -d apk-pure -o 'acknowledge_dangers=true' out
+          mkdir -p out
+          ok() { find out -type f -size +5M | grep -q . ; }
+          echo "== 1. apkeep APKPure: versions"
+          ./apkeep -l -a "$PKG" -d apk-pure || true
+          echo "== 2. apkeep APKPure: download"
+          ./apkeep -a "$PKG" -d apk-pure -o 'acknowledge_dangers=true' out || true
+          ok || { echo "== 3. APKPure direct XAPK";
+            curl -fL -A "$UA" -o out/whoop.xapk "https://d.apkpure.com/b/XAPK/$PKG?version=latest" || true; }
+          ok || { echo "== 4. APKPure direct APK";
+            curl -fL -A "$UA" -o out/whoop.apk "https://d.apkpure.com/b/APK/$PKG?version=latest" || true; }
+          find out -type f -size -5M -delete
           ls -la out
-          test -n "$(ls out)"
+          for f in out/*; do echo "$f: $(file -b "$f")"; sha256sum "$f"; done
+          ok
       - name: Draft release
         env:
           GH_TOKEN: ${{ github.token }}
