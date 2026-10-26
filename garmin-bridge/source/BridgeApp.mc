@@ -15,6 +15,7 @@ import Toybox.Application;
 import Toybox.Background;
 import Toybox.Communications;
 import Toybox.Lang;
+import Toybox.System;
 import Toybox.WatchUi;
 
 (:background)
