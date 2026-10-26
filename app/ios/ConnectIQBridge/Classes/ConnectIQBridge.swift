@@ -64,14 +64,14 @@ public final class ConnectIQBridge: NSObject, IQDeviceEventDelegate, IQAppMessag
   }
 
   private func app(_ d: IQDevice) -> IQApp {
-    IQApp(uuid: ConnectIQBridge.appId, storeUuid: ConnectIQBridge.appId, device: d)
+    IQApp(uuid: ConnectIQBridge.appId, store: ConnectIQBridge.appId, device: d)
   }
 
   private func handle(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     start()
     switch call.method {
     case "selectDevices":
-      ConnectIQ.sharedInstance().showConnectIQDeviceSelection()
+      ConnectIQ.sharedInstance().showDeviceSelection()
       result(nil)
     case "devices":
       result(devices.map(describe))
