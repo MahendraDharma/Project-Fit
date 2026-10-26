@@ -282,12 +282,7 @@ class ConnectIqLink {
   /// background run sends a few messages at a time) still catches the
   /// others up. Rows already stored come back as the same rows. 0 = never.
   Future<int> _newestStoredSec() async {
-    final db = await LocalDb.instance;
-    final r = await db.rawQuery(
-        'SELECT vendor_key, MAX(ts_ms) AS t FROM observation '
-        'WHERE device_id = ? AND vendor_key IS NOT NULL GROUP BY vendor_key',
-        [kCiqDeviceId]);
-    final ts = [for (final row in r) (row['t'] as num?)?.toInt()].whereType<int>();
+    final ts = (await LocalDb.newestVendorTsByKey(kCiqDeviceId)).values;
     return ts.isEmpty ? 0 : ts.reduce((a, b) => a < b ? a : b) ~/ 1000;
   }
 }

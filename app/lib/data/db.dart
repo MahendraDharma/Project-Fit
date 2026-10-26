@@ -2980,6 +2980,20 @@ class LocalDb {
     );
   }
 
+  /// The newest stored sample time per vendor series of one device, ms —
+  /// where a link that pulls "everything newer" picks up from.
+  static Future<Map<String, int>> newestVendorTsByKey(String deviceId) async {
+    final db = await instance;
+    final rows = await db.rawQuery(
+        'SELECT vendor_key, MAX(ts_ms) AS t FROM observation '
+        'WHERE device_id = ? AND vendor_key IS NOT NULL GROUP BY vendor_key',
+        [deviceId]);
+    return {
+      for (final r in rows)
+        if (r['vendor_key'] is String && r['t'] is num) r['vendor_key'] as String: (r['t'] as num).toInt(),
+    };
+  }
+
   static Future<List<Map<String, Object?>>> observationsForDay(
     String date,
   ) async {
