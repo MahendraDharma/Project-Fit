@@ -25,7 +25,7 @@ jobs:
       - name: Download
         run: |
           mkdir out
-          ./apkeep -a "${{ inputs.package }}" -d apk-pure out || ./apkeep -a "${{ inputs.package }}" out
+          ./apkeep -a "${{ inputs.package }}" -d apk-pure -o 'acknowledge_dangers=true' out
           ls -la out
           test -n "$(ls out)"
       - name: Draft release
