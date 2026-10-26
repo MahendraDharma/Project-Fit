@@ -158,16 +158,18 @@ void main() {
       expect(log.events, ['t', 'r', 't']);
     });
 
-    test('days notify on the first, every third and the last only; revision '
-        'moves once, at the end', () async {
+    test('days notify on the first, every third and the last only; the '
+        'revision also moves on those days but the last, so screens fill in '
+        'mid-sweep, and once more at the end', () async {
       final app = make();
       app.debugDeriveRun =
           deriveHook(days: [for (var i = 7; i >= 1; i--) 'd$i']);
       final log = SignalLog(app);
       await app.debugAfterDrain();
-      // Days 1, 3, 6 and 7 tick; then the revision; then the final tick.
-      expect(log.events, ['t', 't', 't', 't', 'r', 't']);
-      expect(app.insightsRevision.value, 1);
+      // Days 1, 3 and 6 bump and tick, day 7 only ticks; then the pass's
+      // own revision and final tick.
+      expect(log.events, ['r', 't', 'r', 't', 'r', 't', 't', 'r', 't']);
+      expect(app.insightsRevision.value, 4);
     });
 
     test('two days: first and last both tick', () async {
@@ -175,7 +177,7 @@ void main() {
       app.debugDeriveRun = deriveHook(days: ['d2', 'd1']);
       final log = SignalLog(app);
       await app.debugAfterDrain();
-      expect(log.events, ['t', 't', 'r', 't']);
+      expect(log.events, ['r', 't', 't', 'r', 't']);
     });
 
     test('a heavy rescan that refreshed days ticks again but does not bump '
