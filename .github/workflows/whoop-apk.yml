@@ -1,0 +1,37 @@
+name: whoop-apk
+
+# Riset saja: mengambil aplikasi WHOOP Android untuk mempelajari cara aplikasi
+# itu membaca data band milik saya sendiri. File ditaruh di DRAFT release
+# (tidak publik) dan dihapus setelah dianalisis. Tidak ada yang di-commit.
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Android package id'
+        default: 'com.whoop.android'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install apkeep
+        run: |
+          curl -fsSL -o apkeep https://github.com/EFForg/apkeep/releases/latest/download/apkeep-x86_64-unknown-linux-gnu \
+            && chmod +x apkeep && ./apkeep --version \
+            || { cargo install apkeep --locked && cp ~/.cargo/bin/apkeep . ; }
+      - name: Download
+        run: |
+          mkdir out
+          ./apkeep -a "${{ inputs.package }}" -d apk-pure out || ./apkeep -a "${{ inputs.package }}" out
+          ls -la out
+          test -n "$(ls out)"
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete re-whoop --repo "$GITHUB_REPOSITORY" --yes 2>/dev/null || true
+          gh release create re-whoop --repo "$GITHUB_REPOSITORY" --draft \
+            --title "re-whoop (draft, research only)" --notes "Not published. Deleted after analysis." out/*
