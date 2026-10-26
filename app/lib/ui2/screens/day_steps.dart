@@ -244,7 +244,14 @@ class DayStepsDetail extends StatefulWidget {
   State<DayStepsDetail> createState() => _DayStepsDetailState();
 }
 
-class _DayStepsDetailState extends State<DayStepsDetail> {
+class _DayStepsDetailState extends State<DayStepsDetail> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   DayStepsData? _d;
   bool _loading = true;
   String? _day;

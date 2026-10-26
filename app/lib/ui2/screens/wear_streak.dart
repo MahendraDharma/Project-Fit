@@ -99,7 +99,14 @@ class StreakChip extends StatefulWidget {
   State<StreakChip> createState() => _StreakChipState();
 }
 
-class _StreakChipState extends State<StreakChip> {
+class _StreakChipState extends State<StreakChip> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.streak == null;
+
+  @override
+  void reload() => _load();
+
   WearStreak? _s;
 
   @override

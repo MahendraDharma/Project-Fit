@@ -15,6 +15,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:projectfit_analytics/onehz.dart' as ana;
@@ -35,6 +36,7 @@ import '../ble/adapters/host.dart' show BandHost;
 import '../ble/adapters/whoop_gen4.dart' show WhoopFramedAdapter;
 import '../ble/android_background.dart';
 import '../ble/ble_engine.dart';
+import '../ble/garmin_link.dart';
 import '../ble/hrs_link.dart';
 import '../ble/polar_pmd_link.dart';
 import '../ble/live_step_runs.dart';
@@ -98,6 +100,7 @@ import '../notify/notification_prefs.dart';
 import '../gestures/gesture_settings.dart';
 import '../health/auto_workout_import.dart';
 import '../health/health_readings_import.dart';
+import '../sync/full_sync.dart';
 import '../health/health_export.dart';
 import '../health/phone_pedometer.dart';
 import '../import/noop_import.dart';
@@ -1506,6 +1509,13 @@ class AppState extends ChangeNotifier {
   /// Bumped whenever stored insights change so listeners can re-query without a
   /// full ChangeNotifier repaint.
   ValueNotifier<int> get insightsRevision => _deriveCoordinator.insightsRevision;
+
+  /// Days done / queued in the derive pass running now (see DeriveCoordinator).
+  ValueListenable<(int, int)?> get deriveDays => _deriveCoordinator.deriveDays;
+
+  /// Sync everything — band, derive, Garmin watch, Health readings — with one
+  /// progress figure. What Home's sync pill and pull-to-refresh run.
+  late final FullSync fullSync = FullSync(_AppFullSyncHost(this));
   StreamSubscription<String>? _tapSub;
 
   void _handleTapRoute(String route) {
@@ -2071,7 +2081,9 @@ class AppState extends ChangeNotifier {
       unawaited(AutoWorkoutImport.maybeRun());
       // Vitals other devices put in Health (Garmin, a watch): display-only,
       // once the user has said yes on a tap, at most hourly, never prompting.
-      unawaited(HealthReadingsImporter.maybeRun());
+      unawaited(HealthReadingsImporter.maybeRun().then((n) {
+        if (n > 0) bumpInsights();
+      }));
       await _maybeGenerateBriefing();
       unawaited(_checkSchemaHealth()); // throttled internally to 24h
       // Staleness-escalation meta-layer: the SAME check the headless path
@@ -5351,4 +5363,35 @@ class AppState extends ChangeNotifier {
       _log('[gesture] mark moment failed: $e');
     }
   }
+}
+
+/// [FullSync]'s steps, on this app's own sync, derive, watch and importer.
+class _AppFullSyncHost implements FullSyncHost {
+  _AppFullSyncHost(this._app);
+  final AppState _app;
+
+  @override
+  bool get bandPaired => _app.isPaired;
+  @override
+  Future<void> syncBand() => _app.syncNow();
+  @override
+  bool get bandActive => _app.syncingNow;
+  @override
+  DateTime? get lastRecordAt => _app.lastRecordAt;
+  @override
+  bool get deriving => _app.deriving || _app.derivePending;
+  @override
+  (int, int)? get deriveDays => _app.deriveDays.value;
+  @override
+  Future<bool> garminPaired() async => await GarminLink.pairedRow() != null;
+  @override
+  Future<bool> syncGarmin() => GarminLink.instance.sync();
+  @override
+  double? get garminProgress => GarminLink.instance.progress.value;
+  @override
+  Future<bool> healthAsked() => HealthReadingsImporter.asked();
+  @override
+  Future<int> importHealth() => HealthReadingsImporter.runNow();
+  @override
+  void dataChanged() => _app.bumpInsights();
 }

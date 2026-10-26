@@ -86,6 +86,7 @@ import '../../state/clock_format.dart' show formatClockOf;
 import '../pairing/device_picker.dart' show DevicePickerScreen;
 import '../onboarding/profile_setup.dart' show formatDay;
 import '../ui2.dart';
+import 'garmin_session.dart';
 import 'profile.dart';
 import 'settings.dart' show backToRoot;
 import 'wearable_numbers.dart' show DeviceUseSwitch, WearableDayScreen;
@@ -1933,6 +1934,10 @@ Future<void> _syncGarminWatch(BuildContext c) async {
   messenger?.showSnackBar(SnackBar(content: Text(uiText(c, 'Syncing…'))));
   final ok = await GarminLink.instance.sync();
   if (!c.mounted) return;
+  // What landed has to reach the Home cards without a relaunch.
+  try {
+    c.read<AppState>().bumpInsights();
+  } catch (_) {}
   messenger?.showSnackBar(SnackBar(
     content: Text(ok
         ? (l?.devicesSynced ?? 'Synced.')
@@ -2296,6 +2301,12 @@ class DeviceDetailView extends StatelessWidget {
                 // "nothing unless its experimental flag is on" (R6), and that
                 // has to be on the screen rather than inferred from a metric
                 // quietly still abstaining.
+                // The watch's last session, readable — its link has never
+                // met a real watch, so an empty card needs a reason.
+                if (s.family == 'garmin') ...[
+                  const GarminSessionCard(),
+                  const SizedBox(height: S.x5),
+                ],
                 if (!s.isBand && s.deviceId != null) ...[
                   Surface(
                     pad: const EdgeInsets.symmetric(horizontal: S.x4),

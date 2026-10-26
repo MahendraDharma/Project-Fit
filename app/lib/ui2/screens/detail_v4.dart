@@ -68,7 +68,14 @@ class DetailTop extends StatefulWidget {
   State<DetailTop> createState() => _DetailTopState();
 }
 
-class _DetailTopState extends State<DetailTop> {
+class _DetailTopState extends State<DetailTop> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   DetailTopData? _data;
 
   @override
@@ -653,7 +660,14 @@ class TrendSection extends StatefulWidget {
   State<TrendSection> createState() => _TrendSectionState();
 }
 
-class _TrendSectionState extends State<TrendSection> {
+class _TrendSectionState extends State<TrendSection> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.rows == null;
+
+  @override
+  void reload() => _load();
+
   List<TrendRow>? _rows;
 
   @override
@@ -939,18 +953,27 @@ class OtherDevicesCard extends StatefulWidget {
   State<OtherDevicesCard> createState() => _OtherDevicesCardState();
 }
 
-class _OtherDevicesCardState extends State<OtherDevicesCard> {
+class _OtherDevicesCardState extends State<OtherDevicesCard> with RevisionReload {
   List<OtherReading>? _r;
 
   @override
   void initState() {
     super.initState();
     _r = widget.readings;
-    if (_r == null) {
-      loadOtherReadings().then((r) {
-        if (mounted) setState(() => _r = r);
-      }, onError: (_) {});
-    }
+    if (_r == null) reload();
+  }
+
+  // Loaded once, this card kept saying nothing after a sync brought the
+  // watch's or Health's numbers in, until the app was relaunched.
+  @override
+  bool get revisionReloads => widget.readings == null;
+
+  @override
+  void reload() {
+    final t = beginRead(#other);
+    loadOtherReadings().then((r) {
+      if (stillNewest(#other, t)) setState(() => _r = r);
+    }, onError: (_) {});
   }
 
   @override
@@ -1029,7 +1052,7 @@ class StressEnergyRow extends StatefulWidget {
   State<StressEnergyRow> createState() => _StressEnergyRowState();
 }
 
-class _StressEnergyRowState extends State<StressEnergyRow> {
+class _StressEnergyRowState extends State<StressEnergyRow> with RevisionReload {
   double? _stress, _battery;
 
   @override
@@ -1037,17 +1060,27 @@ class _StressEnergyRowState extends State<StressEnergyRow> {
     super.initState();
     _stress = widget.stress;
     _battery = widget.battery;
-    if (!widget.preloaded) {
-      loadOtherReadings().then((r) {
-        if (!mounted) return;
-        setState(() {
-          for (final x in r) {
-            if (x.kind == kGarminStressKey) _stress = x.value;
-            if (x.kind == kBodyBatteryKey) _battery = x.value;
-          }
-        });
-      }, onError: (_) {});
-    }
+    if (!widget.preloaded) reload();
+  }
+
+  // Same as OtherDevicesCard: re-read when a sync lands the watch's numbers.
+  @override
+  bool get revisionReloads => !widget.preloaded;
+
+  @override
+  void reload() {
+    final t = beginRead(#stressEnergy);
+    loadOtherReadings().then((r) {
+      if (!stillNewest(#stressEnergy, t)) return;
+      setState(() {
+        _stress = null;
+        _battery = null;
+        for (final x in r) {
+          if (x.kind == kGarminStressKey) _stress = x.value;
+          if (x.kind == kBodyBatteryKey) _battery = x.value;
+        }
+      });
+    }, onError: (_) {});
   }
 
   @override

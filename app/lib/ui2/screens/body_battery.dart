@@ -100,20 +100,28 @@ class BodyBatteryScreen extends StatefulWidget {
   State<BodyBatteryScreen> createState() => _BodyBatteryScreenState();
 }
 
-class _BodyBatteryScreenState extends State<BodyBatteryScreen> {
+class _BodyBatteryScreenState extends State<BodyBatteryScreen> with RevisionReload {
   BodyBatteryData? _d;
 
   @override
   void initState() {
     super.initState();
     _d = widget.data;
-    if (_d == null) {
-      BodyBatteryData.load(widget.day ?? todayLabel()).then((d) {
-        if (mounted) setState(() => _d = d);
-      }, onError: (_) {
-        if (mounted) setState(() => _d = BodyBatteryData(day: widget.day ?? todayLabel()));
-      });
-    }
+    if (_d == null) reload();
+  }
+
+  // Re-read when a sync lands the watch's samples while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() {
+    final t = beginRead(#bb);
+    BodyBatteryData.load(widget.day ?? todayLabel()).then((d) {
+      if (stillNewest(#bb, t)) setState(() => _d = d);
+    }, onError: (_) {
+      if (stillNewest(#bb, t)) setState(() => _d = BodyBatteryData(day: widget.day ?? todayLabel()));
+    });
   }
 
   @override

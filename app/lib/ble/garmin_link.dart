@@ -26,9 +26,12 @@
 // discovered after a silent timeout.
 
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
+import 'package:flutter/foundation.dart'
+    show ValueNotifier, debugPrint, visibleForTesting;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/db.dart';
 import '../data/models.dart' show ArchiveRecord;
@@ -53,6 +56,57 @@ List<String> garminMlCharsOf(List<BluetoothService> services) => [
         if (s.uuid == Guid(kGarminService))
           for (final c in s.characteristics) c.uuid.str128,
     ];
+
+/// `SharedPreferences` key of the last session's [GarminSyncReport].
+const String kGarminReportPref = 'garmin_last_session';
+
+/// What the last session with the watch did: when, whether it held a session
+/// at all, how many health files the watch listed and how many were read, and
+/// its log lines. This code has never met a real watch (R6), so the first
+/// real session has to be readable by the person holding one — "the data is
+/// empty" alone cannot say whether the connect, the channel or the files
+/// failed.
+class GarminSyncReport {
+  final int atMs;
+  final bool ok;
+
+  /// Health files the watch listed as not read yet; -1 when the directory
+  /// never arrived.
+  final int listed;
+  final int read;
+  final List<String> lines;
+  const GarminSyncReport({
+    required this.atMs,
+    required this.ok,
+    required this.listed,
+    required this.read,
+    required this.lines,
+  });
+
+  Map<String, Object?> toJson() =>
+      {'at': atMs, 'ok': ok, 'listed': listed, 'read': read, 'lines': lines};
+
+  static GarminSyncReport? fromJson(String? raw) {
+    if (raw == null) return null;
+    try {
+      final m = jsonDecode(raw) as Map<String, Object?>;
+      return GarminSyncReport(
+        atMs: m['at'] as int,
+        ok: m['ok'] as bool,
+        listed: m['listed'] as int,
+        read: m['read'] as int,
+        lines: [for (final l in m['lines'] as List) l as String],
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<GarminSyncReport?> load() async =>
+      fromJson((await SharedPreferences.getInstance()).getString(kGarminReportPref));
+}
+
+final RegExp _listedLine = RegExp(r'garmin: (\d+) health file');
 
 /// The live link to a paired Garmin watch. One instance; a second concurrent
 /// one is not a thing anyone asked for.
@@ -107,6 +161,29 @@ class GarminLink {
 
   bool _busy = false;
 
+  /// 0..1 while a session reads files, null otherwise: the files read of the
+  /// ones the watch listed. 0 until the directory arrives.
+  final ValueNotifier<double?> progress = ValueNotifier<double?>(null);
+
+  final List<String> _lines = [];
+  int _listed = -1;
+  int _read = 0;
+
+  void _say(String m) {
+    debugPrint('[garmin] $m');
+    if (_lines.length < 120) _lines.add(m);
+    final hit = _listedLine.firstMatch(m);
+    if (hit != null) {
+      _listed = int.parse(hit.group(1)!);
+      _setProgress();
+    }
+  }
+
+  void _setProgress() {
+    if (progress.value == null) return;
+    progress.value = _listed <= 0 ? (_listed == 0 ? 1.0 : 0.0) : (_read / _listed).clamp(0.0, 1.0);
+  }
+
   /// Connect to the paired watch, hold the session for its bounded window,
   /// disconnect.
   ///
@@ -116,7 +193,29 @@ class GarminLink {
   Future<bool> sync() {
     if (_busy) return Future.value(false);
     _busy = true;
-    return _sync().whenComplete(() => _busy = false);
+    _lines.clear();
+    _listed = -1;
+    _read = 0;
+    progress.value = 0;
+    return _sync().then((ok) async {
+      if (_lines.isNotEmpty) {
+        final report = GarminSyncReport(
+          atMs: DateTime.now().millisecondsSinceEpoch,
+          ok: ok,
+          listed: _listed,
+          read: _read,
+          lines: List.of(_lines),
+        );
+        try {
+          await (await SharedPreferences.getInstance())
+              .setString(kGarminReportPref, jsonEncode(report.toJson()));
+        } catch (_) {}
+      }
+      return ok;
+    }).whenComplete(() {
+      _busy = false;
+      progress.value = null;
+    });
   }
 
   Future<bool> _sync() async {
@@ -131,6 +230,7 @@ class GarminLink {
       return false;
     }
     _deviceId = deviceId;
+    _say('connecting to ${row['label'] ?? 'the watch'} ($remoteId).');
 
     try {
       // A cap on concurrent SECONDARY links (never the band's own connect —
@@ -148,15 +248,16 @@ class GarminLink {
           _device = device;
           await device.connect(timeout: const Duration(seconds: 20));
           final services = await device.discoverServices();
+          _say('connected; ${services.length} service(s), MTU ${device.mtuNow}.');
           final link = GattBandLink(
             entry: kGarmin,
             services: services,
-            onLog: (m) => debugPrint('[garmin] $m'),
+            onLog: _say,
           );
           _link = link;
           final ml = garminMlCharsOf(services);
           if (garminMlPair(ml) == null) {
-            debugPrint('[garmin] ${kGarmin.label}: no multi-link data '
+            _say('${kGarmin.label}: no multi-link data '
                 'characteristic under ${kGarminService.substring(0, 8)}.');
             return false;
           }
@@ -170,14 +271,15 @@ class GarminLink {
               ));
           _host = host;
           await host.run(link);
-          return true;
+          _say('session over: $_read of ${_listed < 0 ? '?' : _listed} file(s) read.');
+          return _listed >= 0;
         } finally {
           // Drop the link and DISCONNECT before the slot is released.
           await stop();
         }
       });
     } catch (e) {
-      debugPrint('[garmin] sync failed: $e');
+      _say('sync failed: $e');
       return false;
     }
   }
@@ -213,7 +315,7 @@ class GarminLink {
   BandHost _makeHost(String deviceId, GarminAdapter adapter) => BandHost(
         adapter: adapter,
         deviceId: deviceId,
-        onLog: (m) => debugPrint('[garmin] $m'),
+        onLog: _say,
         onNote: _handleNote,
         // The read-file list must not outrun the file's own numbers: a
         // failed vendor write leaves the file unread, so it is read again.
@@ -235,7 +337,11 @@ class GarminLink {
       case 'garmin_fit_files':
         // Read back by `_makeHost`'s `extraCursors` at the next commit,
         // never written on its own.
-        if (value is String) _readFiles = value;
+        if (value is String) {
+          _readFiles = value;
+          _read++;
+          _setProgress();
+        }
       case 'battery':
         if (value is int) _batteryPct = value;
       case 'model':

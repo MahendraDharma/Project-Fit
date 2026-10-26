@@ -294,21 +294,38 @@ class HealthReadingsImporter {
     return n;
   }
 
+  /// Whether the person has said yes to these readings on a tap.
+  static Future<bool> asked() async =>
+      (await SharedPreferences.getInstance()).getBool(kHealthReadingsAsked) == true;
+
+  /// A tap on Sync: the same read, without the hourly floor — still only
+  /// once the user has said yes, still never prompting. Rows stored.
+  static Future<int> runNow({HealthReadingsImporter? importer, DateTime? now}) async {
+    try {
+      if (!await asked()) return 0;
+      return await (importer ?? HealthReadingsImporter()).sync(now: now);
+    } catch (e) {
+      debugPrint('[health_readings] now: $e');
+      return 0;
+    }
+  }
+
   /// The foreground pass: only once the user has said yes on a tap, at most
-  /// hourly, never prompting, never throwing.
-  static Future<void> maybeRun({HealthReadingsImporter? importer, DateTime? now}) async {
+  /// hourly, never prompting, never throwing. Rows stored.
+  static Future<int> maybeRun({HealthReadingsImporter? importer, DateTime? now}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool(kHealthReadingsAsked) != true) return;
+      if (prefs.getBool(kHealthReadingsAsked) != true) return 0;
       final t = now ?? DateTime.now();
       final last = prefs.getInt(kHealthReadingsLastMs);
       if (last != null &&
           t.difference(DateTime.fromMillisecondsSinceEpoch(last)) < kHealthReadingsInterval) {
-        return;
+        return 0;
       }
-      await (importer ?? HealthReadingsImporter()).sync(now: t);
+      return await (importer ?? HealthReadingsImporter()).sync(now: t);
     } catch (e) {
       debugPrint('[health_readings] auto: $e');
+      return 0;
     }
   }
 }

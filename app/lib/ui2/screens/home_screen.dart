@@ -72,6 +72,7 @@ import '../../theme/theme_switcher.dart' show themedRoute;
 import '../activity/day_strain.dart' show DayStrainDetail;
 import 'detail_v4.dart' show OtherDevicesCard, StressEnergyRow;
 import 'heart_day.dart';
+import 'sync_pill.dart';
 import 'wear_streak.dart' show StreakChip;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
@@ -144,7 +145,9 @@ UnitsController? unitsOf(BuildContext c) {
 VoidCallback? syncOf(BuildContext c) {
   try {
     final app = c.read<AppState>();
-    return app.syncNow;
+    // Everything, not only the band: the watch and Health ride the same tap,
+    // and the screens re-read when it ends (see sync/full_sync.dart).
+    return app.fullSync.run;
   } catch (_) {
     return null;
   }
@@ -1977,6 +1980,11 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
           ),
         ]),
       ),
+      // The sync pill — "Sync", "Syncing… 42%", "Sync complete".
+      if (widget.data == null) ...[
+        const Center(child: SyncPill()),
+        const SizedBox(height: S.x2),
+      ],
       Center(child: syncedThroughLine(c, d.dayId, l)),
       const SizedBox(height: S.x3),
 
@@ -2272,7 +2280,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
       // ponytail: the spinner lets go after 90 s; a long backlog keeps going
       // in the background and the syncing card stays up until it ends.
       try {
-        await app.syncNow().timeout(const Duration(seconds: 90));
+        await app.fullSync.run().timeout(const Duration(seconds: 90));
       } catch (_) {
         // A timeout or a failed sync still re-reads what did land.
       }

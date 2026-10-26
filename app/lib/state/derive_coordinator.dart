@@ -78,6 +78,10 @@ class DeriveCoordinator {
   /// full ChangeNotifier repaint.
   final ValueNotifier<int> insightsRevision = ValueNotifier<int>(0);
 
+  /// Days done and days queued in the pass running now, or null between
+  /// passes — what a sync's progress reads for its last mile.
+  final ValueNotifier<(int, int)?> deriveDays = ValueNotifier<(int, int)?>(null);
+
   /// Stand-ins for the derive engine's per-pass work, so a test can hold or
   /// fail a pass without a substrate. Null (the default) runs the real engine.
   /// Tests only.
@@ -108,7 +112,12 @@ class DeriveCoordinator {
           _profile(),
           heavy: heavy,
           onDayDone: (day, index, total) async {
+            deriveDays.value = (index, total);
             if (index == total || index == 1 || index % 3 == 0) {
+              // The revision too, mid-sweep: the screens that re-read listen
+              // to it, so a long sweep used to leave them blank until its
+              // very end. The last day is the pass's own bump below.
+              if (index < total) bumpInsights();
               _notify();
             }
           },
@@ -188,6 +197,7 @@ class DeriveCoordinator {
       // fatal: the app keeps running, but this is worth knowing about.
       TelemetryService.instance.recordNonFatal(e, st, reason: 'post_drain_failed');
     } finally {
+      deriveDays.value = null;
       TelemetryService.instance.setContext('derive_active', false);
     }
   }
@@ -255,6 +265,7 @@ class DeriveCoordinator {
 
   void disposeInsightsRevision() {
     insightsRevision.dispose();
+    deriveDays.dispose();
   }
 
   void dispose() {

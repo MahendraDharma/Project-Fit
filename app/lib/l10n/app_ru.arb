@@ -7748,5 +7748,17 @@
   "homeStressEnergy": "Стресс и энергия",
   "homeFromGarminWatch": "С подключённых часов Garmin",
   "hrDayNoneTitle": "За этот день пульса нет",
-  "hrDayNoneBody": "В этот день браслет ничего не записал."
+  "hrDayNoneBody": "В этот день браслет ничего не записал.",
+  "syncPillIdle": "Синхр.",
+  "syncPillRunning": "Синхронизация… {pct}%",
+  "@syncPillRunning": {"placeholders": {"pct": {"type": "int"}}},
+  "syncPillDone": "Синхронизировано",
+  "garminLastSession": "Последняя синхронизация: {when}",
+  "@garminLastSession": {"placeholders": {"when": {"type": "String"}}},
+  "garminFilesRead": "Прочитано новых файлов здоровья: {read} из {listed}",
+  "@garminFilesRead": {"placeholders": {"read": {"type": "int"}, "listed": {"type": "int"}}},
+  "garminNoFileList": "Часы не прислали список файлов, поэтому ничего не прочитано.",
+  "garminSessionDetails": "Подробности синхронизации",
+  "garminCopyDetails": "Скопировать",
+  "garminDetailsCopied": "Скопировано."
 }

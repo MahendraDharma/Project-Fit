@@ -226,5 +226,17 @@
   "homeStressEnergy": "Stres & energi",
   "homeFromGarminWatch": "Dari jam Garmin yang dipasangkan",
   "hrDayNoneTitle": "Belum ada detak jantung untuk hari ini",
-  "hrDayNoneBody": "Band tidak merekam apa pun pada hari ini."
+  "hrDayNoneBody": "Band tidak merekam apa pun pada hari ini.",
+  "syncPillIdle": "Sinkron",
+  "syncPillRunning": "Sinkron… {pct}%",
+  "@syncPillRunning": {"placeholders": {"pct": {"type": "int"}}},
+  "syncPillDone": "Sinkron selesai",
+  "garminLastSession": "Sinkron terakhir: {when}",
+  "@garminLastSession": {"placeholders": {"when": {"type": "String"}}},
+  "garminFilesRead": "{read} dari {listed} file kesehatan baru terbaca",
+  "@garminFilesRead": {"placeholders": {"read": {"type": "int"}, "listed": {"type": "int"}}},
+  "garminNoFileList": "Jam tidak mengirim daftar filenya, jadi belum ada yang terbaca.",
+  "garminSessionDetails": "Detail sinkron",
+  "garminCopyDetails": "Salin detail",
+  "garminDetailsCopied": "Tersalin."
 }

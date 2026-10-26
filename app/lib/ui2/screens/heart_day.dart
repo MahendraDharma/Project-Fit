@@ -22,7 +22,14 @@ class HeartRateDayScreen extends StatefulWidget {
   State<HeartRateDayScreen> createState() => _HeartRateDayScreenState();
 }
 
-class _HeartRateDayScreenState extends State<HeartRateDayScreen> {
+class _HeartRateDayScreenState extends State<HeartRateDayScreen> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   HomeVitals? _v;
   late String _day = widget.day ?? todayLabel();
   List<String> _days = const [];

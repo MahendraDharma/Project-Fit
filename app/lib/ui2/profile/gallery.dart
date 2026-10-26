@@ -46,6 +46,7 @@ import '../../ai/nightly_sweep.dart' show SweepFinding;
 import '../../compute/findings.dart';
 import '../../models/metric.dart';
 import '../../models/activity_suggestion.dart';
+import '../../sync/full_sync.dart' show SyncPhase, SyncRun, SyncStep;
 import '../screens/detected_activities.dart';
 import '../activity/catalogue.dart';
 import '../activity/live.dart';
@@ -63,6 +64,8 @@ import '../onboarding/welcome.dart' show ImportOutcome, ImportReport;
 import '../screens/screens.dart';
 import '../ui2.dart';
 import 'devices.dart';
+import 'garmin_session.dart';
+import '../../ble/garmin_link.dart' show GarminSyncReport;
 import 'profile.dart';
 import 'wearable_numbers.dart';
 
@@ -242,6 +245,16 @@ Map<String, Widget> componentCases() => {
         (kind: 'spo2', value: 96.2, source: 'Connect', ts: 1792800000),
         (kind: 'rhr_ext', value: 53.0, source: 'Connect', ts: 1792800000),
       ]),
+      'garmin_session': const GarminSessionCard(
+          report: GarminSyncReport(
+              atMs: 1792900000000,
+              ok: true,
+              listed: 3,
+              read: 3,
+              lines: ['connecting to Forerunner 265 (AA:BB).', 'garmin: 3 health file(s) to read.'])),
+      'sync_pill_idle': const SyncPill(run: SyncRun.idle),
+      'sync_pill_running': const SyncPill(run: SyncRun(SyncPhase.running, pct: .42, step: SyncStep.garmin)),
+      'sync_pill_done': const SyncPill(run: SyncRun(SyncPhase.done, pct: 1)),
       'streak_chip': StreakChip(
           streak: WearStreak.from({'2026-10-23': 600, '2026-10-24': 500}, DateTime(2026, 10, 24))),
       'fitness_overview': FitnessOverview(

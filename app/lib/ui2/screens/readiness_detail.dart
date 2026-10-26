@@ -131,7 +131,14 @@ class ReadinessDetail extends StatefulWidget {
   State<ReadinessDetail> createState() => _ReadinessDetailState();
 }
 
-class _ReadinessDetailState extends State<ReadinessDetail> {
+class _ReadinessDetailState extends State<ReadinessDetail> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   ReadinessData? _d;
   bool _loading = true;
   late String? _day = widget.day;

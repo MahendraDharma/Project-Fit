@@ -97,7 +97,14 @@ class Vo2MaxScreen extends StatefulWidget {
 /// Days shown per range tab.
 const List<int> kVo2RangeDays = [30, 91, 182, 365];
 
-class _Vo2MaxScreenState extends State<Vo2MaxScreen> {
+class _Vo2MaxScreenState extends State<Vo2MaxScreen> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   Vo2Data? _d;
   int _range = 1;
 

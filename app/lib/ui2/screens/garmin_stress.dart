@@ -99,7 +99,14 @@ class GarminStressScreen extends StatefulWidget {
   State<GarminStressScreen> createState() => _GarminStressScreenState();
 }
 
-class _GarminStressScreenState extends State<GarminStressScreen> {
+class _GarminStressScreenState extends State<GarminStressScreen> with RevisionReload {
+  // Re-read when a sync lands new data while this screen is open.
+  @override
+  bool get revisionReloads => widget.data == null;
+
+  @override
+  void reload() => _load();
+
   GarminStressData? _d;
 
   @override

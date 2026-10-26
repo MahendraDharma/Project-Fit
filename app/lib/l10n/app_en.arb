@@ -16030,5 +16030,17 @@
   "homeStressEnergy": "Stress & energy",
   "homeFromGarminWatch": "From a paired Garmin watch",
   "hrDayNoneTitle": "No heart rate for this day",
-  "hrDayNoneBody": "Nothing was recorded from the band on this day."
+  "hrDayNoneBody": "Nothing was recorded from the band on this day.",
+  "syncPillIdle": "Sync",
+  "syncPillRunning": "Syncing… {pct}%",
+  "@syncPillRunning": {"placeholders": {"pct": {"type": "int"}}},
+  "syncPillDone": "Sync complete",
+  "garminLastSession": "Last sync: {when}",
+  "@garminLastSession": {"placeholders": {"when": {"type": "String"}}},
+  "garminFilesRead": "{read} of {listed} new health files read",
+  "@garminFilesRead": {"placeholders": {"read": {"type": "int"}, "listed": {"type": "int"}}},
+  "garminNoFileList": "The watch did not send its file list, so nothing was read.",
+  "garminSessionDetails": "Sync details",
+  "garminCopyDetails": "Copy details",
+  "garminDetailsCopied": "Copied."
 }
