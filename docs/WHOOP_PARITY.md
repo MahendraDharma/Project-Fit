@@ -125,3 +125,47 @@ Diuji pada 11.440 rekaman v25 dari satu WHOOP 4.0, dibandingkan dengan rekaman v
 - **Hanya satu panjang gelombang**: tidak ada pola bergantian antar-slot. Jadi v25 tidak membuka SpO₂ maupun suhu kulit.
 - HR dari v25 tidak menambah informasi, karena v24 sudah mengirim HR setiap detik.
 - Dekoder field ada di `packages/protocol` (`parseV25Waveform`). Tidak ada metrik yang diturunkan darinya.
+
+## Cara aplikasi WHOOP mengolah data (analisis APK, 26 Okt 2026)
+
+Sumber: WHOOP Android 5.474.0 (`com.whoop.android`, versionCode 627598), ditandatangani
+`CN=whoop.com, O=WHOOP Inc.` (SHA-256 sertifikat `4ff1dac8…b9c8e2`). Dibaca statis dengan
+JADX + androguard; aplikasinya tidak dijalankan. APK tidak disimpan di repo.
+
+**Kesimpulan: semua angka dihitung di server WHOOP. Aplikasi hanya pengangkut.**
+
+- Rekaman band disimpan utuh di HP (`PersistentStrapPacketDatabase`) lalu dikirim biner apa
+  adanya ke `metrics-service/v1/metrics` dan `metrics-service/v1/metrics/sensor`
+  (worker "Upload Raw Packets to API"). Header kiriman: `X-WHOOP-HW-Version`,
+  `X-WHOOP-FW-Version`, `X-WHOOP-DSP-Version` (versi pengolah sinyal di server),
+  `X-WHOOP-Strap-Id`, `X-WHOOP-Binary-Version`, `X-WHOOP-Binary-Flags`.
+  Balasannya hanya `MetricsProcessedTime`.
+- Kelas paket (`Rev2RawDataPacket`, `Rev2ProcessedResultsPacket`, rekaman historis) hanya
+  membungkus byte; tidak ada pengurai field SpO₂/suhu/HRV di HP. Yang diurai di HP hanya
+  HR realtime, EKG untuk tampilan, dan balasan perintah.
+- SpO₂, suhu kulit, Recovery, dll. datang jadi dari endpoint BFF (`coaching-service/v1/health/bff/monitor`,
+  `health-tab-bff`, `core-details-bff/v2/recovery-details`, …).
+- **VO₂ max diisi manual**: `vo2max-service/v2/{measurementType}/manual` (formulir dengan batas
+  min/maks), lalu ditulis ke Health Connect. Band tidak menghitungnya.
+- Unggahan riset terpisah: `research-metrics-service/v1/{raw,optical,imu,research,data-settings}/upload`.
+- LiteRT ada sebagai pustaka, tapi tidak ada model `.tflite` di aset dan kode WHOOP yang
+  didekompilasi tidak memanggilnya.
+
+**Tipe rekaman** (enum di aplikasi; "Harvard" = WHOOP 4.0, "Maverick" = 5.0/MG):
+`HISTORICAL_R10/R11/R12`, `HISTORICAL_RAW_ECG`, `HISTORICAL_OPTICAL_R20_MAVERICK`, `HISTORICAL_IMU`,
+`HISTORICAL_METRICS_R24_HARVARD`, `REALTIME_HR`, `REALTIME_OPTICAL_R20_MAVERICK`, `REALTIME_IMU`,
+`REALTIME_R10/R11`, `REALTIME_FILTERED_ECG`. Untuk `GEN_4`, aliran mentah realtime = R10.
+Rekaman 1 Hz yang dibaca ProjectFit ("v24") cocok dengan `R24` metrics Harvard.
+
+**Opcode perintah gen4 yang belum dipakai ProjectFit** (nama → nilai):
+`TOGGLE_GENERIC_HR_PROFILE` 14, `TOGGLE_R7_DATA_COLLECTION` 16, `FORCE_TRIM` 25,
+`SET_LED_DRIVE` 39 / `GET_LED_DRIVE` 40, `SET_TIA_GAIN` 41 / `GET_TIA_GAIN` 42,
+`SET_BIAS_OFFSET` 43 / `GET_BIAS_OFFSET` 44, `SET_DP_TYPE` 52, `FORCE_DP_TYPE` 53,
+`SET_RESEARCH_PACKET` 131 / `GET_RESEARCH_PACKET` 132. Balasan GET LED/TIA/bias berisi satu
+nilai (bukan per-LED). Belum diuji di band: `SET_*` mengubah perilaku strap dan bisa menguras
+baterai; hanya `GET_*` yang aman dicoba lebih dulu.
+
+**Artinya untuk ProjectFit:** tidak ada rumus WHOOP yang bisa disalin dari aplikasinya. SpO₂ dan
+suhu kulit butuh (1) menemukan rekaman/kanal yang membawanya — kandidat: R12 historis atau tipe
+yang dipilih lewat `SET_DP_TYPE` — lalu (2) algoritma sendiri. VO₂ max paling jujur tetap dari
+Garmin/Apple Health.
