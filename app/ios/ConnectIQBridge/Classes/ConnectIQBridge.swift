@@ -30,7 +30,10 @@ public final class ConnectIQBridge: NSObject, IQDeviceEventDelegate, IQAppMessag
     let ch = FlutterMethodChannel(name: "projectfit/connectiq", binaryMessenger: messenger)
     shared.channel = ch
     ch.setMethodCallHandler { call, result in shared.handle(call, result) }
-    shared.start()
+    // Only a person who already shared a watch gets the SDK at launch. It runs
+    // its own Bluetooth central; started for everyone, it sat beside the WHOOP
+    // link on every launch and every sync for people with no Garmin at all.
+    if !shared.loadDevices().isEmpty { shared.start() }
   }
 
   private func start() {
@@ -68,6 +71,12 @@ public final class ConnectIQBridge: NSObject, IQDeviceEventDelegate, IQAppMessag
   }
 
   private func handle(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    // Nothing chosen yet: answer without waking the SDK (the sync asks this
+    // every time). Choosing a watch is what starts it.
+    if !started && call.method != "selectDevices" && loadDevices().isEmpty {
+      result(call.method == "devices" ? [] : (call.method == "appStatus" ? nil : "no_device"))
+      return
+    }
     start()
     switch call.method {
     case "selectDevices":
