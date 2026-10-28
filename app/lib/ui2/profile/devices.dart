@@ -88,6 +88,7 @@ import '../onboarding/profile_setup.dart' show formatDay;
 import '../ui2.dart';
 import 'garmin_ciq.dart';
 import 'raw_capture_screen.dart';
+import 'night_spo2_screen.dart';
 import 'garmin_session.dart';
 import 'profile.dart';
 import 'settings.dart' show backToRoot;
@@ -1825,6 +1826,7 @@ class _DeviceDetailState extends State<DeviceDetail> {
       forecast: _forecast,
       onFind: app?.buzzBand,
       onRawCapture: s.isBand ? () => goto(c, const RawCaptureScreen()) : null,
+      onNightSpo2: s.isBand ? () => goto(c, const NightSpo2Screen()) : null,
       liveHr: s.isBand ? app?.liveHr : null,
       onRename: (app != null && app.isConnected)
           ? () => _renameBand(c, app, s.name)
@@ -2199,6 +2201,7 @@ class DeviceDetailView extends StatelessWidget {
 
   /// Opens the raw-data recording. Null hides the row (not the band).
   final VoidCallback? onRawCapture;
+  final VoidCallback? onNightSpo2;
 
   /// The beat arriving right now, or null when nothing fresh is streaming.
   /// Passed IN rather than read from a provider here: this view is rendered in
@@ -2234,6 +2237,7 @@ class DeviceDetailView extends StatelessWidget {
       {super.key,
       this.onFind,
       this.onRawCapture,
+      this.onNightSpo2,
       this.onForget,
       this.onSync,
       this.onRename,
@@ -2515,6 +2519,14 @@ class DeviceDetailView extends StatelessWidget {
                             sub: l?.rawRowSub ??
                                 'For research: optical, motion and heart-rate frames to a file',
                             onTap: onRawCapture),
+                      ],
+                      if (onNightSpo2 != null) ...[
+                        Divider(color: p.line, height: 1),
+                        SetRow(LucideIcons.moon, C.blue,
+                            l?.nightSpo2Title ?? 'Night SpO2',
+                            sub: l?.nightSpo2RowSub ??
+                                'Experimental: red/IR light each night, calibrated with Garmin',
+                            onTap: onNightSpo2),
                       ],
                       if (onFind != null) ...[
                         Divider(color: p.line, height: 1),

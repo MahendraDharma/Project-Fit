@@ -38,6 +38,7 @@ import '../ble/android_background.dart';
 import '../ble/ble_engine.dart';
 import '../ble/garmin_link.dart';
 import '../ble/raw_capture.dart';
+import 'night_optics_recorder.dart';
 import '../garmin/connectiq_link.dart';
 import '../ble/hrs_link.dart';
 import '../ble/polar_pmd_link.dart';
@@ -312,6 +313,16 @@ class AppState extends ChangeNotifier {
     activeWorkoutType: () => activeWorkout?.type,
     breathing: () => breathingActive || breathingWindowOpen,
     reconcileLiveStreams: () => engine.reconcileLiveStreams(),
+    nightOptics: () => nightOptics.active,
+  );
+
+  /// The unattended nightly red/IR recording for the SpO2 calibration
+  /// (Devices → band → Night SpO2).
+  late final NightOpticsRecorder nightOptics = NightOpticsRecorder(
+    gen4: () => engine.bandProfile != null && !engine.bandProfile!.isGen5,
+    connected: () => isConnected,
+    batteryPct: () => engine.state.batteryPct,
+    nudge: () => _liveStreamController.nudge(),
   );
 
   late final WorkoutController _workoutController = WorkoutController(
@@ -1719,6 +1730,7 @@ class AppState extends ChangeNotifier {
     // reach liveHr/the live trace at all (arm/disarm alone don't feed it).
     PolarPmdLink.instance.reading.addListener(_onPmdReading);
     _initDone = _init();
+    unawaited(nightOptics.start());
     // Notification taps → request a tab switch (the shell listens to navRequest).
     _tapSub = NotificationService.instance.taps.listen(_handleTapRoute);
     unawaited(NotificationService.instance.consumeLaunchRoute());
@@ -3192,6 +3204,7 @@ class AppState extends ChangeNotifier {
   // into its in-memory buffer. Cheap-bounded; cleared at each session start.
   void _onLiveFrame(int pt, String hex, int? recTs) {
     _rawCapture?.add(pt, hex, recTs);
+    nightOptics.onFrame(pt, hex);
     // NOTE: deliberately do NOT advance _lastRecTs from live frames. Live frames
     // (0x28/0x2B/0x33) are ephemeral and NEVER persisted, and they carry the
     // CURRENT wall-clock time — so bumping _lastRecTs here pinned the "last data"
@@ -4045,6 +4058,7 @@ class AppState extends ChangeNotifier {
 
   void _onEngineState(String deviceId, DeviceState s) {
     if (_resetting) return; // see [_resetting]
+    nightOptics.evaluate();
     _appendLiveHr(deviceId, s.liveHr, s.liveHrAt);
     // Bank the name the moment the band says it, so it survives the
     // disconnect. Written through `cleanDeviceLabel` for the same reason the

@@ -262,3 +262,28 @@ Saat rekaman berjalan, offload histori juga aktif. Live stream tetap jalan.
 - Rasio ini belum bisa dipetakan ke SpO2. Kurva umum 110−25R memberi 105,6 untuk C/D dan nilai negatif untuk D/C.
 - Penjelasan paling mungkin: DC kanal D sudah dikurangi offset oleh AFE (perintah bias offset), sehingga DC aslinya tidak diketahui. Pembacaan GET bias offset menjawab status 1 (ditolak).
 - Konsekuensinya, SpO2 absolut butuh kalibrasi terhadap pembanding (SpO2 dari Garmin/Apple Health di malam yang sama), atau offset AFE yang sebenarnya. Tanpa itu, perubahan R hanya bisa dipakai sebagai tren relatif.
+
+## SpO2 malam (eksperimen, v0.15.0)
+
+Devices → band → **SpO2 malam**. Fitur ini mengikuti hasil rekaman di atas.
+
+**Kapan merekam**
+- Setiap malam pukul 21:00–09:00, app memegang stream optik gen4 (owner `nightOptics`).
+- Perekaman berhenti sendiri bila baterai band di bawah 20%.
+- Tidak perlu deteksi tidur: jendela saat masih bergerak akan gugur di gerbang kualitas.
+- Pengecekan jalan pada setiap perubahan state engine, bukan dengan timer. iOS yang sedang tidur tidak menjalankan timer, tetapi prompt band dan polling baterai tetap membangunkan app.
+
+**Apa yang dihitung**
+- Per 30 detik dihitung R = (AC/DC)_C ÷ (AC/DC)_D, dengan filter bandpass 0,6–4 Hz.
+- Jendela dipakai hanya bila korelasi C–D ≥ 0,9 dan |korelasi C–A| ≥ 0,6.
+- Analyzer Dart memberi angka yang sama persis dengan analisis Python pada rekaman 10 menit.
+- Hasilnya disimpan sebagai JSONL per malam di direktori app, maksimal 60 malam.
+
+**Kalibrasi dengan Garmin**
+- Setiap bacaan SpO2 Garmin (dari ProjectFit Bridge / Connect IQ) dipasangkan dengan median R jendela bagus dalam ±5 menit.
+- Rumus SpO2 = a + b·R ditampilkan hanya bila:
+  - ada minimal 20 pasangan;
+  - bacaan Garmin bervariasi minimal 3 poin;
+  - kemiringan b negatif;
+  - r² ≥ 0,3.
+- Sebelum itu layar hanya menampilkan progres. Data bisa dibagikan sebagai JSON (jendela per malam + bacaan Garmin).

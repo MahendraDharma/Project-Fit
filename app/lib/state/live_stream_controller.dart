@@ -9,7 +9,9 @@ class LiveStreamController {
     required String? Function() activeWorkoutType,
     required bool Function() breathing,
     required Future<void> Function() reconcileLiveStreams,
+    bool Function()? nightOptics,
   })  : _background = background,
+        _nightOptics = nightOptics ?? _never,
         _activeWorkoutType = activeWorkoutType,
         _breathing = breathing,
         _reconcileLiveStreams = reconcileLiveStreams;
@@ -18,6 +20,8 @@ class LiveStreamController {
   final String? Function() _activeWorkoutType;
   final bool Function() _breathing;
   final Future<void> Function() _reconcileLiveStreams;
+  final bool Function() _nightOptics;
+  static bool _never() => false;
 
   // ── live HR / IMU ownership (#287) ──────────────────────────────────────────
   //
@@ -98,6 +102,7 @@ class LiveStreamController {
       breathing: _breathing(),
       movementSampling: _movementSampling,
       passiveStrapSteps: _passiveStrapSteps,
+      nightOptics: _nightOptics(),
       foreground: !_background(),
     );
   }
