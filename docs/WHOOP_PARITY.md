@@ -169,3 +169,49 @@ baterai; hanya `GET_*` yang aman dicoba lebih dulu.
 suhu kulit butuh (1) menemukan rekaman/kanal yang membawanya — kandidat: R12 historis atau tipe
 yang dipilih lewat `SET_DP_TYPE` — lalu (2) algoritma sendiri. VO₂ max paling jujur tetap dari
 Garmin/Apple Health.
+
+## Model Strain & kalori WHOOP yang ada di HP (analisis APK lanjutan, 28 Okt 2026)
+
+Recovery, tidur, HRV, SpO₂ dan suhu dihitung di server (lihat bagian sebelumnya). Tetapi aplikasi
+membawa **model Strain dan kalori** sendiri di HP: pustaka `com.whoop.analytics.strain` (dipakai untuk
+skor strain di HP) dan versi live di modul `track-activity` (strain saat aktivitas berjalan).
+Rumus di bawah dibaca dari kode yang didekompilasi; dicatat sebagai pengetahuan, bukan disalin.
+
+**HR maksimum (bila belum terukur):**
+`HRmax = 204,427 − 0,27262 × usia + bobot_kebugaran + bobot_jenis_kelamin`
+(usia dari tanggal lahir, dibatasi 12–120 tahun). Bobot kebugaran: collegiate 0; serious enthusiast
+−0,698; tactical / professional −2,993; recreational enthusiast −3,295; inactive −3,669. Bobot jenis
+kelamin: pria −2,023; wanita 0; non-biner −1,011. HR yang pernah tercatat lebih tinggi menggantikannya.
+
+**Penghalusan HR:** untuk setiap sampel, persentil ke-25 dari ±30 sampel di sekitarnya (≈1 menit pada
+1 Hz); jendela dipotong di celah ≥30 detik. Persentil rendah membuang lonjakan HR palsu karena gerakan.
+
+**Beban per sampel:**
+- cadangan `r = clamp((HR − RHR) / ((HRmax + 3) − RHR), 0, 1)`; `r ≤ 0,3` dianggap 0;
+- bobot logistik `w(r) = 16 / (e^((1 − r)/0,15) + 1)` — r 0,5 → 0,55; 0,6 → 1,04; 0,7 → 1,91;
+  0,8 → 3,34; 0,9 → 5,43;
+- `dt` = jarak ke sampel berikutnya dalam detik, **maksimal 3 detik** (celah tidak ikut dihitung);
+- beban mentah `= Σ w(r)·dt / 691200`, dibatasi 0–1 (691200 = 16 × 12 jam × 3600).
+
+**Skala 0–21:** tabel 211 titik (0,0–21,0, langkah 0,1) yang memetakan beban mentah ke strain;
+nilainya hampir linear-logaritmik sampai ~20 lalu melonjak tajam (20 → 21 butuh ~23× beban).
+Gambaran: strain 8 ≈ 14 menit di 70% cadangan HR; 10 ≈ 22 menit; 12 ≈ 33; 14 ≈ 52; 16 ≈ 79;
+18 ≈ 119; 20 ≈ 181 menit (di 80% cadangan kira-kira 0,57× waktunya).
+
+**Kalori (versi "New"):**
+- istirahat: Harris-Benedict revisi (Roza & Shizgal 1984), per detik = kkal/hari ÷ 86 400;
+- ambang = `RHR + 0,3 × (HRmax − RHR)`; di bawahnya hanya kalori istirahat;
+- di atasnya garis lurus dari (ambang, kalori istirahat) ke (HRmax, rumus Keytel dkk. 2005 di HRmax);
+  Keytel memberi kJ/menit, dibagi 251,04 menjadi kkal/detik;
+- total kJ = kkal × 4,184.
+
+**Yang tidak ada di HP:** zona HR diambil dari server (`HrZonesApi`, persen min/maks per zona); Stress
+Monitor, Recovery, tidur, HRV, SpO₂, suhu — semuanya hasil jadi dari server.
+
+**Perangkat keras WHOOP 4.0** (siaran pers WHOOP): 5 LED — 3 hijau (HR), 1 merah, 1 inframerah (SpO₂) —
+dan 4 fotodioda; suhu kulit diukur di permukaan kulit. Jadi kanal merah/IR memang ada di band; yang
+belum ditemukan adalah rekaman yang membawanya (kandidat: R10/R11/R12 — lihat fitur Rekam data mentah).
+
+**Dibanding ProjectFit sekarang:** ProjectFit memakai TRIMP Banister per menit + peta log ke 0–21.
+Perbedaan utama dengan WHOOP: (1) WHOOP per detik dengan HR dihaluskan persentil-25, (2) ambang 30%
+cadangan, (3) bobot logistik (bukan eksponensial Banister), (4) `HRmax + 3`, (5) tabel skala sendiri.
