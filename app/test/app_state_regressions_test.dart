@@ -733,13 +733,16 @@ void main() {
       addTearDown(app.dispose);
       addTearDown(LiveDraft.clear);
       var derives = 0;
+      // 3 s, not 20 ms: `stopWorkout` itself takes ~0.5 s on a cold
+      // database, so a 20 ms tail had already run out by the first expect
+      // whenever this test ran first or on a busy machine.
       app
-        ..strapTailFor = const Duration(milliseconds: 20)
+        ..strapTailFor = const Duration(seconds: 3)
         ..onStrapTailBanked = () => derives++;
       app.startWorkout(type: 'other');
       await app.stopWorkout();
       expect(derives, 0, reason: 'the tail is not recorded yet');
-      for (var i = 0; i < 100 && derives == 0; i++) {
+      for (var i = 0; i < 250 && derives == 0; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 20));
       }
       expect(app.strapTailRunning, isFalse, reason: 'disarmed at its end');
