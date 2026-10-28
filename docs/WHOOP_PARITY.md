@@ -215,3 +215,43 @@ belum ditemukan adalah rekaman yang membawanya (kandidat: R10/R11/R12 — lihat 
 **Dibanding ProjectFit sekarang:** ProjectFit memakai TRIMP Banister per menit + peta log ke 0–21.
 Perbedaan utama dengan WHOOP: (1) WHOOP per detik dengan HR dihaluskan persentil-25, (2) ambang 30%
 cadangan, (3) bobot logistik (bukan eksponensial Banister), (4) `HRmax + 3`, (5) tabel skala sendiri.
+
+## Rekaman mentah live ProjectFit (WHOOP 4.0, 28 Okt 2026, 5 menit)
+
+Rekaman dari layar "Rekam data mentah" (v0.14.1). Isinya 4047 frame:
+
+| Tipe paket | Jumlah | Laju |
+|---|---|---|
+| 0x28 HR | 303 | 1/s |
+| 0x2B R10 | 624 | 1/s per subtipe |
+| 0x33 IMU | 3120 | 10/s |
+
+Saat rekaman berjalan, offload histori juga aktif. Live stream tetap jalan.
+
+**0x2B subtipe 0x0b (optik, 1924 byte).** Blok sampel adalah u32 little-endian. Satu paket = 50 sampel tiap kanal. Paket datang tiap ±0,98 detik, jadi ±51 Hz. Sampel menyambung tanpa lompatan antar-paket.
+
+| Kanal | Lokasi | DC | Isi |
+|---|---|---|---|
+| A | slot 1, byte 38+ (sampel 0–49) | ±294 rb | Pulsa jelas. Frekuensi puncaknya cocok dengan HR band (78–88 bpm). Diduga hijau. |
+| B | slot 1 (sampel 50–99) | ±299 rb | Pulsa jelas, koheren dengan A. Diduga hijau, fotodioda lain. |
+| C | slot 3, byte 1313+ (sampel 0–49) | ±188 rb | Pulsa lemah. Koherensi dengan A 0,2–0,98. Kandidat merah atau IR. |
+| D | slot 3 (sampel 50–99) | ±15,6 rb | Pulsa lemah, berkorelasi 0,74 dengan C. Kandidat merah, IR, atau ambient. |
+
+- Slot 2 (byte 864) ada header-nya tetapi selalu kosong.
+- Header slot 1 dimulai `32 04 78 05 05 78 05 01 78 05 04`. Byte `0x32` = 50 sampel.
+- Header slot 3 dimulai `32 02 c8 00 05`.
+- Rasio AC/DC C dan D belum stabil: C/D berkisar 0,09–0,93 per jendela 20 detik. Ini rekaman siang hari, tangan bergerak, jadi belum cukup untuk rumus SpO2. Perlu rekaman saat diam atau tidur.
+
+**0x2B subtipe 0x0a (gerak, 1920 byte).**
+
+| Lokasi | Isi |
+|---|---|
+| byte 17 | HR (sama dengan 0x28) |
+| f32 @42 | Magnitudo gerak (0,005–1,0) |
+| f32 @46/50/54 | Vektor gravitasi satuan (norma ≈ 1), diulang di @62 |
+| mulai byte 92 | 3×100 sampel akselerometer i16. Sama persis dengan isi 0x33, jadi 100 Hz. |
+| byte 680 | 3×100 sampel i16 di sekitar nol (kandidat giroskop) |
+| ±1508 | 100 sampel i32 kecil |
+
+- u16 @74 dan @76 selalu berselisih 19 (566–585 dan 585–604). Nilainya naik-turun bersama HR, jadi kemungkinan besar bukan suhu.
+- Belum ada medan yang naik pelan seperti suhu kulit. Kemungkinan suhu hanya ada di record histori, yang juga diolah server WHOOP.
