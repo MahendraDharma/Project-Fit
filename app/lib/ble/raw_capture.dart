@@ -29,6 +29,11 @@ class RawCapture extends ChangeNotifier {
   final Map<int, int> _counts = {};
   Map<String, Object?> _header = const {};
   bool _truncated = false;
+  final List<String> _log = [];
+  Map<String, Object?> _endDiag = const {};
+
+  /// Log lines kept with a capture, so an empty one says why.
+  static const int maxLogLines = 2000;
 
   DateTime? get startedAt => _startedAt;
   bool get running => _startedAt != null && _endedAt == null;
@@ -68,8 +73,16 @@ class RawCapture extends ChangeNotifier {
     }));
   }
 
-  void stop() {
+  /// A log line (the app's own, or the capture's notes) while running.
+  void addLog(String line) {
+    if (!running || _log.length >= maxLogLines) return;
+    _log.add('${_now().toIso8601String()} $line');
+  }
+
+  /// The link state as the capture ends.
+  void stop([Map<String, Object?> diag = const {}]) {
     if (!running) return;
+    _endDiag = diag;
     _endedAt = _now();
     notifyListeners();
   }
@@ -86,6 +99,8 @@ class RawCapture extends ChangeNotifier {
       'frames': _lines.length,
       'truncated': _truncated,
       'counts': {for (final e in _counts.entries) '0x${e.key.toRadixString(16)}': e.value},
+      'diag_end': _endDiag,
+      'log': _log,
     }));
     return b.toString();
   }

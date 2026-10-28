@@ -1543,13 +1543,25 @@ class AppState extends ChangeNotifier {
       'app': version,
       'band': engine.isConnected ? (engine.bandProfile == null ? '' : (engine.bandProfile!.isGen5 ? 'gen5' : 'gen4')) : 'not connected',
       'optics': optics,
+      'diag_start': engine.liveDiagnostics(),
     });
     _liveStreamController.setMovementSamplingWindow(true);
+    // The first capture came back empty: the band sent nothing for five
+    // minutes. If nothing has arrived after 15 s, and again after 60 s, ask
+    // the engine to re-send the live toggles, and say so in the file.
+    for (final wait in const [Duration(seconds: 15), Duration(seconds: 60)]) {
+      Timer(wait, () {
+        if (!c.running || c.frames > 0) return;
+        c.addLog('[raw] no frames after ${wait.inSeconds}s; re-asserting live '
+            'streams. ${engine.liveDiagnostics()}');
+        unawaited(engine.reassertLiveStreams());
+      });
+    }
     return c;
   }
 
   void stopRawCapture() {
-    _rawCapture?.stop();
+    _rawCapture?.stop(engine.liveDiagnostics());
     _liveStreamController.setMovementSamplingWindow(false);
   }
 
@@ -3071,6 +3083,7 @@ class AppState extends ChangeNotifier {
     FileLog.write(line);
     logLines.insert(0, line);
     if (logLines.length > 200) logLines.removeLast();
+    _rawCapture?.addLog(line);
   }
 
   /// `LocalDb.schemaHealth()` (real `PRAGMA integrity_check` + schema

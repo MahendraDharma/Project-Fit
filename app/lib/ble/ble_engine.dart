@@ -8609,7 +8609,11 @@ class BleEngine {
         owner: session,
       );
       final r = sent.written ? await sent.response : null;
-      out[name] = r == null ? null : '${r.status}:${r.fields['raw_hex'] ?? ''}';
+      out[name] = !sent.written
+          ? 'not_written'
+          : r == null
+              ? 'no_reply'
+              : '${r.status}:${r.fields['raw_hex'] ?? ''}';
     }
     return out;
   }
@@ -8683,6 +8687,36 @@ class BleEngine {
       onState(state);
     }
     return _reconcileLive();
+  }
+
+  /// Re-send the live toggles the owners want, on the next converged pass —
+  /// what the keep-alive does when the band's toggles silently died. The raw
+  /// capture calls it when nothing arrives.
+  Future<void> reassertLiveStreams() {
+    _liveReassert = true;
+    _imuDirty = true;
+    _hrDirty = true;
+    return _liveRun?.future ?? _reconcileLive();
+  }
+
+  /// Why live frames are or are not flowing, for a diagnostic export.
+  Map<String, Object?> liveDiagnostics() {
+    final s = _session;
+    final want = _desiredLive();
+    return {
+      'phase': _phase.name,
+      'session': s != null,
+      'connected': s?.connected ?? false,
+      'gen5': s?.band.isGen5,
+      'live_ready': _liveReady,
+      'applied_hr': _liveApplied.hr,
+      'applied_imu': _liveApplied.imu,
+      'desired_hr': want.hr,
+      'desired_imu': want.imu,
+      'offload_active': _offloadActive,
+      'standard_hr_fallback': state.standardHrFallback,
+      'last_rx': lastRxAt?.toIso8601String(),
+    };
   }
 
   /// Tests only: the keep-alive's re-arm request, without the rest of the

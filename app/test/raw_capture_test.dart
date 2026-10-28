@@ -15,8 +15,10 @@ void main() {
     expect(c.secondsLeft, 30);
     now = now.add(const Duration(seconds: 31));
     expect(c.timeUp, isTrue);
-    c.stop();
+    c.addLog('[raw] note');
+    c.stop({'phase': 'listening'});
     c.add(0x28, 'dd', null); // after stop: ignored
+    c.addLog('late'); // after stop: ignored
     final lines = const LineSplitter().convert(c.toJsonl());
     expect(lines, hasLength(4));
     final head = jsonDecode(lines.first) as Map;
@@ -27,6 +29,8 @@ void main() {
     final end = jsonDecode(lines.last) as Map;
     expect(end['frames'], 2);
     expect(end['counts'], {'0x2b': 1, '0x33': 1});
+    expect(end['diag_end'], {'phase': 'listening'});
+    expect((end['log'] as List).single, endsWith('[raw] note'));
     expect(c.fileName, 'projectfit-raw-20261026-2340.jsonl');
   });
 }

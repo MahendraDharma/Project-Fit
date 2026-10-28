@@ -16078,5 +16078,6 @@
   "@rawFrames": {"placeholders": {"n": {"type": "int"}}},
   "rawNotConnected": "Connect the band first, then start.",
   "rawDone": "Recording saved",
-  "rawShare": "Share the file"
+  "rawShare": "Share the file",
+  "rawWaiting": "Nothing from the band yet. Keep it on your wrist and close to the phone; if the app is still syncing, recording starts once that finishes."
 }

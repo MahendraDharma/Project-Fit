@@ -274,5 +274,6 @@
   "@rawFrames": {"placeholders": {"n": {"type": "int"}}},
   "rawNotConnected": "Sambungkan band dulu, lalu mulai.",
   "rawDone": "Rekaman tersimpan",
-  "rawShare": "Bagikan file"
+  "rawShare": "Bagikan file",
+  "rawWaiting": "Belum ada data dari band. Pakai band di pergelangan dan dekatkan ke HP; kalau app masih sinkron, rekaman mulai setelah sinkron selesai."
 }

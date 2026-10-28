@@ -160,6 +160,13 @@ class _RawCaptureScreenState extends State<RawCaptureScreen> {
             const SizedBox(height: S.x2),
             Text(l?.rawFrames(cap.frames) ?? '${cap.frames} frames',
                 style: F.body.copyWith(color: p.ink2)),
+            if (cap.running && cap.frames == 0 && cap.minutes * 60 - cap.secondsLeft >= 15) ...[
+              const SizedBox(height: S.x2),
+              Text(
+                  l?.rawWaiting ??
+                      'Nothing from the band yet. Keep it on your wrist and close to the phone.',
+                  style: F.cap.copyWith(color: p.on(C.orange))),
+            ],
             const SizedBox(height: S.x2),
             Wrap(spacing: S.x2, runSpacing: S.x2, children: [
               for (final e in counts.entries)
