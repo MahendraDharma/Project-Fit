@@ -2795,8 +2795,35 @@ class BleEngine {
   /// outside the link. Anything but an explicit 'gen4' probes the official
   /// gen5 sequence first ([connectRouteFor]); a discovered gen4 falls back to
   /// the unchanged legacy flow.
-  Future<bool> connectToRemoteId(String remoteId, {String? generationHint}) =>
-      connect(BluetoothDevice.fromId(remoteId), generationHint: generationHint);
+  ///
+  /// iOS: a WHOOP the SYSTEM already holds (Settings → Bluetooth shows it
+  /// connected, e.g. through the WHOOP app) is attached to directly. When the
+  /// saved id is not among the system-connected WHOOPs but exactly one is,
+  /// that one is used — an id that went stale (the band was forgotten and
+  /// re-paired in Settings) otherwise left the app "connecting" forever to a
+  /// peripheral iOS no longer knows by that name.
+  Future<bool> connectToRemoteId(String remoteId, {String? generationHint}) async {
+    var id = remoteId;
+    if (Platform.isIOS) {
+      try {
+        final held = await FlutterBluePlus.systemDevices([
+          Guid(GattProfile.gen4.service),
+          Guid(GattProfile.gen5.service),
+        ]);
+        final ids = [for (final d in held) d.remoteId.str];
+        if (ids.isNotEmpty) {
+          _log('[BLE] system-connected WHOOP(s): ${ids.join(', ')}; saved $remoteId');
+        }
+        if (!ids.contains(remoteId) && ids.length == 1) {
+          _log('[BLE] saved id is not the system-connected WHOOP; attaching to ${ids.single}');
+          id = ids.single;
+        }
+      } catch (e) {
+        _log('[BLE] systemDevices failed: $e');
+      }
+    }
+    return connect(BluetoothDevice.fromId(id), generationHint: generationHint);
+  }
 
   /// What the last accepting scan ADVERTISED per remote id ('gen4'/'gen5'), so
   /// a first-ever connect right after a scan takes the generation-correct
