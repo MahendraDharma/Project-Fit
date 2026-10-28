@@ -255,3 +255,10 @@ Saat rekaman berjalan, offload histori juga aktif. Live stream tetap jalan.
 
 - u16 @74 dan @76 selalu berselisih 19 (566–585 dan 585–604). Nilainya naik-turun bersama HR, jadi kemungkinan besar bukan suhu.
 - Belum ada medan yang naik pelan seperti suhu kulit. Kemungkinan suhu hanya ada di record histori, yang juga diolah server WHOOP.
+
+**Rekaman kedua (10 menit, band kencang, tangan diam di kasur).** Keempat kanal berdenyut dan koheren dengan hijau (≥0,9 di 17 dari 20 jendela 30 detik).
+- C dan D berkorelasi 0,95, jadi keduanya melihat denyut yang sama.
+- Rasio AC/DC C ÷ D stabil di 0,16–0,20 setelah ±2,5 menit (median 0,177). Pada menit-menit awal nilainya masih 0,10–0,14, saat band baru dikencangkan.
+- Rasio ini belum bisa dipetakan ke SpO2. Kurva umum 110−25R memberi 105,6 untuk C/D dan nilai negatif untuk D/C.
+- Penjelasan paling mungkin: DC kanal D sudah dikurangi offset oleh AFE (perintah bias offset), sehingga DC aslinya tidak diketahui. Pembacaan GET bias offset menjawab status 1 (ditolak).
+- Konsekuensinya, SpO2 absolut butuh kalibrasi terhadap pembanding (SpO2 dari Garmin/Apple Health di malam yang sama), atau offset AFE yang sebenarnya. Tanpa itu, perubahan R hanya bisa dipakai sebagai tren relatif.
