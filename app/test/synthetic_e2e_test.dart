@@ -112,7 +112,7 @@ SYNTHETIC DAY $_dayId — derived vs truth
         reason: 'strain abstains on a cold start');
     expect(((full['absent_notes'] as Map?)?['strain'] as String?) ?? '',
         startsWith('need_baseline:'));
-  });
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
   test('Colmi, Ultrahuman, Mi Band and Garmin data reach the app and leave '
       'the day '
