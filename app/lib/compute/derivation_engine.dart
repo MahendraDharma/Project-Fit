@@ -4934,6 +4934,39 @@ class DerivationEngine {
               _localDayLabelToSec(dayId) - kNocturnalSearchLookbackSec) <
           prunedBeforeSec;
 
+  /// Whether the prune has cut into [day]'s sleep window (see
+  /// [windowTruncatedByPrune]). A rejected night has nothing to protect.
+  Future<bool> _windowCutByPrune(PreparedDerivationDay day) async =>
+      day.sleepSource != 'rejected' &&
+      windowTruncatedByPrune(
+        day.date,
+        await LocalDb.getCursorInt(_prunedBeforeCursor),
+        forcedOnsetSec:
+            day.sleepSource == 'manual' || day.sleepSource == 'confirmed'
+                ? day.sleepOnsetSec
+                : null,
+      );
+
+  /// The early form of the edge#305 prune decline in [_derivePreparedDay]:
+  /// true when that guard would keep the stored row no matter what the bundle
+  /// computes — the window is prune-cut and the stored row is real and has
+  /// night scalars.
+  Future<bool> _declinePruneCutDay(
+    PreparedDerivationDay day, {
+    required bool suppliedSubstrate,
+  }) async {
+    if (suppliedSubstrate || !await _windowCutByPrune(day)) return false;
+    final existing = await LocalDb.dayResult(day.date);
+    final hadNight = existing != null &&
+        (existing['rhr'] != null ||
+            existing['rmssd'] != null ||
+            existing['readiness'] != null);
+    if (!hadNight || !_isRealDayResult(existing)) return false;
+    _log('derive ${day.date}: sleep window cut by the prune under a day that '
+        'already had real night scalars — kept the existing result (edge#305)');
+    return true;
+  }
+
   /// A stable, cheap signature of the CURRENT rolling baseline — the same inputs
   /// the readiness/illness baselines fold over. We take the trailing
   /// _baselineWindowDays derived rows and the median of each baseline series
@@ -5181,6 +5214,15 @@ class DerivationEngine {
       dataNowSec =
           await _agingEdgeFor(daySub.deviceFamily, dataNowSec, history);
     }
+    // The prune has cut into this day's window and the stored row already has
+    // a real night: the edge#305 guard below declines this pass whatever the
+    // bundle holds (an empty bundle by the raw-pruned guard, any other by the
+    // prune clause). Decide it HERE, before the day-bundle isolate — a whole
+    // day of 1 Hz rows costs seconds of compute only to be thrown away.
+    // Nothing above the guard writes, so declining early changes no outcome.
+    if (await _declinePruneCutDay(day, suppliedSubstrate: suppliedSubstrate)) {
+      return;
+    }
     // Per-second 4-class stage labels (the single source): 'wake'|'light'|
     // 'deep'|'rem'. analytics' segmentSleep exposes the 4-class stream directly
     // (NREM split into Light/Deep via the LOW-CONFIDENCE HR-depth overlay); we
@@ -5406,16 +5448,7 @@ class DerivationEngine {
             ) ||
             // An import brings its own substrate, the prune can't have cut it.
             // A rejected night has nothing to protect either.
-            (!suppliedSubstrate &&
-                day.sleepSource != 'rejected' &&
-                windowTruncatedByPrune(
-                  day.date,
-                  await LocalDb.getCursorInt(_prunedBeforeCursor),
-                  forcedOnsetSec: day.sleepSource == 'manual' ||
-                          day.sleepSource == 'confirmed'
-                      ? day.sleepOnsetSec
-                      : null,
-                )))) {
+            (!suppliedSubstrate && await _windowCutByPrune(day)))) {
       final existingNight = await LocalDb.dayResult(day.date);
       final existingHadNight = existingNight != null &&
           (existingNight['rhr'] != null ||
