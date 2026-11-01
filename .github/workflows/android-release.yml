@@ -66,9 +66,11 @@ jobs:
             echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
             echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
             echo "APK_NAME=ProjectFit.apk" >> "$GITHUB_ENV"
+            echo "APK_SUFFIX=" >> "$GITHUB_ENV"
           else
             echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: debug-signed test build. It cannot be updated in place; see docs/ANDROID.md."
             echo "APK_NAME=ProjectFit-test.apk" >> "$GITHUB_ENV"
+            echo "APK_SUFFIX=-test" >> "$GITHUB_ENV"
           fi
 
       - name: Build APK
@@ -83,8 +85,8 @@ jobs:
           REF="${RELEASE_TAG}"
           if [ -z "$REF" ]; then REF="$(git rev-parse --short HEAD)"; fi
           cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/$APK_NAME"
-          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/projectfit-${REF}.apk"
-          echo "VERSIONED=projectfit-${REF}.apk" >> "$GITHUB_ENV"
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/projectfit-${REF}${APK_SUFFIX}.apk"
+          echo "VERSIONED=projectfit-${REF}${APK_SUFFIX}.apk" >> "$GITHUB_ENV"
           ls -l "$GITHUB_WORKSPACE"/*.apk
 
       - uses: actions/upload-artifact@v4
