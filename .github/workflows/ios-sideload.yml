@@ -145,11 +145,13 @@ jobs:
             |---|---|
             | **iOS 27 ke atas** (cukup iPhone) | Pasang SideStore, lalu tambahkan sumber `https://github.com/${{ github.repository }}/releases/latest/download/apps.json` |
             | **iOS 15 – 26** (pakai komputer) | Unduh **ProjectFit.ipa** di bawah, lalu pasang dengan Sideloadly |
+            | **Android 8 ke atas** | Unduh **ProjectFit.apk** di bawah lalu buka di HP ([panduan](https://github.com/${{ github.repository }}/blob/main/docs/ANDROID.md)) |
 
             👉 **[Tutorial lengkap langkah demi langkah](https://github.com/${{ github.repository }}/blob/main/docs/IOS_SIDELOAD.md)**
 
             ### ⬇️ File di rilis ini
-            - **ProjectFit.ipa**: file aplikasinya. Ini yang Anda unduh.
+            - **ProjectFit.ipa**: aplikasi iPhone.
+            - **ProjectFit.apk**: aplikasi Android (ditambahkan workflow android-release beberapa menit kemudian).
             - `projectfit-…-unsigned.ipa`: file yang sama, dengan nomor versi di namanya.
             - `apps.json`: sumber untuk SideStore/AltStore. Tidak perlu diunduh.
             - *Source code*: untuk pengembang.

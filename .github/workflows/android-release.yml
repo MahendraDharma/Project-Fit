@@ -1,0 +1,107 @@
+name: android-release
+
+# Builds the Android APK. Run it by hand from the Actions tab
+# (workflow_dispatch) with `release_tag` to attach ProjectFit.apk to that
+# GitHub release (the one ios-sideload creates), or leave it empty for an
+# artifact only. A pushed v* tag does the same.
+#
+# SIGNING. Android only installs an update over an app signed with the same
+# key, and ProjectFit keeps its data on the phone, so a key change means
+# uninstalling — and losing that data. The release key therefore comes from
+# repository secrets (ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+# ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD; see docs/ANDROID.md). Without them
+# the build falls back to a throwaway debug key and the file is named
+# ProjectFit-test.apk so it is never mistaken for an updatable release.
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Attach the APK to this release tag (e.g. v0.16.0); empty = artifact only'
+        required: false
+        default: ''
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.release_tag }}
+    permissions:
+      contents: write # only used to attach to a release
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Pinned, same as ios-sideload: the app does not build on 3.44.x yet.
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.6
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Release key (from secrets, if set)
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+            echo "APK_NAME=ProjectFit.apk" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: debug-signed test build. It cannot be updated in place; see docs/ANDROID.md."
+            echo "APK_NAME=ProjectFit-test.apk" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: flutter build apk --release
+
+      - name: Name the APK
+        run: |
+          REF="${RELEASE_TAG}"
+          if [ -z "$REF" ]; then REF="$(git rev-parse --short HEAD)"; fi
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/$APK_NAME"
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/projectfit-${REF}.apk"
+          echo "VERSIONED=projectfit-${REF}.apk" >> "$GITHUB_ENV"
+          ls -l "$GITHUB_WORKSPACE"/*.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: projectfit-apk
+          path: |
+            ${{ env.APK_NAME }}
+            ${{ env.VERSIONED }}
+          retention-days: 30
+
+      # No `body`: the release text is written by ios-sideload and already has
+      # the Android row; this only adds the files.
+      - name: Attach the APK to the release
+        if: env.RELEASE_TAG != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: |
+            ${{ env.APK_NAME }}
+            ${{ env.VERSIONED }}
