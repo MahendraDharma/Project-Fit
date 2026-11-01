@@ -8,6 +8,8 @@ State at the end of the last session, and what to pick up.
   (`Mahendra Dharma Putra <65089209+MahendraDharma@users.noreply.github.com>`), with no
   co-author or session trailers. The same applies to PR bodies and GitHub comments.
 - The owner writes in Indonesian; reply in Indonesian.
+- Standing permissions (skill search via deep-skill-finder, reading GitHub sources, scientific
+  papers) are in the root `CLAUDE.md`; use them without asking again.
 - Personal health exports never go in the repository (`.gitignore` covers them). The owner's
   OpenStrap export lived only in the previous session's scratchpad, so ask for it again if a
   task needs real data.
@@ -107,5 +109,8 @@ redo it:
 3. Body Battery from FIT field 227/3 in the decoder.
 4. Skin temperature and SpO₂ field identification on WHOOP 4.0 (needs reference measurements).
 5. "Wake when recovery is green".
-6. Local versions of WHOOP-cloud and Garmin metrics: see `docs/LOCAL_METRICS_RESEARCH.md` §D
-   (Intensity Minutes, stress 0–3/0–100, Training Load Focus first) and the owner decisions in §F.
+6. Local versions of WHOOP-cloud and Garmin metrics: see `docs/LOCAL_METRICS_RESEARCH.md`.
+   Done (owner decisions §F): all-day stress 0–100, Body Battery, Sleep Score 0–100, VO2max from
+   routine + fitness age (waist in profile), all computed on read in
+   `app/lib/ui2/screens/garmin_style.dart`. Next from §D: Intensity Minutes, Training Load Focus,
+   Health Snapshot. The owner wants the band alone (no phone GPS/barometer).

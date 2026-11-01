@@ -293,16 +293,30 @@ berguna bila dibuka nanti:
 
 ---
 
-## F. Keputusan yang dibutuhkan dari pemilik
+## F. Keputusan pemilik (1 Nov 2026) dan yang sudah dibuat
 
-1. **Stres:** satu skala (0–3 gaya WHOOP atau 0–100 gaya Garmin), atau keduanya?
-2. **Sleep Score 0–100:** mau dibuat dengan bobot terbuka, atau cukup Sleep performance?
-3. **Body Battery:** mau garis waktu "istirahat vs beban" (E-1), atau tetap tidak ada?
-4. **GPS HP:** apakah "band WHOOP saja" boleh memakai GPS dan barometer iPhone? Bila ya,
-   VO₂max, Race Predictor, lantai, dan Hill Score ikut terbuka.
-5. **Lingkar pinggang:** boleh ditambahkan ke profil untuk VO₂max non-latihan / Fitness Age HUNT?
+| # | Keputusan | Hasil |
+|---|---|---|
+| 1 | Stres 0–100 gaya Garmin | ✅ `wellness/all_day_stress.dart` + kartu Health. Skor = 100·ln(HRV malam ÷ HRV jendela)/ln 4, hanya jendela diam 5 menit, rujukan = median HRV malam 14 malam, pita Garmin 0–25/26–50/51–75/76–100 |
+| 2 | Sleep Score 0–100 bobot terbuka, di samping Sleep performance | ✅ `sleep/sleep_score.dart` + kartu di layar Sleep |
+| 3 | Tambahkan Body Battery | ✅ `wellness/body_battery.dart` + kartu Health. Laju per 5 menit: tidur +1,0×(1−stres/100); diam ≤25 +0,25×(25−s)/25; diam >25 −0,6×(s−25)/75; aktif −(0,15+2,5x²); terjaga −0,15. Batas 5–100, burn-in 3 hari dari 50 |
+| 4 | Band WHOOP saja (tanpa GPS/barometer HP) | VO₂max dari rutinitas, bukan dari lari GPS; lantai, Hill Score, Performance Condition tetap tidak dibuat |
+| 5 | Lingkar pinggang di profil | ✅ Profil › Edit profil. VO₂max HUNT (versi pinggang; BMI sebagai cadangan) + Fitness Age dari rata-rata HUNT3 per dekade (NTNU) |
 
----
+Semua dihitung saat dibaca dari data yang sudah tersimpan (`daytime_hrv`, kurva HR per menit,
+jendela tidur, seri HRV/RHR/stres malam, workout), tanpa perubahan skema atau `kAlgoVersion`, dan
+tidak ada yang masuk ke Recovery/Strain.
+
+**Verifikasi sumber HUNT (paper ilmiah):**
+- Koefisien versi pinggang dicek di tabel 1 *J Am Heart Assoc* 2020 (PMC7428991): pria
+  100,27 − 0,296·usia + 0,226·PA − 0,369·pinggang − 0,155·RHR (SEE 5,70); wanita 74,736 − 0,247·usia
+  + 0,198·PA − 0,259·pinggang − 0,114·RHR (SEE 5,14).
+- Definisi PA-index dari tim HUNT sendiri (Nauman 2012, PMC3445602; Loe 2013, PMC3654926):
+  frekuensi 0/0/1/2,5/5 × intensitas 1/2/3 × durasi 0,10/0,38/0,75/1,0, rentang 0–15.
+- Di app, frekuensi dan durasi diambil dari workout 4 minggu terakhir; intensitas dari rata-rata
+  cadangan HR sesi (<50% santai, 50–75% terengah, ≥75% hampir habis — ambang kita sendiri).
+- Bias yang diketahui: RHR band adalah RHR malam (lebih rendah dari RHR duduk di HUNT), jadi
+  VO₂max bisa sedikit terlalu tinggi.
 
 ## Referensi
 
@@ -335,6 +349,10 @@ berguna bila dibuka nanti:
 
 [27] Firstbeat, EPOC Based Training Effect Assessment (salinan Scribd): https://www.scribd.com/document/168308330/EPOC-Based-Training-Effect-Assestment
 [28] Paten US 7,192,401 B2 (Firstbeat): https://patents.google.com/patent/US7192401B2/en
+[29] Persamaan non-latihan, tabel 1 (JAHA 2020): https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7428991/
+[30] Nauman dkk. 2012, definisi PA-index HUNT: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445602/
+[31] Loe dkk. 2013, rata-rata VO₂max HUNT3: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3654926/
+[32] NTNU CERG, Fitness numbers (rata-rata per dekade): https://www.ntnu.edu/cerg/fitness-numbers
 
 Literatur tanpa tautan (untuk dicek saat implementasi):
 - Nes BM dkk. 2011, *Med Sci Sports Exerc* 43(11): VO₂peak dari model non-latihan, studi HUNT.

@@ -30,6 +30,7 @@ import '../ui2.dart';
 import 'advanced.dart';
 import 'ecg.dart' show EcgEntryCard, pairedIsMaverickOf;
 import 'findings_log.dart';
+import 'garmin_style.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'hrv_status_card.dart';
@@ -96,6 +97,9 @@ class HealthData {
   /// trend cards draw for resting HR and HRV. Null when it could not be read.
   final Map<String, dynamic>? baselines;
 
+  /// All-day stress, Body Battery and fitness age (garmin_style.dart).
+  final GarminStyleData garmin;
+
   const HealthData({
     this.today = const {},
     this.insights = const {},
@@ -110,6 +114,7 @@ class HealthData {
     this.napDay = '',
     this.findings = const [],
     this.baselines,
+    this.garmin = GarminStyleData.empty,
   });
 
   /// The stored points for [key].
@@ -219,6 +224,17 @@ class HealthData {
     final napDay = days.isEmpty ? todayLabel() : days.first;
     final naps = await _soft(() => repo.getDayNaps(napDay));
     final heart = await _soft(() => repo.getDayHeart(todayLabel()));
+    // An addition, like the soft reads above: a failure here must not take
+    // the rest of Health down with it.
+    var garmin = GarminStyleData.empty;
+    try {
+      garmin = await GarminStyleData.load(repo,
+          profile: profile,
+          days: days,
+          hrv: charts['hrv']!,
+          rhr: charts['resting_hr']!,
+          sleepStress: charts['stress']!);
+    } catch (_) {}
 
     return HealthData(
       today: today,
@@ -238,6 +254,7 @@ class HealthData {
       baselines: heart['baselines'] is Map
           ? (heart['baselines'] as Map).cast<String, dynamic>()
           : null,
+      garmin: garmin,
     );
   }
 }
@@ -900,6 +917,14 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
       // (7 + 60 slots of the stored nightly series).
       const SizedBox(height: S.x3),
       HrvStatusCard(hrvStatus(d.spark('hrv', 67))),
+      // Garmin-style surfaces from the band alone (owner decision 2026-11-01).
+      // Read-only from stored data; none of them feeds a score.
+      const SizedBox(height: S.x3),
+      AllDayStressCard(d.garmin.stress, dayStartSec: d.garmin.dayStartSec),
+      const SizedBox(height: S.x3),
+      BodyBatteryCard(d.garmin.battery, dayStartSec: d.garmin.dayStartSec),
+      const SizedBox(height: S.x3),
+      RoutineFitnessCard(d.garmin.fitness, age: d.garmin.age),
       // The active wearable's heart rows, each with its class, source line
       // and reason. Nothing on a WHOOP-only install, nor when handed data.
       if (widget.data == null) const WearableCells(kHealthWearableRows),

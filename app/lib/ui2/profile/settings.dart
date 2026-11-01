@@ -1403,6 +1403,7 @@ class EditProfile extends StatelessWidget {
             'age',
             'height_cm',
             'weight_kg',
+            'waist_cm',
           ])
             k: fields[k],
         });
@@ -1452,6 +1453,10 @@ class _EditProfileViewState extends State<EditProfileView> {
       TextEditingController(text: _u.heightField(widget.initial['height_cm'] as num?));
   late final _weight =
       TextEditingController(text: _u.weightField(widget.initial['weight_kg'] as num?));
+  // Waist feeds only the fitness-age estimate (HUNT model). Same cm ↔ inch
+  // conversion as height, so it reuses the height helpers.
+  late final _waist =
+      TextEditingController(text: _u.heightField(widget.initial['waist_cm'] as num?));
   late String? _sex = (widget.initial['sex'] as String?)?.toLowerCase();
 
   /// When the store last gave us something. Null is "never", which is also
@@ -1519,6 +1524,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _age.dispose();
     _height.dispose();
     _weight.dispose();
+    _waist.dispose();
     super.dispose();
   }
 
@@ -1533,10 +1539,13 @@ class _EditProfileViewState extends State<EditProfileView> {
     final age = Typed.of(_age.text);
     final height = Typed.of(_height.text);
     final weight = Typed.of(_weight.text);
+    final waist = Typed.of(_waist.text);
+    final waistLabel = _waistLabel(l);
     final bad = [
       if (age.bad) (l?.settingsAgeFieldLabel ?? 'Age'),
       if (height.bad) uiText(context, _u.heightLabel),
       if (weight.bad) uiText(context, _u.weightLabel),
+      if (waist.bad) waistLabel,
     ];
     if (bad.isNotEmpty) {
       sayUnreadable(context, bad);
@@ -1549,6 +1558,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       // Typed in the units on the label, stored in metric.
       'height_cm': height.value == null ? null : _u.heightToCm(_height.text),
       'weight_kg': weight.value == null ? null : _u.weightToKg(_weight.text),
+      'waist_cm': waist.value == null ? null : _u.heightToCm(_waist.text),
     });
   }
 
@@ -1627,6 +1637,15 @@ class _EditProfileViewState extends State<EditProfileView> {
                         : uiText(c, _u.weightLabel).toUpperCase(),
                     TextInputType.number,
                   ),
+                  const SizedBox(height: S.x4),
+                  _text(
+                    c,
+                    _waist,
+                    l?.localeName.startsWith('ru') == true
+                        ? _waistLabel(l)
+                        : _waistLabel(l).toUpperCase(),
+                    TextInputType.number,
+                  ),
                   ..._importBlock(p, c),
                   const SizedBox(height: S.x6),
                 StatusCard(
@@ -1686,6 +1705,10 @@ class _EditProfileViewState extends State<EditProfileView> {
       ),
     ];
   }
+
+  String _waistLabel(AppLocalizations? l) => _u.isImperial
+      ? (l?.settingsWaistIn ?? 'Waist (in)')
+      : (l?.settingsWaistCm ?? 'Waist (cm)');
 
   Widget _text(BuildContext c, TextEditingController ctl, String label,
       TextInputType kind) {

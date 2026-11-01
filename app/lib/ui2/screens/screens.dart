@@ -35,6 +35,7 @@ export 'metric_detail.dart';
 export 'month_grid.dart';
 export 'monthly_report.dart';
 export 'hrv_status_card.dart';
+export 'garmin_style.dart';
 export 'readiness_detail.dart';
 export 'rough_night.dart';
 export 'sleep_detail.dart';

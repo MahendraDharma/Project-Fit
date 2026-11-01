@@ -31,7 +31,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:projectfit_analytics/onehz.dart'
-    show hrvStatus, muscleVolume;
+    show
+        BatterySlot,
+        BatteryState,
+        QuietHrvWindow,
+        RoutineSession,
+        allDayStress,
+        bodyBattery,
+        hrvStatus,
+        muscleVolume,
+        routineFitness;
 import 'package:share_plus/share_plus.dart';
 
 import '../../coach/coach_config.dart';
@@ -1736,6 +1745,7 @@ Map<String, Widget> _listCases() => {
       ..._monthlyReportCases(),
       ..._muscleSetsCases(),
       ..._hrvStatusCases(),
+      ..._garminStyleCases(),
       ..._whatChangedCases(),
     };
 
@@ -1942,6 +1952,62 @@ Map<String, Widget> _hrvStatusCases() => {
       'hrv_status_learning':
           HrvStatusCard(hrvStatus(_hrvNights(52, 52, weekNights: 2))),
     };
+
+// Garmin-style cards from the band: stress, Body Battery, fitness age and
+// the sleep score, each with a learning state.
+Map<String, Widget> _garminStyleCases() {
+  const t0 = 1790000000 - 1790000000 % 86400;
+  final nights = List<double?>.filled(14, 60);
+  final windows = [
+    for (var i = 0; i < 96; i++)
+      QuietHrvWindow(t0 + 8 * 3600 + i * 300, 25 + 30 * (i % 7) / 6, 60),
+  ];
+  final slots = [
+    for (var i = 0; i < 96; i++)
+      BatterySlot(t0 - 7 * 3600 + i * 300, BatteryState.asleep, stress: 20),
+    for (var i = 0; i < 12; i++)
+      BatterySlot(t0 + 9 * 3600 + i * 300, BatteryState.active, hrr: 0.7),
+    for (var i = 0; i < 72; i++)
+      BatterySlot(t0 + 10 * 3600 + i * 300, BatteryState.still, stress: 40),
+  ];
+  final fit = routineFitness(
+    age: 41,
+    sex: 'male',
+    waistCm: 88,
+    nightlyRhr: List<double?>.filled(14, 54),
+    sessions: [
+      for (var i = 0; i < 12; i++) const RoutineSession(45, meanHrr: 0.6)
+    ],
+  );
+  return {
+    'stress_day':
+        AllDayStressCard(allDayStress(windows, nights), dayStartSec: t0),
+    'stress_day_learning':
+        AllDayStressCard(allDayStress(windows, List<double?>.filled(3, 60))),
+    'body_battery': BodyBatteryCard(bodyBattery(slots, showFromSec: t0),
+        dayStartSec: t0),
+    'body_battery_learning':
+        BodyBatteryCard(bodyBattery(const [], showFromSec: t0)),
+    'fitness_age': RoutineFitnessCard(fit, age: 41),
+    'fitness_age_need_waist': RoutineFitnessCard(routineFitness(
+        age: 41,
+        sex: 'male',
+        waistCm: null,
+        nightlyRhr: const [],
+        sessions: const [])),
+    'sleep_score': SleepScoreCard(sleepScoreOfNight(const {
+      'duration_min': 412,
+      'need_min': 465,
+      'deep_min': 70,
+      'rem_min': 88,
+      'awake_min': 34,
+      'restless_min': 22,
+      'sleep_stress': 31,
+    })),
+    'sleep_score_guideline':
+        SleepScoreCard(sleepScoreOfNight(const {'duration_min': 380})),
+  };
+}
 
 // ── what changed ──────────────────────────────────────────────────────────
 

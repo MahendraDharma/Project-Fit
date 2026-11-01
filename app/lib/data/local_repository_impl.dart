@@ -1161,6 +1161,11 @@ class LocalRepositoryImpl extends LocalRepository {
       // Low-confidence WRIST orientation (gravity-tilt) during sleep — a body-
       // position PROXY, NOT supine/side/prone body position.
       'wrist_orientation': b['wrist_orientation'],
+      // The two sleep-score inputs the fields above do not carry: minutes of
+      // movement inside the sleep window (`_restlessness`) and the night's
+      // stress (the sleep-window score the stress block publishes).
+      'restless_min': (b['restlessness'] as Map?)?['restless_min'],
+      'sleep_stress': _sub(b, 'stress')?['score'],
     };
     // NOTE: this used to re-map the periods here through
     // `sleepPeriodsForScreen` and overwrite `night['periods']`. That translator

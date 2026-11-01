@@ -8782,6 +8782,15 @@ class DerivationEngine {
   /// so: no score, no 0-100, no battery, no gauge, no "current stress". a
   /// timeline of RMSSD over still minutes, labelled as variability, is the
   /// whole allowed surface.
+  ///
+  /// OWNER DECISION, 2026-11-01: the owner asked for a Garmin-style 0-100
+  /// stress level and a Body Battery anyway, after reading both reasons above.
+  /// They are built ON READ from this timeline in
+  /// `ui2/screens/garmin_style.dart` (analytics `allDayStress`, `bodyBattery`),
+  /// still motion-gated, with every constant stated and labelled as
+  /// ProjectFit's own estimate. Nothing derived here changed, and neither
+  /// number is stored or fed into Recovery, Strain or any baseline — which is
+  /// what keeps the two reasons above true of everything this engine writes.
   static Map<String, dynamic> _daytimeHrv(Substrate s, int onsetSec, int offsetSec,
       {int tonightSleepOnsetSec = 0}) {
     const binSec = 300;

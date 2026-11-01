@@ -86,9 +86,10 @@ Ini target reverse engineering nomor satu.
 | **HRV Status** | Rata-rata ln-RMSSD 7 malam vs baseline 60 malam ± SWC (Plews 2012/2013); seimbang / di atas / di bawah (`clinical/hrv_status.dart`, `ui2/screens/hrv_status_card.dart`, tab Health) | ✅ |
 | **Training load / load ratio** | ATL 7 hari & CTL 42 hari (sudah ada) + rasio akut:kronis dengan zona Gabbett 2016; diberi catatan kritik Impellizzeri 2020 (`clinical/load_ratio.dart`, kartu beban di tab Workout) | ✅ |
 | **Training Readiness** | Setara Readiness (§1) | ✅ |
-| **Stress** | Baevsky Stress Index (§3) | 🟡 skala berbeda |
-| **Sleep Score** | Sleep performance + staging (§1) | 🟡 |
-| **Body Battery** | Tidak dibuat: metode Firstbeat tidak dipublikasikan, dan versi buatan sendiri berarti konstanta yang dipilih tanpa dasar | ⛔ |
+| **Stress** 0–100 | Skala 0–100 gaya Garmin dari jendela diam 5 menit vs HRV malam Anda (`wellness/all_day_stress.dart`, kartu di tab Health). Skala ProjectFit sendiri, bukan Garmin | ✅ metode berbeda |
+| **Sleep Score** 0–100 | Komponen Garmin dengan bobot terbuka (durasi 35, tahap 20, terjaga/gelisah/stres 15), ditampilkan di samping Sleep performance (`sleep/sleep_score.dart`) | ✅ bobot sendiri |
+| **Body Battery** | Atas keputusan pemilik (1 Nov 2026): model dari deskripsi publik Firstbeat, semua laju pengisian/pengurasan ditulis terbuka (`wellness/body_battery.dart`). Estimasi ProjectFit, bukan angka Garmin | 🟡 estimasi |
+| **VO₂max & Fitness Age (tanpa GPS)** | Model non-latihan HUNT (Nes 2011: usia, lingkar pinggang, RHR, indeks aktivitas dari workout 4 minggu) + Fitness Age dari rata-rata HUNT3 (`clinical/fitness_age.dart`) | 🟡 estimasi ±5 |
 | **VO₂max, Race Predictor** | VO₂max submaksimal dari split rute GPS HP + HR band (ACSM + Swain 1997; `clinical/vo2max.dart`, `_submaxVo2maxFromSplits`). Estimasi lama OpenStrap (k/RHR) tetap dihapus. Race Predictor belum ada. Rencana lanjutan: `docs/LOCAL_METRICS_RESEARCH.md` | 🟡 butuh GPS HP |
 
 ## 7. Daftar kerja yang diusulkan

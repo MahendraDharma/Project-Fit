@@ -32,6 +32,7 @@ import '../profile/devices.dart' show DeviceFilter;
 import '../profile/profile.dart' show ProfileAvatar;
 import '../ui2.dart';
 import 'detail_v4.dart';
+import 'garmin_style.dart' show SleepScoreCard, sleepScoreOfNight;
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'metric_detail.dart';
@@ -628,6 +629,12 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
 
       // ── 1 · THE ANSWER ──
       _answer(c, p, d, n),
+      // The 0–100 sleep score beside (never instead of) the answer above
+      // (owner decision 2026-11-01; weights in analytics sleep_score.dart).
+      if (sleepScoreOfNight(n).present) ...[
+        const SizedBox(height: S.x3),
+        SleepScoreCard(sleepScoreOfNight(n)),
+      ],
 
       // ── 2 · THE NIGHT ITSELF ──
       const SizedBox(height: S.x3),

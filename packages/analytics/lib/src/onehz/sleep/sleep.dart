@@ -39,3 +39,4 @@ export 'cpc.dart';
 export 'circadian_np.dart';
 export 'cycles.dart';
 export 'night_hrv_shape.dart';
+export 'sleep_score.dart';
