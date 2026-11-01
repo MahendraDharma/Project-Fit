@@ -40,6 +40,18 @@ Installed with Xcode and a free Personal Team (team ID in the owner's gitignored
 `cd ~/Project-Fit/app && git pull && flutter run --release` on the owner's Mac. Sideloadly and
 AltServer fail on Apple's October 2026 login block (`-80045`); see `docs/IOS_SIDELOAD.md`.
 
+## Android and website (2026-11-01)
+- `android-release.yml` builds the APK (ubuntu, Flutter 3.41.6) and attaches `ProjectFit.apk` to a
+  release tag. It signs with the release key from secrets `ANDROID_KEYSTORE_BASE64`,
+  `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (`projectfit`), `ANDROID_KEY_PASSWORD`. The key
+  was generated in the 2026-11-01 session and handed to the owner; it is NOT in the repository.
+  Without the secrets it builds a debug-signed `ProjectFit-test.apk`. First CI build: success.
+- Website: `site/` (static, no build), deployed by `pages.yml` to
+  <https://mahendradharma.github.io/Project-Fit/>. Needs Settings → Pages → Source: GitHub Actions
+  once; the first deploy failed with "Get Pages site failed" because Pages was off.
+- Card images in `site/img/` are rendered from the app gallery (id locale, dark) with a throwaway
+  widget test; re-render them when the cards change.
+
 ## Logo (2026-11-01)
 The owner picked option B, "P.": a geometric lowercase p (stem + round bowl) with a green dot,
 white on `#111315`, no glow or gradient. Source SVG geometry is in the splash `_Mark` painter
