@@ -67,6 +67,7 @@ const Map<String, List<String>> kMuscleRegions = {
   'Glutes': ['gluteal'],
   'Hamstrings': ['hamstring'],
   'Lats': ['upper_back'],
+  'Lower back': ['lower_back'],
   'Obliquus externus abdominis': ['obliques'],
   'Serratus anterior': ['obliques'],
   'Quads': ['quadriceps'],

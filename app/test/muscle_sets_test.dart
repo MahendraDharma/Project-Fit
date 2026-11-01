@@ -22,7 +22,8 @@ void main() {
       LoggedSet('bench_press', 8, loadKg: 60, rpe: 8, at: at),
       LoggedSet('not_in_catalogue', 10, at: at),
     ]));
-    expect(inputs[0].primaryMuscles, ['chest', 'triceps', 'shoulders']);
+    expect(inputs[0].primaryMuscles, ['Chest']);
+    expect(inputs[0].secondaryMuscles, ['Triceps', 'Shoulders']);
     expect(inputs[0].loadKg, 60);
     expect(inputs[0].rpe, 8);
     expect(inputs[1].primaryMuscles, isEmpty);
@@ -37,8 +38,9 @@ void main() {
     ]))).value!;
     await tester.pumpWidget(_harness(MuscleSetsCard(v)));
     expect(find.text('Sets per muscle, last 7 days'), findsOneWidget);
-    expect(find.text('chest'), findsOneWidget);
-    expect(find.text('3 · 1'), findsNWidgets(3)); // 3 sets, 1 hard, per muscle
+    expect(find.text('Chest'), findsOneWidget);
+    expect(find.text('3 · 1'), findsOneWidget); // primary: 3 sets, 1 hard
+    expect(find.text('1.5 · 0.5'), findsNWidgets(2)); // secondary: half each
     expect(find.textContaining('RPE 7 or more'), findsOneWidget);
   });
 
@@ -48,7 +50,8 @@ void main() {
       LoggedSet('bench_press', 8, loadKg: 60, at: at),
     ]))).value!;
     await tester.pumpWidget(_harness(MuscleSetsCard(v)));
-    expect(find.text('1'), findsNWidgets(3));
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('0.5'), findsNWidgets(2));
     expect(find.textContaining('Rate sets with RPE'), findsOneWidget);
   });
 }

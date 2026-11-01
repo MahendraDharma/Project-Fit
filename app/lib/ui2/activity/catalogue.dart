@@ -447,11 +447,16 @@ final _russianExerciseLocalizations = lookupAppLocalizations(
   const Locale('ru'),
 );
 
+// Muscles use the wger vocabulary of the generated tail ("Chest", "Lats",
+// "Quads"…), one spelling per muscle: the recovery list and the sets card key
+// on the name, so "biceps" here and "Biceps" there became two rows. Every name
+// must be a key of kMuscleRegions (muscle_recovery.dart); a test holds that.
 const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'bench_press',
     'Bench press',
-    ['chest', 'triceps', 'shoulders'],
+    ['Chest'],
+    secondaryMuscles: ['Triceps', 'Shoulders'],
     category: 'Chest',
     equipment: ['Barbell', 'Bench'],
     localizedLabels: {
@@ -463,7 +468,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'incline_db_press',
     'Incline DB press',
-    ['chest', 'shoulders', 'triceps'],
+    ['Chest', 'Shoulders'],
+    secondaryMuscles: ['Triceps'],
     category: 'Chest',
     equipment: ['Dumbbell', 'Incline bench'],
     aliases: ['incline dumbbell press'],
@@ -477,7 +483,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'cable_fly',
     'Cable fly',
-    ['chest', 'shoulders'],
+    ['Chest'],
+    secondaryMuscles: ['Shoulders'],
     category: 'Chest',
     equipment: ['Cable machine'],
     localizedLabels: {
@@ -489,7 +496,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'push_up',
     'Push-up',
-    ['chest', 'triceps', 'shoulders'],
+    ['Chest'],
+    secondaryMuscles: ['Triceps', 'Shoulders'],
     category: 'Chest',
     equipment: ['none (bodyweight exercise)'],
     aliases: ['push up', 'push-ups', 'press-up'],
@@ -499,7 +507,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'overhead_press',
     'Overhead press',
-    ['shoulders', 'triceps', 'core'],
+    ['Shoulders'],
+    secondaryMuscles: ['Triceps', 'Abs'],
     category: 'Shoulders',
     equipment: ['Barbell'],
     aliases: ['OHP'],
@@ -512,7 +521,7 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'triceps_pushdown',
     'Triceps pushdown',
-    ['triceps'],
+    ['Triceps'],
     category: 'Arms',
     equipment: ['Cable machine'],
     localizedLabels: {
@@ -524,7 +533,7 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'overhead_extension',
     'Overhead extension',
-    ['triceps'],
+    ['Triceps'],
     category: 'Arms',
     aliases: ['overhead triceps extension'],
     localizedLabels: {
@@ -536,7 +545,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'barbell_row',
     'Barbell row',
-    ['back', 'biceps', 'core'],
+    ['Lats'],
+    secondaryMuscles: ['Biceps', 'Trapezius'],
     category: 'Back',
     equipment: ['Barbell'],
     localizedLabels: {
@@ -548,7 +558,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'lat_pulldown',
     'Lat pulldown',
-    ['back', 'biceps'],
+    ['Lats'],
+    secondaryMuscles: ['Biceps'],
     category: 'Back',
     equipment: ['Cable machine'],
     localizedLabels: {
@@ -560,7 +571,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'pull_up',
     'Pull-up',
-    ['back', 'biceps', 'core'],
+    ['Lats'],
+    secondaryMuscles: ['Biceps', 'Abs'],
     category: 'Back',
     equipment: ['Pull-up bar'],
     aliases: ['pull up', 'pull-ups'],
@@ -570,7 +582,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'barbell_curl',
     'Barbell curl',
-    ['biceps'],
+    ['Biceps'],
+    secondaryMuscles: ['Brachialis'],
     category: 'Arms',
     equipment: ['Barbell'],
     localizedLabels: {
@@ -582,7 +595,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'back_squat',
     'Back squat',
-    ['legs', 'glutes', 'core'],
+    ['Quads', 'Glutes'],
+    secondaryMuscles: ['Hamstrings', 'Lower back'],
     category: 'Legs',
     equipment: ['Barbell'],
     localizedLabels: {
@@ -594,7 +608,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'front_squat',
     'Front squat',
-    ['legs', 'glutes', 'core'],
+    ['Quads'],
+    secondaryMuscles: ['Glutes', 'Abs'],
     category: 'Legs',
     equipment: ['Barbell'],
     localizedLabels: {
@@ -606,7 +621,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'deadlift',
     'Deadlift',
-    ['back', 'legs', 'glutes', 'core'],
+    ['Hamstrings', 'Glutes', 'Lower back'],
+    secondaryMuscles: ['Quads', 'Trapezius'],
     category: 'Back',
     equipment: ['Barbell'],
     localizedLabels: {
@@ -618,7 +634,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'romanian_deadlift',
     'Romanian deadlift',
-    ['glutes', 'legs', 'back'],
+    ['Hamstrings', 'Glutes'],
+    secondaryMuscles: ['Lower back'],
     category: 'Legs',
     equipment: ['Barbell'],
     aliases: ['RDL'],
@@ -631,7 +648,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'hip_thrust',
     'Hip thrust',
-    ['glutes', 'legs'],
+    ['Glutes'],
+    secondaryMuscles: ['Hamstrings'],
     category: 'Legs',
     localizedLabels: {
       'de': 'Hip Thrust',
@@ -642,7 +660,8 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'leg_press',
     'Leg press',
-    ['legs', 'glutes'],
+    ['Quads'],
+    secondaryMuscles: ['Glutes'],
     category: 'Legs',
     localizedLabels: {
       'de': 'Beinpresse',
@@ -653,7 +672,7 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'plank',
     'Plank',
-    ['core'],
+    ['Abs'],
     category: 'Abs',
     equipment: ['none (bodyweight exercise)'],
     step: 0,
@@ -663,7 +682,7 @@ const _edgeExerciseLibrary = <ExerciseDef>[
   ExerciseDef(
     'hanging_leg_raise',
     'Hanging leg raise',
-    ['core'],
+    ['Abs'],
     category: 'Abs',
     equipment: ['Pull-up bar'],
     step: 0,

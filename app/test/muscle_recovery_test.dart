@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:projectfit/ui2/activity/catalogue.dart';
 import 'package:projectfit/ui2/screens/screens.dart';
 import 'package:projectfit/ui2/ui2.dart';
 
@@ -41,6 +42,17 @@ void main() {
     for (final rs in kMuscleRegions.values) {
       for (final r in rs) {
         expect(keys, contains(r));
+      }
+    }
+  });
+
+  // One spelling per muscle: the hand-written lifts once said "biceps" and
+  // "back" while the wger rows said "Biceps" and "Lats", and the freshness
+  // list showed both as separate muscles, the lowercase ones off the body map.
+  test('every exercise muscle is a body-map muscle, spelled one way', () {
+    for (final e in exerciseLibrary) {
+      for (final m in [...e.primaryMuscles, ...e.secondaryMuscles]) {
+        expect(kMuscleRegions.keys, contains(m), reason: '${e.key}: $m');
       }
     }
   });
