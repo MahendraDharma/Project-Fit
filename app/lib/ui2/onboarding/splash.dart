@@ -12,7 +12,6 @@
 // moment the app is already slowest.
 
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../ui2.dart';
 
@@ -82,11 +81,39 @@ class _Cover extends StatelessWidget {
       color: p.bg,
       child: Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(LucideIcons.activity, size: 44, color: p.on(C.green)),
+          // The "P." mark, same geometry as the app icon (1024 box).
+          SizedBox.square(
+              dimension: 64,
+              child: CustomPaint(painter: _Mark(p.ink, p.on(C.green)))),
           const SizedBox(height: S.x4),
           Text('ProjectFit', style: F.t2.copyWith(color: p.ink)),
         ]),
       ),
     );
   }
+}
+
+/// The app icon's "P.": stem, round bowl, accent dot — drawn, not an asset, so
+/// it takes the theme's ink on both light and dark.
+class _Mark extends CustomPainter {
+  final Color ink, accent;
+  const _Mark(this.ink, this.accent);
+
+  @override
+  void paint(Canvas c, Size s) {
+    final k = s.shortestSide / 1024;
+    c.scale(k);
+    c.translate(-20, -10); // the icon's optical centring
+    final stroke = Paint()
+      ..color = ink
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 80
+      ..strokeCap = StrokeCap.round;
+    c.drawLine(const Offset(372, 300), const Offset(372, 744), stroke);
+    c.drawCircle(const Offset(532, 460), 160, stroke);
+    c.drawCircle(const Offset(676, 704), 44, Paint()..color = accent);
+  }
+
+  @override
+  bool shouldRepaint(_Mark o) => o.ink != ink || o.accent != accent;
 }

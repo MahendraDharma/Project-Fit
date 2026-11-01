@@ -253,9 +253,9 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/icon.png"
   remove_alpha_ios: true
-  # The icon's own plate, so the ring the mask leaves around the artwork is the
-  # same colour as the artwork's edge rather than the old cream.
-  adaptive_icon_background: "#0A1D3A"
+  # The icon's own plate (the "P." mark's #111315), so the ring the mask
+  # leaves around the artwork is the same colour as the artwork's edge.
+  adaptive_icon_background: "#111315"
   adaptive_icon_foreground: "assets/launcher/icon_adaptive.png"
 
 flutter:

@@ -38,6 +38,15 @@ Installed with Xcode and a free Personal Team (team ID in the owner's gitignored
 `cd ~/Project-Fit/app && git pull && flutter run --release` on the owner's Mac. Sideloadly and
 AltServer fail on Apple's October 2026 login block (`-80045`); see `docs/IOS_SIDELOAD.md`.
 
+## Logo (2026-11-01)
+The owner picked option B, "P.": a geometric lowercase p (stem + round bowl) with a green dot,
+white on `#111315`, no glow or gradient. Source SVG geometry is in the splash `_Mark` painter
+(`lib/ui2/onboarding/splash.dart`, 1024 box). Assets: `assets/images/icon.png` / `icon_bw.png`,
+`assets/launcher/icon_adaptive.png`, iOS AppIcon + AppIconBW, watch icon, Android launcher,
+`docs/assets/logo.png`, `social-preview.png`. Do NOT let `dart run flutter_launcher_icons` write
+`ios/Runner.xcodeproj/project.pbxproj`: it renames the AppIconBW alternate and the widget colours
+to `AppIcon`; revert that file after running it.
+
 ## UI redesign (done in v0.12.0: mockup v3)
 The owner picked mockup v3, a WHOOP-inspired, data-dense Home (style only: no WHOOP logos,
 assets or trade dress).
@@ -100,6 +109,7 @@ redo it:
   - Topics: whoop, garmin, fitness, hrv, sleep-tracking, flutter, bluetooth-low-energy,
     local-first, health, wearables.
 - Settings → Social preview → upload `docs/assets/social-preview.png`.
+  (Re-upload after the 2026-11-01 logo change: the "P." mark replaced the pulse logo.)
 
 ## Open work, in order
 1. Restyle the detail screens to match the v3 Home.
