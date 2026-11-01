@@ -12,17 +12,27 @@
 <p align="center">
   <a href="https://github.com/MahendraDharma/Project-Fit/releases/latest"><img alt="Download" src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F_DOWNLOAD-untuk_iPhone-2ea44f?style=for-the-badge&amp;logo=apple&amp;logoColor=white"></a>
   &nbsp;
+  <a href="docs/ANDROID.md"><img alt="Download untuk Android" src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F_DOWNLOAD-untuk_Android-2ea44f?style=for-the-badge&amp;logo=android&amp;logoColor=white"></a>
+  &nbsp;
   <a href="docs/IOS_SIDELOAD.md"><img alt="Cara install" src="https://img.shields.io/badge/%F0%9F%93%96_CARA_INSTALL-tutorial_lengkap-0969da?style=for-the-badge"></a>
 </p>
+
+<p align="center">🌐 <a href="https://mahendradharma.github.io/Project-Fit/"><strong>mahendradharma.github.io/Project-Fit</strong></a></p>
 
 <p align="center">
   <a href="https://github.com/MahendraDharma/Project-Fit/releases/latest"><img alt="Versi terbaru" src="https://img.shields.io/github/v/release/MahendraDharma/Project-Fit?label=versi&amp;color=2ea44f"></a>
   <img alt="iOS 15 ke atas" src="https://img.shields.io/badge/iOS-15%2B-black?logo=apple">
+  <img alt="Android 8 ke atas" src="https://img.shields.io/badge/Android-8%2B-3DDC84?logo=android&amp;logoColor=white">
   <img alt="Gratis" src="https://img.shields.io/badge/harga-gratis-success">
   <a href="LICENSE"><img alt="Lisensi AGPL-3.0" src="https://img.shields.io/badge/lisensi-AGPL--3.0-blue"></a>
 </p>
 
 ---
+
+## 🤖 Cara pasang di Android
+
+Unduh **ProjectFit.apk** dari [rilis terbaru](https://github.com/MahendraDharma/Project-Fit/releases/latest),
+buka di HP, lalu izinkan pemasangan dari sumber itu. Langkah lengkap: **[docs/ANDROID.md](docs/ANDROID.md)**.
 
 ## 📲 Cara pasang di iPhone
 
