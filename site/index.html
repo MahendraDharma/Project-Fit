@@ -1,160 +1,118 @@
 <!doctype html>
-<html lang="id">
+<html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ProjectFit — kebugaran yang dihitung di HP Anda</title>
-<meta name="description" content="ProjectFit membaca band WHOOP dan jam Garmin, lalu menghitung recovery, strain, tidur, stres dan Body Battery langsung di HP. Tanpa akun, tanpa server, gratis dan open source.">
+<title>ProjectFit — your fitness data, computed on your phone</title>
+<meta name="description" content="ProjectFit reads your WHOOP band and Garmin watch and works out recovery, strain, sleep, stress and Body Battery on the phone itself. No account, no server, free and open source.">
+<link rel="canonical" href="https://mahendradharma.github.io/Project-Fit/">
+<link rel="alternate" hreflang="en" href="https://mahendradharma.github.io/Project-Fit/">
+<link rel="alternate" hreflang="id" href="https://mahendradharma.github.io/Project-Fit/id/">
+<link rel="alternate" hreflang="ja" href="https://mahendradharma.github.io/Project-Fit/ja/">
+<link rel="alternate" hreflang="zh" href="https://mahendradharma.github.io/Project-Fit/zh/">
+<link rel="alternate" hreflang="x-default" href="https://mahendradharma.github.io/Project-Fit/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mahendradharma.github.io/Project-Fit/">
 <meta property="og:title" content="ProjectFit">
-<meta property="og:description" content="Kebugaran yang dihitung di HP Anda. Gratis dan open source.">
+<meta property="og:description" content="ProjectFit reads your WHOOP band and Garmin watch and works out recovery, strain, sleep, stress and Body Battery on the phone itself. No account, no server, free and open source.">
 <meta property="og:image" content="https://mahendradharma.github.io/Project-Fit/img/social-preview.png">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B0C0E">
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
-<style>
-@font-face{font-family:Manrope;src:url(fonts/Manrope-400.ttf);font-weight:400;font-display:swap}
-@font-face{font-family:Manrope;src:url(fonts/Manrope-600.ttf);font-weight:600;font-display:swap}
-@font-face{font-family:Manrope;src:url(fonts/Manrope-700.ttf);font-weight:700;font-display:swap}
-:root{--bg:#0B0C0E;--surface:#15171A;--card:#1C1F23;--line:rgba(255,255,255,.08);--ink:#F5F5F7;--ink2:#C7C7CC;--ink3:#8E8E93;--accent:#30D158;--accent-ink:#06210F;--max:1080px}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,-apple-system,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
-a{color:inherit}
-img{max-width:100%;display:block}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
-nav{position:sticky;top:0;z-index:5;background:rgba(11,12,14,.78);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;gap:24px;height:60px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;text-decoration:none;font-size:17px}
-.brand img{width:30px;height:30px;border-radius:7px}
-nav .links{margin-left:auto;display:flex;gap:22px;font-size:14px;color:var(--ink2)}
-nav .links a{text-decoration:none}
-nav .links a:hover{color:var(--ink)}
-.hero{padding:88px 0 56px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
-h1{font-size:clamp(36px,5.4vw,60px);line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;font-weight:700}
-h1 em{font-style:normal;color:var(--accent)}
-.lead{font-size:clamp(17px,2vw,19px);color:var(--ink2);margin:0 0 32px;max-width:34em}
-.cta{display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--line);background:var(--card);transition:transform .15s ease,background .15s ease}
-.btn:hover{transform:translateY(-1px);background:#23272C}
-.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
-.btn.primary:hover{background:#3BE066}
-.btn svg{width:18px;height:18px}
-.note{font-size:13px;color:var(--ink3);margin-top:14px}
-.stack{position:relative;height:560px}
-.stack img{position:absolute;width:72%;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.55);border:1px solid var(--line)}
-.stack img:nth-child(1){top:0;right:0}
-.stack img:nth-child(2){top:170px;left:0}
-.stack img:nth-child(3){bottom:0;right:6%}
-section{padding:72px 0;border-top:1px solid var(--line)}
-.kicker{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
-h2{font-size:clamp(28px,3.6vw,40px);line-height:1.15;letter-spacing:-.015em;margin:0 0 14px}
-.sub{color:var(--ink2);max-width:40em;margin:0 0 40px}
-.features{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.feature{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:18px}
-.feature h3{margin:0;font-size:20px}
-.feature p{margin:0;color:var(--ink2);font-size:15px}
-.feature img{border-radius:16px;border:1px solid var(--line)}
-.chips{display:flex;flex-wrap:wrap;gap:10px}
-.chip{padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px;color:var(--ink2)}
-.chip b{color:var(--ink);font-weight:600}
-.privacy{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.pv{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
-.pv h3{margin:0 0 6px;font-size:17px}
-.pv p{margin:0;color:var(--ink2);font-size:15px}
-.install{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.inst{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px}
-.inst h3{margin:0 0 4px;font-size:21px}
-.inst .req{color:var(--ink3);font-size:14px;margin:0 0 16px}
-.inst ol{margin:0 0 20px;padding-left:20px;color:var(--ink2)}
-.inst li{margin:6px 0}
-footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--ink3);font-size:14px}
-footer p{margin:6px 0}
-@media (max-width:860px){
-  .hero{grid-template-columns:1fr;padding-top:56px}
-  .stack{height:auto;display:grid;gap:14px}
-  .stack img{position:static;width:100%}
-  .stack img:nth-child(3){display:none}
-  .features,.install{grid-template-columns:1fr}
-  .privacy{grid-template-columns:1fr}
-  nav .links{display:none}
-}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
-</style>
+<link rel="stylesheet" href="assets/site.css">
+<script defer src="assets/site.js"></script>
 </head>
 <body>
-<nav><div class="wrap">
-  <a class="brand" href="#"><img src="img/logo.png" alt="">ProjectFit</a>
-  <div class="links"><a href="#fitur">Fitur</a><a href="#privasi">Privasi</a><a href="#pasang">Pasang</a><a href="https://github.com/MahendraDharma/Project-Fit">GitHub</a></div>
+<a class="skip" href="#main">Skip</a>
+<nav aria-label="Main"><div class="wrap">
+  <a class="brand" href="./"><svg viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="228" fill="#111315"/><g transform="translate(512 512) scale(.86) translate(-532 -522)"><path d="M372 300 L372 744" stroke="#fff" stroke-width="80" stroke-linecap="round"/><circle cx="532" cy="460" r="160" fill="none" stroke="#fff" stroke-width="80"/><circle cx="676" cy="704" r="44" fill="#30D158"/></g></svg>ProjectFit</a>
+  <div class="links"><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#install">Install</a><a href="https://github.com/MahendraDharma/Project-Fit">GitHub</a></div>
+  <details class="lang"><summary aria-label="Language"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/></svg>English</summary><ul><li><a href="./" hreflang="en" lang="en" aria-current="page">English</a></li><li><a href="id/" hreflang="id" lang="id">Bahasa Indonesia</a></li><li><a href="ja/" hreflang="ja" lang="ja">日本語</a></li><li><a href="zh/" hreflang="zh" lang="zh">简体中文</a></li></ul></details>
 </div></nav>
 
-<main class="wrap">
-  <div class="hero">
+<main id="main" class="wrap">
+  <header class="hero">
+    <svg class="pulse-bg" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true"><path d="M0 90 H380 L410 90 L430 40 L455 130 L480 20 L505 110 L520 90 H760 L780 90 L795 60 L812 112 L830 70 L842 90 H1200"/></svg>
     <div>
-      <h1>Kebugaran yang dihitung <em>di HP Anda.</em></h1>
-      <p class="lead">ProjectFit membaca band WHOOP dan jam Garmin, lalu menghitung recovery, strain, tidur, stres, dan Body Battery langsung di HP. Tanpa akun, tanpa server, tanpa langganan.</p>
-      <div class="cta">
-        <a class="btn primary" href="#pasang"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Unduh gratis</a>
-        <a class="btn" href="https://github.com/MahendraDharma/Project-Fit"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>Kode sumber</a>
+      <h1 class="in-1">Your fitness data,<br><span class="accent">computed on your phone.</span></h1>
+      <p class="lead in-2">ProjectFit reads your WHOOP band and Garmin watch over Bluetooth and works out recovery, strain, sleep, stress and Body Battery on the phone itself. No account, no server, no subscription.</p>
+      <div class="cta in-3">
+        <a class="btn primary" href="#install"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Download free</a>
+        <a class="btn" href="https://github.com/MahendraDharma/Project-Fit"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>Source code</a>
       </div>
-      <p class="note">iPhone dan Android · open source (AGPL-3.0)</p>
+      <p class="note in-4">iPhone and Android · open source (AGPL-3.0)</p>
     </div>
-    <div class="stack" aria-hidden="true">
-      <img src="img/stress_day.png" alt="">
-      <img src="img/body_battery.png" alt="">
-      <img src="img/sleep_score.png" alt="">
-    </div>
+    <div class="mark"><svg viewBox="300 220 480 600" role="img" aria-label="ProjectFit"><path class="stroke" d="M372 744 L372 300"/><path class="stroke" d="M372 460 A160 160 0 1 1 692 460 A160 160 0 1 1 372 460"/><circle class="ring" cx="676" cy="704" r="44"/><circle class="dot" cx="676" cy="704" r="44"/></svg></div>
+  </header>
+
+  <div class="facts" data-reveal>
+    <div class="fact"><b data-count="0">0</b><span>accounts to create</span></div>
+    <div class="fact"><b data-count="0">0</b><span>ProjectFit servers</span></div>
+    <div class="fact"><b data-count="7600" data-format="{n}+">7,600+</b><span>automated tests</span></div>
+    <div class="fact"><b data-count="100" data-format="{n}%">100%</b><span>open source code</span></div>
   </div>
 
-  <section id="fitur">
-    <p class="kicker">Fitur</p>
-    <h2>Angka yang biasa ada di cloud, kini di saku Anda.</h2>
-    <p class="sub">Setiap angka dihitung dengan metode yang dipublikasikan, dengan konstanta yang ditulis terbuka. Kalau datanya belum cukup, ProjectFit bilang begitu, bukan menebak.</p>
-    <div class="features">
-      <div class="feature"><div><h3>Stres &amp; Body Battery</h3><p>Stres 0–100 dihitung hanya saat Anda diam, dibanding variasi jantung Anda di malam hari. Body Battery terisi saat tidur dan terkuras oleh aktivitas.</p></div><img src="img/body_battery.png" alt="Kartu Body Battery" loading="lazy"></div>
-      <div class="feature"><div><h3>Tidur</h3><p>Skor tidur 0–100 dengan bobot terbuka, di samping kebutuhan tidur pribadi, utang tidur, tahap tidur, dan laju napas.</p></div><img src="img/sleep_score.png" alt="Kartu skor tidur" loading="lazy"></div>
-      <div class="feature"><div><h3>Kebugaran</h3><p>Usia kebugaran dan VO₂max dari rutinitas Anda (model studi HUNT), menit intensitas mingguan, dan fokus beban latihan.</p></div><img src="img/fitness_age.png" alt="Kartu usia kebugaran" loading="lazy"></div>
-      <div class="feature"><div><h3>Health Snapshot</h3><p>Dua menit duduk diam: denyut jantung, HRV, laju napas, dan stres disimpan sebagai satu catatan.</p></div><img src="img/snapshot_card.png" alt="Kartu Health Snapshot" loading="lazy"></div>
-    </div>
-    <div style="height:28px"></div>
-    <div class="chips">
-      <span class="chip"><b>Recovery</b> harian</span><span class="chip"><b>Strain</b> 0–21</span><span class="chip">HRV Status</span><span class="chip">Beban latihan &amp; rasio akut:kronis</span><span class="chip">Zona detak jantung</span><span class="chip">Kalori</span><span class="chip">Langkah</span><span class="chip">Deteksi tidur siang</span><span class="chip">Pemulihan otot</span><span class="chip">Set per otot</span><span class="chip">Jurnal kebiasaan</span><span class="chip">Laporan bulanan</span><span class="chip">Alarm bangun pintar</span><span class="chip">Napas terpandu</span><span class="chip">Coach AI (kunci Anda sendiri)</span>
-    </div>
-  </section>
-
-  <section id="privasi">
-    <p class="kicker">Privasi</p>
-    <h2>Data kesehatan Anda tidak pernah meninggalkan HP.</h2>
-    <p class="sub">Tidak ada akun dan tidak ada server ProjectFit. Band disambungkan lewat Bluetooth langsung ke aplikasi.</p>
-    <div class="privacy">
-      <div class="pv"><h3>Dihitung di perangkat</h3><p>Semua metrik dihitung di HP dari data mentah band. Bisa dipakai tanpa internet.</p></div>
-      <div class="pv"><h3>Tanpa akun</h3><p>Tidak perlu mendaftar. Cadangan data dienkripsi dan disimpan di tempat yang Anda pilih.</p></div>
-      <div class="pv"><h3>Kode terbuka</h3><p>Seluruh kode ada di GitHub dengan lisensi AGPL-3.0, jadi siapa pun bisa memeriksanya.</p></div>
-    </div>
-  </section>
-
-  <section id="pasang">
-    <p class="kicker">Pasang</p>
-    <h2>Gratis untuk iPhone dan Android.</h2>
-    <p class="sub">ProjectFit belum ada di App Store maupun Play Store. Pasang langsung dari rilis GitHub.</p>
-    <div class="install">
-      <div class="inst">
-        <h3>iPhone</h3>
-        <p class="req">iOS 15 ke atas · Apple ID gratis</p>
-        <ol><li>iOS 27 ke atas: pasang SideStore, lalu tambahkan sumber ProjectFit.</li><li>iOS 15–26: unduh <b>ProjectFit.ipa</b>, lalu pasang dengan Sideloadly dari komputer.</li></ol>
-        <div class="cta"><a class="btn primary" href="https://github.com/MahendraDharma/Project-Fit/blob/main/docs/IOS_SIDELOAD.md">Panduan iPhone</a><a class="btn" href="https://github.com/MahendraDharma/Project-Fit/releases/latest">Rilis terbaru</a></div>
+  <section id="features">
+    <p class="kicker">Features</p>
+    <h2>The numbers that usually live in a cloud, in your pocket.</h2>
+    <p class="sub">Every number comes from a published method with its constants written in the open. When there is not enough data yet, ProjectFit says so instead of guessing.</p>
+    <div class="scrolly">
+      <div class="steps">
+<article class="step" data-step="0"><h3>Stress, scored only while you are still</h3><p>A 0–100 stress level from five-minute still windows, against how variable your heart is at night. Moving time is left blank, not scored.</p><img src="img/en/stress_day.png" alt="Stress, scored only while you are still" loading="lazy" width="780"></article>
+<article class="step" data-step="1"><h3>Body Battery</h3><p>Charges while you sleep and rest calmly, drains with activity and stress. Every rate is written down, so you can see why it moved.</p><img src="img/en/body_battery.png" alt="Body Battery" loading="lazy" width="780"></article>
+<article class="step" data-step="2"><h3>Sleep score, with its parts</h3><p>Duration against your own sleep need, stages, awake time, restlessness and stress during the night, each shown with its weight.</p><img src="img/en/sleep_score.png" alt="Sleep score, with its parts" loading="lazy" width="780"></article>
+<article class="step" data-step="3"><h3>Fitness age without a treadmill test</h3><p>VO₂max from your routine with the HUNT Study model (age, waist, resting heart rate, workouts), and the age whose average matches it.</p><img src="img/en/fitness_age.png" alt="Fitness age without a treadmill test" loading="lazy" width="780"></article>
+<article class="step" data-step="4"><h3>Intensity minutes and training focus</h3><p>Weekly moderate and vigorous minutes against the WHO&#x27;s 150, and four weeks of training split into low aerobic, high aerobic and anaerobic.</p><img src="img/en/intensity_minutes.png" alt="Intensity minutes and training focus" loading="lazy" width="780"></article>
+<article class="step" data-step="5"><h3>Health Snapshot</h3><p>Two minutes sitting still: heart rate, HRV, breathing rate and stress, saved as one entry.</p><img src="img/en/snapshot_card.png" alt="Health Snapshot" loading="lazy" width="780"></article>
       </div>
-      <div class="inst">
-        <h3>Android</h3>
-        <p class="req">Android 8.0 ke atas</p>
-        <ol><li>Unduh <b>ProjectFit.apk</b> dari rilis terbaru.</li><li>Buka filenya dan izinkan pemasangan dari sumber ini.</li><li>Beri izin Bluetooth (Perangkat di sekitar) saat pertama dibuka.</li></ol>
-        <div class="cta"><a class="btn primary" href="https://github.com/MahendraDharma/Project-Fit/blob/main/docs/ANDROID.md">Panduan Android</a><a class="btn" href="https://github.com/MahendraDharma/Project-Fit/releases/latest">Rilis terbaru</a></div>
+      <div class="phone" aria-hidden="true"><div class="screen"><img src="img/en/stress_day.png" alt="" width="780"><img src="img/en/body_battery.png" alt="" width="780" loading="lazy"><img src="img/en/sleep_score.png" alt="" width="780" loading="lazy"><img src="img/en/fitness_age.png" alt="" width="780" loading="lazy"><img src="img/en/intensity_minutes.png" alt="" width="780" loading="lazy"><img src="img/en/snapshot_card.png" alt="" width="780" loading="lazy"></div></div>
+    </div>
+    <div class="chips" data-reveal><span class="chip">Daily recovery</span><span class="chip">Strain 0–21</span><span class="chip">HRV status</span><span class="chip">Training load</span><span class="chip">Heart-rate zones</span><span class="chip">Calories</span><span class="chip">Steps</span><span class="chip">Nap detection</span><span class="chip">Muscle recovery</span><span class="chip">Sets per muscle</span><span class="chip">Habit journal</span><span class="chip">Monthly report</span><span class="chip">Smart wake alarm</span><span class="chip">Guided breathing</span><span class="chip">AI coach (your own key)</span></div>
+  </section>
+
+  <section id="privacy">
+    <p class="kicker">Privacy</p>
+    <h2>Your health data never leaves your phone.</h2>
+    <p class="sub">There is no ProjectFit account and no ProjectFit server. The band talks to the app over Bluetooth.</p>
+    <div class="flow" data-reveal>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V2h6v4M9 18v4h6v-4"/><path d="M9.5 12h1.5l1-2 1 4 1-2h.5"/></svg><b>Your band</b><span>WHOOP or Garmin</span></div>
+      <div class="wire" aria-hidden="true"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><b>Your phone</b><span>every number computed here</span></div>
+      <div class="wire cut" aria-hidden="true"></div>
+      <div class="node off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H8a5 5 0 1 1 1-9.9A6 6 0 0 1 20 11a4 4 0 0 1-2.5 8Z"/></svg><b>A server</b><span>none</span></div>
+    </div>
+    <div class="points">
+      <div class="point"><h3>Computed on the device</h3><p>Every metric is worked out on the phone from the band&#x27;s raw data. It works offline.</p></div>
+      <div class="point"><h3>No account</h3><p>Nothing to sign up for. Backups are encrypted and go where you choose.</p></div>
+      <div class="point"><h3>Open code</h3><p>All of it is on GitHub under AGPL-3.0, so anyone can check what it does.</p></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <p class="kicker">Install</p>
+    <h2>Free on iPhone and Android.</h2>
+    <p class="sub">ProjectFit is not in the App Store or Play Store yet. Install it from the GitHub release.</p>
+    <div class="install">
+      <div class="inst" data-reveal>
+        <h3><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.2.7c1.3 0 2.1-1.2 2.9-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-3.8ZM14 5.4c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4Z"/></svg>iPhone</h3><p class="req">iOS 15 or later · a free Apple ID</p>
+        <ol><li>iOS 27 or later: install SideStore, then add the ProjectFit source.</li><li>iOS 15–26: download ProjectFit.ipa and install it with Sideloadly from a computer.</li></ol>
+        <div class="cta"><a class="btn primary" href="https://github.com/MahendraDharma/Project-Fit/blob/main/docs/IOS_SIDELOAD.md">iPhone guide</a><a class="btn" href="https://github.com/MahendraDharma/Project-Fit/releases/latest">Latest release</a></div>
+      </div>
+      <div class="inst" data-reveal>
+        <h3><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5 19.4 6.4a.4.4 0 1 0-.7-.4l-1.8 3.1A11 11 0 0 0 12 8a11 11 0 0 0-4.9 1.1L5.3 6a.4.4 0 1 0-.7.4l1.8 3.1A9.6 9.6 0 0 0 1.5 17h21a9.6 9.6 0 0 0-4.9-7.5ZM7 14.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>Android</h3><p class="req">Android 8.0 or later</p>
+        <ol><li>Download ProjectFit.apk from the latest release.</li><li>Open it and allow installs from that source.</li><li>Allow Bluetooth (Nearby devices) the first time you open it.</li></ol>
+        <div class="cta"><a class="btn primary" href="https://github.com/MahendraDharma/Project-Fit/blob/main/docs/ANDROID.md">Android guide</a><a class="btn" href="https://github.com/MahendraDharma/Project-Fit/releases/latest">Latest release</a></div>
       </div>
     </div>
   </section>
 </main>
 
 <footer><div class="wrap">
-  <p><b style="color:var(--ink)">ProjectFit</b> · open source, AGPL-3.0 · berbasis OpenStrap.</p>
-  <p>WHOOP dan Garmin adalah merek milik pemiliknya masing-masing. ProjectFit tidak berafiliasi dengan, didukung, atau disponsori oleh mereka.</p>
-  <p>Bukan alat medis. Angka-angkanya adalah estimasi untuk kebugaran, bukan diagnosis.</p>
+  <p><b style="color:var(--ink)">ProjectFit</b> · open source, AGPL-3.0 · based on OpenStrap.</p>
+  <p>WHOOP and Garmin are trademarks of their respective owners. ProjectFit is not affiliated with, endorsed or sponsored by them.</p>
+  <p>Not a medical device. The numbers are fitness estimates, not a diagnosis.</p>
+  <p class="langs"><a href="./" hreflang="en" lang="en">English</a> <a href="id/" hreflang="id" lang="id">Bahasa Indonesia</a> <a href="ja/" hreflang="ja" lang="ja">日本語</a> <a href="zh/" hreflang="zh" lang="zh">简体中文</a></p>
 </div></footer>
 </body>
 </html>
