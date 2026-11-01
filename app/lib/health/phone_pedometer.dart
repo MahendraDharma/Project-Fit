@@ -326,12 +326,21 @@ class PhonePedometer {
   /// caller surfaces this: "permission granted but no data ever arrives" is
   /// otherwise a silent dead end on iOS, where `requestAuthorization` reports
   /// success even when the user denied READ.
-  Future<({int daysRead, int totalSteps})> syncRecent({
+  ///
+  /// [changedDays] are the days whose banked total moved. Banking rows changes
+  /// nothing a screen shows: Home and the trends read the step scalar the
+  /// derive persisted, so the caller must re-derive these days or the app
+  /// keeps the count from the last derive while the phone's own Health app
+  /// shows the current one.
+  Future<({int daysRead, int totalSteps, Set<String> changedDays})> syncRecent({
     int days = routineSyncDays,
   }) async {
+    final changed = <String>{};
     if (_stepReader == null) {
       await _purgeImportedHealthStoreRows();
-      if (!await hasPermission()) return (daysRead: 0, totalSteps: 0);
+      if (!await hasPermission()) {
+        return (daysRead: 0, totalSteps: 0, changedDays: changed);
+      }
     }
     final now = DateTime.now();
     final epoch = _epoch;
@@ -343,12 +352,14 @@ class PhonePedometer {
       // which would mislabel the day and start its hour walk at the wrong
       // offset. DateTime normalises an out-of-range day field for us.
       final day = DateTime(now.year, now.month, now.day - d);
+      final before = await LocalDb.phoneStepsForDay(dayLabelOf(day));
       final n = await syncDay(day);
       if (n != null) {
         ok++;
         total += n;
+        if (n != before) changed.add(dayLabelOf(day));
       }
     }
-    return (daysRead: ok, totalSteps: total);
+    return (daysRead: ok, totalSteps: total, changedDays: changed);
   }
 }

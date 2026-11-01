@@ -965,10 +965,48 @@ class AppState extends ChangeNotifier {
       phoneStepsLastTotal = r.totalSteps;
       await _refreshPhoneStepsToday();
       notifyListeners();
+      await _rederivePhoneStepDays(r.changedDays);
       return r.daysRead;
     } catch (e) {
       debugPrint('[phone_steps] sync: $e');
       return 0;
+    }
+  }
+
+  /// Days whose phone steps moved since they were last derived. Durable,
+  /// because a sync can run on a background wake where no derive may run, and
+  /// the next foreground sync then finds the rows unchanged.
+  static const String _kPhoneStepsDirtyDays = 'phone_steps_dirty_days';
+
+  /// Re-derive the days a phone-step sync changed, plus any left over from a
+  /// sync that could not derive.
+  ///
+  /// WHY. Banking rows into `live_coverage` changes nothing a screen shows:
+  /// Home, Strain and the trends read the `steps` scalar the derive persisted.
+  /// The only automatic derive is drain-triggered, and the launch and resume
+  /// syncs ran with no derive after them, so the app kept showing the count
+  /// from the last band drain while the phone's Health app showed the current
+  /// one — the two numbers the owner kept seeing disagree.
+  Future<void> _rederivePhoneStepDays(Set<String> changed) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final days = {
+        ...?prefs.getStringList(_kPhoneStepsDirtyDays),
+        ...changed,
+      };
+      if (days.isEmpty) return;
+      await prefs.setStringList(_kPhoneStepsDirtyDays, days.toList()..sort());
+      // No derive in the background (iOS CPU watchdog, see DeriveScheduler);
+      // the next foreground sync picks the days up. A re-analysis already
+      // derives every day.
+      if (_background || reanalyzing || !phoneStepsEnabled) return;
+      await rederiveDays(days);
+      final left = {...?prefs.getStringList(_kPhoneStepsDirtyDays)}
+        ..removeAll(days);
+      await prefs.setStringList(_kPhoneStepsDirtyDays, left.toList()..sort());
+      notifyListeners();
+    } catch (e) {
+      debugPrint('[phone_steps] re-derive: $e');
     }
   }
 

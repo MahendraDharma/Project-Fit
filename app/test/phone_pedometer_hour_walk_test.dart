@@ -249,6 +249,25 @@ void main() {
     expect(r.totalSteps, greaterThan(0));
   });
 
+  test('syncRecent names the days whose banked total moved', () async {
+    // The caller re-derives exactly these days: without that, Home kept the
+    // step count of the last derive while the phone's Health app moved on.
+    var perHour = 5;
+    final ped = PhonePedometer(stepReader: (from, to) async => perHour);
+    final first = await ped.syncRecent(days: 2);
+    final y = _label(yesterday());
+    expect(first.changedDays, contains(y));
+
+    // Same counts again: nothing moved, nothing to re-derive.
+    final again = await ped.syncRecent(days: 2);
+    expect(again.changedDays, isNot(contains(y)));
+
+    // More steps arrived: the day moved.
+    perHour = 6;
+    final more = await ped.syncRecent(days: 2);
+    expect(more.changedDays, contains(y));
+  });
+
   test('stop() mid-sync banks nothing for the days not yet written', () async {
     late PhonePedometer ped;
     var stopped = false;
