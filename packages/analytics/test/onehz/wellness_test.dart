@@ -682,6 +682,9 @@ void main() {
         if (firstTs == 0) firstTs = r.tsEpoch;
         lastTs = r.tsEpoch;
         final tMs = r.tsEpoch * 1000.0 + r.tsSubsec;
+        // Deliberate: this test pins that the legacy (not-temperature) field
+        // still decodes and cannot crash the cosinor; nothing ships it.
+        // ignore: deprecated_member_use
         temp.add(AdcSample(tMs, r.skinTempRaw.toDouble()));
         final a = r.accelG;
         if (a.length == 3) accel.add(AccelSample(tMs, a[0], a[1], a[2]));

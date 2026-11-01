@@ -3,6 +3,22 @@
 Read `docs/NEXT_SESSION.md` first: it holds the current state, the ground rules (commit author,
 language, branches) and the open work.
 
+## Release rule (owner, 2026-11-01)
+
+When a piece of work is finished, it ends in a release — and a release is never cut before the
+whole project has been tested and every bug found has been fixed:
+
+1. Run everything: `dart analyze` + `dart test` in `packages/protocol` and `packages/analytics`,
+   `flutter analyze` + the full `flutter test` in `app/` (not just the files touched). Do not edit
+   files under `app/` while the app suite runs.
+2. Any failure is a bug to fix first (root cause, with a test), then re-run the affected tests.
+   A failure that also fails on `main` before your change still gets fixed or reported before
+   releasing.
+3. Release: bump `version:` in `app/pubspec.yaml` (when app code changed), push to `main`, run
+   `ios-sideload` and `android-release` with the same `release_tag`, then check the release has
+   `ProjectFit.ipa`, `ProjectFit.apk` and `apps.json`. Rebuild the website (`tools/site/build.py`)
+   if what it describes changed.
+
 ## Standing permissions from the owner (granted 2026-11-01)
 
 The owner does not want to repeat these each session. Use them without asking first:
