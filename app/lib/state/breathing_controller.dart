@@ -109,6 +109,21 @@ class BreathingController {
     }
   }
 
+  /// End a quiet window that belongs to no breathing session — the Health
+  /// Snapshot's two minutes — and hand its frames back. Empty when no such
+  /// window is open (or a paced session owns the buffer).
+  List<String> takeWindowFrames() {
+    if (!breathingWindowOpen || breathingActive) return const [];
+    breathingWindowOpen = false;
+    final frames = List<String>.from(_breathingFrames);
+    _breathingFrames.clear();
+    _preWindowFrames = null;
+    _windowRowStartedAt = null;
+    _nudgeLive(); // the window's HR ownership ends here
+    _notify();
+    return frames;
+  }
+
   /// Close the window, measure both quiet stretches and attach them to the
   /// banked session. Safe to call when no window is open.
   Future<void> closeBreathingWindow() async {

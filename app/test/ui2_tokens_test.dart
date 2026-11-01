@@ -211,6 +211,9 @@ const _notComponents = {
   'StreakScreen', 'HeartRateDayScreen',
   // Owns a live BLE capture of the band's raw frames.
   'RawCaptureScreen',
+  // Owns a two-minute live RR capture; its result rows are SnapshotCard,
+  // which the gallery holds.
+  'HealthSnapshotScreen',
   'NightSpo2Screen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',

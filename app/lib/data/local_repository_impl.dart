@@ -4754,12 +4754,18 @@ Map<String, dynamic> _spotCheckCompute(List<String> records) {
   final hrv = ana.hrvTime(cleaned.nn, nnTimesMs: cleaned.nnTimesMs);
   if (!hrv.present) return {'ok': false, 'n_beats': cleaned.nn.length};
   final meanHr = hrs.isEmpty ? null : hrs.reduce((a, b) => a + b) / hrs.length;
+  // Breathing rate off the same beats (RSA), for the Health Snapshot. Absent
+  // when the beats do not carry a clear breathing rhythm — never guessed.
+  final resp = ana.rsaRespRate(cleaned.nn, cleaned.nnTimesMs,
+      artifactFraction: 1 - cleaned.cleanFraction);
   return {
     'ok': true,
     'rmssd': hrv.value!.rmssd?.round(),
     'sdnn': hrv.value!.sdnn?.round(),
     'mean_hr': meanHr?.round(),
+    'resp_brpm': resp.present ? resp.value!.brpm : null,
     'n_beats': cleaned.nn.length,
+    'clean_fraction': cleaned.cleanFraction,
     'confidence': hrv.confidence,
   };
 }

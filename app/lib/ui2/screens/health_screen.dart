@@ -31,6 +31,7 @@ import 'advanced.dart';
 import 'ecg.dart' show EcgEntryCard, pairedIsMaverickOf;
 import 'findings_log.dart';
 import 'garmin_style.dart';
+import 'health_snapshot.dart';
 import 'home_screen.dart';
 import 'investigate.dart';
 import 'hrv_status_card.dart';
@@ -929,6 +930,15 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
       IntensityMinutesCard(d.garmin.intensity),
       const SizedBox(height: S.x3),
       LoadFocusCard(d.garmin.focus),
+      const SizedBox(height: S.x3),
+      ActionCard(
+        l?.snapshotTitle ?? 'Health Snapshot',
+        l?.snapshotMeta ?? 'Two still minutes: heart rate, HRV, breathing, stress',
+        l?.snapshotCta ?? 'Start',
+        LucideIcons.heartPulse,
+        C.green,
+        onTap: () => go(c, const HealthSnapshotScreen()),
+      ),
       // The active wearable's heart rows, each with its class, source line
       // and reason. Nothing on a WHOOP-only install, nor when handed data.
       if (widget.data == null) const WearableCells(kHealthWearableRows),

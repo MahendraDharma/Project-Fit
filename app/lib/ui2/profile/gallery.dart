@@ -2021,6 +2021,22 @@ Map<String, Widget> _garminStyleCases() {
       [8, 25, 10, 0, 0],
     ])),
     'load_focus_learning': LoadFocusCard(loadFocus(const [])),
+    'snapshot_card': const SnapshotCard({
+      't': 1790000000,
+      'hr': 64,
+      'rmssd': 48,
+      'sdnn': 61,
+      'resp': 14.2,
+      'stress': 22,
+      'beats': 128,
+    }),
+    'snapshot_card_compact': const SnapshotCard({
+      't': 1789900000,
+      'hr': 71,
+      'rmssd': 31,
+      'resp': null,
+      'stress': 61,
+    }, compact: true),
     'sleep_score_guideline':
         SleepScoreCard(sleepScoreOfNight(const {'duration_min': 380})),
   };

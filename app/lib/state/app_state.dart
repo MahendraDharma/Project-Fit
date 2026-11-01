@@ -5195,6 +5195,11 @@ class AppState extends ChangeNotifier {
   Future<void> closeBreathingWindow() =>
       _breathingController.closeBreathingWindow();
 
+  /// End a quiet window that no breathing session owns (the Health Snapshot)
+  /// and take its RR-bearing frames.
+  List<String> takeQuietWindowFrames() =>
+      _breathingController.takeWindowFrames();
+
   /// Begin a guided-breathing session. Requires a connected band.
   Future<void> startBreathingSession({
     BreathPattern? pattern,
