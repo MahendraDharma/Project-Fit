@@ -920,24 +920,33 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
       HrvStatusCard(hrvStatus(d.spark('hrv', 67))),
       // Garmin-style surfaces from the band alone (owner decision 2026-11-01).
       // Read-only from stored data; none of them feeds a score.
-      const SizedBox(height: S.x3),
-      AllDayStressCard(d.garmin.stress, dayStartSec: d.garmin.dayStartSec),
-      const SizedBox(height: S.x3),
-      BodyBatteryCard(d.garmin.battery, dayStartSec: d.garmin.dayStartSec),
-      const SizedBox(height: S.x3),
-      RoutineFitnessCard(d.garmin.fitness, age: d.garmin.age),
-      const SizedBox(height: S.x3),
-      IntensityMinutesCard(d.garmin.intensity),
-      const SizedBox(height: S.x3),
-      LoadFocusCard(d.garmin.focus),
-      const SizedBox(height: S.x3),
-      ActionCard(
-        l?.snapshotTitle ?? 'Health Snapshot',
-        l?.snapshotMeta ?? 'Two still minutes: heart rate, HRV, breathing, stress',
-        l?.snapshotCta ?? 'Start',
-        LucideIcons.heartPulse,
-        C.green,
-        onTap: () => go(c, const HealthSnapshotScreen()),
+      Section(
+        l?.healthGroupEnergy ?? 'Stress & energy',
+        Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          AllDayStressCard(d.garmin.stress, dayStartSec: d.garmin.dayStartSec),
+          const SizedBox(height: S.x3),
+          BodyBatteryCard(d.garmin.battery, dayStartSec: d.garmin.dayStartSec),
+          const SizedBox(height: S.x3),
+          ActionCard(
+            l?.snapshotTitle ?? 'Health Snapshot',
+            l?.snapshotMeta ??
+                'Two still minutes: heart rate, HRV, breathing, stress',
+            l?.snapshotCta ?? 'Start',
+            LucideIcons.heartPulse,
+            C.green,
+            onTap: () => go(c, const HealthSnapshotScreen()),
+          ),
+        ]),
+      ),
+      Section(
+        l?.healthGroupFitness ?? 'Fitness & training',
+        Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          IntensityMinutesCard(d.garmin.intensity),
+          const SizedBox(height: S.x3),
+          LoadFocusCard(d.garmin.focus),
+          const SizedBox(height: S.x3),
+          RoutineFitnessCard(d.garmin.fitness, age: d.garmin.age),
+        ]),
       ),
       // The active wearable's heart rows, each with its class, source line
       // and reason. Nothing on a WHOOP-only install, nor when handed data.

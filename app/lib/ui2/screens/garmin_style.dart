@@ -284,6 +284,58 @@ class GarminStyleData {
   }
 }
 
+// ── shared pieces ─────────────────────────────────────────────────────────────
+
+/// Label over value, wrapped — one stat row style for every card here, so the
+/// cards read as one family (and wrap instead of overflowing at large text).
+class _Stats extends StatelessWidget {
+  final List<(String, String, Color?)> cells;
+  const _Stats(this.cells);
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    return Wrap(spacing: S.x5, runSpacing: S.x3, children: [
+      for (final (label, value, dot) in cells)
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            if (dot != null) ...[
+              Container(
+                  width: 8,
+                  height: 8,
+                  decoration:
+                      BoxDecoration(color: p.on(dot), shape: BoxShape.circle)),
+              const SizedBox(width: S.x1),
+            ],
+            Flexible(
+                child: Text(label, style: F.cap.copyWith(color: p.ink3))),
+          ]),
+          const SizedBox(height: 2),
+          Text(value,
+              style: F.body
+                  .copyWith(color: p.ink, fontWeight: FontWeight.w600)),
+        ]),
+    ]);
+  }
+}
+
+/// 00 · 06 · 12 · 18 · 24 under a day chart.
+class _HourAxis extends StatelessWidget {
+  const _HourAxis();
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    return Padding(
+      padding: const EdgeInsets.only(top: S.x1),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        for (final h in const ['00', '06', '12', '18', '24'])
+          Text(h, style: F.cap.copyWith(color: p.ink3)),
+      ]),
+    );
+  }
+}
+
 // ── STRESS ──────────────────────────────────────────────────────────────────
 
 Color stressColor(double score) =>
@@ -346,20 +398,22 @@ class AllDayStressCard extends StatelessWidget {
         ),
         const SizedBox(height: S.x3),
         SizedBox(
-          height: 56,
+          height: 64,
           child: CustomPaint(
             size: Size.infinite,
             painter: _StressBars(v.timeline, dayStartSec, p),
           ),
         ),
+        const _HourAxis(),
         const SizedBox(height: S.x3),
-        Wrap(spacing: S.x3, runSpacing: S.x1, children: [
-          for (final b in const ['rest', 'low', 'medium', 'high'])
-            Text(
-              l?.stressBandMinutes(stressBandWord(l, b), v.bandMinutes[b] ?? 0) ??
-                  '${stressBandWord(l, b)} ${v.bandMinutes[b] ?? 0} min',
-              style: F.cap.copyWith(color: p.ink2),
-            ),
+        _Stats([
+          for (final (b, col) in const [
+            ('rest', C.blue),
+            ('low', C.yellow),
+            ('medium', C.orange),
+            ('high', C.red),
+          ])
+            (stressBandWord(l, b), '${v.bandMinutes[b] ?? 0} min', col),
         ]),
         const SizedBox(height: S.x2),
         Text(
@@ -383,15 +437,23 @@ class _StressBars extends CustomPainter {
 
   @override
   void paint(Canvas c, Size s) {
+    final grid = Paint()..color = p.track;
+    for (final y in const [0.25, 0.5, 0.75]) {
+      c.drawLine(Offset(0, s.height * (1 - y)), Offset(s.width, s.height * (1 - y)),
+          grid..strokeWidth = 0.5);
+    }
     c.drawLine(Offset(0, s.height), Offset(s.width, s.height),
         Paint()..color = p.track);
     if (pts.isEmpty) return;
     final origin = t0 ?? pts.first.tSec;
-    final w = math.max(1.5, s.width / 288 - 0.5);
+    // One five-minute window is 1/288 of the day; leave a hairline between.
+    final w = math.max(1.0, s.width / 288 - 0.6);
     for (final q in pts) {
       final x = (q.tSec - origin) / 86400 * s.width;
       final h = math.max(2.0, q.score / 100 * s.height);
-      c.drawRect(Rect.fromLTWH(x, s.height - h, w, h),
+      c.drawRRect(
+          RRect.fromRectAndCorners(Rect.fromLTWH(x, s.height - h, w, h),
+              topLeft: const Radius.circular(1), topRight: const Radius.circular(1)),
           Paint()..color = p.on(stressColor(q.score)));
     }
   }
@@ -444,19 +506,20 @@ class BodyBatteryCard extends StatelessWidget {
         ),
         const SizedBox(height: S.x3),
         SizedBox(
-          height: 64,
+          height: 80,
           child: CustomPaint(
             size: Size.infinite,
             painter: _BatteryLine(v.timeline, dayStartSec, p),
           ),
         ),
+        const _HourAxis(),
         const SizedBox(height: S.x3),
-        Text(
-          l?.batteryChargedDrained(
-                  v.charged.round().toString(), v.drained.round().toString()) ??
-              '+${v.charged.round()} charged · −${v.drained.round()} drained today',
-          style: F.body.copyWith(color: p.ink2),
-        ),
+        _Stats([
+          (l?.batteryCharged ?? 'Charged', '+${v.charged.round()}', C.green),
+          (l?.batteryDrained ?? 'Drained', '−${v.drained.round()}', C.orange),
+          (l?.batteryHighest ?? 'Highest', '${v.highest.round()}', null),
+          (l?.batteryLowest ?? 'Lowest', '${v.lowest.round()}', null),
+        ]),
         const SizedBox(height: S.x2),
         Text(
           l?.batteryFootnote ??
@@ -479,7 +542,9 @@ class _BatteryLine extends CustomPainter {
 
   @override
   void paint(Canvas c, Size s) {
-    final grid = Paint()..color = p.track;
+    final grid = Paint()
+      ..color = p.track
+      ..strokeWidth = 0.5;
     for (final y in const [0.0, 0.5, 1.0]) {
       c.drawLine(Offset(0, y * s.height), Offset(s.width, y * s.height), grid);
     }
@@ -488,23 +553,35 @@ class _BatteryLine extends CustomPainter {
     Offset at(ana.BatteryPoint q) => Offset(
         ((q.tSec - origin) / 86400 * s.width).clamp(0.0, s.width),
         s.height - q.level / 100 * s.height);
+    final col = p.on(C.teal);
     final line = Paint()
-      ..color = p.on(C.teal)
-      ..strokeWidth = 2
+      ..color = col
+      ..strokeWidth = 2.5
+      ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke;
-    Path? path;
+    final fill = Paint()..color = col.withValues(alpha: 0.16);
+    // Runs between band-off gaps: each gets its own line and soft fill.
+    final runs = <List<Offset>>[];
     int? prevT;
     for (final q in pts) {
-      // A gap of more than one slot (band off) breaks the line.
-      if (path == null || prevT == null || q.tSec - prevT > ana.bodyBatterySlotSec) {
-        if (path != null) c.drawPath(path, line);
-        path = Path()..moveTo(at(q).dx, at(q).dy);
-      } else {
-        path.lineTo(at(q).dx, at(q).dy);
-      }
+      if (prevT == null || q.tSec - prevT > ana.bodyBatterySlotSec) runs.add([]);
+      runs.last.add(at(q));
       prevT = q.tSec;
     }
-    if (path != null) c.drawPath(path, line);
+    for (final r in runs) {
+      final path = Path()..moveTo(r.first.dx, r.first.dy);
+      for (final o in r.skip(1)) {
+        path.lineTo(o.dx, o.dy);
+      }
+      final area = Path.from(path)
+        ..lineTo(r.last.dx, s.height)
+        ..lineTo(r.first.dx, s.height)
+        ..close();
+      c.drawPath(area, fill);
+      c.drawPath(path, line);
+    }
+    final end = runs.last.last;
+    c.drawCircle(end, 4, Paint()..color = col);
   }
 
   @override
@@ -558,18 +635,12 @@ class RoutineFitnessCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: S.x2),
-        Text(
-          l?.fitnessVo2(one(v.vo2max), one(v.seeMlKgMin), one(v.averageForAge)) ??
-              'VO₂max ≈ ${one(v.vo2max)} ± ${one(v.seeMlKgMin)} mL/kg/min · '
-                  'average for your age ${one(v.averageForAge)}',
-          style: F.body.copyWith(color: p.ink2),
-        ),
-        const SizedBox(height: S.x1),
-        Text(
-          l?.fitnessRoutine(v.pa.sessionsPerWeek.toStringAsFixed(1)) ??
-              'Last 4 weeks: ${v.pa.sessionsPerWeek.toStringAsFixed(1)} sessions a week',
-          style: F.cap.copyWith(color: p.ink2),
-        ),
+        _Stats([
+          ('VO₂max', '${one(v.vo2max)} ± ${one(v.seeMlKgMin)}', C.green),
+          (l?.fitnessAverage ?? 'Average for your age', one(v.averageForAge), null),
+          (l?.fitnessSessions ?? 'Sessions a week',
+              v.pa.sessionsPerWeek.toStringAsFixed(1), null),
+        ]),
         const SizedBox(height: S.x2),
         Text(
           l?.fitnessFootnote ??
@@ -733,21 +804,42 @@ class IntensityMinutesCard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: S.x3),
+        const SizedBox(height: S.x2),
+        ClipRRect(
+          borderRadius: R.rPill,
+          child: LinearProgressIndicator(
+            value: (v.total / ana.imWeeklyTarget).clamp(0.0, 1.0),
+            minHeight: 8,
+            backgroundColor: p.track,
+            color: p.on(v.total >= ana.imWeeklyTarget ? C.green : C.yellow),
+          ),
+        ),
+        const SizedBox(height: S.x4),
         SizedBox(
-          height: 56,
+          height: 64,
           child: CustomPaint(
             size: Size.infinite,
             painter: _WeekBars(v.days, p),
           ),
         ),
+        const SizedBox(height: S.x1),
+        Row(children: [
+          // Monday first; MaterialLocalizations lists them Sunday first.
+          for (final d in [
+            ...MaterialLocalizations.of(c).narrowWeekdays.skip(1),
+            MaterialLocalizations.of(c).narrowWeekdays.first,
+          ])
+            Expanded(
+              child: Text(d,
+                  textAlign: TextAlign.center,
+                  style: F.cap.copyWith(color: p.ink3)),
+            ),
+        ]),
         const SizedBox(height: S.x3),
-        Text(
-          l?.intensitySplit('${v.moderate}', '${v.vigorous}') ??
-              '${v.moderate} moderate · ${v.vigorous} vigorous min '
-                  '(vigorous counts double)',
-          style: F.body.copyWith(color: p.ink2),
-        ),
+        _Stats([
+          (l?.intensityModerate ?? 'Moderate', '${v.moderate} min', C.yellow),
+          (l?.intensityVigorous ?? 'Vigorous ×2', '${v.vigorous} min', C.orange),
+        ]),
         const SizedBox(height: S.x2),
         Text(
           l?.intensityFootnote ??
@@ -829,18 +921,13 @@ class LoadFocusCard extends StatelessWidget {
           style: F.cap.copyWith(color: p.ink3),
         ),
         const SizedBox(height: S.x3),
-        ClipRRect(
-          borderRadius: R.rPill,
-          child: SizedBox(
-            height: 12,
-            child: Row(children: [
-              for (final (_, x, col) in parts)
-                if (x > 0)
-                  Expanded(
-                    flex: math.max(1, (1000 * v.share(x)).round()),
-                    child: ColoredBox(color: p.on(col)),
-                  ),
-            ]),
+        SizedBox(
+          height: 14,
+          width: double.infinity,
+          child: CustomPaint(
+            painter: _SplitBar(
+                [for (final (_, x, col) in parts) (v.share(x), p.on(col))],
+                p.track),
           ),
         ),
         const SizedBox(height: S.x3),
@@ -873,4 +960,29 @@ class LoadFocusCard extends StatelessWidget {
       ]),
     );
   }
+}
+
+/// Shares laid end to end in one rounded bar, a hairline between them.
+class _SplitBar extends CustomPainter {
+  final List<(double, Color)> parts;
+  final Color track;
+  _SplitBar(this.parts, this.track);
+
+  @override
+  void paint(Canvas c, Size s) {
+    final r = RRect.fromRectAndRadius(Offset.zero & s, Radius.circular(s.height / 2));
+    c.clipRRect(r);
+    c.drawRRect(r, Paint()..color = track);
+    var x = 0.0;
+    for (final (share, col) in parts) {
+      if (share <= 0) continue;
+      final w = share * s.width;
+      c.drawRect(Rect.fromLTWH(x, 0, math.max(0, w - 2), s.height),
+          Paint()..color = col);
+      x += w;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SplitBar o) => true;
 }
