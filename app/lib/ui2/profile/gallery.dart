@@ -34,11 +34,14 @@ import 'package:projectfit_analytics/onehz.dart'
     show
         BatterySlot,
         BatteryState,
+        IntensityDay,
         QuietHrvWindow,
         RoutineSession,
         allDayStress,
         bodyBattery,
         hrvStatus,
+        intensityWeek,
+        loadFocus,
         muscleVolume,
         routineFitness;
 import 'package:share_plus/share_plus.dart';
@@ -2004,6 +2007,20 @@ Map<String, Widget> _garminStyleCases() {
       'restless_min': 22,
       'sleep_stress': 31,
     })),
+    'intensity_minutes': IntensityMinutesCard(intensityWeek(const [
+      IntensityDay(22, 0),
+      null,
+      IntensityDay(35, 12),
+      IntensityDay(0, 0),
+    ])),
+    'intensity_minutes_learning':
+        IntensityMinutesCard(intensityWeek(const [null, null])),
+    'load_focus': LoadFocusCard(loadFocus(const [
+      [5, 20, 25, 6, 0],
+      [0, 10, 18, 14, 4],
+      [8, 25, 10, 0, 0],
+    ])),
+    'load_focus_learning': LoadFocusCard(loadFocus(const [])),
     'sleep_score_guideline':
         SleepScoreCard(sleepScoreOfNight(const {'duration_min': 380})),
   };

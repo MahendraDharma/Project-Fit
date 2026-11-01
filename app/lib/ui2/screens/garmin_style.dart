@@ -32,6 +32,10 @@ class GarminStyleData {
   final ana.Metric<ana.BodyBattery> battery;
   final ana.Metric<ana.RoutineFitness> fitness;
 
+  /// This calendar week (Monday on) and the last four weeks of sessions.
+  final ana.Metric<ana.IntensityWeek> intensity;
+  final ana.Metric<ana.LoadFocus> focus;
+
   /// The day the stress and battery describe (the newest derived day).
   final String? day;
 
@@ -43,10 +47,17 @@ class GarminStyleData {
     required this.stress,
     required this.battery,
     required this.fitness,
+    this.intensity = _absentIntensity,
+    this.focus = _absentFocus,
     this.day,
     this.dayStartSec,
     this.age,
   });
+
+  static const _absentIntensity = ana.Metric<ana.IntensityWeek>.absent(
+      tier: ana.Tier.estimate, inputs_used: []);
+  static const _absentFocus =
+      ana.Metric<ana.LoadFocus>.absent(tier: ana.Tier.estimate, inputs_used: []);
 
   static const empty = GarminStyleData(
     stress: ana.Metric.absent(tier: ana.Tier.estimate, inputs_used: []),
@@ -79,21 +90,74 @@ class GarminStyleData {
     List<double?> nightsUpTo(Map<String, double> by, String day, int n) =>
         [for (var i = n - 1; i >= 0; i--) by[_shift(day, -i)]];
 
-    final fitness = await _fitness(repo, profile, age, rhrBy);
+    final hrMax = estimatedMaxHr(age, null);
+    final today = todayLabel();
+    final recentRhr = [
+      for (var i = 13; i >= 0; i--) rhrBy[_shift(today, -i)]
+    ];
+    final knownRhr = [for (final v in recentRhr) ?v]..sort();
+    final rhrNow = knownRhr.isEmpty ? null : knownRhr[knownRhr.length ~/ 2];
+
+    // The last four weeks of finished sessions, read once for fitness and focus.
+    final from = DateTime.now().millisecondsSinceEpoch ~/ 1000 -
+        ana.loadFocusWindowDays * 86400;
+    final w = await _soft(() => repo.getWorkouts(range: 'month'));
+    final sessions = [
+      for (final s in (w['workouts'] as List? ?? const []))
+        if (s is Map &&
+            s['status'] != 'live' &&
+            s['start_ts'] is num &&
+            (s['start_ts'] as num) >= from)
+          s,
+    ];
+    final fitness =
+        _fitness(profile, age, recentRhr, rhrNow, hrMax, sessions);
+    final focus = ana.loadFocus([
+      for (final s in sessions)
+        if (s['zone_min'] is List)
+          [for (final v in s['zone_min'] as List) v is num ? v : 0],
+    ]);
+
+    // One day-heart read per day, shared by the week, the stress and the battery.
+    final heart = <String, Map<String, dynamic>>{};
+    Future<Map<String, dynamic>> heartOf(String d) async =>
+        heart[d] ??= await _soft(() => repo.getDayHeart(d));
+
+    // ── intensity minutes: Monday of this week to today ──
+    final weekday = DateTime.now().weekday; // 1 = Monday
+    final week = <ana.IntensityDay?>[];
+    for (var i = weekday - 1; i >= 0; i--) {
+      final d = _shift(today, -i);
+      final pts = [
+        for (final e in ((await heartOf(d))['hr'] as List? ?? const []))
+          if (e is Map && e['t'] is num && e['v'] is num)
+            (tSec: (e['t'] as num).round(), bpm: (e['v'] as num).toDouble()),
+      ];
+      final r = rhrBy[d] ?? rhrNow;
+      week.add(pts.isEmpty || r == null || hrMax == null
+          ? null
+          : ana.intensityMinutesOfDay(pts, restingHr: r, maxHr: hrMax));
+    }
+    final intensity = ana.intensityWeek(week);
+
     if (days.isEmpty) {
       return GarminStyleData(
-          stress: empty.stress, battery: empty.battery, fitness: fitness, age: age);
+          stress: empty.stress,
+          battery: empty.battery,
+          fitness: fitness,
+          intensity: intensity,
+          focus: focus,
+          age: age);
     }
     final day = days.first;
     final start = localDayStartSec(day);
 
-    // ── the shown day and its burn-in, one read per day ──
-    final heart = <String, Map<String, dynamic>>{};
+    // ── the shown day and its burn-in ──
     final sleep = <String, Map<String, dynamic>>{};
     for (var i = -(_batteryDays - 1); i <= 1; i++) {
       final d = _shift(day, i);
       sleep[d] = await _soft(() => repo.getDaySleepV2(d));
-      if (i <= 0) heart[d] = await _soft(() => repo.getDayHeart(d));
+      if (i <= 0) await heartOf(d);
     }
 
     List<ana.QuietHrvWindow> windowsOf(String d) {
@@ -116,7 +180,6 @@ class GarminStyleData {
         windows.add((on.round(), off.round(), stressBy[e.key]));
       }
     }
-    final hrMax = estimatedMaxHr(age, null);
     final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final slots = <ana.BatterySlot>[];
     for (var i = -(_batteryDays - 1); i <= 0; i++) {
@@ -173,38 +236,33 @@ class GarminStyleData {
       stress: stress,
       battery: battery,
       fitness: fitness,
+      intensity: intensity,
+      focus: focus,
       day: day,
       dayStartSec: start,
       age: age,
     );
   }
 
-  static Future<ana.Metric<ana.RoutineFitness>> _fitness(
-    LocalRepository repo,
+  static ana.Metric<ana.RoutineFitness> _fitness(
     Map<String, dynamic> profile,
     num? age,
-    Map<String, double> rhrBy,
-  ) async {
-    final today = todayLabel();
-    final nights = [
-      for (var i = 13; i >= 0; i--) rhrBy[_shift(today, -i)]
-    ];
-    final known = [for (final v in nights) ?v];
-    final rhr = known.isEmpty ? null : (known..sort())[known.length ~/ 2];
-    final hrMax = estimatedMaxHr(age, null);
+    List<double?> nights,
+    double? rhr,
+    double? hrMax,
+    List<Map> sessions,
+  ) {
     final from = DateTime.now().millisecondsSinceEpoch ~/ 1000 -
         ana.paIndexWindowDays * 86400;
-    final sessions = <ana.RoutineSession>[];
-    final w = await _soft(() => repo.getWorkouts(range: 'month'));
-    for (final s in (w['workouts'] as List? ?? const [])) {
-      if (s is! Map || s['status'] == 'live') continue;
+    final routine = <ana.RoutineSession>[];
+    for (final s in sessions) {
       final st = s['start_ts'], min = s['duration_min'];
       if (st is! num || st < from || min is! num || min <= 0) continue;
       final avg = s['avg_hr'];
       final hrr = (avg is num && rhr != null && hrMax != null && hrMax > rhr)
           ? ((avg - rhr) / (hrMax - rhr)).clamp(0.0, 1.0).toDouble()
           : null;
-      sessions.add(ana.RoutineSession(min.toDouble(), meanHrr: hrr));
+      routine.add(ana.RoutineSession(min.toDouble(), meanHrr: hrr));
     }
     return ana.routineFitness(
       age: age?.toDouble(),
@@ -212,7 +270,7 @@ class GarminStyleData {
       waistCm: (profile['waist_cm'] as num?)?.toDouble(),
       bmi: bmiOf(profile['weight_kg'] as num?, profile['height_cm'] as num?),
       nightlyRhr: nights,
-      sessions: sessions,
+      sessions: routine,
     );
   }
 
@@ -628,6 +686,188 @@ class SleepScoreCard extends StatelessWidget {
               'Garmin’s ingredients with ProjectFit’s own weights: duration 35, '
                   'stages 20, awake time, restlessness and stress 15 each. Sleep '
                   'performance is still the share of your sleep need you got.',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
+      ]),
+    );
+  }
+}
+
+// ── INTENSITY MINUTES ───────────────────────────────────────────────────────
+
+class IntensityMinutesCard extends StatelessWidget {
+  final ana.Metric<ana.IntensityWeek> week;
+  const IntensityMinutesCard(this.week, {super.key});
+
+  @override
+  Widget build(BuildContext c) {
+    final l = AppLocalizations.of(c);
+    final p = P.of(c);
+    final v = week.value;
+    if (v == null) {
+      return StatusCard(
+        l?.intensityLearningTitle ?? 'Intensity minutes need heart rate',
+        l?.intensityLearningBody ??
+            'Wear the band and set your age: the effort bands are worked out '
+                'from your resting and maximum heart rate.',
+        icon: LucideIcons.hourglass,
+      );
+    }
+    return Surface(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(l?.intensityTitle ?? 'Intensity minutes',
+            style: F.head.copyWith(color: p.ink)),
+        const SizedBox(height: S.x2),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text('${v.total}', style: F.n34.copyWith(color: p.ink)),
+            const SizedBox(width: S.x2),
+            Flexible(
+              child: Text(
+                l?.intensityOfTarget('${ana.imWeeklyTarget}') ??
+                    'of ${ana.imWeeklyTarget} this week',
+                style: F.cap.copyWith(color: p.ink3),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: S.x3),
+        SizedBox(
+          height: 56,
+          child: CustomPaint(
+            size: Size.infinite,
+            painter: _WeekBars(v.days, p),
+          ),
+        ),
+        const SizedBox(height: S.x3),
+        Text(
+          l?.intensitySplit('${v.moderate}', '${v.vigorous}') ??
+              '${v.moderate} moderate · ${v.vigorous} vigorous min '
+                  '(vigorous counts double)',
+          style: F.body.copyWith(color: p.ink2),
+        ),
+        const SizedBox(height: S.x2),
+        Text(
+          l?.intensityFootnote ??
+              'Minutes inside a bout of 10 or more at moderate (40 % of your '
+                  'heart-rate reserve) or vigorous (60 %) effort, against the '
+                  'WHO and ACSM guideline of 150 a week. Monday to today, from '
+                  'the band’s heart rate.',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
+      ]),
+    );
+  }
+}
+
+/// Seven slots, Monday first; a day with no heart rate is an empty slot.
+class _WeekBars extends CustomPainter {
+  final List<ana.IntensityDay?> days;
+  final P p;
+  _WeekBars(this.days, this.p);
+
+  @override
+  void paint(Canvas c, Size s) {
+    const n = 7;
+    final gap = 6.0, w = (s.width - gap * (n - 1)) / n;
+    final top = math.max(
+        30, days.fold<int>(0, (m, d) => math.max(m, d?.total ?? 0)));
+    for (var i = 0; i < n; i++) {
+      final x = i * (w + gap);
+      final r = RRect.fromRectAndRadius(
+          Rect.fromLTWH(x, 0, w, s.height), const Radius.circular(3));
+      c.drawRRect(r, Paint()..color = p.track);
+      final d = i < days.length ? days[i] : null;
+      if (d == null || d.total == 0) continue;
+      final hv = 2 * d.vigorous / top * s.height;
+      final hm = d.moderate / top * s.height;
+      c.drawRect(Rect.fromLTWH(x, s.height - hv - hm, w, hm),
+          Paint()..color = p.on(C.yellow));
+      c.drawRect(Rect.fromLTWH(x, s.height - hv, w, hv),
+          Paint()..color = p.on(C.orange));
+    }
+  }
+
+  @override
+  bool shouldRepaint(_WeekBars o) => true;
+}
+
+// ── TRAINING LOAD FOCUS ─────────────────────────────────────────────────────
+
+class LoadFocusCard extends StatelessWidget {
+  final ana.Metric<ana.LoadFocus> focus;
+  const LoadFocusCard(this.focus, {super.key});
+
+  @override
+  Widget build(BuildContext c) {
+    final l = AppLocalizations.of(c);
+    final p = P.of(c);
+    final v = focus.value;
+    if (v == null) {
+      return StatusCard(
+        l?.focusLearningTitle ?? 'No sessions in the last 4 weeks',
+        l?.focusLearningBody ??
+            'Training load focus is built from your recorded workouts.',
+        icon: LucideIcons.hourglass,
+      );
+    }
+    final parts = [
+      (l?.focusLow ?? 'Low aerobic', v.lowAerobic, C.blue),
+      (l?.focusHigh ?? 'High aerobic', v.highAerobic, C.orange),
+      (l?.focusAnaerobic ?? 'Anaerobic', v.anaerobic, C.purple),
+    ];
+    return Surface(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(l?.focusTitle ?? 'Training load focus',
+            style: F.head.copyWith(color: p.ink)),
+        const SizedBox(height: S.x1),
+        Text(
+          l?.focusSessions(v.sessions) ??
+              '${v.sessions} sessions in the last 4 weeks',
+          style: F.cap.copyWith(color: p.ink3),
+        ),
+        const SizedBox(height: S.x3),
+        ClipRRect(
+          borderRadius: R.rPill,
+          child: SizedBox(
+            height: 12,
+            child: Row(children: [
+              for (final (_, x, col) in parts)
+                if (x > 0)
+                  Expanded(
+                    flex: math.max(1, (1000 * v.share(x)).round()),
+                    child: ColoredBox(color: p.on(col)),
+                  ),
+            ]),
+          ),
+        ),
+        const SizedBox(height: S.x3),
+        for (final (label, x, col) in parts) ...[
+          Row(children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(color: p.on(col), shape: BoxShape.circle),
+            ),
+            const SizedBox(width: S.x2),
+            Expanded(
+              child: Text(label, style: F.body.copyWith(color: p.ink2)),
+            ),
+            Text('${(100 * v.share(x)).round()}%',
+                style: F.body.copyWith(color: p.ink)),
+          ]),
+          const SizedBox(height: S.x1),
+        ],
+        const SizedBox(height: S.x1),
+        Text(
+          l?.focusFootnote ??
+              'Session time in each heart-rate zone, harder zones weighted '
+                  'more: zones 1–3 low aerobic, zone 4 high aerobic, zone 5 '
+                  'anaerobic. For reference, endurance athletes keep about 80 % '
+                  'of their training easy; that describes them, it is not a '
+                  'target for you.',
           style: F.cap.copyWith(color: p.ink3),
         ),
       ]),

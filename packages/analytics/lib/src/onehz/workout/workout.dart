@@ -28,3 +28,5 @@ export 'hr_zones.dart';
 export 'observed_max_hr.dart';
 export 'hr_recovery.dart';
 export 'muscle_volume.dart';
+export 'intensity_minutes.dart';
+export 'load_focus.dart';

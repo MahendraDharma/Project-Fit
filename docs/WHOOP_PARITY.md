@@ -85,6 +85,8 @@ Ini target reverse engineering nomor satu.
 |---|---|---|
 | **HRV Status** | Rata-rata ln-RMSSD 7 malam vs baseline 60 malam ± SWC (Plews 2012/2013); seimbang / di atas / di bawah (`clinical/hrv_status.dart`, `ui2/screens/hrv_status_card.dart`, tab Health) | ✅ |
 | **Training load / load ratio** | ATL 7 hari & CTL 42 hari (sudah ada) + rasio akut:kronis dengan zona Gabbett 2016; diberi catatan kritik Impellizzeri 2020 (`clinical/load_ratio.dart`, kartu beban di tab Workout) | ✅ |
+| **Intensity Minutes** | Pita ACSM dari HR per menit, blok ≥10 menit, berat ×2, target WHO 150/minggu (`workout/intensity_minutes.dart`) | ✅ |
+| **Training Load Focus** | Menit zona sesi 4 minggu, bobot Edwards, 3 kelompok (`workout/load_focus.dart`) | ✅ metode berbeda (bukan EPOC) |
 | **Training Readiness** | Setara Readiness (§1) | ✅ |
 | **Stress** 0–100 | Skala 0–100 gaya Garmin dari jendela diam 5 menit vs HRV malam Anda (`wellness/all_day_stress.dart`, kartu di tab Health). Skala ProjectFit sendiri, bukan Garmin | ✅ metode berbeda |
 | **Sleep Score** 0–100 | Komponen Garmin dengan bobot terbuka (durasi 35, tahap 20, terjaga/gelisah/stres 15), ditampilkan di samping Sleep performance (`sleep/sleep_score.dart`) | ✅ bobot sendiri |

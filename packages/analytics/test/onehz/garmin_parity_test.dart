@@ -191,4 +191,52 @@ void main() {
           'need_baseline:have=3,need=7');
     });
   });
+
+  group('intensity minutes', () {
+    // RHR 60, HRmax 180: 40 % HRR = 108 bpm, 60 % = 132 bpm.
+    List<({int tSec, double bpm})> run(int from, int n, double bpm) =>
+        [for (var i = 0; i < n; i++) (tSec: (from + i) * 60, bpm: bpm)];
+
+    test('ACSM bands inside a 10-minute bout; vigorous counts double', () {
+      final d = intensityMinutesOfDay(
+        [...run(0, 6, 115), ...run(6, 6, 140)],
+        restingHr: 60,
+        maxHr: 180,
+      );
+      expect((d.moderate, d.vigorous, d.total), (6, 6, 18));
+    });
+
+    test('a bout under 10 minutes and a gap both count for nothing', () {
+      final d = intensityMinutesOfDay(
+        [...run(0, 9, 140), ...run(20, 5, 140), ...run(26, 5, 140)],
+        restingHr: 60,
+        maxHr: 180,
+      );
+      expect(d.total, 0);
+    });
+
+    test('a week with no measured day is absent, not zero', () {
+      expect(
+          intensityWeek(List<IntensityDay?>.filled(7, null)).present, isFalse);
+      final w = intensityWeek([const IntensityDay(30, 10), null]).value!;
+      expect((w.moderate, w.vigorous, w.total), (30, 10, 50));
+    });
+  });
+
+  group('load focus', () {
+    test('Edwards-weighted zone minutes split into the three buckets', () {
+      final f = loadFocus([
+        [10, 10, 10, 0, 0], // 10 + 20 + 30 = 60 low
+        [0, 0, 0, 5, 2], // 20 high, 10 anaerobic
+        [0, 0, 0, 0, 0], // no zone time: not a session
+      ]).value!;
+      expect((f.lowAerobic, f.highAerobic, f.anaerobic, f.sessions),
+          (60.0, 20.0, 10.0, 2));
+      expect(f.share(f.lowAerobic), closeTo(60 / 90, 1e-12));
+    });
+
+    test('no sessions is absent', () {
+      expect(loadFocus(const []).note, 'need_input:name=sessions');
+    });
+  });
 }

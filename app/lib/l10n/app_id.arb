@@ -344,5 +344,22 @@
   "sleepScoreGuideline": "Kebutuhan tidur belum dipelajari, jadi durasi dibandingkan dengan 7 jam.",
   "sleepScoreFootnote": "Komponen Garmin dengan bobot ProjectFit sendiri: durasi 35, tahap 20, waktu terjaga, kegelisahan, dan stres masing-masing 15. Sleep performance tetap menunjukkan berapa bagian kebutuhan tidur yang Anda dapat.",
   "settingsWaistCm": "Lingkar pinggang (cm)",
-  "settingsWaistIn": "Lingkar pinggang (in)"
+  "settingsWaistIn": "Lingkar pinggang (in)",
+  "intensityTitle": "Menit intensitas",
+  "intensityOfTarget": "dari {target} minggu ini",
+  "@intensityOfTarget": {"placeholders": {"target": {"type": "String"}}},
+  "intensitySplit": "{moderate} sedang · {vigorous} berat mnt (menit berat dihitung dua kali)",
+  "@intensitySplit": {"placeholders": {"moderate": {"type": "String"}, "vigorous": {"type": "String"}}},
+  "intensityFootnote": "Menit di dalam rentang minimal 10 menit dengan usaha sedang (40% cadangan denyut jantung) atau berat (60%), mengikuti pedoman WHO dan ACSM 150 menit per minggu. Senin sampai hari ini, dari denyut jantung band.",
+  "intensityLearningTitle": "Menit intensitas butuh denyut jantung",
+  "intensityLearningBody": "Pakai band dan isi usia Anda: batas usaha dihitung dari denyut istirahat dan denyut maksimum.",
+  "focusTitle": "Fokus beban latihan",
+  "focusLow": "Aerobik rendah",
+  "focusHigh": "Aerobik tinggi",
+  "focusAnaerobic": "Anaerobik",
+  "focusSessions": "{count} sesi dalam 4 minggu terakhir",
+  "@focusSessions": {"placeholders": {"count": {"type": "int"}}},
+  "focusFootnote": "Waktu sesi di tiap zona denyut jantung, zona yang lebih berat diberi bobot lebih besar: zona 1–3 aerobik rendah, zona 4 aerobik tinggi, zona 5 anaerobik. Sebagai rujukan, atlet ketahanan menjaga sekitar 80% latihannya ringan; itu gambaran mereka, bukan target untuk Anda.",
+  "focusLearningTitle": "Tidak ada sesi dalam 4 minggu terakhir",
+  "focusLearningBody": "Fokus beban latihan dibangun dari workout yang Anda rekam."
 }

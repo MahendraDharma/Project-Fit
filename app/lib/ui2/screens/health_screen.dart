@@ -925,6 +925,10 @@ class _HealthScreenState extends State<HealthScreen> with RevisionReload {
       BodyBatteryCard(d.garmin.battery, dayStartSec: d.garmin.dayStartSec),
       const SizedBox(height: S.x3),
       RoutineFitnessCard(d.garmin.fitness, age: d.garmin.age),
+      const SizedBox(height: S.x3),
+      IntensityMinutesCard(d.garmin.intensity),
+      const SizedBox(height: S.x3),
+      LoadFocusCard(d.garmin.focus),
       // The active wearable's heart rows, each with its class, source line
       // and reason. Nothing on a WHOOP-only install, nor when handed data.
       if (widget.data == null) const WearableCells(kHealthWearableRows),

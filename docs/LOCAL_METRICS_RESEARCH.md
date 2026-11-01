@@ -177,7 +177,8 @@ WHOOP Age di Bagian A.
 Semua item di bawah hanya butuh kode, tanpa perangkat tambahan. Setiap item ditaruh di
 `packages/analytics` sebagai fungsi murni (dengan tes), lalu diberi kartu di app.
 
-### D-1. Intensity Minutes 🟢
+### D-1. Intensity Minutes ✅ (2026-11-01)
+- Dibuat: `workout/intensity_minutes.dart` + kartu Health. Pita ACSM (Garber 2011): sedang ≥40% cadangan HR, berat ≥60%; hanya blok ≥10 menit berturut-turut; menit berat ×2; minggu Senin–hari ini vs target 150.
 - Menit sedang/berat dari HR 1 Hz.
 - Ambang awal mengikuti dokumentasi Garmin: zona 3 = sedang, zona ≥4 = berat, menit berat dihitung
   2, hanya blok ≥10 menit berturut-turut. Ambang ditulis sebagai konstanta terbuka.
@@ -194,7 +195,8 @@ Semua item di bawah hanya butuh kode, tanpa perangkat tambahan. Setiap item dita
   dengan WHOOP/Garmin. Pita 0–25/26–50/51–75/76–100 dipakai sebagai label saja.
 - Baevsky SI tetap ada sebagai metrik pembanding.
 
-### D-3. Training Load Focus 🟢
+### D-3. Training Load Focus ✅ (2026-11-01)
+- Dibuat: `workout/load_focus.dart` + kartu Health. Menit zona per sesi 4 minggu × bobot Edwards (zona n = n); zona 1–3 aerobik rendah, 4 aerobik tinggi, 5 anaerobik (dekat batas Seiler ±82/87% HRmax). Tanpa label "kekurangan".
 - Beban 4 minggu (TRIMP yang sudah ada) dibagi menurut zona HR saat beban itu terjadi:
   - aerobik rendah: di bawah ambang aerobik (≈ zona 2 atas)
   - aerobik tinggi: antara ambang aerobik dan anaerobik

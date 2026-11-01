@@ -16148,5 +16148,22 @@
   "sleepScoreGuideline": "No sleep need learned yet, so duration is measured against 7 hours.",
   "sleepScoreFootnote": "Garmin’s ingredients with ProjectFit’s own weights: duration 35, stages 20, awake time, restlessness and stress 15 each. Sleep performance is still the share of your sleep need you got.",
   "settingsWaistCm": "Waist (cm)",
-  "settingsWaistIn": "Waist (in)"
+  "settingsWaistIn": "Waist (in)",
+  "intensityTitle": "Intensity minutes",
+  "intensityOfTarget": "of {target} this week",
+  "@intensityOfTarget": {"placeholders": {"target": {"type": "String"}}},
+  "intensitySplit": "{moderate} moderate · {vigorous} vigorous min (vigorous counts double)",
+  "@intensitySplit": {"placeholders": {"moderate": {"type": "String"}, "vigorous": {"type": "String"}}},
+  "intensityFootnote": "Minutes inside a bout of 10 or more at moderate (40 % of your heart-rate reserve) or vigorous (60 %) effort, against the WHO and ACSM guideline of 150 a week. Monday to today, from the band’s heart rate.",
+  "intensityLearningTitle": "Intensity minutes need heart rate",
+  "intensityLearningBody": "Wear the band and set your age: the effort bands are worked out from your resting and maximum heart rate.",
+  "focusTitle": "Training load focus",
+  "focusLow": "Low aerobic",
+  "focusHigh": "High aerobic",
+  "focusAnaerobic": "Anaerobic",
+  "focusSessions": "{count} sessions in the last 4 weeks",
+  "@focusSessions": {"placeholders": {"count": {"type": "int"}}},
+  "focusFootnote": "Session time in each heart-rate zone, harder zones weighted more: zones 1–3 low aerobic, zone 4 high aerobic, zone 5 anaerobic. For reference, endurance athletes keep about 80 % of their training easy; that describes them, it is not a target for you.",
+  "focusLearningTitle": "No sessions in the last 4 weeks",
+  "focusLearningBody": "Training load focus is built from your recorded workouts."
 }

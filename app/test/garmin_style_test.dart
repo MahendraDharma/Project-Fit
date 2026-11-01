@@ -2,6 +2,7 @@
 // stress, Body Battery slots (asleep / still / active / not worn) and the
 // fitness-age inputs.
 import 'package:flutter_test/flutter_test.dart';
+import 'package:projectfit/data/day_label.dart';
 import 'package:projectfit/data/local_repository.dart';
 import 'package:projectfit/ui2/screens/garmin_style.dart';
 
@@ -78,4 +79,52 @@ void main() {
     // rather than reading a month-old heart.
     expect(g.fitness.present, isFalse);
   });
+
+  test('intensity minutes this week and load focus from session zones',
+      () async {
+    final today = todayLabel();
+    final mid = localDayStartSec(today)!;
+    final repo = _TodayRepo(mid);
+    final noon = (t: mid + 12 * 3600, v: 55.0);
+    final g = await GarminStyleData.load(
+      repo,
+      profile: const {'age': 30, 'sex': 'm'},
+      days: const [],
+      hrv: const [],
+      rhr: [noon],
+      sleepStress: const [],
+    );
+    // 15 minutes at 150 bpm: 72 % of reserve (55 → 187) — vigorous, doubled.
+    final w = g.intensity.value!;
+    expect((w.moderate, w.vigorous, w.total), (0, 15, 30));
+    final f = g.focus.value!;
+    expect((f.lowAerobic, f.highAerobic, f.anaerobic), (60.0, 20.0, 10.0));
+  });
+}
+
+class _TodayRepo extends LocalRepository {
+  final int mid;
+  _TodayRepo(this.mid);
+
+  @override
+  Future<Map<String, dynamic>> getDayHeart(String date) async =>
+      date == todayLabel()
+          ? {
+              'hr': [
+                for (var i = 0; i < 15; i++) {'t': mid + 600 + i * 60, 'v': 150}
+              ],
+            }
+          : const {};
+
+  @override
+  Future<Map<String, dynamic>> getWorkouts({String range = 'month'}) async => {
+        'workouts': [
+          {
+            'status': 'done',
+            'start_ts': mid,
+            'duration_min': 40,
+            'zone_min': [10, 10, 10, 5, 2],
+          },
+        ],
+      };
 }

@@ -122,5 +122,5 @@ redo it:
 6. Local versions of WHOOP-cloud and Garmin metrics: see `docs/LOCAL_METRICS_RESEARCH.md`.
    Done (owner decisions §F): all-day stress 0–100, Body Battery, Sleep Score 0–100, VO2max from
    routine + fitness age (waist in profile), all computed on read in
-   `app/lib/ui2/screens/garmin_style.dart`. Next from §D: Intensity Minutes, Training Load Focus,
-   Health Snapshot. The owner wants the band alone (no phone GPS/barometer).
+   `app/lib/ui2/screens/garmin_style.dart`; Intensity Minutes and Training Load Focus too. Next
+   from §D: Health Snapshot, ambang aerobik DFA-α1 (eksperimen). The owner wants the band alone (no phone GPS/barometer).
