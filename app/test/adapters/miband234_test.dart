@@ -408,11 +408,14 @@ void main() {
     // subscribed to battery/steps/HR — same drive loop as the test above,
     // minus collecting events, stopping the instant the subscribe happens.
     var served = 0;
-    // The history fetch runs first and waits out its reply timeout on this
-    // silent link, so this spin lets real time pass.
-    for (var spin = 0;
-        spin < 400 && !link.isListening(kHuami234BatteryChar);
-        spin++) {
+    // The history fetch runs first and waits out its reply timeouts on this
+    // silent link, so this spin lets real time pass. Bounded by a WALL-CLOCK
+    // deadline, not a spin count: 400 spins of 5 ms was a 2 s budget that a
+    // loaded full-suite run overshot (the subscribe happened after the loop
+    // gave up), failing a test whose subject is cancellation, not speed.
+    final deadline = Stopwatch()..start();
+    while (deadline.elapsed.inSeconds < 20 &&
+        !link.isListening(kHuami234BatteryChar)) {
       await Future<void>.delayed(const Duration(milliseconds: 5));
       while (served < link.writes.length) {
         for (final f in _reconnectReply(served, link.writes[served].$2)) {

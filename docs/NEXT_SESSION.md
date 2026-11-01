@@ -40,6 +40,13 @@ Installed with Xcode and a free Personal Team (team ID in the owner's gitignored
 `cd ~/Project-Fit/app && git pull && flutter run --release` on the owner's Mac. Sideloadly and
 AltServer fail on Apple's October 2026 login block (`-80045`); see `docs/IOS_SIDELOAD.md`.
 
+## Test flakiness to watch
+- `adapters/miband234_test.dart` "cancelling the session…" failed once under a loaded full run: its
+  wait was a 400 × 5 ms spin count (a 2 s wall budget). Now a 20 s wall-clock deadline. The other
+  adapter tests' `_drive` helpers (miband234, miscale, ultrahuman, oura, garmin) use the same
+  spin-count shape and then swallow a 2 s timeout; none has failed yet, but a loaded run that
+  overshoots would return partial results. Same fix if one ever does.
+
 ## Android and website (2026-11-01)
 - `android-release.yml` builds the APK (ubuntu, Flutter 3.41.6) and attaches `ProjectFit.apk` to a
   release tag. It signs with the release key from secrets `ANDROID_KEYSTORE_BASE64`,
