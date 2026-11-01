@@ -16,7 +16,8 @@ State at the end of the last session, and what to pick up.
 
 ## State
 - CI (`test.yml`) is green on `main`. Superseded runs are cancelled only on PRs.
-- Tests: protocol 670, analytics 802, app 6100 (`flutter test --concurrency=1`, Flutter 3.41.6).
+- Tests: protocol 672, analytics 824, app 6168 (`flutter test`, Flutter 3.41.6), all green on
+  2026-11-01 before v0.16.0.
 - DB schema v59, `kAlgoVersion` 113. Parity status is in `docs/WHOOP_PARITY.md`.
 - WHOOP 4.0 v25 records are decoded (`parseV25Waveform`). They carry one optical channel, so
   they do not unlock SpO₂ or skin temperature.
@@ -25,7 +26,8 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Release v0.13.0 has `ProjectFit.ipa`, `projectfit-v0.13.0-unsigned.ipa` and `apps.json`.
+- Latest release: **v0.16.0** (2026-11-01; 0.15.0 was never released on its own) with
+  `ProjectFit.ipa`, `projectfit-v0.16.0-unsigned.ipa` and `apps.json`.
   - Fixed download link: `releases/latest/download/ProjectFit.ipa`.
   - SideStore/AltStore source: `releases/latest/download/apps.json`.
 - To cut a release, run **Actions → ios-sideload → Run workflow** with `release_tag`, either
