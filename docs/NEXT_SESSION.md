@@ -107,3 +107,5 @@ redo it:
 3. Body Battery from FIT field 227/3 in the decoder.
 4. Skin temperature and SpO₂ field identification on WHOOP 4.0 (needs reference measurements).
 5. "Wake when recovery is green".
+6. Local versions of WHOOP-cloud and Garmin metrics: see `docs/LOCAL_METRICS_RESEARCH.md` §D
+   (Intensity Minutes, stress 0–3/0–100, Training Load Focus first) and the owner decisions in §F.

@@ -89,7 +89,7 @@ Ini target reverse engineering nomor satu.
 | **Stress** | Baevsky Stress Index (§3) | 🟡 skala berbeda |
 | **Sleep Score** | Sleep performance + staging (§1) | 🟡 |
 | **Body Battery** | Tidak dibuat: metode Firstbeat tidak dipublikasikan, dan versi buatan sendiri berarti konstanta yang dipilih tanpa dasar | ⛔ |
-| **VO₂max, Race Predictor** | Tidak dibuat: estimasi VO₂max lama OpenStrap hanya k/RHR (dihapus); butuh data kecepatan lari GPS untuk metode yang jujur | ❌ |
+| **VO₂max, Race Predictor** | VO₂max submaksimal dari split rute GPS HP + HR band (ACSM + Swain 1997; `clinical/vo2max.dart`, `_submaxVo2maxFromSplits`). Estimasi lama OpenStrap (k/RHR) tetap dihapus. Race Predictor belum ada. Rencana lanjutan: `docs/LOCAL_METRICS_RESEARCH.md` | 🟡 butuh GPS HP |
 
 ## 7. Daftar kerja yang diusulkan
 
