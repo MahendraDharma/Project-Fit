@@ -70,6 +70,11 @@ jobs:
           KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           clean() { local v; v="$(printf '%s' "$1" | tr -d ' \t\r\n')"; printf '%s' "${v#ANDROID_*=}"; }
+          # A whole SECRETS.txt pasted into one secret: take this field from it.
+          pick() {
+            local v; v="$(printf '%s' "$2" | tr -d ' \t\r\n')"
+            if [[ "$v" == *"$1="* ]]; then v="${v#*"$1="}"; printf '%s' "${v%%ANDROID_*}"; else clean "$v"; fi
+          }
           if [ -z "$KEYSTORE_B64" ]; then
             echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: debug-signed test build. It cannot be updated in place; see docs/ANDROID.md."
             echo "APK_NAME=ProjectFit-test.apk" >> "$GITHUB_ENV"
@@ -83,7 +88,9 @@ jobs:
           fi
           SIZE=$(stat -c %s "$RUNNER_TEMP/release.jks")
           echo "Decoded keystore: $SIZE bytes (the ProjectFit key is 3836)."
-          KS="$(clean "$KS_PASS")"; KP="$(clean "$KEY_PASS")"; AL="$(clean "$KEY_ALIAS")"
+          KS="$(pick ANDROID_KEYSTORE_PASSWORD "$KS_PASS")"
+          KP="$(pick ANDROID_KEY_PASSWORD "$KEY_PASS")"
+          AL="$(pick ANDROID_KEY_ALIAS "$KEY_ALIAS")"
           echo "Password lengths: store ${#KS}, key ${#KP} (both 28 for the ProjectFit key); alias length ${#AL}."
           if ! keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$KS" >/dev/null 2>&1; then
             if [ "$SIZE" != "3836" ]; then
