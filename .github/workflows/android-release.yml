@@ -58,26 +58,57 @@ jobs:
 
       - run: flutter pub get
 
+      # Secrets pasted from a phone often carry a stray newline, spaces, or the
+      # "NAME = " prefix from SECRETS.txt; all of that is stripped here. Then
+      # keytool checks the pair before Gradle does, and says WHICH part is
+      # wrong without printing either value.
       - name: Release key (from secrets, if set)
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
-            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
-            echo "APK_NAME=ProjectFit.apk" >> "$GITHUB_ENV"
-            echo "APK_SUFFIX=" >> "$GITHUB_ENV"
-          else
+          clean() { local v; v="$(printf '%s' "$1" | tr -d ' \t\r\n')"; printf '%s' "${v#ANDROID_*=}"; }
+          if [ -z "$KEYSTORE_B64" ]; then
             echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: debug-signed test build. It cannot be updated in place; see docs/ANDROID.md."
             echo "APK_NAME=ProjectFit-test.apk" >> "$GITHUB_ENV"
             echo "APK_SUFFIX=-test" >> "$GITHUB_ENV"
+            exit 0
           fi
+          B64="$(clean "$KEYSTORE_B64")"
+          if ! printf '%s' "$B64" | base64 -d > "$RUNNER_TEMP/release.jks" 2>/dev/null; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not valid base64: paste the WHOLE of keystore.base64.txt (about 5,100 characters) and nothing else."
+            exit 1
+          fi
+          SIZE=$(stat -c %s "$RUNNER_TEMP/release.jks")
+          echo "Decoded keystore: $SIZE bytes (the ProjectFit key is 3836)."
+          KS="$(clean "$KS_PASS")"; KP="$(clean "$KEY_PASS")"; AL="$(clean "$KEY_ALIAS")"
+          echo "Password lengths: store ${#KS}, key ${#KP} (both 28 for the ProjectFit key); alias length ${#AL}."
+          if ! keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$KS" >/dev/null 2>&1; then
+            if [ "$SIZE" != "3836" ]; then
+              echo "::error::The keystore is incomplete ($SIZE bytes, expected 3836): ANDROID_KEYSTORE_BASE64 was cut short. Paste the whole of keystore.base64.txt again."
+            else
+              echo "::error::The keystore is complete but ANDROID_KEYSTORE_PASSWORD does not open it. Paste only the password from SECRETS.txt (28 letters and digits)."
+            fi
+            exit 1
+          fi
+          if ! keytool -list -keystore "$RUNNER_TEMP/release.jks" -storepass "$KS" -alias "$AL" >/dev/null 2>&1; then
+            echo "::error::ANDROID_KEY_ALIAS does not name the key in this keystore. It should be: projectfit"
+            exit 1
+          fi
+          {
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_PASSWORD=$KS"
+            echo "ANDROID_KEY_PASSWORD=$KP"
+            echo "ANDROID_KEY_ALIAS=$AL"
+            echo "APK_NAME=ProjectFit.apk"
+            echo "APK_SUFFIX="
+          } >> "$GITHUB_ENV"
+          echo "::add-mask::$KS"
+          echo "::add-mask::$KP"
 
       - name: Build APK
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: flutter build apk --release
 
       - name: Name the APK
