@@ -289,7 +289,7 @@ def page(code):
       <div class="steps">
 {steps}
       </div>
-      <div class="phone" aria-hidden="true"><div class="screen">{screens}</div></div>
+      <div class="stage" aria-hidden="true"><div class="phone"><div class="screen">{screens}</div></div></div>
     </div>
     <div class="chips" data-reveal>{chips}</div>
   </section>

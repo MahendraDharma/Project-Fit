@@ -20,7 +20,7 @@
       }
     });
   }, { rootMargin: '0px 0px -10% 0px' });
-  document.querySelectorAll('[data-reveal]').forEach(function (el) {
+  document.querySelectorAll('[data-reveal], .step').forEach(function (el) {
     reveal.observe(el);
   });
 
@@ -36,7 +36,10 @@
     es.forEach(function (e) {
       if (e.isIntersecting) show(Number(e.target.getAttribute('data-step')));
     });
-  }, { rootMargin: '-45% 0px -45% 0px' });
+  // The line that picks the step: mid-screen on a wide screen, and on a phone
+  // below the pinned phone (which covers the top half), near three quarters.
+  }, { rootMargin: window.matchMedia('(max-width: 900px)').matches
+      ? '-72% 0px -24% 0px' : '-45% 0px -45% 0px' });
   steps.forEach(function (s) { follow.observe(s); });
 
   // Facts count up once.
