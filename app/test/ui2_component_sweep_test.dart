@@ -52,7 +52,7 @@ Future<void> _loadType() async {
   // hardware, so on Android and in the test harness the type IS Manrope —
   // registering it under the primary name makes text measure as a non-Apple
   // user sees it, rather than as the harness's fallback blocks.
-  for (final family in const ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay']) {
+  for (final family in const ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay', 'DMSans', 'DMSansDisplay']) {
     final loader = FontLoader(family);
     for (final f in files) {
       loader.addFont(f
@@ -82,8 +82,10 @@ void main() {
       ),
     ));
     expect(ShellDomain.values, hasLength(4));
+    // The pill is icons only: each tab is named to the screen reader.
     for (final d in ShellDomain.values) {
-      expect(find.text(d.label), findsWidgets, reason: '${d.label} tab missing');
+      expect(find.bySemanticsLabel(d.label), findsWidgets,
+          reason: '${d.label} tab missing');
     }
   });
 

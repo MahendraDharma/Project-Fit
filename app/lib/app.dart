@@ -35,6 +35,7 @@ import 'ui2/screens/journal_compose.dart';
 import 'ui2/screens/log_workout.dart';
 import 'ui2/screens/detected_activities.dart';
 import 'ui2/screens/nutrition_screen.dart';
+import 'ui2/screens/quick_add.dart' show showQuickAdd;
 import 'ui2/screens/sleep_tab.dart';
 import 'ui2/screens/wellness_screen.dart';
 import 'ui2/screens/workout_screen.dart';
@@ -593,6 +594,7 @@ class _ShellState extends State<_Shell> {
       key: ValueKey(_rev),
       initial: _domain,
       banner: live ? const _LiveSessionBar() : null,
+      onQuickAdd: () => showQuickAdd(context),
       onSelect: (d) {
         _domain = d;
         Prefs.setInt(Prefs.shellTabV2, d.index);

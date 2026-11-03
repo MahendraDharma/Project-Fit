@@ -135,30 +135,38 @@ class P {
 
   static P of(BuildContext c) => P(Theme.of(c).brightness == Brightness.dark);
 
-  // Two looks, one token set. DARK is the performance look: a deep slate page
-  // with slate cards a step lighter, so the scores and rings carry the colour.
-  // LIGHT is the calm look: a cool off-white page with white, softly lifted
-  // cards.
-  Color get bg => dark ? const Color(0xFF1E2328) : const Color(0xFFF3F4F8);
-  Color get card => dark ? const Color(0xFF2C3238) : C.white;
-  Color get card2 => dark ? const Color(0xFF363D44) : const Color(0xFFECEEF3);
-  Color get line => dark ? const Color(0xFF3B434B) : const Color(0xFFE3E6EC);
-  Color get track => dark ? const Color(0xFF3B434B) : const Color(0xFFE3E6EC);
+  // Two looks, one token set, both in the soft, round style the owner picked
+  // in November 2026 (mockup B). DARK is a near-black neutral page with
+  // charcoal cards a step lighter, so the scores and rings carry the colour.
+  // LIGHT is a cool off-white page with white, softly lifted cards.
+  Color get bg => dark ? const Color(0xFF0D0E10) : const Color(0xFFF3F4F7);
+  Color get card => dark ? const Color(0xFF1A1B1F) : C.white;
+  Color get card2 => dark ? const Color(0xFF25272C) : const Color(0xFFECEEF3);
+  Color get line => dark ? const Color(0xFF2E3036) : const Color(0xFFE3E6EC);
+  Color get track => dark ? const Color(0xFF2E3036) : const Color(0xFFE3E6EC);
 
-  Color get ink => dark ? const Color(0xFFF5F7FA) : const Color(0xFF15171C);
-  Color get ink2 => dark ? const Color(0xFFC2C9D0) : const Color(0xFF5B6170);
+  Color get ink => dark ? const Color(0xFFF5F6F8) : const Color(0xFF17181C);
+  Color get ink2 => dark ? const Color(0xFFC3C6CE) : const Color(0xFF5B6170);
 
   /// The muted caption ink. Hand-solved to clear 4.5:1 on [card2], the darkest
   /// (light theme) / lightest (dark theme) surface it can sit on — so it is
   /// legible on every surface, not just the one it was eyeballed against.
-  /// 4.78:1 (dark) and 5.03:1 (light) on that surface.
-  Color get ink3 => dark ? const Color(0xFFA3ACB5) : const Color(0xFF5E6575);
+  /// 6.13:1 (dark) and 5.03:1 (light) on that surface.
+  Color get ink3 => dark ? const Color(0xFFA2A6AF) : const Color(0xFF5E6575);
 
-  /// A card's corners. Crisp on the dark look, soft and round on the light one.
-  BorderRadius get cardRadius => dark ? R.rLg : R.rXl;
+  /// A card's corners: soft and round on both looks.
+  BorderRadius get cardRadius => R.rXl;
 
   /// The ink that goes on top of a [fill]. White by construction — [fill]
   /// darkens the accent until white clears AA on it.
+  /// The floating tab pill: dark on both looks (charcoal on the light page,
+  /// a step above the card on the dark one). [navInk] is an idle icon on it
+  /// (≥ 3:1, non-text); [navOn] is the selected tab's disc, [navOnInk] its icon.
+  Color get navBg => dark ? const Color(0xFF2A2C32) : const Color(0xFF17181C);
+  Color get navInk => const Color(0xFFB4B8C1);
+  Color get navOn => dark ? const Color(0xFFF5F6F8) : C.white;
+  Color get navOnInk => const Color(0xFF17181C);
+
   Color get inkOnFill => C.white;
 
   /// [accent] rendered as TEXT on one of this brightness' surfaces, nudged
@@ -268,8 +276,8 @@ class P {
 /// the big steps, Text the rest, as Apple sizes them. Elsewhere — Android, the
 /// tests — both fall back to the bundled Manrope.
 class F {
-  static const _f = 'CupertinoSystemText';
-  static const _d = 'CupertinoSystemDisplay';
+  static const _f = 'DMSans';
+  static const _d = 'DMSansDisplay';
   static const _fb = ['Manrope'];
   static const _tab = [FontFeature.tabularFigures()];
 
@@ -517,7 +525,7 @@ ThemeData buildTheme(Brightness b) {
     scaffoldBackgroundColor: p.bg,
     colorScheme:
         ColorScheme.fromSeed(seedColor: C.green, brightness: b, surface: p.card),
-    fontFamily: 'CupertinoSystemText',
+    fontFamily: 'DMSans',
     fontFamilyFallback: const ['Manrope'],
     splashFactory: NoSplash.splashFactory,
     highlightColor: const Color(0x00000000),

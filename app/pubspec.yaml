@@ -277,6 +277,31 @@ flutter:
   # SIL Open Font License (OFL.txt alongside the .ttf files, from
   # https://github.com/google/fonts).
   fonts:
+    # DM Sans (SIL OFL 1.1, assets/fonts/DMSans/OFL.txt), cut from the variable
+    # font in google/fonts at two optical sizes: text (opsz 14) and display
+    # (opsz 32). Latin only: Cyrillic and other scripts fall back to Manrope.
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/DMSans/DMSans-400.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans/DMSans-500.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans/DMSans-600.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans/DMSans-700.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans/DMSans-800.ttf
+          weight: 800
+    - family: DMSansDisplay
+      fonts:
+        - asset: assets/fonts/DMSans/DMSansDisplay-500.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans/DMSansDisplay-600.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans/DMSansDisplay-700.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans/DMSansDisplay-800.ttf
+          weight: 800
     - family: Manrope
       fonts:
         - asset: assets/fonts/Manrope/Manrope-400.ttf

@@ -1,4 +1,5 @@
-// The tab bar speaks the user's language, visibly and to a screen reader.
+// The tab bar speaks the user's language to a screen reader (the pill shows
+// icons only).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,12 +22,9 @@ void main() {
     await _pump(tester, const Locale('de'));
     await tester.pumpAndSettle();
     for (final de in ['Heute', 'Schlaf', 'Aktivität', 'Gesundheit']) {
-      expect(find.text(de), findsOneWidget);
       expect(find.bySemanticsLabel(RegExp('^${RegExp.escape(de)}')),
           findsWidgets);
     }
-    expect(find.text('Today'), findsNothing);
-    expect(find.text('Activity'), findsNothing);
     expect(find.bySemanticsLabel(RegExp('Today|Activity')), findsNothing);
     semantics.dispose();
   });

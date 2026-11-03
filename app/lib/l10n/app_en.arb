@@ -16192,5 +16192,11 @@
   "statHighest": "Highest",
   "statLowest": "Lowest",
   "statAverage": "Average",
-  "homeBandEstimate": "ProjectFit estimate from your band"
+  "homeBandEstimate": "ProjectFit estimate from your band",
+  "navQuickAdd": "Log or start something",
+  "quickAddTitle": "Log or start",
+  "quickStartActivity": "Start an activity",
+  "quickLogWorkout": "Log a workout",
+  "quickLogFood": "Log food",
+  "quickJournal": "Write in your journal"
 }

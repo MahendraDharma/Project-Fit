@@ -13,7 +13,7 @@ void main() {
     final fonts = Directory(
       'assets/fonts/Manrope',
     ).listSync().whereType<File>().where((f) => f.path.endsWith('.ttf'));
-    for (final family in ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay']) {
+    for (final family in ['Manrope', 'CupertinoSystemText', 'CupertinoSystemDisplay', 'DMSans', 'DMSansDisplay']) {
       final loader = FontLoader(family);
       for (final file in fonts) {
         loader.addFont(

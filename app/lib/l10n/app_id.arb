@@ -388,5 +388,11 @@
   "statHighest": "Tertinggi",
   "statLowest": "Terendah",
   "statAverage": "Rata-rata",
-  "homeBandEstimate": "Estimasi ProjectFit dari band Anda"
+  "homeBandEstimate": "Estimasi ProjectFit dari band Anda",
+  "navQuickAdd": "Catat atau mulai sesuatu",
+  "quickAddTitle": "Catat atau mulai",
+  "quickStartActivity": "Mulai aktivitas",
+  "quickLogWorkout": "Catat latihan",
+  "quickLogFood": "Catat makanan",
+  "quickJournal": "Tulis di jurnal"
 }

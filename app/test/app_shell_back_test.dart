@@ -42,7 +42,7 @@ void main() {
   }
 
   Future<void> select(WidgetTester tester, ShellDomain domain) async {
-    await tester.tap(find.text(domain.label));
+    await tester.tap(find.bySemanticsLabel(domain.label));
     await tester.pumpAndSettle();
   }
 

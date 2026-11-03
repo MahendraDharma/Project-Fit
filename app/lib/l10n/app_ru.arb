@@ -7910,5 +7910,11 @@
   "statHighest": "Максимум",
   "statLowest": "Минимум",
   "statAverage": "Среднее",
-  "homeBandEstimate": "Оценка ProjectFit по браслету"
+  "homeBandEstimate": "Оценка ProjectFit по браслету",
+  "navQuickAdd": "Записать или начать",
+  "quickAddTitle": "Записать или начать",
+  "quickStartActivity": "Начать активность",
+  "quickLogWorkout": "Записать тренировку",
+  "quickLogFood": "Записать еду",
+  "quickJournal": "Запись в дневник"
 }

@@ -71,12 +71,16 @@ class AppShell extends StatefulWidget {
   /// belongs inside the domain.
   final Widget? banner;
 
+  /// The green + in the middle of the tab bar. Null: no + (a bare shell).
+  final VoidCallback? onQuickAdd;
+
   const AppShell({
     super.key,
     required this.builder,
     this.initial = ShellDomain.today,
     this.onSelect,
     this.banner,
+    this.onQuickAdd,
   });
 
   @override
@@ -156,7 +160,8 @@ class _AppShellState extends State<AppShell> {
             ],
           ),
         ),
-        bottomNavigationBar: _TabBar(current: _current, onTap: _select),
+        bottomNavigationBar: _TabBar(
+            current: _current, onTap: _select, onQuickAdd: widget.onQuickAdd),
       ),
     );
   }
@@ -165,41 +170,59 @@ class _AppShellState extends State<AppShell> {
 class _TabBar extends StatelessWidget {
   final ShellDomain current;
   final ValueChanged<ShellDomain> onTap;
+  final VoidCallback? onQuickAdd;
 
-  const _TabBar({required this.current, required this.onTap});
+  const _TabBar({required this.current, required this.onTap, this.onQuickAdd});
 
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    // A floating pill rather than a full-width strip: inset from the edges and
-    // the home indicator, rounded, on the page colour.
+    final l = AppLocalizations.of(c);
+    final tabs = [
+      for (final d in ShellDomain.values)
+        _Tab(domain: d, on: d == current, onTap: () => onTap(d)),
+    ];
+    // A dark floating pill of icons, centred over the page: the selected tab
+    // is a light disc, and the green + in the middle opens the quick log.
+    // Labels are for the screen reader; the icons carry the meaning on screen.
     return ColoredBox(
       color: p.bg,
       child: SafeArea(
         top: false,
-        minimum: const EdgeInsets.fromLTRB(S.x3, 0, S.x3, S.x2),
-        child: Container(
-          decoration: BoxDecoration(
-            color: p.card,
-            borderRadius: R.rXl,
-            border: Border.all(color: p.line),
-            boxShadow: p.el(2),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: S.x1),
-          child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final d in ShellDomain.values)
-                Expanded(
-                  child: _Tab(
-                    domain: d,
-                    on: d == current,
-                    onTap: () => onTap(d),
+        minimum: const EdgeInsets.fromLTRB(S.x3, S.x1, S.x3, S.x3),
+        child: Center(
+          heightFactor: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: p.navBg,
+              borderRadius: R.rPill,
+              boxShadow: p.el(2),
+            ),
+            padding: const EdgeInsets.all(S.x1 + 2),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ...tabs.take(2),
+                if (onQuickAdd != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: S.x1),
+                    child: Pressable(
+                      onTap: onQuickAdd,
+                      semanticLabel: l?.navQuickAdd ?? 'Log or start something',
+                      child: Container(
+                        width: S.x12,
+                        height: S.x12,
+                        decoration: BoxDecoration(
+                          color: p.fill(C.green),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(LucideIcons.plus, size: 24, color: p.inkOnFill),
+                      ),
+                    ),
                   ),
-                ),
-            ],
-          ),
+                ...tabs.skip(2),
+              ],
+            ),
           ),
         ),
       ),
@@ -217,40 +240,22 @@ class _Tab extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    final ink = on ? p.ink : p.ink3;
-    final label = domain.title(c);
     return Semantics(
       selected: on,
       child: Pressable(
         onTap: onTap,
-        semanticLabel: label,
+        semanticLabel: domain.title(c),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-            AnimatedContainer(
-              duration: motion(c, Motion.base),
-              padding: EdgeInsets.symmetric(
-                horizontal: on ? S.x3 : 0,
-                vertical: S.x1,
-              ),
-              decoration: BoxDecoration(
-                color: on ? p.wash(domain.accent) : const Color(0x00000000),
-                borderRadius: R.rPill,
-              ),
-              child: Icon(domain.icon, size: 20, color: ink),
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: AnimatedContainer(
+            duration: motion(c, Motion.base),
+            width: S.x12,
+            height: S.x12,
+            decoration: BoxDecoration(
+              color: on ? p.navOn : p.navBg,
+              shape: BoxShape.circle,
             ),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-              style: F.over.copyWith(
-                color: ink,
-                fontWeight: on ? FontWeight.w600 : FontWeight.w500,
-              ),
-              ),
-            ],
+            child: Icon(domain.icon, size: 22, color: on ? p.navOnInk : p.navInk),
           ),
         ),
       ),

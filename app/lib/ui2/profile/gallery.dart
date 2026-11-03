@@ -59,6 +59,7 @@ import '../../compute/findings.dart';
 import '../../models/metric.dart';
 import '../../models/activity_suggestion.dart';
 import '../../sync/full_sync.dart' show SyncPhase, SyncRun, SyncStep;
+import '../screens/quick_add.dart' show QuickAddSheet;
 import '../screens/detected_activities.dart';
 import '../activity/catalogue.dart';
 import '../activity/live.dart';
@@ -305,6 +306,8 @@ Map<String, Widget> componentCases() => {
       'recovery_bar': const RecoveryBar(64),
       'draw_in': DrawIn(
           builder: (c, t) => LinearProgressIndicator(value: .7 * t, minHeight: 8)),
+      'quick_add': QuickAddSheet(
+          onStart: () {}, onWorkout: () {}, onFood: () {}, onJournal: () {}),
       'stress_energy': const StressEnergyRow(
           stress: 12, battery: 73, highest: 82, lowest: 0, average: 11),
       'detail_hero': const DetailHero(
