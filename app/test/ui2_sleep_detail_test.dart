@@ -348,15 +348,15 @@ void main() {
         unobservedMin: 106, // 486 in bed, 380 watched
       ),
     );
-    expect(find.text('WATCHED'), findsOneWidget);
+    expect(find.text('Watched'), findsOneWidget);
     expect(find.text('6h 20m'), findsOneWidget);
     expect(find.textContaining('is not a measurement'), findsOneWidget);
   });
 
   testWidgets('a fully observed night says nothing about watching', (t) async {
     await _pump(t, SleepData(day: '2026-05-20', night: _night()));
-    expect(find.text('WATCHED'), findsNothing);
-    expect(find.text('ASLEEP OF THAT'), findsOneWidget);
+    expect(find.text('Watched'), findsNothing);
+    expect(find.text('Asleep of that'), findsOneWidget);
   });
 
   // ── SLP-02 · settling time, forced windows only ───────────────────────────
@@ -561,7 +561,7 @@ void main() {
     await t.tap(b);
     await t.pumpAndSettle();
     // The same pickers as "Change the times", seeded on the night before.
-    expect(find.text('WHEN YOU GOT INTO BED'), findsOneWidget);
+    expect(find.text('When you got into bed'), findsOneWidget);
   });
 
   testWidgets('a night marked not sleep offers undo, not "I was asleep"',

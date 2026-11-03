@@ -180,7 +180,7 @@
   "@profileSetupBody": {
     "description": "Profile setup intro body."
   },
-  "profileSetupSexHeader": "SEX",
+  "profileSetupSexHeader": "Sex",
   "@profileSetupSexHeader": {
     "description": "Sex field section header."
   },
@@ -200,7 +200,7 @@
   "@profileSetupOtherSexNote": {
     "description": "Note shown when 'prefer not to say' is picked."
   },
-  "profileSetupAgeLabel": "AGE",
+  "profileSetupAgeLabel": "Age",
   "@profileSetupAgeLabel": {
     "description": "Field label: age."
   },
@@ -212,7 +212,7 @@
   "@profileSetupAgeConsequence": {
     "description": "What is lost without age."
   },
-  "profileSetupHeightLabel": "HEIGHT",
+  "profileSetupHeightLabel": "Height",
   "@profileSetupHeightLabel": {
     "description": "Field label: height."
   },
@@ -220,7 +220,7 @@
   "@profileSetupHeightConsequence": {
     "description": "What is lost without height."
   },
-  "profileSetupWeightLabel": "WEIGHT",
+  "profileSetupWeightLabel": "Weight",
   "@profileSetupWeightLabel": {
     "description": "Field label: weight."
   },
@@ -228,7 +228,7 @@
   "@profileSetupWeightConsequence": {
     "description": "What is lost without weight."
   },
-  "profileSetupOptional": "OPTIONAL",
+  "profileSetupOptional": "Optional",
   "@profileSetupOptional": {
     "description": "Field tag: optional."
   },
@@ -253,11 +253,11 @@
   "@alarmNavSub": {
     "description": "Alarm screen subtitle."
   },
-  "alarmArmedFor": "ARMED FOR",
+  "alarmArmedFor": "Armed for",
   "@alarmArmedFor": {
     "description": "Armed-for section label."
   },
-  "alarmNextLabel": "NEXT",
+  "alarmNextLabel": "Next",
   "@alarmNextLabel": {
     "description": "Next-occurrence section label."
   },
@@ -380,7 +380,7 @@
   "@bandNotifNavTitle": {
     "description": "Screen title."
   },
-  "bandNotifNavSub": "WHAT MAKES THE STRAP BUZZ",
+  "bandNotifNavSub": "What makes the strap buzz",
   "@bandNotifNavSub": {
     "description": "Screen subtitle."
   },
@@ -701,11 +701,11 @@
   "@devicesPairABand": {
     "description": "Fix button."
   },
-  "devicesLive": "LIVE",
+  "devicesLive": "Live",
   "@devicesLive": {
     "description": "Section header."
   },
-  "devicesQualityLadder": "THE QUALITY LADDER",
+  "devicesQualityLadder": "The quality ladder",
   "@devicesQualityLadder": {
     "description": "Section header."
   },
@@ -1708,7 +1708,7 @@
   },
   "whatChangedTitle": "What changed",
   "monthlyReportTitle": "Your month",
-  "monthlyReportSub": "LAST 30 DAYS AGAINST THE 30 BEFORE",
+  "monthlyReportSub": "Last 30 days against the 30 before",
   "monthlyReportLinkSub": "What moved, and what was only day-to-day noise",
   "monthlyReportFootnote": "A change is named only when it is bigger than 0.2 of your usual day-to-day spread in the earlier month (Hopkins). Smaller differences are day-to-day noise and read as steady.",
   "monthlyReportNotEnough": "Not enough days yet",
@@ -1719,7 +1719,7 @@
   "@whatChangedTitle": {
     "description": "What Changed screen: nav bar title."
   },
-  "whatChangedSub": "AGAINST YOUR OWN HISTORY",
+  "whatChangedSub": "Against your own history",
   "@whatChangedSub": {
     "description": "What Changed screen: nav bar subtitle, all caps."
   },
@@ -1839,7 +1839,7 @@
   "@journalFieldStartTracking": {
     "description": "Custom journal field sheet: primary save button label."
   },
-  "aiBriefingForDay": "FOR {day}",
+  "aiBriefingForDay": "For {day}",
   "@aiBriefingForDay": {
     "description": "AI briefing screen subtitle naming the day the briefing covers.",
     "placeholders": {
@@ -1942,11 +1942,11 @@
   "@aiBriefingEmptyCardBody": {
     "description": "Status card body when the payload had no metric values to send."
   },
-  "napsFellAsleepHelp": "WHEN YOU FELL ASLEEP",
+  "napsFellAsleepHelp": "When you fell asleep",
   "@napsFellAsleepHelp": {
     "description": "Time picker helper text for logging when a manual nap started."
   },
-  "napsWokeUpHelp": "WHEN YOU WOKE UP",
+  "napsWokeUpHelp": "When you woke up",
   "@napsWokeUpHelp": {
     "description": "Time picker helper text for logging when a manual nap ended."
   },
@@ -3152,7 +3152,7 @@
   "@logWorkoutDetectedActivityTitle": {
     "description": "Nav bar title on the detected-workout review screen"
   },
-  "logWorkoutYoursToConfirmSub": "YOURS TO CONFIRM",
+  "logWorkoutYoursToConfirmSub": "Yours to confirm",
   "@logWorkoutYoursToConfirmSub": {
     "description": "Nav bar subtitle (all caps) on the detected-workout review screen"
   },
@@ -3229,11 +3229,11 @@
   "@logWorkoutDefaultTitle": {
     "description": "Default screen title for the manual workout log form when no title is supplied"
   },
-  "logWorkoutWindowRescoredSub": "THE WINDOW, RE-SCORED",
+  "logWorkoutWindowRescoredSub": "The window, re-scored",
   "@logWorkoutWindowRescoredSub": {
     "description": "Nav bar subtitle (all caps) when retiming an existing logged workout"
   },
-  "logWorkoutYourOwnTimesSub": "YOUR OWN TIMES",
+  "logWorkoutYourOwnTimesSub": "Your own times",
   "@logWorkoutYourOwnTimesSub": {
     "description": "Nav bar subtitle (all caps) when logging a brand-new manual workout"
   },
@@ -3507,7 +3507,7 @@
   "@logFoodPillYours": {
     "description": "Provenance pill on a food row: numbers were typed in by the user"
   },
-  "logFoodBareOccasion": "LOGGED · ENERGY NOT RECORDED",
+  "logFoodBareOccasion": "Logged · energy not recorded",
   "@logFoodBareOccasion": {
     "description": "Detail line on a food row that was logged with no energy/macro numbers, all caps"
   },
@@ -3619,7 +3619,7 @@
   "@dayTimelineTitle": {
     "description": "Day timeline screen title."
   },
-  "dayTimelineSub": "MIDNIGHT TO MIDNIGHT",
+  "dayTimelineSub": "Midnight to midnight",
   "@dayTimelineSub": {
     "description": "Day timeline screen subtitle, all-caps."
   },
@@ -3987,15 +3987,15 @@
   "@nutritionEnergyBalance": {
     "description": "Nutrition Week tab: section header above the eaten/burned/balance metrics"
   },
-  "nutritionLabelEaten": "EATEN",
+  "nutritionLabelEaten": "Eaten",
   "@nutritionLabelEaten": {
     "description": "Nutrition Week tab: all-caps inline metric label for energy eaten"
   },
-  "nutritionLabelBurned": "BURNED",
+  "nutritionLabelBurned": "Burned",
   "@nutritionLabelBurned": {
     "description": "Nutrition screen: all-caps inline metric label for energy burned (used in Week tab and Today card)"
   },
-  "nutritionLabelBalance": "BALANCE",
+  "nutritionLabelBalance": "Balance",
   "@nutritionLabelBalance": {
     "description": "Nutrition Week tab: all-caps inline metric label for the eaten-minus-burned balance"
   },
@@ -4081,7 +4081,7 @@
   "@nutritionNotMeasured": {
     "description": "Nutrition Goals tab: value shown when estimated expenditure has no data"
   },
-  "nutritionExpenditureSub": "TODAY, FROM HEART RATE AND YOUR PROFILE",
+  "nutritionExpenditureSub": "Today, from heart rate and your profile",
   "@nutritionExpenditureSub": {
     "description": "Nutrition Goals tab: all-caps subtext explaining the expenditure figure's source"
   },
@@ -4177,11 +4177,11 @@
       }
     }
   },
-  "nutritionLoggedToday": "LOGGED TODAY",
+  "nutritionLoggedToday": "Logged today",
   "@nutritionLoggedToday": {
     "description": "Nutrition Today card: all-caps header when no energy figure exists, only an occasion count"
   },
-  "nutritionEatenToday": "EATEN TODAY",
+  "nutritionEatenToday": "Eaten today",
   "@nutritionEatenToday": {
     "description": "Nutrition Today card: all-caps header when an energy figure exists"
   },
@@ -4207,7 +4207,7 @@
       }
     }
   },
-  "nutritionLabelBalanceAtLeast": "BALANCE AT LEAST",
+  "nutritionLabelBalanceAtLeast": "Balance at least",
   "@nutritionLabelBalanceAtLeast": {
     "description": "Nutrition Today card: all-caps inline metric label for the balance when eaten is only a floor"
   },
@@ -4252,7 +4252,7 @@
   "@nutritionNotRecorded": {
     "description": "Nutrition Week tab: nutrient mean value when no complete day recorded this nutrient"
   },
-  "nutritionEveryDayNoFigure": "EVERY COMPLETE DAY HAD AN OCCASION WITH NO {label} FIGURE",
+  "nutritionEveryDayNoFigure": "Every complete day had an occasion with no {label} figure",
   "@nutritionEveryDayNoFigure": {
     "description": "Nutrition Week tab: all-caps subtext when every complete day lacked this nutrient's figure",
     "placeholders": {
@@ -4261,7 +4261,7 @@
       }
     }
   },
-  "nutritionNoDayRecorded": "NO COMPLETE DAY RECORDED {label}",
+  "nutritionNoDayRecorded": "No complete day recorded {label}",
   "@nutritionNoDayRecorded": {
     "description": "Nutrition Week tab: all-caps subtext when no complete day recorded this nutrient",
     "placeholders": {
@@ -4279,7 +4279,7 @@
       }
     }
   },
-  "nutritionLeftOutAsFloor": " · {n} LEFT OUT AS A FLOOR",
+  "nutritionLeftOutAsFloor": " · {n} left out as a floor",
   "@nutritionLeftOutAsFloor": {
     "description": "Nutrition Week tab: all-caps suffix appended to the mean subtext naming how many days were left out as floors (includes leading ' · ')",
     "placeholders": {
@@ -4476,7 +4476,7 @@
   "@coachNotSetUpTitle": {
     "description": "Coach screen: title shown when the coach has not been set up"
   },
-  "coachPastChats": "PAST CHATS",
+  "coachPastChats": "Past chats",
   "@coachPastChats": {
     "description": "Coach screen: all-caps section header above the list of past chat sessions"
   },
@@ -4553,11 +4553,11 @@
   "@coachWhereModelRuns": {
     "description": "Coach AI settings: section header above the provider preset list"
   },
-  "coachYourDataYourModel": "YOUR DATA, YOUR MODEL",
+  "coachYourDataYourModel": "Your data, your model",
   "@coachYourDataYourModel": {
     "description": "Coach screen: all-caps headline in the empty-chat welcome card"
   },
-  "investigateNerdStatsLabel": "NERD STATS",
+  "investigateNerdStatsLabel": "Nerd stats",
   "@investigateNerdStatsLabel": {
     "description": "Subtitle on the Investigate (nerd stats) screen header"
   },
@@ -4964,7 +4964,7 @@
       }
     }
   },
-  "investigateAcrossNOwnNights": "ACROSS {n} OF YOUR OWN NIGHTS",
+  "investigateAcrossNOwnNights": "Across {n} of your own nights",
   "@investigateAcrossNOwnNights": {
     "description": "Section header: summary across the user's own recent nights",
     "placeholders": {
@@ -5100,7 +5100,7 @@
   "@investigateOneValuePerDerivedDay": {
     "description": "Value: one stored value per derived day"
   },
-  "investigateMethodLabel": "METHOD",
+  "investigateMethodLabel": "Method",
   "@investigateMethodLabel": {
     "description": "Section header for the method/citation panel"
   },
@@ -5213,7 +5213,7 @@
       }
     }
   },
-  "calmBreathingPaceOfRate": "PACE {block} OF {total} · {rate} BREATHS A MINUTE",
+  "calmBreathingPaceOfRate": "Pace {block} of {total} · {rate} breaths a minute",
   "@calmBreathingPaceOfRate": {
     "description": "Header shown during a sweep block naming its position and pace",
     "placeholders": {
@@ -5245,11 +5245,11 @@
   "@calmBreathingScoringNeedsBand": {
     "description": "Status card body: scoring needs the band connected"
   },
-  "calmBreathingBeforeLabel": "BEFORE",
+  "calmBreathingBeforeLabel": "Before",
   "@calmBreathingBeforeLabel": {
     "description": "Header shown during the pre-session quiet window"
   },
-  "calmBreathingAfterLabel": "AFTER",
+  "calmBreathingAfterLabel": "After",
   "@calmBreathingAfterLabel": {
     "description": "Header shown during the post-session quiet window"
   },
@@ -5286,7 +5286,7 @@
   "@calmBreathingCardiacCoherence": {
     "description": "Result card title for the coherence score"
   },
-  "calmBreathingHowStronglyFollowedPace": "HOW STRONGLY YOUR HEART RATE FOLLOWED THE PACE",
+  "calmBreathingHowStronglyFollowedPace": "How strongly your heart rate followed the pace",
   "@calmBreathingHowStronglyFollowedPace": {
     "description": "Result card subtitle explaining what the coherence score measures"
   },
@@ -5294,7 +5294,7 @@
   "@calmBreathingStoppedThere": {
     "description": "Headline shown when a sweep was aborted early"
   },
-  "calmBreathingHowStronglyEachPace": "HOW STRONGLY YOUR HEART RATE FOLLOWED EACH PACE",
+  "calmBreathingHowStronglyEachPace": "How strongly your heart rate followed each pace",
   "@calmBreathingHowStronglyEachPace": {
     "description": "Header for the sweep results table"
   },
@@ -5825,11 +5825,11 @@
   "@cycleLogPeriodButton": {
     "description": "Button label to log a period start today (used both as a status-card fix action and the main button)."
   },
-  "cycleLogKindStart": "START",
+  "cycleLogKindStart": "Start",
   "@cycleLogKindStart": {
     "description": "Recent-logs row: this entry is a period start (shown uppercased already, so translate as-is)"
   },
-  "cycleLogKindEnd": "END",
+  "cycleLogKindEnd": "End",
   "@cycleLogKindEnd": {
     "description": "Recent-logs row: this entry is a period end (shown uppercased already, so translate as-is)"
   },
@@ -5869,7 +5869,7 @@
   "@cycleTurnOffTracking": {
     "description": "Text button to disable cycle tracking."
   },
-  "cycleDayInThisCycle": "DAY IN THIS CYCLE",
+  "cycleDayInThisCycle": "Day in this cycle",
   "@cycleDayInThisCycle": {
     "description": "Overline label above the current cycle-day number."
   },
@@ -5902,11 +5902,11 @@
   "@cyclePhaseLuteal": {
     "description": "Cycle phase pill label: luteal."
   },
-  "cycleNextPeriodBetween": "NEXT PERIOD, EXPECTED BETWEEN",
+  "cycleNextPeriodBetween": "Next period, expected between",
   "@cycleNextPeriodBetween": {
     "description": "Overline label when the next-period prediction is a date range."
   },
-  "cycleNextPeriodAround": "NEXT PERIOD, EXPECTED AROUND",
+  "cycleNextPeriodAround": "Next period, expected around",
   "@cycleNextPeriodAround": {
     "description": "Overline label when the next-period prediction is a single point date."
   },
@@ -6118,7 +6118,7 @@
       }
     }
   },
-  "cycleNightOfLabel": "NIGHT OF {date}",
+  "cycleNightOfLabel": "Night of {date}",
   "@cycleNightOfLabel": {
     "description": "Overline label naming the night the day-against-itself comparison is about.",
     "placeholders": {
@@ -6534,15 +6534,15 @@
   "@healthChronotypeJetlagRegularity": {
     "description": "Body clock card subtitle"
   },
-  "healthChronotypeLabel": "NATURAL BEDTIME",
+  "healthChronotypeLabel": "Natural bedtime",
   "@healthChronotypeLabel": {
     "description": "Body clock inline-metric label: CHRONOTYPE"
   },
-  "healthSocialJetlagLabel": "WEEKEND SHIFT",
+  "healthSocialJetlagLabel": "Weekend shift",
   "@healthSocialJetlagLabel": {
     "description": "Body clock inline-metric label: SOCIAL JETLAG"
   },
-  "healthRegularityLabel": "CONSISTENCY",
+  "healthRegularityLabel": "Consistency",
   "@healthRegularityLabel": {
     "description": "Body clock inline-metric label: REGULARITY"
   },
@@ -7511,7 +7511,7 @@
   "@homeStepsNone": {
     "description": "Steps card value when no step count was recorded at all."
   },
-  "homeStepsNotRecorded": "NOT RECORDED",
+  "homeStepsNotRecorded": "Not recorded",
   "@homeStepsNotRecorded": {
     "description": "Steps card subtitle when nothing counted steps at all."
   },
@@ -7672,7 +7672,7 @@
   "@wellnessTabCycle": {
     "description": "Wellness sub-tab label: Cycle"
   },
-  "wellnessStartASitting": "START A SITTING",
+  "wellnessStartASitting": "Start a sitting",
   "@wellnessStartASitting": {
     "description": "Hero card label to start a breathing sitting, all caps"
   },
@@ -8028,7 +8028,7 @@
   "@wellnessChangeTheTime": {
     "description": "Accessibility label for the time picker row in the schedule sheet"
   },
-  "wellnessWhichDays": "WHICH DAYS",
+  "wellnessWhichDays": "Which days",
   "@wellnessWhichDays": {
     "description": "All-caps section label in the schedule picker for choosing weekdays"
   },
@@ -8359,19 +8359,19 @@
   "@sleepDetailTotalSleep": {
     "description": "Caption under the big total-sleep-duration number."
   },
-  "sleepDetailInBed": "IN BED",
+  "sleepDetailInBed": "In bed",
   "@sleepDetailInBed": {
     "description": "Inline metric label: time spent in bed."
   },
-  "sleepDetailWatched": "WATCHED",
+  "sleepDetailWatched": "Watched",
   "@sleepDetailWatched": {
     "description": "Inline metric label: time the band actually recorded."
   },
-  "sleepDetailAsleepOfThat": "ASLEEP OF THAT",
+  "sleepDetailAsleepOfThat": "Asleep of that",
   "@sleepDetailAsleepOfThat": {
     "description": "Inline metric label for asleep percentage when a 'watched' window is also shown."
   },
-  "sleepDetailAsleep": "ASLEEP",
+  "sleepDetailAsleep": "Asleep",
   "@sleepDetailAsleep": {
     "description": "Inline metric label for asleep percentage (efficiency)."
   },
@@ -8464,11 +8464,11 @@
   "@sleepDetailCorrectionFailedTitle": {
     "description": "Status card title when a sleep window correction failed to apply."
   },
-  "sleepDetailBedTimeHelp": "WHEN YOU GOT INTO BED",
+  "sleepDetailBedTimeHelp": "When you got into bed",
   "@sleepDetailBedTimeHelp": {
     "description": "Help text on the time picker for when the user got into bed."
   },
-  "sleepDetailWakeTimeHelp": "WHEN YOU GOT UP",
+  "sleepDetailWakeTimeHelp": "When you got up",
   "@sleepDetailWakeTimeHelp": {
     "description": "Help text on the time picker for when the user got up."
   },
@@ -8773,15 +8773,15 @@
   "@sleepDetailNothingStoodOut": {
     "description": "Reassurance line shown when nothing unusual was found in the night."
   },
-  "sleepDetailSleepingHr": "SLEEPING HR",
+  "sleepDetailSleepingHr": "Sleeping HR",
   "@sleepDetailSleepingHr": {
     "description": "All-caps inline metric label: average sleeping heart rate."
   },
-  "sleepDetailLowest": "LOWEST",
+  "sleepDetailLowest": "Lowest",
   "@sleepDetailLowest": {
     "description": "All-caps inline metric label: lowest heart rate reached overnight."
   },
-  "sleepDetailBreathingCaps": "BREATHING",
+  "sleepDetailBreathingCaps": "Breathing",
   "@sleepDetailBreathingCaps": {
     "description": "All-caps inline metric label for breathing rate summary."
   },
@@ -8901,7 +8901,7 @@
   "@workoutScreenTitle": {
     "description": "Workout screen title"
   },
-  "workoutStartSessionLabel": "START A SESSION",
+  "workoutStartSessionLabel": "Start a session",
   "@workoutStartSessionLabel": {
     "description": "Hero start card label on For You tab"
   },
@@ -9061,7 +9061,7 @@
       }
     }
   },
-  "workoutQuickStartHeader": "QUICK START",
+  "workoutQuickStartHeader": "Quick start",
   "@workoutQuickStartHeader": {
     "description": "Section header over the quick-start activity tiles"
   },
@@ -9541,11 +9541,11 @@
   "@activityPickerNoMatchBody": {
     "description": "Status card body when a search finds no matching activity"
   },
-  "activityPickerQuickStart": "QUICK START",
+  "activityPickerQuickStart": "Quick start",
   "@activityPickerQuickStart": {
     "description": "Section heading over the quick-start row when the user has no activity history"
   },
-  "activityPickerRecent": "RECENT",
+  "activityPickerRecent": "Recent",
   "@activityPickerRecent": {
     "description": "Section heading over the recent-activities row"
   },
@@ -9571,7 +9571,7 @@
       }
     }
   },
-  "dayStrainToday": "TODAY",
+  "dayStrainToday": "Today",
   "@dayStrainToday": {
     "description": "Day strain screen sub-header when the shown day is today"
   },
@@ -9721,7 +9721,7 @@
   "@activityZonesWearBandFix": {
     "description": "Suggested fix action on the no-ceiling card"
   },
-  "activityZonesHighestSeenLabel": "HIGHEST WE HAVE SEEN",
+  "activityZonesHighestSeenLabel": "Highest we have seen",
   "@activityZonesHighestSeenLabel": {
     "description": "Label above the highest measured heart rate figure"
   },
@@ -9900,7 +9900,7 @@
   "@activityShareOpenFailed": {
     "description": "Snackbar shown when the OS share sheet fails to open"
   },
-  "activitySharePhotoHeader": "YOUR PHOTO",
+  "activitySharePhotoHeader": "Your photo",
   "@activitySharePhotoHeader": {
     "description": "Section eyebrow header above the photo picker row on the share screen"
   },
@@ -9920,7 +9920,7 @@
   "@activityShareRemovePhoto": {
     "description": "Row label/button to remove the chosen photo from the share card"
   },
-  "activityShareBasemapHeader": "BASEMAP",
+  "activityShareBasemapHeader": "Basemap",
   "@activityShareBasemapHeader": {
     "description": "Section eyebrow header above the basemap toggle row on the share screen"
   },
@@ -9964,7 +9964,7 @@
   "@activityPosterFormatStory": {
     "description": "Format switcher label for the 9:16 portrait story crop of the share card"
   },
-  "activitySummaryRpeHeadline": "HOW HARD DID THAT FEEL?",
+  "activitySummaryRpeHeadline": "How hard did that feel?",
   "@activitySummaryRpeHeadline": {
     "description": "Header of the TS-09 post-session effort rating card"
   },
@@ -10412,7 +10412,7 @@
   "@activitySummaryKm": {
     "description": "Column header for kilometre number in the route splits table"
   },
-  "activitySummaryPace": "PACE",
+  "activitySummaryPace": "Pace",
   "@activitySummaryPace": {
     "description": "Column header for pace in the route splits table"
   },
@@ -10428,23 +10428,23 @@
   "@activitySummaryRoundHeader": {
     "description": "Column header for round number in the interval splits table"
   },
-  "activitySummaryWorkHeader": "WORK",
+  "activitySummaryWorkHeader": "Work",
   "@activitySummaryWorkHeader": {
     "description": "Column header for work duration in the interval splits table"
   },
-  "activitySummaryRestHeader": "REST",
+  "activitySummaryRestHeader": "Rest",
   "@activitySummaryRestHeader": {
     "description": "Column header for rest duration in the interval splits table"
   },
-  "activitySummaryAvgBpm": "AVG BPM",
+  "activitySummaryAvgBpm": "Avg BPM",
   "@activitySummaryAvgBpm": {
     "description": "Column header for average heart rate in the interval splits table"
   },
-  "activitySummaryLapHeader": "LAP",
+  "activitySummaryLapHeader": "Lap",
   "@activitySummaryLapHeader": {
     "description": "Column header for lap number in the laps splits table"
   },
-  "activitySummaryTimeHeader": "TIME",
+  "activitySummaryTimeHeader": "Time",
   "@activitySummaryTimeHeader": {
     "description": "Column header for lap time in the laps splits table"
   },
@@ -10627,11 +10627,11 @@
   "@activityLiveDeniedForeverBody": {
     "description": "Live measured session: explanation when location is permanently denied for the app."
   },
-  "activityLiveDurationHeader": "DURATION",
+  "activityLiveDurationHeader": "Duration",
   "@activityLiveDurationHeader": {
     "description": "Live measured session: section header above the elapsed-time display."
   },
-  "activityLiveEffortRpeHeader": "EFFORT (RPE)",
+  "activityLiveEffortRpeHeader": "Effort (RPE)",
   "@activityLiveEffortRpeHeader": {
     "description": "Live strength screen: header above the RPE (rate of perceived exertion) picker."
   },
@@ -10639,7 +10639,7 @@
   "@activityLiveEndSet": {
     "description": "Live match screen: button that closes the current set and starts a new one."
   },
-  "activityLiveExerciseOf": "EXERCISE {index} OF {total}",
+  "activityLiveExerciseOf": "Exercise {index} of {total}",
   "@activityLiveExerciseOf": {
     "description": "Live strength screen: 'EXERCISE {index} OF {total}' progress header.",
     "placeholders": {
@@ -10673,7 +10673,7 @@
       }
     }
   },
-  "activityLiveIntervalSubtitle": "{workSec} S WORK · {restSec} S REST",
+  "activityLiveIntervalSubtitle": "{workSec} s work · {restSec} s rest",
   "@activityLiveIntervalSubtitle": {
     "description": "Live interval screen: shell subtitle stating the work/rest split, e.g. '45 S WORK · 30 S REST'.",
     "placeholders": {
@@ -10693,7 +10693,7 @@
   "@activityLiveKgVolumeUnit": {
     "description": "Live strength screen: unit label under the total training volume in kg."
   },
-  "activityLiveLapButtonLabel": "LAP",
+  "activityLiveLapButtonLabel": "Lap",
   "@activityLiveLapButtonLabel": {
     "description": "Live swim screen: label on the big circular tap-a-lap button."
   },
@@ -10726,7 +10726,7 @@
   "@activityLiveLogAsBodyweight": {
     "description": "Live strength screen: toggle label to log the current set as bodyweight-only."
   },
-  "activityLiveMatchSetSubtitle": "SET {n}",
+  "activityLiveMatchSetSubtitle": "Set {n}",
   "@activityLiveMatchSetSubtitle": {
     "description": "Live match screen: shell subtitle showing the set number in progress.",
     "placeholders": {
@@ -10752,7 +10752,7 @@
   "@activityLiveNextExercise": {
     "description": "Live strength screen: accessibility label for the next-exercise arrow."
   },
-  "activityLiveNextLabel": "NEXT",
+  "activityLiveNextLabel": "Next",
   "@activityLiveNextLabel": {
     "description": "Live interval screen: 'NEXT' header before the upcoming work/rest phase."
   },
@@ -10826,7 +10826,7 @@
   "@activityLiveOpenSettings": {
     "description": "Live measured session: fix action when location is permanently denied."
   },
-  "activityLiveOpponentLabel": "OPPONENT",
+  "activityLiveOpponentLabel": "Opponent",
   "@activityLiveOpponentLabel": {
     "description": "Live match screen: label above the opponent's score."
   },
@@ -10847,7 +10847,7 @@
       }
     }
   },
-  "activityLivePoolSubtitle": "{len}M POOL · {stroke}",
+  "activityLivePoolSubtitle": "{len}m pool · {stroke}",
   "@activityLivePoolSubtitle": {
     "description": "Live swim screen: shell subtitle showing pool length and stroke.",
     "placeholders": {
@@ -10879,7 +10879,7 @@
   "@activityLivePoseMountain": {
     "description": "Live flow (yoga) screen: name of the Mountain pose."
   },
-  "activityLivePoseOf": "POSE {index} OF {total}",
+  "activityLivePoseOf": "Pose {index} of {total}",
   "@activityLivePoseOf": {
     "description": "Live flow (yoga) screen: 'POSE {index} OF {total}' progress header.",
     "placeholders": {
@@ -10936,7 +10936,7 @@
       }
     }
   },
-  "activityLiveRepsLabel": "REPS",
+  "activityLiveRepsLabel": "Reps",
   "@activityLiveRepsLabel": {
     "description": "Live strength screen: header above the reps stepper."
   },
@@ -10962,7 +10962,7 @@
   "@activityLiveRepsUnit": {
     "description": "Live strength screen: unit label under the total reps figure."
   },
-  "activityLiveRestingHeader": "RESTING",
+  "activityLiveRestingHeader": "Resting",
   "@activityLiveRestingHeader": {
     "description": "Live strength screen: header shown during the rest countdown between sets."
   },
@@ -10974,7 +10974,7 @@
   "@activityLiveResumeLabel": {
     "description": "Live session shell: accessibility label for the resume control."
   },
-  "activityLiveRoundLabel": "ROUND {n}",
+  "activityLiveRoundLabel": "Round {n}",
   "@activityLiveRoundLabel": {
     "description": "Live interval screen: 'ROUND N' header.",
     "placeholders": {
@@ -11018,7 +11018,7 @@
       }
     }
   },
-  "activityLiveSetsListHeader": "SETS",
+  "activityLiveSetsListHeader": "Sets",
   "@activityLiveSetsListHeader": {
     "description": "Live match screen: header above the list of finished sets."
   },
@@ -11050,7 +11050,7 @@
   "@activityLiveStrokeFree": {
     "description": "Live swim screen: name of freestyle stroke."
   },
-  "activityLiveThisExerciseLabel": "THIS EXERCISE",
+  "activityLiveThisExerciseLabel": "This exercise",
   "@activityLiveThisExerciseLabel": {
     "description": "Live strength screen: header above the current exercise's logged sets."
   },
@@ -11082,7 +11082,7 @@
       }
     }
   },
-  "activityLiveWeightLabel": "WEIGHT",
+  "activityLiveWeightLabel": "Weight",
   "@activityLiveWeightLabel": {
     "description": "Live strength screen: header above the weight stepper."
   },
@@ -11102,7 +11102,7 @@
   "@activityLiveWorkWord": {
     "description": "The word 'Work', used standalone for interval announcements and labels."
   },
-  "activityLiveYouLabel": "YOU",
+  "activityLiveYouLabel": "You",
   "@activityLiveYouLabel": {
     "description": "Live match screen: label above the user's own score."
   },
@@ -11503,7 +11503,7 @@
   "@settingsNotificationsNavTitle": {
     "description": "Title of the notification settings screen"
   },
-  "settingsNotificationsNavSub": "WHAT MAY INTERRUPT YOU",
+  "settingsNotificationsNavSub": "What may interrupt you",
   "@settingsNotificationsNavSub": {
     "description": "Subtitle under the notification settings screen title"
   },
@@ -11748,11 +11748,11 @@
   "@settingsEditProfileNavTitle": {
     "description": "Title of the edit-profile screen"
   },
-  "settingsNameFieldLabel": "NAME",
+  "settingsNameFieldLabel": "Name",
   "@settingsNameFieldLabel": {
     "description": "Field label for the profile name text field"
   },
-  "settingsSexFieldLabel": "SEX",
+  "settingsSexFieldLabel": "Sex",
   "@settingsSexFieldLabel": {
     "description": "Field label for the profile sex selector"
   },
@@ -11768,7 +11768,7 @@
   "@settingsSexPreferNotToSay": {
     "description": "Sex option: prefer not to say"
   },
-  "settingsAgeYearsFieldLabel": "AGE (YEARS)",
+  "settingsAgeYearsFieldLabel": "Age (years)",
   "@settingsAgeYearsFieldLabel": {
     "description": "Field label for the profile age text field"
   },
@@ -13419,7 +13419,7 @@
   "@supplementHDLCholesterold579f5": {
     "description": "Presentation-only text for existing interface, exports or notifications."
   },
-  "supplementHEALTHOBSERVATION4f314b": "HEALTH OBSERVATION",
+  "supplementHEALTHOBSERVATION4f314b": "Health observation",
   "@supplementHEALTHOBSERVATION4f314b": {
     "description": "Presentation-only text for existing interface, exports or notifications."
   },
@@ -15988,7 +15988,7 @@
   "streakHow": "Wear your band at least 4 hours a day",
   "streakStarted": "Streak started",
   "streakBest": "Longest streak",
-  "streakThisWeek": "THIS WEEK",
+  "streakThisWeek": "This week",
   "streakAllMilestones": "Every milestone reached",
   "streakToNext": "{n} more days to the next milestone",
   "@streakToNext": {"placeholders": {"n": {"type": "int"}}},

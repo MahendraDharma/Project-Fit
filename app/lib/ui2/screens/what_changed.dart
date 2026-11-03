@@ -153,7 +153,7 @@ class _WhatChangedScreenState extends State<WhatChangedScreen> {
     final l = AppLocalizations.of(c);
     return detailScaffold(
         c, l?.whatChangedTitle ?? 'What changed',
-        sub: l?.whatChangedSub ?? 'AGAINST YOUR OWN HISTORY', [
+        sub: l?.whatChangedSub ?? 'Against your own history', [
       ...dayNavRow(_day ?? d.day, d.days, _goDay),
       if (_loading) ...[
         const SizedBox(height: S.x8),

@@ -147,7 +147,7 @@ class LiveHrCard extends StatelessWidget {
                     final id = app.liveHrDeviceId;
                     final source = id == null ? null
                         : ranked.firstWhereOrNull((s) => deviceIdOf(s) == id);
-                    final label = source?.displayName(c) ?? (l?.devicesLive ?? 'LIVE');
+                    final label = source?.displayName(c) ?? (l?.devicesLive ?? 'Live');
                     return Pressable(
                 onTap: () => app.showLiveHrFrom(_nextDevice(app, ranked, id)),
                       semanticLabel:
@@ -158,7 +158,7 @@ class LiveHrCard extends StatelessWidget {
                   },
                 )
               else
-                Pill(l?.devicesLive ?? 'LIVE', C.red, icon: LucideIcons.radio),
+                Pill(l?.devicesLive ?? 'Live', C.red, icon: LucideIcons.radio),
             ],
           ),
         if (trace.length > 2) ...[

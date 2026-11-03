@@ -44,19 +44,19 @@
   "pairingFailedAdviceBody": "Обычно помогает повторный поиск с расстояния около метра.",
   "profileSetupTitle": "О вас",
   "profileSetupBody": "Четыре параметра влияют на расчёт ваших показателей. Если оставить какой-либо из них пустым, недоступными останутся только зависящие от него показатели.",
-  "profileSetupSexHeader": "ПОЛ",
+  "profileSetupSexHeader": "Пол",
   "profileSetupSexMale": "Мужской",
   "profileSetupSexFemale": "Женский",
   "profileSetupSexPreferNotToSay": "Не указывать",
   "profileSetupOtherSexNote": "Для расчёта калорий используется среднее значение двух опубликованных наборов коэффициентов. Для тренировочной нагрузки и показателя «Нагрузка» опубликованы только два набора коэффициентов, поэтому используется мужской.",
-  "profileSetupAgeLabel": "ВОЗРАСТ",
+  "profileSetupAgeLabel": "Возраст",
   "profileSetupAgeUnit": "лет",
   "profileSetupAgeConsequence": "Без него недоступны: зоны пульса, калории и фитнес-возраст.",
-  "profileSetupHeightLabel": "РОСТ",
+  "profileSetupHeightLabel": "Рост",
   "profileSetupHeightConsequence": "Без него недоступны: длина шага и расстояние по шагам.",
-  "profileSetupWeightLabel": "ВЕС",
+  "profileSetupWeightLabel": "Вес",
   "profileSetupWeightConsequence": "Без него недоступны: калории и тренировочная нагрузка.",
-  "profileSetupOptional": "НЕОБЯЗАТЕЛЬНО",
+  "profileSetupOptional": "Необязательно",
   "profileSetupPickOneToContinue": "Выберите один из вариантов выше, чтобы продолжить.",
   "alarmNavTitle": "Будильник",
   "alarmFiredAt": "Сработал в {time}",
@@ -68,8 +68,8 @@
     }
   },
   "alarmNavSub": "Будит вибрацией браслета, а не телефона",
-  "alarmArmedFor": "УСТАНОВЛЕН НА",
-  "alarmNextLabel": "СЛЕДУЮЩИЙ",
+  "alarmArmedFor": "Установлен на",
+  "alarmNextLabel": "Следующий",
   "alarmScheduleGroup": "Расписание на неделю",
   "alarmWakeTimeRowTitle": "Время пробуждения",
   "alarmNotConnectedTitle": "Браслет не подключён",
@@ -104,7 +104,7 @@
   "alarmDetailPending": "Команда дошла до браслета. Подтверждение обычно приходит в течение нескольких секунд.",
   "alarmDetailUnknown": "Это время приложение отправило последним, но браслет его не подтвердил. Для уверенности установите его снова при подключении.",
   "bandNotifNavTitle": "Уведомления на браслете",
-  "bandNotifNavSub": "КОГДА БРАСЛЕТ ВИБРИРУЕТ",
+  "bandNotifNavSub": "Когда браслет вибрирует",
   "bandNotifUnsupportedTitle": "На этом телефоне функция недоступна",
   "bandNotifUnsupportedBody": "Определять, какое приложение отправило уведомление, можно только в Android. iOS не предоставляет такой доступ ни одному приложению, включая это.",
   "bandNotifRelayGroup": "Передача уведомлений",
@@ -252,8 +252,8 @@
   "devicesPhoneCountingBody": "Телефон считает только шаги. Пульс, сон, восстановление и температура недоступны, пока не подключён браслет.",
   "devicesNothingMeasuringBody": "Браслет не подключён и шаги с телефона не поступают, поэтому приложение не будет оценивать показатели приблизительно.",
   "devicesPairABand": "Подключить браслет",
-  "devicesLive": "СЕЙЧАС",
-  "devicesQualityLadder": "КАЧЕСТВО ИСТОЧНИКОВ",
+  "devicesLive": "Сейчас",
+  "devicesQualityLadder": "Качество источников",
   "devicesNothingHereYet": "Пока ничего нет",
   "devicesExperimental": "Экспериментально",
   "devicesStreamingBeats": "Передаёт интервалы между ударами",
@@ -728,7 +728,7 @@
   },
   "monthGridToday": "Сегодня",
   "whatChangedTitle": "Что изменилось",
-  "whatChangedSub": "В СРАВНЕНИИ С ВАШЕЙ ИСТОРИЕЙ",
+  "whatChangedSub": "В сравнении с вашей историей",
   "whatChangedNoDataTitle": "За этот день пока нет данных",
   "whatChangedNoDataBody": "За этот день нет значений для сравнения с предыдущими, поэтому выделить нечего.",
   "whatChangedLearningTitle": "Обычный диапазон ещё определяется",
@@ -817,8 +817,8 @@
   "aiBriefingNoneCardBody": "Проверка выполняется на этом телефоне. Модель вызывается только при наличии наблюдения, которое можно ей передать. Сегодня таких наблюдений нет.",
   "aiBriefingEmptyCardTitle": "Нет данных для отправки",
   "aiBriefingEmptyCardBody": "На момент составления ни у одного показателя не было значения, поэтому запрос их не содержал.",
-  "napsFellAsleepHelp": "КОГДА ВЫ ЗАСНУЛИ",
-  "napsWokeUpHelp": "КОГДА ВЫ ПРОСНУЛИСЬ",
+  "napsFellAsleepHelp": "Когда вы заснули",
+  "napsWokeUpHelp": "Когда вы проснулись",
   "napsInvalidWindow": "Дневной сон длится от 5 минут до 6 часов. Более долгий сон относится к ночному, где можно просмотреть его стадии.",
   "napsOverlap": "Этот период пересекается с уже записанным дневным сном. Сначала удалите прежнюю запись, чтобы не учитывать одно время дважды.",
   "napsNotReanalysed": "Повторный анализ дня не выполнен: уже идёт другой анализ. Изменение сохранено и будет учтено в следующий раз.",
@@ -1404,7 +1404,7 @@
   "logWorkoutCouldNotDismiss": "Не удалось отклонить. Повторите попытку.",
   "logWorkoutAdjustTimes": "Изменить время",
   "logWorkoutDetectedActivityTitle": "Обнаруженная активность",
-  "logWorkoutYoursToConfirmSub": "ПОДТВЕРДИТЕ САМИ",
+  "logWorkoutYoursToConfirmSub": "Подтвердите сами",
   "logWorkoutReadFailedTitle": "Не удалось прочитать обнаруженную активность",
   "logWorkoutReadFailedBody": "Хранилище не ответило. Ничего не записано и не отклонено.",
   "logWorkoutTryAgain": "Повторить",
@@ -1429,8 +1429,8 @@
   "logWorkoutToday": "Сегодня",
   "logWorkoutYesterday": "Вчера",
   "logWorkoutDefaultTitle": "Записать прошедшую тренировку",
-  "logWorkoutWindowRescoredSub": "ПЕРЕСЧЁТ ЗА ПЕРИОД",
-  "logWorkoutYourOwnTimesSub": "ВРЕМЯ, УКАЗАННОЕ ВАМИ",
+  "logWorkoutWindowRescoredSub": "Пересчёт за период",
+  "logWorkoutYourOwnTimesSub": "Время, указанное вами",
   "logWorkoutWhenGroup": "Когда",
   "logWorkoutActivityLabel": "Активность",
   "logWorkoutDateLabel": "Дата",
@@ -1510,7 +1510,7 @@
   },
   "logFoodPillOpenFoodFacts": "Open Food Facts",
   "logFoodPillYours": "Ваши данные",
-  "logFoodBareOccasion": "ЗАПИСАНО · КАЛОРИИ НЕ УКАЗАНЫ",
+  "logFoodBareOccasion": "Записано · калории не указаны",
   "logFoodOpensInBrowser": "{label}, открывается в браузере",
   "@logFoodOpensInBrowser": {
     "placeholders": {
@@ -1569,7 +1569,7 @@
     }
   },
   "dayTimelineTitle": "Ваш день подробно",
-  "dayTimelineSub": "ОТ ПОЛУНОЧИ ДО ПОЛУНОЧИ",
+  "dayTimelineSub": "От полуночи до полуночи",
   "dayTimelineHeartRateTitle": "Пульс",
   "dayTimelineMidnight": "Полночь",
   "dayTimelineNoon": "Полдень",
@@ -1723,9 +1723,9 @@
   "nutritionLabelFat": "Жиры",
   "nutritionLabelFibre": "Клетчатка",
   "nutritionEnergyBalance": "Баланс калорий",
-  "nutritionLabelEaten": "СЪЕДЕНО",
-  "nutritionLabelBurned": "ПОТРАЧЕНО",
-  "nutritionLabelBalance": "БАЛАНС",
+  "nutritionLabelEaten": "Съедено",
+  "nutritionLabelBurned": "Потрачено",
+  "nutritionLabelBalance": "Баланс",
   "nutritionEatenMeanNote": "Съедено — среднее за {days} полных дней. Израсходовано — только за сегодня.",
   "@nutritionEatenMeanNote": {
     "placeholders": {
@@ -1758,7 +1758,7 @@
   "nutritionBodySpentToday": "Расход энергии за сегодня",
   "nutritionEstimatedExpenditure": "Оценка расхода энергии",
   "nutritionNotMeasured": "Не измерено",
-  "nutritionExpenditureSub": "СЕГОДНЯ, ПО ПУЛЬСУ И ВАШЕМУ ПРОФИЛЮ",
+  "nutritionExpenditureSub": "Сегодня, по пульсу и вашему профилю",
   "nutritionRemoveTitle": "Удалить {label}?",
   "@nutritionRemoveTitle": {
     "placeholders": {
@@ -1837,8 +1837,8 @@
       }
     }
   },
-  "nutritionLoggedToday": "ЗАПИСАНО СЕГОДНЯ",
-  "nutritionEatenToday": "СЪЕДЕНО СЕГОДНЯ",
+  "nutritionLoggedToday": "Записано сегодня",
+  "nutritionEatenToday": "Съедено сегодня",
   "nutritionAtLeast": "Не менее",
   "nutritionOccasionsUnit": "{n, plural, one{приём пищи} few{приёма пищи} many{приёмов пищи} other{приёма пищи}}",
   "@nutritionOccasionsUnit": {
@@ -1856,7 +1856,7 @@
       }
     }
   },
-  "nutritionLabelBalanceAtLeast": "БАЛАНС НЕ МЕНЕЕ",
+  "nutritionLabelBalanceAtLeast": "Баланс не менее",
   "nutritionNotLogged": "Не записано",
   "nutritionLoggedNoEnergy": "Записей: {n} · энергетическая ценность не указана",
   "@nutritionLoggedNoEnergy": {
@@ -1873,7 +1873,7 @@
   "nutritionMealSnacks": "Перекусы",
   "nutritionNotCounted": "Не подсчитано",
   "nutritionNotRecorded": "Не записано",
-  "nutritionEveryDayNoFigure": "В КАЖДОМ ПОЛНОМ ДНЕ ЕСТЬ ПРИЁМ ПИЩИ БЕЗ ЗНАЧЕНИЯ «{label}»",
+  "nutritionEveryDayNoFigure": "В каждом полном дне есть приём пищи без значения «{label}»",
   "@nutritionEveryDayNoFigure": {
     "placeholders": {
       "label": {
@@ -1881,7 +1881,7 @@
       }
     }
   },
-  "nutritionNoDayRecorded": "НЕТ ПОЛНЫХ ДНЕЙ СО ЗНАЧЕНИЕМ «{label}»",
+  "nutritionNoDayRecorded": "Нет полных дней со значением «{label}»",
   "@nutritionNoDayRecorded": {
     "placeholders": {
       "label": {
@@ -1897,7 +1897,7 @@
       }
     }
   },
-  "nutritionLeftOutAsFloor": " · {n} ИСКЛЮЧЕНО КАК НИЖНЯЯ ГРАНИЦА",
+  "nutritionLeftOutAsFloor": " · {n} исключено как нижняя граница",
   "@nutritionLeftOutAsFloor": {
     "placeholders": {
       "n": {
@@ -1973,7 +1973,7 @@
   "coachNotSetUp": "Не настроено",
   "coachNotSetUpBody": "Выберите модель на своём компьютере или любого совместимого с OpenAI провайдера со своим ключом. Данные в любом случае не проходят через ProjectFit.",
   "coachNotSetUpTitle": "Тренер не настроен",
-  "coachPastChats": "ПРОШЛЫЕ ЧАТЫ",
+  "coachPastChats": "Прошлые чаты",
   "coachPickModelFirst": "Сначала выберите или укажите модель.",
   "coachSafeWarning": "Ничего не записывается до нажатия ниже.",
   "coachSaveIt": "Сохранить",
@@ -1998,8 +1998,8 @@
   "coachTryAsking": "Примеры вопросов",
   "coachUntitledChat": "Чат без названия",
   "coachWhereModelRuns": "Где работает модель",
-  "coachYourDataYourModel": "ВАШИ ДАННЫЕ, ВАША МОДЕЛЬ",
-  "investigateNerdStatsLabel": "ПОДРОБНАЯ СТАТИСТИКА",
+  "coachYourDataYourModel": "Ваши данные, ваша модель",
+  "investigateNerdStatsLabel": "Подробная статистика",
   "investigateProvenanceLabel": "Происхождение данных",
   "investigateDayLabel": "День",
   "investigateCoverageLabel": "Покрытие",
@@ -2124,7 +2124,7 @@
       }
     }
   },
-  "investigateAcrossNOwnNights": "ПО {n} ВАШИМ НОЧАМ",
+  "investigateAcrossNOwnNights": "По {n} вашим ночам",
   "@investigateAcrossNOwnNights": {
     "placeholders": {
       "n": {
@@ -2181,7 +2181,7 @@
   "investigateUnitless": "без единицы",
   "investigateStorage": "Хранилище",
   "investigateOneValuePerDerivedDay": "одно значение на рассчитанный день",
-  "investigateMethodLabel": "МЕТОД",
+  "investigateMethodLabel": "Метод",
   "investigateNotDocumented": "Не описан.",
   "calmBreathingResonanceLabel": "Резонанс",
   "calmBreathingResonanceDescription": "Ровные вдохи и выдохи, около {rate} дыханий в минуту. В этом режиме оценивается согласованность.",
@@ -2238,7 +2238,7 @@
       }
     }
   },
-  "calmBreathingPaceOfRate": "ТЕМП {block} ИЗ {total} · {rate} ДЫХАНИЙ В МИНУТУ",
+  "calmBreathingPaceOfRate": "Темп {block} из {total} · {rate} дыханий в минуту",
   "@calmBreathingPaceOfRate": {
     "placeholders": {
       "block": {
@@ -2263,7 +2263,7 @@
   "calmBreathingNoScoreForSession": "Нет оценки согласованности за эту сессию",
   "calmBreathingScoringNeedsBand": "Для оценки нужны интервалы с браслета. Он не подключён: темп задаётся, но сеанс не сохраняется.",
   "calmBreathingBeforeLabel": "ДО",
-  "calmBreathingAfterLabel": "ПОСЛЕ",
+  "calmBreathingAfterLabel": "После",
   "calmBreathingSitStill": "Немного посидите неподвижно.",
   "calmBreathingStaySitting": "Оставайтесь сидеть.",
   "calmBreathingNothingPacingScored": "Дышите как обычно. Темп не задаётся, оценка не выполняется.",
@@ -2278,9 +2278,9 @@
   "calmBreathingTooFewBeatTimings": "За сеанс слишком мало чистых интервалов для оценки.",
   "calmBreathingThatIsDone": "Готово.",
   "calmBreathingCardiacCoherence": "Согласованность сердечного ритма",
-  "calmBreathingHowStronglyFollowedPace": "НАСКОЛЬКО СИЛЬНО ПУЛЬС СЛЕДОВАЛ ТЕМПУ ДЫХАНИЯ",
+  "calmBreathingHowStronglyFollowedPace": "Насколько сильно пульс следовал темпу дыхания",
   "calmBreathingStoppedThere": "Остановлено.",
-  "calmBreathingHowStronglyEachPace": "НАСКОЛЬКО СИЛЬНО ПУЛЬС СЛЕДОВАЛ КАЖДОМУ ТЕМПУ",
+  "calmBreathingHowStronglyEachPace": "Насколько сильно пульс следовал каждому темпу",
   "calmBreathingBreathsAMinute": "{rate} дыханий в минуту",
   "@calmBreathingBreathsAMinute": {
     "placeholders": {
@@ -2596,8 +2596,8 @@
   "cycleNoPeriodTitle": "Менструация пока не записана",
   "cycleNoPeriodBody": "Подсчёт по записанным вами дням.",
   "cycleLogPeriodButton": "Записать начало менструации сегодня",
-  "cycleLogKindStart": "НАЧАЛО",
-  "cycleLogKindEnd": "КОНЕЦ",
+  "cycleLogKindStart": "Начало",
+  "cycleLogKindEnd": "Конец",
   "cycleAcrossCyclesTitle": "По вашим циклам",
   "cycleUnitCompleteCycle": "полный цикл",
   "cycleUnitCompleteCycles": "полных циклов",
@@ -2607,7 +2607,7 @@
   "cycleReproOptionalHint": "Необязательно. Пока вы не выберете, приложение не показывает фазу.",
   "cycleReproPrivateHint": "Только вы и этот телефон. Никогда не экспортируется.",
   "cycleTurnOffTracking": "Выключить отслеживание цикла",
-  "cycleDayInThisCycle": "ДЕНЬ ЦИКЛА",
+  "cycleDayInThisCycle": "День цикла",
   "cycleCountedFromLastStart": "от последнего записанного начала",
   "cycleOfAboutDays": "из примерно {days}",
   "@cycleOfAboutDays": {
@@ -2621,8 +2621,8 @@
   "cyclePhaseFollicular": "Фолликулярная",
   "cyclePhaseOvulation": "Период овуляции",
   "cyclePhaseLuteal": "Лютеиновая",
-  "cycleNextPeriodBetween": "СЛЕДУЮЩАЯ МЕНСТРУАЦИЯ ОЖИДАЕТСЯ МЕЖДУ",
-  "cycleNextPeriodAround": "СЛЕДУЮЩАЯ МЕНСТРУАЦИЯ ОЖИДАЕТСЯ ОКОЛО",
+  "cycleNextPeriodBetween": "Следующая менструация ожидается между",
+  "cycleNextPeriodAround": "Следующая менструация ожидается около",
   "cycleFromOneMeasuredGap": "по единственному измеренному промежутку: он не показывает изменчивость вашего цикла",
   "cyclePastEndOfIt": "после конца диапазона прошло {days} дн. · ",
   "@cyclePastEndOfIt": {
@@ -2702,7 +2702,7 @@
   "cycleHowLongCyclesBeen": "Длительность ваших циклов",
   "cycleRestingHeartRate": "Пульс в покое",
   "cycleUnitBpm": "уд/мин",
-  "cycleHrvRmssdTitle": "ВСР",
+  "cycleHrvRmssdTitle": "Вср",
   "cycleUnitMs": "мс",
   "cycleNotEnoughDescribeDayTitle": "Пока недостаточно циклов для описания дня",
   "cycleNotEnoughDescribeDayBody": "Каждая точка — центральное значение одного и того же дня как минимум двух ваших циклов. Пока ни для одной точки нет двух циклов.",
@@ -2745,7 +2745,7 @@
       }
     }
   },
-  "cycleNightOfLabel": "НОЧЬ НА {date}",
+  "cycleNightOfLabel": "Ночь на {date}",
   "@cycleNightOfLabel": {
     "placeholders": {
       "date": {
@@ -2754,7 +2754,7 @@
     }
   },
   "cycleComparisonNotCorrection": "Это сравнение, а не поправка. Оценка восстановления от него не меняется, и это не указание для тренировок.",
-  "cycleCompareHrvLabel": "ВСР",
+  "cycleCompareHrvLabel": "Вср",
   "cycleCompareLine": "{label}: {z1} относительно последних 3 недель, {z2} относительно дня {cycleDay} в последних {n} циклах.",
   "@cycleCompareLine": {
     "placeholders": {
@@ -2860,7 +2860,7 @@
   "healthWhatLabResults": "результаты анализов",
   "healthMeasuresUnit": "измерения",
   "healthRowRestingHr": "Пульс в покое",
-  "healthRowHrv": "ВСР",
+  "healthRowHrv": "Вср",
   "healthRowSleep": "Сон",
   "healthRowStress": "Стресс",
   "healthRowRespRate": "Частота дыхания",
@@ -2967,9 +2967,9 @@
   },
   "healthBodyClockTitle": "Биологические часы",
   "healthChronotypeJetlagRegularity": "Естественное время сна, сдвиг в выходные и постоянство режима",
-  "healthChronotypeLabel": "ЕСТЕСТВЕННОЕ ВРЕМЯ СНА",
-  "healthSocialJetlagLabel": "СДВИГ В ВЫХОДНЫЕ",
-  "healthRegularityLabel": "ПОСТОЯНСТВО",
+  "healthChronotypeLabel": "Естественное время сна",
+  "healthSocialJetlagLabel": "Сдвиг в выходные",
+  "healthRegularityLabel": "Постоянство",
   "healthConsistencyTitle": "Постоянство",
   "healthDaysWithRecord": "Дни с оценкой за последние 30 дней",
   "healthToday": "Сегодня",
@@ -3256,7 +3256,7 @@
   "homeReadinessSteady": "Стабильно",
   "homeReadinessTakeItEasy": "Снизьте темп",
   "homeReadinessRestToday": "Сегодня отдохните",
-  "homeDriverHrv": "ВСР",
+  "homeDriverHrv": "Вср",
   "homeDriverRhr": "Пульс в покое",
   "homeDriverResp": "Частота дыхания",
   "homeDriverTemp": "Температура кожи",
@@ -3435,7 +3435,7 @@
   "homeNoRestingHrWhy": "Пульс в покое определяется во сне, но сон не записан.",
   "homeSteps": "Шаги",
   "homeStepsNone": "Нет",
-  "homeStepsNotRecorded": "НЕ ЗАПИСАНО",
+  "homeStepsNotRecorded": "Не записано",
   "homeStepsPercentGoal": "{pct}% цели",
   "@homeStepsPercentGoal": {
     "placeholders": {
@@ -3520,7 +3520,7 @@
   "wellnessTabHabits": "Привычки",
   "wellnessTabMedication": "Лекарства",
   "wellnessTabCycle": "Цикл",
-  "wellnessStartASitting": "НАЧАТЬ ПРАКТИКУ",
+  "wellnessStartASitting": "Начать практику",
   "wellnessExercisesNoun": "упражнения",
   "wellnessPickOneAndGo": "Выберите и начните",
   "wellnessLastMinutes": "Последний: {count} мин",
@@ -3671,7 +3671,7 @@
   "wellnessSun": "Вс",
   "wellnessWhenYouTakeIt": "Время приёма",
   "wellnessChangeTheTime": "Изменить время",
-  "wellnessWhichDays": "В КАКИЕ ДНИ",
+  "wellnessWhichDays": "В какие дни",
   "wellnessPickAtLeastOneDay": "Выберите хотя бы один день.",
   "wellnessDueDays": "Запланировано: {days}.",
   "@wellnessDueDays": {
@@ -3861,10 +3861,10 @@
   "sleepDetailOvernightSection": "Ночные сигналы",
   "sleepDetailTonightSection": "Этой ночью",
   "sleepDetailTotalSleep": "Общий сон",
-  "sleepDetailInBed": "В ПОСТЕЛИ",
-  "sleepDetailWatched": "НАБЛЮДАЛОСЬ",
-  "sleepDetailAsleepOfThat": "ИЗ НИХ ВО СНЕ",
-  "sleepDetailAsleep": "СОН",
+  "sleepDetailInBed": "В постели",
+  "sleepDetailWatched": "Наблюдалось",
+  "sleepDetailAsleepOfThat": "Из них во сне",
+  "sleepDetailAsleep": "Сон",
   "sleepDetailWatchedExplain": "Наблюдалось {watched} из {inBed} в постели; остальное не измерено. Длительность сна и доли стадий ниже рассчитаны только по наблюдавшемуся времени.",
   "@sleepDetailWatchedExplain": {
     "placeholders": {
@@ -3901,8 +3901,8 @@
   "sleepDetailIWasAsleep": "Я спал(а)",
   "sleepDetailReanalysing": "Повторный анализ ночи…",
   "sleepDetailCorrectionFailedTitle": "Исправление не применено",
-  "sleepDetailBedTimeHelp": "КОГДА ВЫ ЛЕГЛИ В ПОСТЕЛЬ",
-  "sleepDetailWakeTimeHelp": "КОГДА ВЫ ВСТАЛИ",
+  "sleepDetailBedTimeHelp": "Когда вы легли в постель",
+  "sleepDetailWakeTimeHelp": "Когда вы встали",
   "sleepDetailReanalyseFailed": "Ночь не пересчитана: шёл другой пересчёт или произошла ошибка. Время сохранено: откройте «Ваши данные» и запустите повторный анализ.",
   "sleepDetailNoHypnogramTitle": "За эту ночь гипнограммы нет",
   "sleepDetailNoHypnogramBody": "Для определения стадий нужны движение и межударные интервалы. Одного из источников не было.",
@@ -3967,7 +3967,7 @@
     }
   },
   "sleepDetailHeartRate": "Пульс",
-  "sleepDetailHrv": "ВСР",
+  "sleepDetailHrv": "Вср",
   "sleepDetailBreathing": "Дыхание",
   "sleepDetailTemp": "Температура",
   "sleepDetailNotMeasuredCap": "Не измерено",
@@ -4056,9 +4056,9 @@
     }
   },
   "sleepDetailNothingStoodOut": "Отклонений не обнаружено.",
-  "sleepDetailSleepingHr": "ПУЛЬС ВО СНЕ",
-  "sleepDetailLowest": "МИНИМУМ",
-  "sleepDetailBreathingCaps": "ДЫХАНИЕ",
+  "sleepDetailSleepingHr": "Пульс во сне",
+  "sleepDetailLowest": "Минимум",
+  "sleepDetailBreathingCaps": "Дыхание",
   "sleepDetailSkinTemp": "Температура кожи",
   "sleepDetailSleepNeedNotEstablished": "Потребность во сне не определена",
   "sleepDetailYourNeedIs": "Ваша потребность — {need}",
@@ -4128,7 +4128,7 @@
   "workoutTabActivities": "Активности",
   "workoutTabHistory": "История",
   "workoutScreenTitle": "Тренировка",
-  "workoutStartSessionLabel": "НАЧАТЬ ТРЕНИРОВКУ",
+  "workoutStartSessionLabel": "Начать тренировку",
   "workoutActivitiesNoun": "активности",
   "workoutThisWeek": "Эта неделя",
   "workoutTrainingLoad": "Тренировочная нагрузка",
@@ -4185,7 +4185,7 @@
       }
     }
   },
-  "workoutQuickStartHeader": "БЫСТРЫЙ СТАРТ",
+  "workoutQuickStartHeader": "Быстрый старт",
   "workoutCalorieNeedWeightTitle": "Для оценки калорий нужен ваш вес",
   "workoutAddWeightFix": "Укажите вес в профиле",
   "workoutCalorieEstimatesTitle": "Калории — оценочные значения",
@@ -4298,7 +4298,7 @@
   },
   "workoutUnchangedLabel": "Без изменений",
   "workoutRestingHeartRateLabel": "Пульс в покое",
-  "workoutHrvLabel": "ВСР",
+  "workoutHrvLabel": "Вср",
   "workoutMorningCount": "{n, plural, one{{n} утро} few{{n} утра} many{{n} утр} other{{n} утра}}",
   "@workoutMorningCount": {
     "placeholders": {
@@ -4421,8 +4421,8 @@
   },
   "activityPickerNoMatchTitle": "Подходящей активности нет",
   "activityPickerNoMatchBody": "В каталоге около семидесяти активностей с опубликованными энергозатратами. Выберите ближайшую.",
-  "activityPickerQuickStart": "БЫСТРЫЙ СТАРТ",
-  "activityPickerRecent": "НЕДАВНИЕ",
+  "activityPickerQuickStart": "Быстрый старт",
+  "activityPickerRecent": "Недавние",
   "activityPickerCalorieEstimatesTitle": "Калории — оценочные значения",
   "activityPickerMetValue": "{met}× от покоя",
   "@activityPickerMetValue": {
@@ -4440,7 +4440,7 @@
       }
     }
   },
-  "dayStrainToday": "СЕГОДНЯ",
+  "dayStrainToday": "Сегодня",
   "dayStrainTitle": "Нагрузка за день",
   "dayStrainNoTraceTitle": "Нет графика нагрузки за этот день",
   "dayStrainNoMinuteTraceTitle": "Нет поминутного графика за этот день",
@@ -4512,7 +4512,7 @@
   "activityZonesNoCeilingTanakaTail": " Пока максимум не измерен, зоны ниже определяются по возрасту.",
   "activityZonesNoCeilingDefaultBody": "Учитывается только высокий пульс, сохранявшийся 15 секунд во время движения. Односекундный скачок не считается пульсом.",
   "activityZonesWearBandFix": "Носите браслет на обычных интенсивных тренировках",
-  "activityZonesHighestSeenLabel": "НАИБОЛЬШИЙ ИЗМЕРЕННЫЙ",
+  "activityZonesHighestSeenLabel": "Наибольший измеренный",
   "activityZonesBpmUnit": "уд/мин",
   "activityZonesCeilingOnDate": "за {date}",
   "@activityZonesCeilingOnDate": {
@@ -4607,12 +4607,12 @@
   },
   "activityShareTitle": "Поделиться",
   "activityShareOpenFailed": "Не удалось открыть меню отправки.",
-  "activitySharePhotoHeader": "ВАШЕ ФОТО",
+  "activitySharePhotoHeader": "Ваше фото",
   "activityShareAddPhoto": "Добавить фото",
   "activityShareChangePhoto": "Изменить фото",
   "activitySharePhotoHint": "С этого телефона. Ничего не загружается",
   "activityShareRemovePhoto": "Удалить фото",
-  "activityShareBasemapHeader": "КАРТА",
+  "activityShareBasemapHeader": "Карта",
   "activityShareDrawMap": "Показать настоящую карту",
   "activityShareMapHint": "Запрашивает участки карты маршрута у openstreetmap.org. При отключении показан только маршрут",
   "activityShareFetchingMapTitle": "Загрузка карты",
@@ -4623,7 +4623,7 @@
   "activityShareStatusPrivateBody": "Скрыта из сводок и экспорта.",
   "activityPosterFormatPost": "Публикация",
   "activityPosterFormatStory": "История",
-  "activitySummaryRpeHeadline": "НАСКОЛЬКО ТЯЖЕЛО БЫЛО?",
+  "activitySummaryRpeHeadline": "Насколько тяжело было?",
   "activitySummaryRpeBody": "Ваша собственная оценка усилия. Это ощущение, а не измерение: оно может отличаться от показателей выше.",
   "activitySummaryRateEffort": "Оценить усилие: {n} из 10",
   "@activitySummaryRateEffort": {
@@ -4866,15 +4866,15 @@
   "activitySummaryNoSplitsTitle": "Нет отрезков этой тренировки",
   "activitySummaryNoSplitsBody": "Для отрезков нужно записанное расстояние.",
   "activitySummaryKm": "КМ",
-  "activitySummaryPace": "ТЕМП",
+  "activitySummaryPace": "Темп",
   "activitySummaryHr": "ПУЛЬС",
   "activitySummarySetsLoggedZero": "Записанных подходов: 0.",
   "activitySummaryRoundHeader": "Р",
-  "activitySummaryWorkHeader": "РАБОТА",
-  "activitySummaryRestHeader": "ОТДЫХ",
-  "activitySummaryAvgBpm": "СРЕДНИЙ ПУЛЬС",
-  "activitySummaryLapHeader": "КРУГ",
-  "activitySummaryTimeHeader": "ВРЕМЯ",
+  "activitySummaryWorkHeader": "Работа",
+  "activitySummaryRestHeader": "Отдых",
+  "activitySummaryAvgBpm": "Средний пульс",
+  "activitySummaryLapHeader": "Круг",
+  "activitySummaryTimeHeader": "Время",
   "activitySummarySpeedVsFastest": "СКОРОСТЬ ОТНОСИТЕЛЬНО ЛУЧШЕЙ",
   "activitySummaryBodyweightReps": "{n, plural, one{{n} повтор} few{{n} повтора} many{{n} повторов} other{{n} повтора}} · собственный вес",
   "@activitySummaryBodyweightReps": {
@@ -4968,10 +4968,10 @@
     }
   },
   "activityLiveDeniedForeverBody": "Геолокация запрещена для приложения. Изменить это можно только в настройках.",
-  "activityLiveDurationHeader": "ДЛИТЕЛЬНОСТЬ",
-  "activityLiveEffortRpeHeader": "УСИЛИЕ (RPE)",
+  "activityLiveDurationHeader": "Длительность",
+  "activityLiveEffortRpeHeader": "Усилие (RPE)",
   "activityLiveEndSet": "Завершить сет",
-  "activityLiveExerciseOf": "УПРАЖНЕНИЕ {index} ИЗ {total}",
+  "activityLiveExerciseOf": "Упражнение {index} из {total}",
   "@activityLiveExerciseOf": {
     "placeholders": {
       "index": {
@@ -4999,7 +4999,7 @@
       }
     }
   },
-  "activityLiveIntervalSubtitle": "{workSec} С РАБОТА · {restSec} С ОТДЫХ",
+  "activityLiveIntervalSubtitle": "{workSec} с работа · {restSec} с отдых",
   "@activityLiveIntervalSubtitle": {
     "placeholders": {
       "workSec": {
@@ -5012,7 +5012,7 @@
   },
   "activityLiveKcalEstUnit": "ккал · оценка",
   "activityLiveKgVolumeUnit": "кг объёма",
-  "activityLiveLapButtonLabel": "КРУГ",
+  "activityLiveLapButtonLabel": "Круг",
   "activityLiveLapsChartTitle": "Круги",
   "activityLiveLapsCount": "{count, plural, one{{count} круг} few{{count} круга} many{{count} кругов} other{{count} круга}} · {stroke}",
   "@activityLiveLapsCount": {
@@ -5034,7 +5034,7 @@
     }
   },
   "activityLiveLogAsBodyweight": "Записать с собственным весом",
-  "activityLiveMatchSetSubtitle": "СЕТ {n}",
+  "activityLiveMatchSetSubtitle": "Сет {n}",
   "@activityLiveMatchSetSubtitle": {
     "placeholders": {
       "n": {
@@ -5052,7 +5052,7 @@
   },
   "activityLiveMinimiseLabel": "Свернуть",
   "activityLiveNextExercise": "Следующее упражнение",
-  "activityLiveNextLabel": "ДАЛЕЕ",
+  "activityLiveNextLabel": "Далее",
   "activityLiveNextPose": "Следующая поза",
   "activityLiveNextRest": "Отдых · {time}",
   "@activityLiveNextRest": {
@@ -5082,7 +5082,7 @@
   "activityLiveNoRouteOffTitle": "Нет маршрута: геолокация выключена",
   "activityLiveOneLapFewer": "Убрать один круг",
   "activityLiveOpenSettings": "Открыть настройки",
-  "activityLiveOpponentLabel": "СОПЕРНИК",
+  "activityLiveOpponentLabel": "Соперник",
   "activityLivePauseLabel": "Пауза",
   "activityLivePerLapUnit": "на круг",
   "activityLivePointLabel": "Очко: {side}",
@@ -5093,7 +5093,7 @@
       }
     }
   },
-  "activityLivePoolSubtitle": "БАССЕЙН {len} М · {stroke}",
+  "activityLivePoolSubtitle": "Бассейн {len} м · {stroke}",
   "@activityLivePoolSubtitle": {
     "placeholders": {
       "len": {
@@ -5109,7 +5109,7 @@
   "activityLivePoseChildsPose": "Поза ребёнка",
   "activityLivePoseForwardFold": "Наклон вперёд",
   "activityLivePoseMountain": "Гора",
-  "activityLivePoseOf": "ПОЗА {index} ИЗ {total}",
+  "activityLivePoseOf": "Поза {index} из {total}",
   "@activityLivePoseOf": {
     "placeholders": {
       "index": {
@@ -5137,7 +5137,7 @@
       }
     }
   },
-  "activityLiveRepsLabel": "ПОВТОРЫ",
+  "activityLiveRepsLabel": "Повторы",
   "activityLiveRepsLoggedBodyweight": "{n, plural, one{Записан {n} повтор} few{Записано {n} повтора} many{Записано {n} повторов} other{Записано {n} повтора}}",
   "@activityLiveRepsLoggedBodyweight": {
     "placeholders": {
@@ -5155,10 +5155,10 @@
     }
   },
   "activityLiveRepsUnit": "повторов",
-  "activityLiveRestingHeader": "ОТДЫХ",
+  "activityLiveRestingHeader": "Отдых",
   "activityLiveRestWord": "Отдых",
   "activityLiveResumeLabel": "Продолжить",
-  "activityLiveRoundLabel": "РАУНД {n}",
+  "activityLiveRoundLabel": "Раунд {n}",
   "@activityLiveRoundLabel": {
     "placeholders": {
       "n": {
@@ -5192,7 +5192,7 @@
       }
     }
   },
-  "activityLiveSetsListHeader": "ПОДХОДЫ",
+  "activityLiveSetsListHeader": "Подходы",
   "activityLiveSetsUnit": "подходов",
   "activityLiveStepsUnit": "шагов",
   "activityLiveStrainUnit": "нагрузка",
@@ -5200,7 +5200,7 @@
   "activityLiveStrokeBreast": "Брасс",
   "activityLiveStrokeFly": "Баттерфляй",
   "activityLiveStrokeFree": "Вольный стиль",
-  "activityLiveThisExerciseLabel": "ЭТО УПРАЖНЕНИЕ",
+  "activityLiveThisExerciseLabel": "Это упражнение",
   "activityLiveTimeInZonesTitle": "Время в зонах",
   "activityLiveTimeUnit": "время",
   "activityLiveTryAgain": "Повторить",
@@ -5216,7 +5216,7 @@
       }
     }
   },
-  "activityLiveWeightLabel": "ВЕС",
+  "activityLiveWeightLabel": "Вес",
   "activityLiveWeightRepsLogged": "Записано {kg} кг × {n}",
   "@activityLiveWeightRepsLogged": {
     "placeholders": {
@@ -5380,7 +5380,7 @@
   "settingsDeveloperModeRowTitle": "Режим разработчика",
   "settingsResetAllDataRowTitle": "Сбросить все данные",
   "settingsNotificationsNavTitle": "Уведомления",
-  "settingsNotificationsNavSub": "ЧТО МОЖЕТ ВАС ПОБЕСПОКОИТЬ",
+  "settingsNotificationsNavSub": "Что может вас побеспокоить",
   "settingsNotificationsOffSystemTitle": "Уведомления выключены в системе",
   "settingsNotificationsOffSystemBody": "Уведомления ниже не поступят, пока вы не разрешите их в системе.",
   "settingsTurnThemOn": "Включить",
@@ -5478,12 +5478,12 @@
   },
   "settingsAgeFieldLabel": "Возраст",
   "settingsEditProfileNavTitle": "Изменить профиль",
-  "settingsNameFieldLabel": "ИМЯ",
-  "settingsSexFieldLabel": "ПОЛ",
+  "settingsNameFieldLabel": "Имя",
+  "settingsSexFieldLabel": "Пол",
   "settingsSexMale": "Мужской",
   "settingsSexFemale": "Женский",
   "settingsSexPreferNotToSay": "Не указывать",
-  "settingsAgeYearsFieldLabel": "ВОЗРАСТ (ЛЕТ)",
+  "settingsAgeYearsFieldLabel": "Возраст (лет)",
   "settingsFourFieldsTitle": "Эти четыре поля влияют на показатели",
   "settingsFourFieldsBody": "Используются для зон пульса, оценки калорий и тренировочной нагрузки. Если очистить поле, недоступными останутся только показатели, которым оно нужно.",
   "settingsImportBlockAppleHealth": "Рост, вес, дата рождения и пол из {store}. Рост и вес обновляются каждый раз; возраст и пол заполняются, только если поле пустое.",
@@ -5628,7 +5628,7 @@
   },
   "devicesOrderNotSaved": "Не удалось сохранить порядок. Ничего не изменено.",
   "devicesRequestNotSaved": "Не удалось сохранить запрос. Попробуйте снова.",
-  "ecgTitle": "ЭКГ",
+  "ecgTitle": "Экг",
   "ecgHeartScreener": "Проверка ритма сердца",
   "ecgEntryMeta": "WHOOP MG · результат браслета",
   "ecgOpen": "Открыть",
@@ -6348,7 +6348,7 @@
   "supplementGoal9fe00a": "Цель",
   "supplementGood61dedc": "Хорошая",
   "supplementHDLCholesterold579f5": "Холестерин ЛПВП",
-  "supplementHEALTHOBSERVATION4f314b": "НАБЛЮДЕНИЕ ЗА ЗДОРОВЬЕМ",
+  "supplementHEALTHOBSERVATION4f314b": "Наблюдение за здоровьем",
   "supplementHRRecovery1b0d16": "Восстановление пульса",
   "supplementHRVStabilitydfdddc": "Стабильность ВСР",
   "supplementHaematocrit2a11fb": "Гематокрит",
@@ -6819,7 +6819,7 @@
   "wearableRowCircadian": "Пик биологических часов",
   "wearableRowEfficiency": "Эффективность сна",
   "wearableRowHrr": "Восстановление пульса",
-  "wearableRowHrv": "ВСР",
+  "wearableRowHrv": "Вср",
   "wearableRowIrregularRhythm": "Нерегулярный ритм",
   "wearableRowMovement": "Движение",
   "wearableRowNadir": "Минимальный ночной пульс",
@@ -7519,7 +7519,7 @@
   "alarmSleepGoalRowTitle": "Будить по цели сна",
   "alarmSleepGoalRowSub": "Разбудить раньше, когда отдых за эту ночь достигнет вашей потребности во сне, а не на лёгкой фазе. Нужна изученная потребность во сне.",
   "monthlyReportTitle": "Ваш месяц",
-  "monthlyReportSub": "ПОСЛЕДНИЕ 30 ДНЕЙ ПРОТИВ 30 ДНЕЙ ДО НИХ",
+  "monthlyReportSub": "Последние 30 дней против 30 дней до них",
   "monthlyReportLinkSub": "Что изменилось, а что было лишь обычными колебаниями",
   "monthlyReportFootnote": "Изменение называется, только если оно больше 0,2 вашего обычного разброса от дня ко дню в предыдущем месяце (Хопкинс). Меньшие различия — обычные колебания и считаются стабильными.",
   "monthlyReportNotEnough": "Пока недостаточно дней",
@@ -7563,7 +7563,7 @@
   "homeMonitorResp": "Дых.",
   "homeMonitorSpo2": "SpO₂",
   "homeMonitorRhr": "ЧСС пок.",
-  "homeMonitorHrv": "ВСР",
+  "homeMonitorHrv": "Вср",
   "homeMonitorTemp": "Темп.",
   "homeMonitorGreen": "Ночные показатели без отклонений.",
   "homeMonitorAmber": "В ночных показателях что-то не так. См. «Здоровье».",
@@ -7706,7 +7706,7 @@
   "streakHow": "Носите браслет хотя бы 4 часа в день",
   "streakStarted": "Серия началась",
   "streakBest": "Самая длинная серия",
-  "streakThisWeek": "ЭТА НЕДЕЛЯ",
+  "streakThisWeek": "Эта неделя",
   "streakAllMilestones": "Все рубежи пройдены",
   "streakToNext": "Ещё {n} дн. до следующего рубежа",
   "@streakToNext": {"placeholders": {"n": {"type": "int"}}},
@@ -7891,7 +7891,7 @@
   "snapshotHistory": "Прежние снимки",
   "snapshotFootnote": "Стресс по той же шкале, что и на карточке «Стресс»: спокойствие как ночью — это 0. Без кислорода в крови: для него у браслета есть только ночной эксперимент.",
   "snapshotHr": "Пульс",
-  "snapshotHrv": "ВСР",
+  "snapshotHrv": "Вср",
   "snapshotResp": "Дыхание",
   "snapshotStress": "Стресс",
   "batteryCharged": "Заряд",

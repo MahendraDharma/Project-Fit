@@ -846,7 +846,7 @@ class _ActivitySummaryState extends State<ActivitySummary> {
     final l = AppLocalizations.of(context);
     return Surface(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(l?.activitySummaryRpeHeadline ?? 'HOW HARD DID THAT FEEL?',
+        Text(l?.activitySummaryRpeHeadline ?? 'How hard did that feel?',
             style: F.over.copyWith(color: p.ink3)),
         const SizedBox(height: S.x2),
         Text(
@@ -1937,7 +1937,7 @@ class _ActivitySummaryState extends State<ActivitySummary> {
                         style: F.over.copyWith(color: p.ink3))),
                 SizedBox(
                     width: 46,
-                    child: Text(l?.activitySummaryPace ?? 'PACE',
+                    child: Text(l?.activitySummaryPace ?? 'Pace',
                         style: F.over.copyWith(color: p.ink3))),
                 const Expanded(child: SizedBox()),
                 SizedBox(
@@ -2036,15 +2036,15 @@ class _ActivitySummaryState extends State<ActivitySummary> {
                     child: Text(l?.activitySummaryRoundHeader ?? 'R',
                         style: F.over.copyWith(color: p.ink3))),
                 Expanded(
-                    child: Text(l?.activitySummaryWorkHeader ?? 'WORK',
+                    child: Text(l?.activitySummaryWorkHeader ?? 'Work',
                         style: F.over.copyWith(color: p.ink3))),
                 Expanded(
-                    child: Text(l?.activitySummaryRestHeader ?? 'REST',
+                    child: Text(l?.activitySummaryRestHeader ?? 'Rest',
                         style: F.over.copyWith(color: p.ink3))),
                 if (anyHr)
                   SizedBox(
                       width: 52,
-                      child: Text(l?.activitySummaryAvgBpm ?? 'AVG BPM',
+                      child: Text(l?.activitySummaryAvgBpm ?? 'Avg BPM',
                           textAlign: TextAlign.right,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -2103,11 +2103,11 @@ class _ActivitySummaryState extends State<ActivitySummary> {
               Row(children: [
                 SizedBox(
                     width: 34,
-                    child: Text(l?.activitySummaryLapHeader ?? 'LAP',
+                    child: Text(l?.activitySummaryLapHeader ?? 'Lap',
                         style: F.over.copyWith(color: p.ink3))),
                 SizedBox(
                     width: 52,
-                    child: Text(l?.activitySummaryTimeHeader ?? 'TIME',
+                    child: Text(l?.activitySummaryTimeHeader ?? 'Time',
                         style: F.over.copyWith(color: p.ink3))),
                 Expanded(
                     child: Text(

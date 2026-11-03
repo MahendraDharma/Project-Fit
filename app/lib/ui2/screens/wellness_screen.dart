@@ -289,7 +289,7 @@ class _WellnessScreenState extends State<WellnessScreen> with RevisionReload {
             // list would be an invitation to nothing.
             if (tab == 0) ...[
               StartCard(
-                label: l?.wellnessStartASitting ?? 'START A SITTING',
+                label: l?.wellnessStartASitting ?? 'Start a sitting',
                 // What the picker actually offers. Three, not the number of
                 // things on this tab.
                 count: kBreathPatterns.length,
@@ -1305,7 +1305,7 @@ Future<MedSchedule?> pickMedSchedule(
               ),
               const SizedBox(height: S.x4),
               Text(
-                l?.wellnessWhichDays ?? 'WHICH DAYS',
+                l?.wellnessWhichDays ?? 'Which days',
                 style: F.over.copyWith(color: p.ink3),
               ),
               const SizedBox(height: S.x2),

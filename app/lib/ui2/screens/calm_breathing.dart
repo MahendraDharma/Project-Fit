@@ -976,8 +976,8 @@ class _Quiet extends StatelessWidget {
       children: [
         Text(
           pre
-              ? (l?.calmBreathingBeforeLabel ?? 'BEFORE')
-              : (l?.calmBreathingAfterLabel ?? 'AFTER'),
+              ? (l?.calmBreathingBeforeLabel ?? 'Before')
+              : (l?.calmBreathingAfterLabel ?? 'After'),
           textAlign: TextAlign.center,
           style: F.over.copyWith(color: p.ink3),
         ),
@@ -1109,7 +1109,7 @@ class _Result extends StatelessWidget {
             l?.calmBreathingCardiacCoherence ?? 'Cardiac coherence',
             m!.value!.toStringAsFixed(0),
             sub: l?.calmBreathingHowStronglyFollowedPace ??
-                'HOW STRONGLY YOUR HEART RATE FOLLOWED THE PACE',
+                'How strongly your heart rate followed the pace',
           ),
       ],
     );
@@ -1157,7 +1157,7 @@ class _SweepResult extends StatelessWidget {
             children: [
               Text(
                 l?.calmBreathingHowStronglyEachPace ??
-                    'HOW STRONGLY YOUR HEART RATE FOLLOWED EACH PACE',
+                    'How strongly your heart rate followed each pace',
                 style: F.over.copyWith(color: p.ink3),
               ),
               const SizedBox(height: S.x3),

@@ -975,7 +975,7 @@ class FoodRow extends StatelessWidget {
     // branch that read it could never run.
     if (e.isBareOccasion) {
       return AppLocalizations.of(c)?.logFoodBareOccasion ??
-          'LOGGED · ENERGY NOT RECORDED';
+          'Logged · energy not recorded';
     }
     final parts = <String>['${e.kcal!.round()} ${uiText(c, 'kcal')}'];
     if (e.proteinG != null) {

@@ -156,8 +156,8 @@ class _ActivityPickerState extends State<ActivityPicker> {
                   // first time anyone read it. The heading follows the data.
                   Text(
                       widget.recent.isEmpty
-                          ? (l?.activityPickerQuickStart ?? 'QUICK START')
-                          : (l?.activityPickerRecent ?? 'RECENT'),
+                          ? (l?.activityPickerQuickStart ?? 'Quick start')
+                          : (l?.activityPickerRecent ?? 'Recent'),
                       style: F.over.copyWith(color: p.ink3)),
                   const SizedBox(height: S.x3),
                   Builder(builder: (_) {

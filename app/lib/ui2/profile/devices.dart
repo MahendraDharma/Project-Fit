@@ -1455,7 +1455,7 @@ class MyDevicesView extends StatelessWidget {
                 // something in it: a heading over nothing is the empty rung
                 // problem again, one level up.
                 if (sources.isNotEmpty) ...[
-                  Text(l?.devicesLive ?? 'LIVE', style: F.over.copyWith(color: p.ink3)),
+                  Text(l?.devicesLive ?? 'Live', style: F.over.copyWith(color: p.ink3)),
                   const SizedBox(height: S.x3),
                 ],
                 for (final s in sources) ...[
@@ -1503,7 +1503,7 @@ class MyDevicesView extends StatelessWidget {
                 // (owner's call, live review). `kNotYet`/`NotYet` still hold
                 // the reasons and permanences below; only the render is gone.
                 const SizedBox(height: S.x5),
-                Text(l?.devicesQualityLadder ?? 'THE QUALITY LADDER',
+                Text(l?.devicesQualityLadder ?? 'The quality ladder',
                     style: F.over.copyWith(color: p.ink3)),
                 const SizedBox(height: S.x3),
                 for (final t in SourceTier.values)

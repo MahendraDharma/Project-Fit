@@ -225,7 +225,7 @@ class _DayStrainDetailState extends State<DayStrainDetail> {
     final sub = day == null
         ? ''
         : dayLabelOf(day) == todayLabel()
-        ? (l?.dayStrainToday ?? 'TODAY')
+        ? (l?.dayStrainToday ?? 'Today')
         : localizedDate(day, l?.localeName ?? 'en', pattern: 'd MMMM');
 
     final live = widget.data == null && repoOf(c) != null;

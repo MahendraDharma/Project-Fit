@@ -1089,7 +1089,7 @@ void main() {
       await tester.pumpWidget(
           _frame(ActivitySummary(saved, weightKg: 72.4), Brightness.light, 1.0));
       await tester.pumpAndSettle();
-      expect(find.text('HOW HARD DID THAT FEEL?'), findsNothing);
+      expect(find.text('How hard did that feel?'), findsNothing);
 
       // Written, and just finished → asked.
       await tester.pumpWidget(_frame(
@@ -1097,7 +1097,7 @@ void main() {
           Brightness.light,
           1.0));
       await tester.pumpAndSettle();
-      expect(find.text('HOW HARD DID THAT FEEL?'), findsOneWidget);
+      expect(find.text('How hard did that feel?'), findsOneWidget);
       // Ten choices, and NOT ONE of them is lit: the answer is the tap. The
       // set-level picker's default of 7 is the garbage-data mechanism this
       // field exists to avoid.
@@ -1108,7 +1108,7 @@ void main() {
       // Skipping counts, and the count is what retires the prompt.
       await tester.tap(find.text('Not now'));
       await tester.pumpAndSettle();
-      expect(find.text('HOW HARD DID THAT FEEL?'), findsNothing);
+      expect(find.text('How hard did that feel?'), findsNothing);
       expect(Prefs.getInt('workout.rpe_skips', 0), 1);
 
       // iOS reaches 3.1x effective. Five choices across a row is the shape on
@@ -1130,7 +1130,7 @@ void main() {
           Brightness.dark,
           1.0));
       await tester.pumpAndSettle();
-      expect(find.text('HOW HARD DID THAT FEEL?'), findsNothing);
+      expect(find.text('How hard did that feel?'), findsNothing);
     });
 
     testWidgets('a session that never reached the database is not asked',
@@ -1148,7 +1148,7 @@ void main() {
           Brightness.light,
           1.0));
       await tester.pumpAndSettle();
-      expect(find.text('HOW HARD DID THAT FEEL?'), findsNothing);
+      expect(find.text('How hard did that feel?'), findsNothing);
     });
 
     testWidgets('a match shows heart rate, not a court map', (tester) async {
@@ -1276,9 +1276,9 @@ void main() {
           1.0));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('LAP'));
+      await tester.tap(find.text('Lap'));
       await tester.pump();
-      await tester.tap(find.text('LAP'));
+      await tester.tap(find.text('Lap'));
       await tester.pump();
 
       // Live: two taps, two laps, two pool lengths.
@@ -1585,8 +1585,8 @@ void main() {
           _frame(liveFor(a, weightKg: 72.4), Brightness.light, 1.0));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('50 S WORK'), findsOneWidget);
-      expect(find.textContaining('20 S REST'), findsOneWidget);
+      expect(find.textContaining('50 s work'), findsOneWidget);
+      expect(find.textContaining('20 s rest'), findsOneWidget);
       expect(find.text('00:50'), findsOneWidget,
           reason: 'the countdown starts from the chosen work length');
       expect(tester.takeException(), isNull);
@@ -1606,8 +1606,8 @@ void main() {
           _frame(liveFor(a, weightKg: 72.4), Brightness.light, 1.0));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('45 S WORK'), findsOneWidget);
-      expect(find.textContaining('30 S REST'), findsOneWidget);
+      expect(find.textContaining('45 s work'), findsOneWidget);
+      expect(find.textContaining('30 s rest'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -1677,7 +1677,7 @@ void main() {
       await tester.tap(find.text('Start'));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('50 S WORK'), findsOneWidget);
+      expect(find.textContaining('50 s work'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -1909,7 +1909,7 @@ void main() {
           1.0));
       await tester.pumpAndSettle();
       expect(find.text('GOAL'), findsNothing);
-      expect(find.text('Distance'), findsNothing);
+      expect(find.text('DISTANCE'), findsNothing);
       expect(find.text('Calories'), findsNothing);
       // The estimate is a RATE, on the picker's own thirty-minute basis.
       expect(find.textContaining('per 30 min'), findsOneWidget);
@@ -2054,7 +2054,7 @@ void main() {
 
       expect(find.text('320'), findsOneWidget); // volume
       expect(find.text('40 kg × 8'), findsWidgets);
-      expect(find.textContaining('RESTING'), findsOneWidget);
+      expect(find.textContaining('Resting'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -2084,7 +2084,7 @@ void main() {
       expect(find.text('lb'), findsWidgets);
 
       // One tap steps a clean 5 lb (not a raw 2.5 kg → 5.5 lb conversion).
-      await tester.tap(find.bySemanticsLabel('WEIGHT up'));
+      await tester.tap(find.bySemanticsLabel('Weight up'));
       await tester.pump();
       expect(find.text('93'), findsOneWidget);
 
@@ -2115,7 +2115,7 @@ void main() {
       expect(find.text('INCLUDE'), findsNothing);
       expect(find.text('Minimal'), findsNothing);
       expect(find.text('Muscle map'), findsNothing);
-      expect(find.text('YOUR PHOTO'), findsOneWidget);
+      expect(find.text('Your photo'), findsOneWidget);
       // A lift has no distance, so no card of it can carry one.
       expect(find.text('DISTANCE'), findsNothing);
 

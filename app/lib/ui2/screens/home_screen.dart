@@ -2368,7 +2368,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
       // count, the phone's, or both, and the card has to say which. The split
       // behind a mixed day is on Nerd stats, one tap down.
       sub: d.steps.value == null
-          ? (l?.homeStepsNotRecorded ?? 'NOT RECORDED')
+          ? (l?.homeStepsNotRecorded ?? 'Not recorded')
           : [
               if (d.stepGoal > 0)
                 l?.homeStepsPercentGoal(

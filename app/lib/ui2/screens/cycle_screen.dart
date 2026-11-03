@@ -447,7 +447,7 @@ class _CycleTabState extends State<CycleTab> with RevisionReload {
           Row(
             children: [
               Text(
-                l?.cycleDayInThisCycle ?? 'DAY IN THIS CYCLE',
+                l?.cycleDayInThisCycle ?? 'Day in this cycle',
                 style: F.over.copyWith(color: p.ink3),
               ),
               const Spacer(),
@@ -504,9 +504,9 @@ class _CycleTabState extends State<CycleTab> with RevisionReload {
                 Text(
                   ranged
                       ? (l?.cycleNextPeriodBetween ??
-                            'NEXT PERIOD, EXPECTED BETWEEN')
+                            'Next period, expected between')
                       : (l?.cycleNextPeriodAround ??
-                            'NEXT PERIOD, EXPECTED AROUND'),
+                            'Next period, expected around'),
                   style: F.over.copyWith(color: p.ink3),
                 ),
                 const SizedBox(height: S.x1),
@@ -751,8 +751,8 @@ class _CycleTabState extends State<CycleTab> with RevisionReload {
                   ),
                   Text(
                     recent[i]['kind'] == 'start'
-                        ? (l?.cycleLogKindStart ?? 'START')
-                        : (l?.cycleLogKindEnd ?? 'END'),
+                        ? (l?.cycleLogKindStart ?? 'Start')
+                        : (l?.cycleLogKindEnd ?? 'End'),
                     style: F.over.copyWith(color: p.ink3),
                   ),
                   const SizedBox(width: S.x3),

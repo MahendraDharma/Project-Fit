@@ -393,8 +393,8 @@ class _LogWorkoutState extends State<LogWorkout> {
             padding: const EdgeInsets.symmetric(horizontal: S.x4),
             child: NavBar(title,
                 sub: retime
-                    ? (l?.logWorkoutWindowRescoredSub ?? 'THE WINDOW, RE-SCORED')
-                    : (l?.logWorkoutYourOwnTimesSub ?? 'YOUR OWN TIMES')),
+                    ? (l?.logWorkoutWindowRescoredSub ?? 'The window, re-scored')
+                    : (l?.logWorkoutYourOwnTimesSub ?? 'Your own times')),
           ),
           Expanded(
             child: ListView(

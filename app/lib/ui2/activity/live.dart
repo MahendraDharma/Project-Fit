@@ -1079,7 +1079,7 @@ class LiveMeasured extends StatelessWidget {
         final f = feed?.call() ?? LiveFeed.none;
         return Column(children: [
           const SizedBox(height: S.x6),
-          Text(l?.activityLiveDurationHeader ?? 'DURATION',
+          Text(l?.activityLiveDurationHeader ?? 'Duration',
               style: F.over.copyWith(color: p.ink3)),
           const SizedBox(height: S.x3),
           bigNum(p, clock(elapsed), ''),
@@ -1613,7 +1613,7 @@ class _LiveStrengthState extends State<LiveStrength> {
       if (setsHere.isNotEmpty) ...[
         Align(
             alignment: Alignment.centerLeft,
-            child: Text(l?.activityLiveThisExerciseLabel ?? 'THIS EXERCISE',
+            child: Text(l?.activityLiveThisExerciseLabel ?? 'This exercise',
                 style: F.over.copyWith(color: p.ink3))),
         const SizedBox(height: S.x3),
         Surface(
@@ -1690,7 +1690,7 @@ class _LiveStrengthState extends State<LiveStrength> {
         _stepper(
             c,
             p,
-            l?.activityLiveWeightLabel ?? 'WEIGHT',
+            l?.activityLiveWeightLabel ?? 'Weight',
             bodyweight ? (l?.activityLiveBwAbbrev ?? 'BW') : _fmt(kg, u),
             bodyweight ? '' : (u?.weightUnit ?? 'kg'),
             () => setState(() => kg = (kg - stepKg).clamp(0, 500).toDouble()),
@@ -1706,13 +1706,13 @@ class _LiveStrengthState extends State<LiveStrength> {
               style: F.cap.copyWith(color: p.on(C.purple))),
         ),
         const SizedBox(height: S.x5),
-        _stepper(c, p, l?.activityLiveRepsLabel ?? 'REPS', '$reps', '',
+        _stepper(c, p, l?.activityLiveRepsLabel ?? 'Reps', '$reps', '',
             () => setState(() => reps = (reps - 1).clamp(1, 100)),
             () => setState(() => reps = reps + 1)),
         const SizedBox(height: S.x5),
         Align(
             alignment: Alignment.centerLeft,
-            child: Text(l?.activityLiveEffortRpeHeader ?? 'EFFORT (RPE)',
+            child: Text(l?.activityLiveEffortRpeHeader ?? 'Effort (RPE)',
                 style: F.over.copyWith(color: p.ink3))),
         const SizedBox(height: S.x3),
         Row(
@@ -1746,7 +1746,7 @@ class _LiveStrengthState extends State<LiveStrength> {
     final l = AppLocalizations.of(c);
     final u = unitsOf(c);
     return Column(children: [
-        Text(l?.activityLiveRestingHeader ?? 'RESTING',
+        Text(l?.activityLiveRestingHeader ?? 'Resting',
             style: F.over.copyWith(color: p.on(C.teal))),
         const SizedBox(height: S.x3),
         SizedBox(
@@ -1970,7 +1970,7 @@ class _LiveSwimState extends State<LiveSwim> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(LucideIcons.plus, size: 30, color: p.inkOnFill),
-                      Text(l?.activityLiveLapButtonLabel ?? 'LAP',
+                      Text(l?.activityLiveLapButtonLabel ?? 'Lap',
                           style: F.over.copyWith(color: p.inkOnFill)),
                     ]),
               ),
@@ -2317,13 +2317,13 @@ class _LiveMatchState extends State<LiveMatch> {
           const SizedBox(height: S.x6),
           Row(children: [
             Expanded(
-                child: _side(ctx, p, l?.activityLiveYouLabel ?? 'YOU', me,
+                child: _side(ctx, p, l?.activityLiveYouLabel ?? 'You', me,
                     p.on(widget.a.color),
                     () => _score(() => me++),
                     () => _score(() => me = (me - 1).clamp(0, 99)))),
             Container(width: 1, height: 120, color: p.line),
             Expanded(
-                child: _side(ctx, p, l?.activityLiveOpponentLabel ?? 'OPPONENT',
+                child: _side(ctx, p, l?.activityLiveOpponentLabel ?? 'Opponent',
                     them, p.ink2,
                     () => _score(() => them++),
                     () => _score(() => them = (them - 1).clamp(0, 99)))),
@@ -2341,7 +2341,7 @@ class _LiveMatchState extends State<LiveMatch> {
           if (sets.isNotEmpty) ...[
             Align(
                 alignment: Alignment.centerLeft,
-                child: Text(l?.activityLiveSetsListHeader ?? 'SETS',
+                child: Text(l?.activityLiveSetsListHeader ?? 'Sets',
                     style: F.over.copyWith(color: p.ink3))),
             const SizedBox(height: S.x3),
             Surface(
@@ -2515,7 +2515,7 @@ class _LiveIntervalState extends State<LiveInterval> {
     return LiveShell(
       widget.a,
       subtitle: l?.activityLiveIntervalSubtitle(widget.workSec, widget.restSec) ??
-          '${widget.workSec} S WORK · ${widget.restSec} S REST',
+          '${widget.workSec} s work · ${widget.restSec} s rest',
       private: widget.private,
       weightKg: widget.weightKg,
       onFinish: widget.onFinish,
@@ -2556,7 +2556,7 @@ class _LiveIntervalState extends State<LiveInterval> {
           const SizedBox(height: S.x6),
           Surface(
             child: Row(children: [
-              Text(l?.activityLiveNextLabel ?? 'NEXT',
+              Text(l?.activityLiveNextLabel ?? 'Next',
                   style: F.over.copyWith(color: p.ink3)),
               const Spacer(),
               Text(

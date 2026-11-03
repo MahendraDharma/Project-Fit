@@ -372,7 +372,7 @@ class _CoachScreenState extends State<CoachScreen> {
               if (engine != null) ...[
                 const SizedBox(height: S.x4),
                 Text(
-                  l?.coachPastChats ?? 'PAST CHATS',
+                  l?.coachPastChats ?? 'Past chats',
                   style: F.over.copyWith(color: p.ink3),
                 ),
                 const SizedBox(height: S.x2),
@@ -548,7 +548,7 @@ class _CoachScreenState extends State<CoachScreen> {
                     ),
                     const SizedBox(width: S.x2),
                     Text(
-                      l?.coachYourDataYourModel ?? 'YOUR DATA, YOUR MODEL',
+                      l?.coachYourDataYourModel ?? 'Your data, your model',
                       style: F.over.copyWith(color: p.on(kCoachAccent)),
                     ),
                   ],

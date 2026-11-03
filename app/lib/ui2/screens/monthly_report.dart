@@ -101,7 +101,7 @@ class _MonthlyReportScreenState extends State<MonthlyReportScreen> {
     final rows = _rows;
     return detailScaffold(
         c, l?.monthlyReportTitle ?? 'Your month',
-        sub: l?.monthlyReportSub ?? 'LAST 30 DAYS AGAINST THE 30 BEFORE', [
+        sub: l?.monthlyReportSub ?? 'Last 30 days against the 30 before', [
       if (rows == null) ...[
         const SizedBox(height: S.x8),
         const Center(child: CircularProgressIndicator()),

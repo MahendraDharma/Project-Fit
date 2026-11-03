@@ -288,7 +288,7 @@ class AlarmScreenView extends StatelessWidget {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l?.alarmNextLabel ?? 'NEXT',
+                          Text(l?.alarmNextLabel ?? 'Next',
                               style: F.over.copyWith(color: p.ink3)),
                           const SizedBox(height: S.x1),
                           Text(_dayAndTime(c, at),

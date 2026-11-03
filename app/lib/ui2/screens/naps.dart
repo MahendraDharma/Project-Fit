@@ -197,13 +197,13 @@ class _NapsScreenState extends State<NapsScreen> {
     final from = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 14, minute: 0),
-      helpText: l?.napsFellAsleepHelp ?? 'WHEN YOU FELL ASLEEP',
+      helpText: l?.napsFellAsleepHelp ?? 'When you fell asleep',
     );
     if (from == null || !mounted) return;
     final to = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: (from.hour + 1) % 24, minute: from.minute),
-      helpText: l?.napsWokeUpHelp ?? 'WHEN YOU WOKE UP',
+      helpText: l?.napsWokeUpHelp ?? 'When you woke up',
     );
     if (to == null || !mounted) return;
 

@@ -914,7 +914,7 @@ void main() {
         home: Investigate('hrv', data: InvestigateData(day: _day(0))),
       ));
       await t.pumpAndSettle();
-      expect(find.text('NERD STATS'), findsOneWidget);
+      expect(find.text('Nerd stats'), findsOneWidget);
       expect(find.textContaining('INVESTIGATE'), findsNothing);
 
       await t.pumpWidget(MaterialApp(
@@ -1250,7 +1250,7 @@ void main() {
 
     testWidgets('it names no condition, no number and no severity', (t) async {
       await pumpI(t, ana.cvhrPersonalDistribution(nights(20, recent: 3)));
-      expect(find.textContaining('ACROSS 20 OF YOUR OWN NIGHTS'), findsOneWidget);
+      expect(find.textContaining('Across 20 of your own nights'), findsOneWidget);
       expect(find.textContaining('running higher'), findsOneWidget);
       // The vocabulary that turns a screen into a diagnosis, in any casing.
       final page = t

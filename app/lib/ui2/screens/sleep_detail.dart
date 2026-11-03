@@ -745,13 +745,13 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
         if (inBed != null || eff != null) ...[
           const SizedBox(height: S.x4),
           InlineMetrics([
-            if (inBed != null) (l?.sleepDetailInBed ?? 'IN BED', hm(inBed), C.indigo),
+            if (inBed != null) (l?.sleepDetailInBed ?? 'In bed', hm(inBed), C.indigo),
             if (watched != null)
-              (l?.sleepDetailWatched ?? 'WATCHED', hm(watched), C.sky),
+              (l?.sleepDetailWatched ?? 'Watched', hm(watched), C.sky),
             if (eff != null)
               (watched == null
-                  ? (l?.sleepDetailAsleepOfThat ?? 'ASLEEP OF THAT')
-                  : (l?.sleepDetailAsleep ?? 'ASLEEP'),
+                  ? (l?.sleepDetailAsleepOfThat ?? 'Asleep of that')
+                  : (l?.sleepDetailAsleep ?? 'Asleep'),
                   _pct(eff * 100), C.green),
           ]),
         ],
@@ -935,13 +935,13 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
     final bed = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(onset),
-      helpText: l?.sleepDetailBedTimeHelp ?? 'WHEN YOU GOT INTO BED',
+      helpText: l?.sleepDetailBedTimeHelp ?? 'When you got into bed',
     );
     if (bed == null || !mounted) return;
     final up = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(wake),
-      helpText: l?.sleepDetailWakeTimeHelp ?? 'WHEN YOU GOT UP',
+      helpText: l?.sleepDetailWakeTimeHelp ?? 'When you got up',
     );
     if (up == null || !mounted) return;
     final (newOnset, newWake) = correctedSleepWindow(onset, wake, bed, up);
@@ -1871,13 +1871,13 @@ class _SleepDetailState extends State<SleepDetail> with RevisionReload {
     // others rather than a reading of its own.
     final summary = <(String, String, Color)>[
       if (noc is Map && noc['sleeping_hr_avg'] != null)
-        (loc?.sleepDetailSleepingHr ?? 'SLEEPING HR',
+        (loc?.sleepDetailSleepingHr ?? 'Sleeping HR',
             '${noc['sleeping_hr_avg']} bpm', C.red),
       if (noc is Map && noc['sleeping_hr_min'] != null)
-        (loc?.sleepDetailLowest ?? 'LOWEST', '${noc['sleeping_hr_min']} bpm',
+        (loc?.sleepDetailLowest ?? 'Lowest', '${noc['sleeping_hr_min']} bpm',
             C.blue),
       if (respV != null)
-        (loc?.sleepDetailBreathingCaps ?? 'BREATHING',
+        (loc?.sleepDetailBreathingCaps ?? 'Breathing',
             '${respV.toStringAsFixed(1)} br/min', C.teal),
     ];
 

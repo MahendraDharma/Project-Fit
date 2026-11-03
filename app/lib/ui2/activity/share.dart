@@ -276,7 +276,7 @@ class _ShareSheetState extends State<ShareSheet> {
                     color: r.activity.color,
                   ),
                   const SizedBox(height: S.x6),
-                  Text(l?.activitySharePhotoHeader ?? 'YOUR PHOTO',
+                  Text(l?.activitySharePhotoHeader ?? 'Your photo',
                       style: F.over.copyWith(color: p.ink3)),
                   const SizedBox(height: S.x3),
                   Surface(
@@ -309,7 +309,7 @@ class _ShareSheetState extends State<ShareSheet> {
                   // them tells openstreetmap.org roughly where you were.
                   if (_hasRoute) ...[
                     const SizedBox(height: S.x6),
-                    Text(l?.activityShareBasemapHeader ?? 'BASEMAP',
+                    Text(l?.activityShareBasemapHeader ?? 'Basemap',
                         style: F.over.copyWith(color: p.ink3)),
                     const SizedBox(height: S.x3),
                     Surface(

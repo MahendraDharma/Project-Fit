@@ -148,7 +148,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
         const SizedBox(height: S.x5),
       ],
       StartCard(
-        label: loc?.workoutStartSessionLabel ?? 'START A SESSION',
+        label: loc?.workoutStartSessionLabel ?? 'Start a session',
         count: allActivities.length,
         noun: loc?.workoutActivitiesNoun ?? 'activities',
         asset: 'mascot_workout.png',
@@ -498,7 +498,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
         ),
       ),
       const SizedBox(height: S.x5),
-      Text(loc?.workoutQuickStartHeader ?? 'QUICK START',
+      Text(loc?.workoutQuickStartHeader ?? 'Quick start',
           style: F.over.copyWith(color: p.ink3)),
       const SizedBox(height: S.x3),
       for (var row = 0; row < 2; row++) ...[

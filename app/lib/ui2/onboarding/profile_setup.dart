@@ -165,7 +165,7 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
               style: F.body.copyWith(color: p.ink2),
             ),
             const SizedBox(height: S.x6),
-            Text(l?.profileSetupSexHeader ?? 'SEX',
+            Text(l?.profileSetupSexHeader ?? 'Sex',
                 style: F.over.copyWith(color: p.ink3)),
             const SizedBox(height: S.x2),
             Row(children: [
@@ -194,20 +194,20 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
               ),
             ],
             const SizedBox(height: S.x5),
-            _Field(_age, l?.profileSetupAgeLabel ?? 'AGE',
+            _Field(_age, l?.profileSetupAgeLabel ?? 'Age',
                 l?.profileSetupAgeUnit ?? 'years',
                 l?.profileSetupAgeConsequence ??
                     'Without it: heart-rate zones, calories, fitness age.'),
             _Field(
               _height,
-              l?.profileSetupHeightLabel ?? 'HEIGHT',
+              l?.profileSetupHeightLabel ?? 'Height',
               uiText(c, _u.isImperial ? 'in' : 'cm'),
               l?.profileSetupHeightConsequence ??
                     'Without it: stride length, and distance from steps.',
             ),
             _Field(
               _weight,
-              l?.profileSetupWeightLabel ?? 'WEIGHT',
+              l?.profileSetupWeightLabel ?? 'Weight',
               uiText(c, _u.isImperial ? 'lb' : 'kg'),
               l?.profileSetupWeightConsequence ??
                     'Without it: calories and training load.',
@@ -286,7 +286,7 @@ class _Field extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(child: Text(label, style: F.over.copyWith(color: p.ink3))),
-          Text(AppLocalizations.of(c)?.profileSetupOptional ?? 'OPTIONAL',
+          Text(AppLocalizations.of(c)?.profileSetupOptional ?? 'Optional',
               style: F.over.copyWith(color: p.ink3)),
         ]),
         const SizedBox(height: S.x1),

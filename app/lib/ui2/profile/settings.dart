@@ -994,7 +994,7 @@ class NotificationSettingsView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: S.x4),
             child: NavBar(l?.settingsNotificationsNavTitle ?? 'Notifications',
                 sub: l?.settingsNotificationsNavSub ??
-                    'WHAT MAY INTERRUPT YOU'),
+                    'What may interrupt you'),
           ),
           Expanded(
             child: ListView(
@@ -1585,10 +1585,10 @@ class _EditProfileViewState extends State<EditProfileView> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
               children: [
-                _text(c, _name, l?.settingsNameFieldLabel ?? 'NAME',
+                _text(c, _name, l?.settingsNameFieldLabel ?? 'Name',
                     TextInputType.name),
                 const SizedBox(height: S.x4),
-                Text(l?.settingsSexFieldLabel ?? 'SEX',
+                Text(l?.settingsSexFieldLabel ?? 'Sex',
                     style: F.over.copyWith(color: p.ink3)),
                 const SizedBox(height: S.x2),
                 Wrap(spacing: S.x2, runSpacing: S.x2, children: [
@@ -1617,7 +1617,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     ),
                 ]),
                 const SizedBox(height: S.x4),
-                _text(c, _age, l?.settingsAgeYearsFieldLabel ?? 'AGE (YEARS)',
+                _text(c, _age, l?.settingsAgeYearsFieldLabel ?? 'Age (years)',
                     TextInputType.number),
                   const SizedBox(height: S.x4),
                   _text(

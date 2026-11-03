@@ -40,7 +40,7 @@ void main() {
     // Surface has its own, unrelated Pressable elsewhere in the tree, so a
     // bare `findsNothing` on Pressable would be too broad; the switch
     // affordance's own semantic label is the specific, addressable marker.
-    expect(find.text('LIVE'), findsOneWidget);
+    expect(find.text('Live'), findsOneWidget);
     expect(find.bySemanticsLabel(RegExp('Tap to switch device')), findsNothing);
   });
 }

@@ -422,12 +422,12 @@ class _NutritionScreenState extends State<NutritionScreen> with RevisionReload {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InlineMetrics([
-                    (l?.nutritionLabelEaten ?? 'EATEN',
+                    (l?.nutritionLabelEaten ?? 'Eaten',
                         '${w.meanKcal.value!.round()} kcal', C.domFood),
-                    (l?.nutritionLabelBurned ?? 'BURNED',
+                    (l?.nutritionLabelBurned ?? 'Burned',
                         '${_burned!.value!.round()} kcal', C.purple),
                     (
-                      l?.nutritionLabelBalance ?? 'BALANCE',
+                      l?.nutritionLabelBalance ?? 'Balance',
                       '${(w.meanKcal.value! - _burned!.value!).round()} kcal',
                       C.teal,
                     ),
@@ -652,7 +652,7 @@ class _NutritionScreenState extends State<NutritionScreen> with RevisionReload {
                     ? (l?.nutritionNotMeasured ?? 'Not measured')
                     : '${_burned!.value!.round()}',
                 unit: _burned?.value == null ? '' : 'kcal',
-                sub: l?.nutritionExpenditureSub ?? 'TODAY, FROM HEART RATE AND YOUR PROFILE',
+                sub: l?.nutritionExpenditureSub ?? 'Today, from heart rate and your profile',
               ),
             ],
           ),
@@ -763,8 +763,8 @@ class DayEnergyCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   k.value == null
-                      ? (l?.nutritionLoggedToday ?? 'LOGGED TODAY')
-                      : (l?.nutritionEatenToday ?? 'EATEN TODAY'),
+                      ? (l?.nutritionLoggedToday ?? 'Logged today')
+                      : (l?.nutritionEatenToday ?? 'Eaten today'),
                   style: F.over.copyWith(color: p.ink3),
                 ),
               ),
@@ -809,7 +809,7 @@ class DayEnergyCard extends StatelessWidget {
           if (burned?.value != null) ...[
             const SizedBox(height: S.x4),
             InlineMetrics([
-              (l?.nutritionLabelBurned ?? 'BURNED',
+              (l?.nutritionLabelBurned ?? 'Burned',
                   '${burned!.value!.round()} kcal', C.purple),
               if (k.value != null)
                 (
@@ -818,8 +818,8 @@ class DayEnergyCard extends StatelessWidget {
                   // balance is AT LEAST this, never at most. The pill on this
                   // same card says "At least".
                   k.isFloor
-                      ? (l?.nutritionLabelBalanceAtLeast ?? 'BALANCE AT LEAST')
-                      : (l?.nutritionLabelBalance ?? 'BALANCE'),
+                      ? (l?.nutritionLabelBalanceAtLeast ?? 'Balance at least')
+                      : (l?.nutritionLabelBalance ?? 'Balance'),
                   '${(k.value! - burned!.value!).round()} kcal',
                   C.teal,
                 ),
@@ -959,7 +959,7 @@ class _Mean extends StatelessWidget {
       sub: mean.value == null
           ? (floors > 0
                 ? (l?.nutritionEveryDayNoFigure(label.toUpperCase()) ??
-                    'EVERY COMPLETE DAY HAD AN OCCASION WITH NO '
+                    'Every complete day had an occasion with no '
                         '${label.toUpperCase()} FIGURE')
                 : (l?.nutritionNoDayRecorded(label.toUpperCase()) ??
                     'NO COMPLETE DAY RECORDED ${label.toUpperCase()}'))

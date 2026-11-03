@@ -325,11 +325,15 @@ class DetailHero extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    return CustomPaint(
-      painter: _Sky(tint, p.bg, p.dark),
-      child: Container(
+    // A flat, softly tinted panel with round lower corners (mockup B), the
+    // ring on it. It replaced a gradient sky with ridges and a glow.
+    return Container(
         width: double.infinity,
-        padding: EdgeInsets.fromLTRB(S.x4, topInset + S.x2, S.x4, S.x8),
+        decoration: BoxDecoration(
+          color: Color.lerp(p.bg, tint, p.dark ? .16 : .13),
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(R.xxl)),
+        ),
+        padding: EdgeInsets.fromLTRB(S.x4, topInset + S.x2, S.x4, S.x6),
         child: Column(children: [
           Pressable(
             onTap: onDate,
@@ -383,46 +387,8 @@ class DetailHero extends StatelessWidget {
             ),
           ),
         ]),
-      ),
     );
   }
-}
-
-/// A tinted dusk sky fading into the page, with two soft ridges. Abstract on
-/// purpose: no photograph, nobody's landscape.
-class _Sky extends CustomPainter {
-  final Color tint, bg;
-  final bool dark;
-  _Sky(this.tint, this.bg, this.dark);
-
-  @override
-  void paint(Canvas c, Size s) {
-    final r = Offset.zero & s;
-    final top = Color.lerp(tint, dark ? C.n900 : C.white, dark ? .55 : .7)!;
-    c.drawRect(
-        r,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [top, Color.lerp(tint, bg, .8)!, bg],
-            stops: const [0, .6, 1],
-          ).createShader(r));
-    for (final (h, a) in [(.66, .14), (.76, .2)]) {
-      final path = Path()..moveTo(0, s.height * h);
-      for (var x = 0.0; x <= s.width; x += 6) {
-        path.lineTo(x, s.height * h + math.sin(x / s.width * math.pi * h * 5) * 16 - math.cos(x / 53) * 5);
-      }
-      path
-        ..lineTo(s.width, s.height)
-        ..lineTo(0, s.height)
-        ..close();
-      c.drawPath(path, Paint()..color = Color.lerp(bg, tint, a)!.withValues(alpha: .7));
-    }
-  }
-
-  @override
-  bool shouldRepaint(_Sky o) => o.tint != tint || o.bg != bg;
 }
 
 class _HeroRing extends CustomPainter {
@@ -437,12 +403,14 @@ class _HeroRing extends CustomPainter {
   void paint(Canvas c, Size s) {
     final ctr = s.center(Offset.zero);
     final rad = s.shortestSide / 2;
-    c.drawCircle(ctr, rad, Paint()..color = p.card.withValues(alpha: .85));
-    c.drawCircle(ctr, rad, Paint()..style = PaintingStyle.stroke..strokeWidth = 1.2..color = p.line);
-    final st = rad * .2;
-    final rr = Rect.fromCircle(center: ctr, radius: rad - st / 2 - rad * .09);
+    final st = rad * .16;
+    final rr = Rect.fromCircle(center: ctr, radius: rad - st / 2);
+    // The track is the ring's own colour, faint, on the tinted panel.
     c.drawArc(rr, 0, 2 * math.pi, false,
-        Paint()..style = PaintingStyle.stroke..strokeWidth = st..color = p.track);
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = st
+          ..color = r.colors.last.withValues(alpha: p.dark ? .22 : .18));
     if (r.dashes case final n?) {
       final seg = 2 * math.pi / n;
       const gap = .06;
@@ -466,17 +434,6 @@ class _HeroRing extends CustomPainter {
           false,
           Paint()
             ..style = PaintingStyle.stroke
-            ..strokeWidth = st + 8
-            ..strokeCap = StrokeCap.round
-            ..color = r.colors.last.withValues(alpha: .25)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
-      c.drawArc(
-          rr,
-          -math.pi / 2,
-          sweep,
-          false,
-          Paint()
-            ..style = PaintingStyle.stroke
             ..strokeWidth = st
             // Butt, not round: a round cap at the start would show the
             // gradient's END colour wrapped back onto the top.
@@ -487,8 +444,6 @@ class _HeroRing extends CustomPainter {
               transform: const GradientRotation(-math.pi / 2),
             ).createShader(rr));
     }
-    final inner = rad - st - rad * .2;
-    c.drawCircle(ctr, inner, Paint()..color = p.card2);
   }
 
   @override
@@ -532,35 +487,28 @@ class DetailTiles extends StatelessWidget {
   Widget _tile(BuildContext c, DetailTile t) {
     final p = P.of(c);
     return Container(
-      decoration: BoxDecoration(color: p.card, borderRadius: p.cardRadius, boxShadow: p.el(1)),
-      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(color: p.card, borderRadius: R.rXl, boxShadow: p.el(1)),
+      padding: const EdgeInsets.fromLTRB(S.x4, S.x3, S.x3, S.x4),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          width: double.infinity,
-          color: p.card2.withValues(alpha: .5),
-          padding: const EdgeInsets.fromLTRB(S.x4, S.x3, S.x3, S.x2),
-          child: Row(children: [
-            Icon(t.icon, size: 15, color: p.ink3),
-            const SizedBox(width: S.x2),
-            Expanded(child: Text(t.label, style: F.cap.copyWith(color: p.ink3))),
-          ]),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(S.x4, S.x3, S.x3, S.x4),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(t.value, style: F.n34.copyWith(color: p.ink)),
-                  if (t.unit.isNotEmpty) ...[
-                    const SizedBox(width: S.x1),
-                    Text(uiText(c, t.unit), style: F.body.copyWith(color: p.ink3)),
-                  ],
-                ]),
-          ),
+        Row(children: [
+          Icon(t.icon, size: 14, color: p.ink3),
+          const SizedBox(width: S.x1 + 2),
+          Expanded(child: Text(t.label, style: F.cap.copyWith(color: p.ink3))),
+        ]),
+        const SizedBox(height: S.x2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(t.value, style: F.n34.copyWith(color: p.ink)),
+                if (t.unit.isNotEmpty) ...[
+                  const SizedBox(width: S.x1),
+                  Text(uiText(c, t.unit), style: F.body.copyWith(color: p.ink3)),
+                ],
+              ]),
         ),
       ]),
     );
@@ -576,11 +524,18 @@ class CoachingCard extends StatelessWidget {
   Widget build(BuildContext c) {
     final p = P.of(c);
     final l = AppLocalizations.of(c);
+    // Inverted, as in mockup B: the one sentence to take away, set apart.
+    // On the dark look a white card would glare: it takes the raised card
+    // tone instead.
+    final bg = p.dark ? p.card2 : p.ink;
+    final ink = p.dark ? p.ink : p.bg;
     return Surface(
+      color: bg,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(l?.detailCoaching ?? 'Coaching', style: F.cap.copyWith(color: p.ink3)),
+        Text(l?.detailCoaching ?? 'Coaching',
+            style: F.cap.copyWith(color: ink.withValues(alpha: .75))),
         const SizedBox(height: S.x1),
-        Text(text, style: F.body.copyWith(color: p.ink, height: 1.45)),
+        Text(text, style: F.body.copyWith(color: ink, height: 1.45)),
       ]),
     );
   }

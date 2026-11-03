@@ -184,7 +184,7 @@
   "streakHow": "Pakai band Anda minimal 4 jam sehari",
   "streakStarted": "Streak dimulai",
   "streakBest": "Streak terpanjang",
-  "streakThisWeek": "MINGGU INI",
+  "streakThisWeek": "Minggu ini",
   "streakAllMilestones": "Semua pencapaian tercapai",
   "streakToNext": "{n} hari lagi menuju pencapaian berikutnya",
   "@streakToNext": {"placeholders": {"n": {"type": "int"}}},

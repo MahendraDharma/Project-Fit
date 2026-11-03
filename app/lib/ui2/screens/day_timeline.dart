@@ -914,7 +914,7 @@ class _DayTimelineScreenState extends State<DayTimelineScreen> {
     final d = _d ?? const TimelineData();
     final l = AppLocalizations.of(c);
     return detailScaffold(c, l?.dayTimelineTitle ?? 'Breakdown of your day',
-        sub: l?.dayTimelineSub ?? 'MIDNIGHT TO MIDNIGHT', [
+        sub: l?.dayTimelineSub ?? 'Midnight to midnight', [
       ...dayNavRow(_day ?? d.day, d.days, _goDay),
       if (_loading) ...[
         const SizedBox(height: S.x8),

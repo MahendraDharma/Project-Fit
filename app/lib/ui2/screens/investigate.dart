@@ -281,7 +281,7 @@ class _InvestigateState extends State<Investigate> {
     return detailScaffold(
       c,
       uiText(context, spec.title),
-      sub: l?.investigateNerdStatsLabel ?? 'NERD STATS',
+      sub: l?.investigateNerdStatsLabel ?? 'Nerd stats',
       [
         ...dayNavRow(_day ?? d.day, d.days, _goDay),
         if (_loading) ...[
@@ -886,7 +886,7 @@ class _InvestigateState extends State<Investigate> {
         color: p.card2,
         elevation: 0,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(l?.investigateAcrossNOwnNights(n) ?? 'ACROSS $n OF YOUR OWN NIGHTS',
+          Text(l?.investigateAcrossNOwnNights(n) ?? 'Across $n of your own nights',
               style: F.over.copyWith(color: p.ink3)),
           const SizedBox(height: S.x3),
           Text(
@@ -1051,7 +1051,7 @@ class _InvestigateState extends State<Investigate> {
       elevation: 0,
       color: p.card2,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(l?.investigateMethodLabel ?? 'METHOD', style: F.over.copyWith(color: p.ink3)),
+        Text(l?.investigateMethodLabel ?? 'Method', style: F.over.copyWith(color: p.ink3)),
         const SizedBox(height: S.x2),
         Text(
             spec.method.isEmpty
