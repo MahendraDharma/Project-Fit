@@ -7903,5 +7903,12 @@
   "intensityModerate": "Умеренные",
   "intensityVigorous": "Интенсивные ×2",
   "healthGroupEnergy": "Стресс и энергия",
-  "healthGroupFitness": "Форма и тренировки"
+  "healthGroupFitness": "Форма и тренировки",
+  "todaysStress": "Стресс сегодня",
+  "lastUpdatedAt": "Обновлено в {time}",
+  "@lastUpdatedAt": {"placeholders": {"time": {"type": "String"}}},
+  "statHighest": "Максимум",
+  "statLowest": "Минимум",
+  "statAverage": "Среднее",
+  "homeBandEstimate": "Оценка ProjectFit по браслету"
 }

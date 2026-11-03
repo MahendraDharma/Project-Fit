@@ -381,5 +381,12 @@
   "intensityModerate": "Sedang",
   "intensityVigorous": "Berat ×2",
   "healthGroupEnergy": "Stres & energi",
-  "healthGroupFitness": "Kebugaran & latihan"
+  "healthGroupFitness": "Kebugaran & latihan",
+  "todaysStress": "Stres hari ini",
+  "lastUpdatedAt": "Terakhir diperbarui pukul {time}",
+  "@lastUpdatedAt": {"placeholders": {"time": {"type": "String"}}},
+  "statHighest": "Tertinggi",
+  "statLowest": "Terendah",
+  "statAverage": "Rata-rata",
+  "homeBandEstimate": "Estimasi ProjectFit dari band Anda"
 }

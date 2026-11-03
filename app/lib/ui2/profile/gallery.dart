@@ -305,7 +305,8 @@ Map<String, Widget> componentCases() => {
       'recovery_bar': const RecoveryBar(64),
       'draw_in': DrawIn(
           builder: (c, t) => LinearProgressIndicator(value: .7 * t, minHeight: 8)),
-      'stress_energy': const StressEnergyRow(stress: 18, battery: 52),
+      'stress_energy': const StressEnergyRow(
+          stress: 12, battery: 73, highest: 82, lowest: 0, average: 11),
       'detail_hero': const DetailHero(
           tint: C.green,
           date: 'Sat 17 Oct',
@@ -1983,6 +1984,21 @@ Map<String, Widget> _garminStyleCases() {
     ],
   );
   return {
+    'stress_summary': const StressSummaryCard(
+        current: 12,
+        highest: 82,
+        lowest: 0,
+        average: 11,
+        updatedSec: 1790000000,
+        source: 'ProjectFit estimate from your band'),
+    'stress_summary_empty': const StressSummaryCard(
+        current: null, source: 'ProjectFit estimate from your band'),
+    'battery_bar': const BatteryBar(
+        level: 73, source: 'ProjectFit estimate from your band'),
+    'battery_bar_low': const BatteryBar(
+        level: 18, source: 'From a paired Garmin watch'),
+    'battery_bar_empty': const BatteryBar(
+        level: null, source: 'ProjectFit estimate from your band'),
     'stress_day':
         AllDayStressCard(allDayStress(windows, nights), dayStartSec: t0),
     'stress_day_learning':

@@ -214,6 +214,8 @@ const _notComponents = {
   // Owns a two-minute live RR capture; its result rows are SnapshotCard,
   // which the gallery holds.
   'HealthSnapshotScreen',
+  // A full card (already in the gallery) on its own screen.
+  'EstimateDetailScreen',
   'NightSpo2Screen',
   // onboarding routes
   'BootSplash', 'WelcomeScreen', 'WelcomeView', 'PairingScreen', 'PairingView',

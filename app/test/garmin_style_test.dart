@@ -1,6 +1,7 @@
 // The Health tab's Garmin-style loader: stored day reads → still-window
 // stress, Body Battery slots (asleep / still / active / not worn) and the
 // fitness-age inputs.
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:projectfit/data/day_label.dart';
 import 'package:projectfit/data/local_repository.dart';
@@ -100,10 +101,60 @@ void main() {
     final f = g.focus.value!;
     expect((f.lowAerobic, f.highAerobic, f.anaerobic), (60.0, 20.0, 10.0));
   });
+
+  test('Home\'s light read skips workouts, fitness and the intensity week',
+      () async {
+    final today = todayLabel();
+    final mid = localDayStartSec(today)!;
+    final repo = _TodayRepo(mid);
+    final g = await GarminStyleData.load(
+      repo,
+      profile: const {'age': 30, 'sex': 'm'},
+      days: const [],
+      hrv: const [],
+      rhr: [(t: mid + 12 * 3600, v: 55.0)],
+      sleepStress: const [],
+      full: false,
+    );
+    expect(repo.workoutReads, 0);
+    expect(g.intensity.present, isFalse);
+    expect(g.fitness.present, isFalse);
+    expect(g.focus.present, isFalse);
+  });
+
+  testWidgets('the Home stress summary shows the day and opens on a tap',
+      (t) async {
+    var taps = 0;
+    final at = DateTime(2026, 10, 1, 14, 33).millisecondsSinceEpoch ~/ 1000;
+    await t.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Column(children: [
+          StressSummaryCard(
+            current: 12,
+            highest: 82,
+            lowest: 0,
+            average: 11,
+            updatedSec: at,
+            source: 'band',
+            onTap: () => taps++,
+          ),
+          BatteryBar(level: 73, source: 'band', onTap: () => taps += 10),
+        ]),
+      ),
+    ));
+    for (final s in ['12', '82', '0', '11', 'Rest', '73%']) {
+      expect(find.text(s), findsOneWidget, reason: s);
+    }
+    expect(find.text('Last updated at 14:33'), findsOneWidget);
+    await t.tap(find.text('82'));
+    await t.tap(find.text('73%'));
+    expect(taps, 11);
+  });
 }
 
 class _TodayRepo extends LocalRepository {
   final int mid;
+  int workoutReads = 0;
   _TodayRepo(this.mid);
 
   @override
@@ -117,7 +168,9 @@ class _TodayRepo extends LocalRepository {
           : const {};
 
   @override
-  Future<Map<String, dynamic>> getWorkouts({String range = 'month'}) async => {
+  Future<Map<String, dynamic>> getWorkouts({String range = 'month'}) async {
+    workoutReads++;
+    return {
         'workouts': [
           {
             'status': 'done',
@@ -127,4 +180,5 @@ class _TodayRepo extends LocalRepository {
           },
         ],
       };
+  }
 }

@@ -29,6 +29,8 @@ import 'home_vitals.dart';
 import 'metric_detail.dart';
 import 'body_battery.dart';
 import 'garmin_stress.dart';
+import 'garmin_style.dart'
+    show AllDayStressCard, BatteryBar, BodyBatteryCard, EstimateDetailScreen, GarminStyleData, StressSummaryCard;
 import 'month_calendar.dart';
 import 'vo2_screen.dart';
 
@@ -1039,45 +1041,66 @@ class _OtherDevicesCardState extends State<OtherDevicesCard> with RevisionReload
   }
 }
 
-/// Today's stress and energy, side by side: Garmin's stress level (its mean
-/// so far) and its Body Battery (the newest sample), each a ring that opens
-/// its screen. Always shown, so the screens are always one tap away; a card
-/// with nothing yet says where its number comes from.
+/// Today's stress and energy on Home: a stress summary (latest reading in a
+/// ticked gauge, with the day's highest, lowest and average) over a Body
+/// Battery bar. Each opens its full card. The band's own estimate comes first;
+/// a paired Garmin watch's reading fills in when the band has none yet. Always
+/// shown, so the screens are always one tap away.
 class StressEnergyRow extends StatefulWidget {
-  final double? stress, battery;
+  final double? stress, battery, highest, lowest, average;
   final bool preloaded;
-  const StressEnergyRow({super.key, this.stress, this.battery}) : preloaded = stress != null || battery != null;
+  const StressEnergyRow(
+      {super.key, this.stress, this.battery, this.highest, this.lowest, this.average})
+      : preloaded = stress != null || battery != null;
 
   @override
   State<StressEnergyRow> createState() => _StressEnergyRowState();
 }
 
 class _StressEnergyRowState extends State<StressEnergyRow> with RevisionReload {
-  double? _stress, _battery;
+  GarminStyleData? _band;
+  double? _watchStress, _watchBattery;
 
   @override
   void initState() {
     super.initState();
-    _stress = widget.stress;
-    _battery = widget.battery;
     if (!widget.preloaded) reload();
   }
 
-  // Same as OtherDevicesCard: re-read when a sync lands the watch's numbers.
+  // Re-read when a sync lands new band data or the watch's numbers.
   @override
   bool get revisionReloads => !widget.preloaded;
 
   @override
   void reload() {
     final t = beginRead(#stressEnergy);
-    loadOtherReadings().then((r) {
-      if (!stillNewest(#stressEnergy, t)) return;
+    final repo = repoOf(context);
+    Future<GarminStyleData?> band() async {
+      if (repo == null) return null;
+      try {
+        return await GarminStyleData.loadToday(repo);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    Future<List<OtherReading>> watch() async {
+      try {
+        return await loadOtherReadings();
+      } catch (_) {
+        return const [];
+      }
+    }
+
+    Future.wait([band(), watch()]).then((r) {
+      if (!mounted || !stillNewest(#stressEnergy, t)) return;
       setState(() {
-        _stress = null;
-        _battery = null;
-        for (final x in r) {
-          if (x.kind == kGarminStressKey) _stress = x.value;
-          if (x.kind == kBodyBatteryKey) _battery = x.value;
+        _band = r[0] as GarminStyleData?;
+        _watchStress = null;
+        _watchBattery = null;
+        for (final x in r[1] as List<OtherReading>) {
+          if (x.kind == kGarminStressKey) _watchStress = x.value;
+          if (x.kind == kBodyBatteryKey) _watchBattery = x.value;
         }
       });
     }, onError: (_) {});
@@ -1086,85 +1109,86 @@ class _StressEnergyRowState extends State<StressEnergyRow> with RevisionReload {
   @override
   Widget build(BuildContext c) {
     final l = AppLocalizations.of(c);
-    final big = MediaQuery.textScalerOf(c).scale(10) > 14;
-    final a = _RingTile(
-      title: l?.gsTitle ?? 'Stress',
-      value: _stress,
-      color: _stress == null ? null : stressColor(_stress!),
-      frac: _stress == null ? 0 : _stress! / 100,
-      onTap: () => go(c, const GarminStressScreen()),
-    );
-    final b = _RingTile(
-      title: l?.bbTitle ?? 'Body Battery',
-      value: _battery,
-      suffix: '%',
-      color: _battery == null ? null : (_battery! >= 50 ? C.green : (_battery! >= 25 ? C.yellow : C.red)),
-      frac: _battery == null ? 0 : _battery! / 100,
-      onTap: () => go(c, const BodyBatteryScreen()),
-    );
+    final bandText = l?.homeBandEstimate ?? 'ProjectFit estimate from your band';
+    final watchText = l?.homeFromGarminWatch ?? 'From a paired Garmin watch';
+    final stressTitle = l?.stressDayTitle ?? 'Stress';
+    final batteryTitle = l?.batteryTitle ?? 'Body Battery';
+
+    final Widget stress, battery;
+    if (widget.preloaded) {
+      stress = StressSummaryCard(
+        current: widget.stress,
+        highest: widget.highest,
+        lowest: widget.lowest,
+        average: widget.average,
+        source: bandText,
+        onTap: () {},
+      );
+      battery = BatteryBar(level: widget.battery, source: bandText, onTap: () {});
+    } else {
+      final d = _band;
+      final st = d?.stress.value;
+      if (st != null && st.timeline.isNotEmpty) {
+        final scores = [for (final p in st.timeline) p.score];
+        stress = StressSummaryCard(
+          current: scores.last,
+          highest: st.highest,
+          lowest: scores.reduce(math.min),
+          average: st.average,
+          updatedSec: st.timeline.last.tSec + 300,
+          source: bandText,
+          onTap: () => go(c, EstimateDetailScreen(
+              stressTitle, AllDayStressCard(d!.stress, dayStartSec: d.dayStartSec))),
+        );
+      } else if (_watchStress != null) {
+        stress = StressSummaryCard(
+          current: _watchStress,
+          source: watchText,
+          onTap: () => go(c, const GarminStressScreen()),
+        );
+      } else {
+        stress = StressSummaryCard(
+          current: null,
+          source: bandText,
+          onTap: d == null
+              ? null
+              : () => go(c, EstimateDetailScreen(
+                  stressTitle, AllDayStressCard(d.stress, dayStartSec: d.dayStartSec))),
+        );
+      }
+      final bb = d?.battery.value;
+      if (bb != null) {
+        battery = BatteryBar(
+          level: bb.current,
+          source: bandText,
+          onTap: () => go(c, EstimateDetailScreen(
+              batteryTitle, BodyBatteryCard(d!.battery, dayStartSec: d.dayStartSec))),
+        );
+      } else if (_watchBattery != null) {
+        battery = BatteryBar(
+          level: _watchBattery,
+          source: watchText,
+          onTap: () => go(c, const BodyBatteryScreen()),
+        );
+      } else {
+        battery = BatteryBar(
+          level: null,
+          source: bandText,
+          onTap: d == null
+              ? null
+              : () => go(c, EstimateDetailScreen(
+                  batteryTitle, BodyBatteryCard(d.battery, dayStartSec: d.dayStartSec))),
+        );
+      }
+    }
     return Section(
       l?.homeStressEnergy ?? 'Stress & energy',
-      big
-          ? Column(children: [a, const SizedBox(height: S.x3), b])
-          : IntrinsicHeight(
-              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Expanded(child: a),
-                const SizedBox(width: S.x3),
-                Expanded(child: b),
-              ]),
-            ),
-    );
-  }
-}
-
-class _RingTile extends StatelessWidget {
-  final String title;
-  final double? value;
-  final String suffix;
-  final Color? color;
-  final double frac;
-  final VoidCallback onTap;
-  const _RingTile(
-      {required this.title, required this.value, this.suffix = '', this.color, required this.frac, required this.onTap});
-
-  @override
-  Widget build(BuildContext c) {
-    final p = P.of(c);
-    final l = AppLocalizations.of(c);
-    final col = color == null ? p.ink3 : p.on(color!);
-    return Surface(
-      onTap: onTap,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Expanded(child: Text(title, style: F.body.copyWith(color: p.ink, fontWeight: FontWeight.w600))),
-          Icon(LucideIcons.arrowRight, size: 16, color: p.ink3),
-        ]),
+      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        stress,
         const SizedBox(height: S.x3),
-        Center(
-          child: SizedBox(
-            width: 84,
-            height: 84,
-            child: Stack(alignment: Alignment.center, children: [
-              DrawIn(
-                builder: (_, t) => CustomPaint(
-                  size: const Size(84, 84),
-                  painter: Ring(frac, col, p.track, stroke: 8, t: t, solid: value != null),
-                ),
-              ),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(value == null ? '–' : '${value!.round()}$suffix',
-                    style: F.n24.copyWith(color: p.ink)),
-              ),
-            ]),
-          ),
-        ),
-        const SizedBox(height: S.x2),
-        Text(
-          value == null ? (l?.homeFromGarminWatch ?? 'From a paired Garmin watch') : 'Garmin',
-          style: F.cap.copyWith(color: p.ink3),
-        ),
+        battery,
       ]),
     );
   }
 }
+

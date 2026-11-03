@@ -16185,5 +16185,12 @@
   "intensityModerate": "Moderate",
   "intensityVigorous": "Vigorous ×2",
   "healthGroupEnergy": "Stress & energy",
-  "healthGroupFitness": "Fitness & training"
+  "healthGroupFitness": "Fitness & training",
+  "todaysStress": "Today's stress",
+  "lastUpdatedAt": "Last updated at {time}",
+  "@lastUpdatedAt": {"placeholders": {"time": {"type": "String"}}},
+  "statHighest": "Highest",
+  "statLowest": "Lowest",
+  "statAverage": "Average",
+  "homeBandEstimate": "ProjectFit estimate from your band"
 }

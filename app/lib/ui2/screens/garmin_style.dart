@@ -23,6 +23,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/metric.dart' show needMessageFromNote;
 import '../ui2.dart';
 import 'home_screen.dart' show ChartPoint;
+import 'metric_detail.dart' show detailScaffold;
 
 /// Days of burn-in before the shown day: the battery's start level is unknown.
 const int _batteryDays = ana.bodyBatteryBurnInDays + 1;
@@ -84,6 +85,7 @@ class GarminStyleData {
     required List<ChartPoint> hrv,
     required List<ChartPoint> rhr,
     required List<ChartPoint> sleepStress,
+    bool full = true,
   }) async {
     final age = profile['age'] as num?;
     final hrvBy = _byDay(hrv), rhrBy = _byDay(rhr), stressBy = _byDay(sleepStress);
@@ -101,7 +103,11 @@ class GarminStyleData {
     // The last four weeks of finished sessions, read once for fitness and focus.
     final from = DateTime.now().millisecondsSinceEpoch ~/ 1000 -
         ana.loadFocusWindowDays * 86400;
-    final w = await _soft(() => repo.getWorkouts(range: 'month'));
+    // Home asks for stress and battery only (`full: false`): no workouts read
+    // and no week of intensity minutes on every refresh of the first tab.
+    final w = full
+        ? await _soft(() => repo.getWorkouts(range: 'month'))
+        : const <String, dynamic>{};
     final sessions = [
       for (final s in (w['workouts'] as List? ?? const []))
         if (s is Map &&
@@ -110,8 +116,9 @@ class GarminStyleData {
             (s['start_ts'] as num) >= from)
           s,
     ];
-    final fitness =
-        _fitness(profile, age, recentRhr, rhrNow, hrMax, sessions);
+    final fitness = full
+        ? _fitness(profile, age, recentRhr, rhrNow, hrMax, sessions)
+        : empty.fitness;
     final focus = ana.loadFocus([
       for (final s in sessions)
         if (s['zone_min'] is List)
@@ -126,7 +133,7 @@ class GarminStyleData {
     // ── intensity minutes: Monday of this week to today ──
     final weekday = DateTime.now().weekday; // 1 = Monday
     final week = <ana.IntensityDay?>[];
-    for (var i = weekday - 1; i >= 0; i--) {
+    for (var i = full ? weekday - 1 : -1; i >= 0; i--) {
       final d = _shift(today, -i);
       final pts = [
         for (final e in ((await heartOf(d))['hr'] as List? ?? const []))
@@ -138,7 +145,7 @@ class GarminStyleData {
           ? null
           : ana.intensityMinutesOfDay(pts, restingHr: r, maxHr: hrMax));
     }
-    final intensity = ana.intensityWeek(week);
+    final intensity = full ? ana.intensityWeek(week) : _absentIntensity;
 
     if (days.isEmpty) {
       return GarminStyleData(
@@ -241,6 +248,25 @@ class GarminStyleData {
       day: day,
       dayStartSec: start,
       age: age,
+    );
+  }
+
+  /// Today's stress and Body Battery straight from the repository — the Home
+  /// tab's read, which has none of Health's charts in hand.
+  static Future<GarminStyleData> loadToday(LocalRepository repo) async {
+    List<ChartPoint> pts(Map<String, dynamic> c) => [
+          for (final e in (c['points'] as List? ?? const []))
+            if (e is Map && e['t'] is num && e['v'] is num)
+              (t: (e['t'] as num).round(), v: (e['v'] as num).toDouble()),
+        ];
+    return load(
+      repo,
+      profile: await repo.getProfile(),
+      days: await repo.availableDays(),
+      hrv: pts(await repo.getChart('hrv')),
+      rhr: pts(await repo.getChart('resting_hr')),
+      sleepStress: pts(await repo.getChart('stress')),
+      full: false,
     );
   }
 
@@ -985,4 +1011,234 @@ class _SplitBar extends CustomPainter {
 
   @override
   bool shouldRepaint(_SplitBar o) => true;
+}
+
+// ── HOME: stress summary and the battery bar ────────────────────────────────
+
+/// The day's stress at a glance: highest, lowest and average beside a ticked
+/// gauge holding the latest reading. [current] etc. are 0–100; null is "no
+/// reading yet". [source] names where the numbers come from.
+class StressSummaryCard extends StatelessWidget {
+  final double? current, highest, lowest, average;
+  final int? updatedSec;
+  final String source;
+  final VoidCallback? onTap;
+  const StressSummaryCard({
+    super.key,
+    required this.current,
+    this.highest,
+    this.lowest,
+    this.average,
+    this.updatedSec,
+    required this.source,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext c) {
+    final l = AppLocalizations.of(c);
+    final p = P.of(c);
+    final v = current;
+    String hm(int sec) {
+      final t = DateTime.fromMillisecondsSinceEpoch(sec * 1000);
+      return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+    }
+
+    Widget stat(String label, double? x) => Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(x == null ? '–' : '${x.round()}',
+                    style: F.n24.copyWith(
+                        color: x == null ? p.ink3 : p.on(stressColor(x)))),
+              ),
+              Text(label, style: F.cap.copyWith(color: p.ink3)),
+            ],
+          ),
+        );
+    final gauge = SizedBox(
+      width: 108,
+      height: 108,
+      child: Stack(alignment: Alignment.center, children: [
+        CustomPaint(
+            size: const Size(108, 108),
+            painter: _TickGauge(v == null ? 0 : v / 100, p, stressColor)),
+        // Large text shrinks to stay inside the ring rather than spill out.
+        Padding(
+          padding: const EdgeInsets.all(22),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(v == null ? '–' : '${v.round()}',
+                  style: F.n24.copyWith(color: p.ink)),
+              if (v != null)
+                Text(stressBandWord(l, ana.stressBand(v)),
+                    style: F.cap.copyWith(color: p.on(stressColor(v)))),
+            ]),
+          ),
+        ),
+      ]),
+    );
+    return Surface(
+      onTap: onTap,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                      color: v == null ? p.ink3 : p.on(stressColor(v)),
+                      shape: BoxShape.circle)),
+              const SizedBox(width: S.x2),
+              Flexible(
+                child: Text(l?.todaysStress ?? "Today's stress",
+                    style: F.head.copyWith(color: p.ink)),
+              ),
+            ]),
+            const SizedBox(height: S.x1),
+            Text(
+              updatedSec == null
+                  ? source
+                  : (l?.lastUpdatedAt(hm(updatedSec!)) ??
+                      'Last updated at ${hm(updatedSec!)}'),
+              style: F.cap.copyWith(color: p.ink3),
+            ),
+            if (highest != null || lowest != null || average != null) ...[
+              const SizedBox(height: S.x3),
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                stat(l?.statHighest ?? 'Highest', highest),
+                const SizedBox(width: S.x2),
+                stat(l?.statLowest ?? 'Lowest', lowest),
+                const SizedBox(width: S.x2),
+                stat(l?.statAverage ?? 'Average', average),
+              ]),
+            ],
+          ]),
+        ),
+        const SizedBox(width: S.x3),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Icon(LucideIcons.arrowRight, size: 18, color: p.ink3),
+          gauge,
+        ]),
+      ]),
+    );
+  }
+}
+
+/// A 270° gauge of ticks, each coloured by the stress band it stands for, lit
+/// up to [frac].
+class _TickGauge extends CustomPainter {
+  final double frac;
+  final P p;
+  final Color Function(double score) colorAt;
+  _TickGauge(this.frac, this.p, this.colorAt);
+
+  @override
+  void paint(Canvas c, Size s) {
+    final ctr = s.center(Offset.zero);
+    final r = s.shortestSide / 2;
+    c.drawCircle(ctr, r - 2, Paint()..color = p.card2);
+    const n = 48;
+    const start = math.pi * 0.75, sweep = math.pi * 1.5;
+    for (var i = 0; i < n; i++) {
+      final k = i / (n - 1);
+      final a = start + sweep * k;
+      final on = k <= frac && frac > 0;
+      final col = p.on(colorAt(100 * k));
+      final paint = Paint()
+        ..color = on ? col : col.withValues(alpha: 0.22)
+        ..strokeWidth = 2.6
+        ..strokeCap = StrokeCap.round;
+      final o1 = ctr + Offset(math.cos(a), math.sin(a)) * (r - 8);
+      final o2 = ctr + Offset(math.cos(a), math.sin(a)) * (r - 16);
+      c.drawLine(o1, o2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_TickGauge o) => o.frac != frac;
+}
+
+/// Body Battery as a row of segments with a bolt and the level.
+class BatteryBar extends StatelessWidget {
+  final double? level; // 0–100
+  final String source;
+  final VoidCallback? onTap;
+  const BatteryBar(
+      {super.key, required this.level, required this.source, this.onTap});
+
+  @override
+  Widget build(BuildContext c) {
+    final l = AppLocalizations.of(c);
+    final p = P.of(c);
+    final v = level;
+    final col = v == null
+        ? p.ink3
+        : p.on(v >= 50 ? C.green : (v >= 25 ? C.yellow : C.red));
+    return Surface(
+      onTap: onTap,
+      child: Semantics(
+        label: '${l?.batteryTitle ?? 'Body Battery'} '
+            '${v == null ? '' : '${v.round()}%'}',
+        excludeSemantics: true,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Icon(LucideIcons.zap, size: 22, color: col),
+            const SizedBox(width: S.x3),
+            Expanded(
+              child: SizedBox(
+                height: 26,
+                child: CustomPaint(
+                    size: Size.infinite,
+                    painter: _Segments(v == null ? 0 : v / 100, col, p.track)),
+              ),
+            ),
+            const SizedBox(width: S.x3),
+            Text(v == null ? '–' : '${v.round()}%',
+                style: F.head.copyWith(color: p.ink)),
+          ]),
+          const SizedBox(height: S.x2),
+          Text(source, style: F.cap.copyWith(color: p.ink3)),
+        ]),
+      ),
+    );
+  }
+}
+
+class _Segments extends CustomPainter {
+  final double frac;
+  final Color on, off;
+  _Segments(this.frac, this.on, this.off);
+
+  @override
+  void paint(Canvas c, Size s) {
+    const n = 40;
+    final gap = 2.5, w = (s.width - gap * (n - 1)) / n;
+    for (var i = 0; i < n; i++) {
+      final lit = (i + 0.5) / n <= frac;
+      c.drawRRect(
+          RRect.fromRectAndRadius(
+              Rect.fromLTWH(i * (w + gap), 0, w, s.height),
+              Radius.circular(w / 2)),
+          Paint()..color = lit ? on : off);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Segments o) => o.frac != frac || o.on != on;
+}
+
+/// A full card on its own screen — where the Home summaries open to.
+class EstimateDetailScreen extends StatelessWidget {
+  final String title;
+  final Widget card;
+  const EstimateDetailScreen(this.title, this.card, {super.key});
+
+  @override
+  Widget build(BuildContext c) => detailScaffold(c, title, [card]);
 }

@@ -314,6 +314,9 @@ Versi baru terpasang di atas versi lama, dan data tetap ada.
 | **"-80045" / "This action cannot be completed at this time"** | Apple sedang memblokir login dari alat sideload (Oktober 2026) | Berhenti mencoba supaya Apple ID tidak terkunci. Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
 | AltServer: **"could not retrieve anisette data value machineID"** | Plug-in Mail milik AltServer belum aktif | Buka **Mail → Settings → General → Manage Plug-ins**, centang **AltPlugin**, klik Apply, lalu tutup dan buka lagi Mail serta AltServer. Masih gagal? Pakai [Tutorial C](#tutorial-c--mac--xcode-paling-pasti) |
 | `flutter run`: **"No space left on device"** | Disk Mac penuh (build berhasil, penyalinan gagal) | Kosongkan ±5 GB: hapus `~/Library/Developer/Xcode/DerivedData`, simulator iOS di **Xcode → Settings → Components**, lalu kosongkan Trash. Jalankan ulang |
+| `flutter run`: **"No devices found"** / masih logo lama setelah `git pull` | Folder di Mac masih di cabang lama, atau iPhone belum tersambung | Jalankan `git checkout main && git pull`. Colokkan iPhone dengan kabel, buka kuncinya, ketuk **Percayai** |
+| `flutter run`: **"TARGET_BUILD_DIR"** tidak ada / tidak ditemukan | Build Xcode terputus setelah `flutter clean` | Jalankan ulang `flutter run --release` **tanpa** `flutter clean`. Masih gagal? Buka `ios/Runner.xcworkspace` di Xcode, pilih skema **Release**, lalu tekan ▶ |
+| **"device needs to be unlocked"** / perangkat terkunci | iPhone terkunci saat aplikasi dipasang | Buka kunci iPhone dan biarkan layarnya menyala sampai pemasangan selesai; pakai kabel, bukan Wi-Fi |
 | Sideloadly **tidak menemukan iPhone** | Koneksi kabel atau iTunes | Ganti kabel atau port, buka kunci iPhone, ketuk **Percayai**. Di Windows, pakai iTunes dari situs Apple |
 | Mode Pengembang **tidak ada di menu** | Belum ada aplikasi sideload | Muncul setelah aplikasi pertama terpasang. Lanjutkan dulu, lalu kembali ke langkah ini |
 
