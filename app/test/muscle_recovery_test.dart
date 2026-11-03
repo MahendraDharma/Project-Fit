@@ -56,4 +56,15 @@ void main() {
       }
     }
   });
+
+  test('a region shared by two muscles shows the more tired one', () {
+    // The reported case: Biceps fatigued, Brachialis recovered, one arm.
+    final r = regionRecovery({'Biceps': 75, 'Brachialis': 96, 'Lats': 70});
+    expect(r['biceps'], 75);
+    expect(muscleState(r['biceps']!), MuscleState.fatigued);
+    expect(regionRecovery({'Brachialis': 96, 'Biceps': 75})['biceps'], 75,
+        reason: 'order of the map must not decide the colour');
+    expect(r['upper_back'], 70);
+    expect(regionRecovery({'Calves': 90, 'Soleus': 40})['left_soleus'], 40);
+  });
 }

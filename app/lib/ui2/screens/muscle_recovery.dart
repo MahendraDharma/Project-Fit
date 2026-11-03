@@ -76,6 +76,22 @@ const Map<String, List<String>> kMuscleRegions = {
   'Triceps': ['triceps'],
 };
 
+/// Body-map region → % recovered. A region drawn for several muscles (biceps
+/// for Biceps and Brachialis, the soleus for Calves and Soleus, the obliques
+/// for two abdominal muscles) shows the LEAST recovered of them: the list said
+/// "Biceps · Fatigued" while the arm was painted by Brachialis, recovered,
+/// because whichever muscle came last overwrote the colour.
+Map<String, double> regionRecovery(Map<String, double> recovered) {
+  final out = <String, double>{};
+  for (final e in recovered.entries) {
+    for (final r in kMuscleRegions[e.key] ?? const <String>[]) {
+      final prev = out[r];
+      if (prev == null || e.value < prev) out[r] = e.value;
+    }
+  }
+  return out;
+}
+
 /// Front and back, each region filled by its muscle's state.
 class BodyMap extends StatelessWidget {
   /// Catalogue muscle name → % recovered.
@@ -85,13 +101,10 @@ class BodyMap extends StatelessWidget {
   @override
   Widget build(BuildContext c) {
     final p = P.of(c);
-    final fill = <String, Color>{};
-    for (final e in recovered.entries) {
-      final col = p.on(kMuscleStateColor[muscleState(e.value)]!);
-      for (final r in kMuscleRegions[e.key] ?? const <String>[]) {
-        fill[r] = col;
-      }
-    }
+    final fill = {
+      for (final e in regionRecovery(recovered).entries)
+        e.key: p.on(kMuscleStateColor[muscleState(e.value)]!),
+    };
     return Semantics(
       label: 'Body map',
       excludeSemantics: true,
