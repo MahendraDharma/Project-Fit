@@ -26,8 +26,9 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.21.0** (2026-11-03): redesign B through Activity and Health, the mochi
-  on Home, the sync as a pull-down pop-up. Each release carries `ProjectFit.ipa`,
+- Latest release: **v0.22.0** (2026-11-03): redesign B through Activity, Health, Profile,
+  settings and onboarding (mochi greets and pairs with you), the mochi on Home, the sync as a
+  pull-down pop-up. Each release carries `ProjectFit.ipa`,
   `ProjectFit.apk` (release key, checked) and `apps.json`. v0.18.0 Home sentence case; v0.19.0
   Sleep hero + all-caps strings to sentence case; v0.20.0 mochi + nudges; v0.21.0 Activity,
   Health, sync pop-up.
@@ -160,8 +161,10 @@ Done since: v0.18.0 F.label/labelSm sentence case; v0.19.0 flat tinted detail he
 coaching card, 119 all-caps ARB keys sentence-cased (German left as written, acronyms kept) by a
 script; v0.21.0 StartCard dark round card (mascot PNGs deleted), SubTabs dark selected capsule,
 icon discs, `detailLinkRow` soft card, Home sync button/line removed for `SyncToast` (pull to
-sync). Next: Profile/settings and onboarding in the same style, detail-screen bodies, the
-website's card images (`site/img/`).
+sync). v0.22.0: NavBar round back button, SetRow icon discs, pill BigButton, mochi on Welcome and
+Pairing, website card images re-rendered; Data screen's action result moved to the top (it was
+off-screen). Note: a macOS runner can fail to start ("not acquired by Runner", GitHub capacity);
+re-run the ios-sideload run.
 
 ## Mascot and coach (owner, 2026-11-03)
 The owner picked the faced **mochi** (canvas <https://claude.ai/artifact/NQRCVuBXBgEcE3YCmYcurn>,
