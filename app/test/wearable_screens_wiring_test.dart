@@ -133,7 +133,7 @@ void main() {
     expect(t.widget<WearableCells>(find.byType(WearableCells)).date, isNull);
     expect(_rhr(t), 58);
 
-    await t.tap(find.bySemanticsLabel('Previous day'));
+    await t.tap(find.byKey(ValueKey('week-$_yesterday')));
     await _settle(t);
     expect(t.widget<WearableCells>(find.byType(WearableCells)).date,
         _yesterday);

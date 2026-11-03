@@ -250,12 +250,9 @@ void main() {
             ),
           );
           await tester.pumpAndSettle();
-          final nav = find.text('Активность');
-          expect(nav, findsOneWidget);
-          final paragraph = tester.renderObject<RenderParagraph>(nav);
-          expect(paragraph.maxLines, isNull);
-          expect(paragraph.didExceedMaxLines, isFalse);
-          expect(paragraph.size.height, greaterThan(0));
+          // The tab pill is icons only; the Russian name reaches the screen
+          // reader, and the pill fits the narrow width without overflow.
+          expect(find.bySemanticsLabel('Активность'), findsOneWidget);
           expect(tester.takeException(), isNull);
           await tester.pumpWidget(
             harness(
