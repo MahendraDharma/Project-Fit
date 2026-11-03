@@ -76,6 +76,7 @@ import 'sync_pill.dart';
 import 'wear_streak.dart' show StreakChip;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
+import 'week_strip.dart' show WeekStrip;
 import 'workout_screen.dart' show activityHost;
 import '../activity/picker.dart' show ActivityPicker;
 import '../profile/alarm.dart'
@@ -832,6 +833,14 @@ String driverLabel(Object? key, [AppLocalizations? l]) {
 ///
 /// Every ring opens something: recovery → [ReadinessDetail], strain →
 /// [DayStrainDetail], sleep → [SleepDetail].
+/// The greeting at the top of Home, by the hour of the day.
+String _greeting(AppLocalizations? l, int hour) => switch (hour) {
+      < 4 => l?.homeGreetingStillUp ?? 'Still up',
+      < 12 => l?.homeGreetingMorning ?? 'Good morning',
+      < 18 => l?.homeGreetingAfternoon ?? 'Good afternoon',
+      _ => l?.homeGreetingEvening ?? 'Good evening',
+    };
+
 class RingTrio extends StatelessWidget {
   final HomeData d;
 
@@ -877,10 +886,11 @@ class RingTrio extends StatelessWidget {
     // the reason in it — same place every other absence on this screen goes.
 
     return Surface(
-      // The rings sit on the page itself; the card was a frame around three
-      // frames.
+      // The rings sit on the page itself, each in its own tile, edge to edge
+      // with the cards below them.
       color: p.bg,
       elevation: 0,
+      pad: EdgeInsets.zero,
       child: Column(children: [
         if (bigText(c))
           // Past ~1.3× a 100 pt column cannot hold the word "Recovery" on one
@@ -891,15 +901,17 @@ class RingTrio extends StatelessWidget {
             _RingRow(rings[i], onTap: _open(rings[i].kind)),
           ]
         else
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (var i = 0; i < rings.length; i++) ...[
-                if (i > 0) const SizedBox(width: S.x3),
-                Expanded(
-                    child: _RingColumn(rings[i], onTap: _open(rings[i].kind))),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < rings.length; i++) ...[
+                  if (i > 0) const SizedBox(width: S.x3),
+                  Expanded(
+                      child: _RingColumn(rings[i], onTap: _open(rings[i].kind))),
+                ],
               ],
-            ],
+            ),
           ),
         for (final r in gaps) ...[
           const SizedBox(height: S.x2),
@@ -1210,22 +1222,32 @@ class _RingColumn extends StatelessWidget {
   const _RingColumn(this.r, {this.onTap});
 
   @override
-  Widget build(BuildContext c) => Pressable(
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    // Each ring is its own soft tile, as in the owner's chosen mockup B.
+    return Pressable(
         onTap: onTap,
         semanticLabel: r.spoken,
-        child: Column(children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 104),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: _Dial(r, stroke: 8, icon: 20, value: true),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(S.x2, S.x4, S.x2, S.x3),
+          decoration: BoxDecoration(
+              color: p.card, borderRadius: R.rXl, boxShadow: p.el(1)),
+          child: Column(children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 88),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: _Dial(r, stroke: 8, icon: 20, value: true),
+              ),
             ),
-          ),
-          const SizedBox(height: S.x3),
-          _RingText(r,
-              align: TextAlign.center, valueShown: r.inside != null || r.why != null),
-        ]),
+            const SizedBox(height: S.x3),
+            _RingText(r,
+                align: TextAlign.center,
+                valueShown: r.inside != null || r.why != null),
+          ]),
+        ),
       );
+  }
 }
 
 /// The accessibility layout: ring left, type in the width it needs.
@@ -1281,10 +1303,11 @@ class _RingText extends StatelessWidget {
       return Column(crossAxisAlignment: cross, children: [
         Row(mainAxisSize: MainAxisSize.min, children: [
           Flexible(
-            child: Text(r.label.toUpperCase(),
-                style: F.label.copyWith(color: p.ink), textAlign: align),
+            child: Text(r.label,
+                style: F.body.copyWith(color: p.ink, fontWeight: FontWeight.w700),
+                textAlign: align),
           ),
-          Icon(LucideIcons.chevronRight, size: 14, color: p.ink),
+          Icon(LucideIcons.chevronRight, size: 14, color: p.ink3),
         ]),
         // The one line the ring cannot say: the duration a sleep percentage
         // is of, that a number is still finishing, or the word an absent
@@ -1297,8 +1320,9 @@ class _RingText extends StatelessWidget {
       ]);
     }
     return Column(crossAxisAlignment: cross, children: [
-      Text(r.label.toUpperCase(),
-          style: F.over.copyWith(color: p.ink3), textAlign: align),
+      Text(r.label,
+          style: F.cap.copyWith(color: p.ink3, fontWeight: FontWeight.w600),
+          textAlign: align),
         const SizedBox(height: S.x1),
         // Absent reads as words, never as a dash and never as a zero — so it
         // takes the sentence weight rather than the numeral one.
@@ -1951,33 +1975,25 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
       // exactly the morning you would most want to be told.
       ...?_bodyWatch(c, d, todayLabel(widget.now)),
       // ── top bar ──
-      // Profile on the left, the wordmark in the middle, the strap's battery
-      // on the right; under them, how far the band's data reaches — the
-      // question "am I looking at today, or at last night?".
+      // The date and a greeting on the left; the wear streak, the strap's
+      // battery and the profile on the right. Under them, how far the band's
+      // data reaches — "am I looking at today, or at last night?".
       Padding(
         padding: const EdgeInsets.only(top: S.x3, bottom: S.x2),
-        child: Row(children: [
-          const ProfileAvatar(accent: C.domHome),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text('PROJECTFIT', style: F.wordmark.copyWith(color: p.ink)),
-              ),
-            ),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(prettyDay(todayLabel(widget.now), l),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: F.cap.copyWith(color: p.ink3)),
+              Text(_greeting(l, widget.hour ?? (widget.now ?? DateTime.now()).hour),
+                  style: F.t1.copyWith(color: p.ink)),
+            ]),
           ),
-          ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: S.x10),
-            child: Align(
-              alignment: Alignment.centerRight,
-              widthFactor: 1,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                // The wear streak, the owner's call (see wear_streak.dart).
-                if (widget.data == null) ...[const StreakChip(), const SizedBox(width: S.x2)],
-                batteryLine(c) ?? const SizedBox.shrink(),
-              ]),
-            ),
-          ),
+          if (widget.data == null) ...[const StreakChip(), const SizedBox(width: S.x2)],
+          if (batteryLine(c) case final b?) ...[b, const SizedBox(width: S.x2)],
+          const ProfileAvatar(accent: C.domHome),
         ]),
       ),
       // The sync pill — "Sync", "Syncing… 42%", "Sync complete".
@@ -1991,7 +2007,10 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
       if (bare) ...[
         const DetectedActivitiesCard(),
       ],
-      ...dayNavRow(_day ?? d.dayId, _days, _goDay),
+      if (_days.length > 1) ...[
+        WeekStrip(day: _day ?? d.dayId, days: _days, onDay: _goDay, now: widget.now),
+        const SizedBox(height: S.x3),
+      ],
       // Stepped back through the record: one tap home.
       if (!isToday)
         Align(

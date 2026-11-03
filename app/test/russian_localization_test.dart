@@ -359,8 +359,10 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Бег'), findsOneWidget);
+    // The tab pill shows icons; each tab is named in Russian to the screen
+    // reader.
     for (final title in ['Сегодня', 'Сон', 'Активность', 'Здоровье']) {
-      expect(find.text(title), findsOneWidget);
+      expect(find.bySemanticsLabel(title), findsOneWidget);
     }
     expect(tester.takeException(), isNull);
     expect(allActivities.first.typeKey, 'running');

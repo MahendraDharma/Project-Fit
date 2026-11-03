@@ -60,6 +60,7 @@ import '../../models/metric.dart';
 import '../../models/activity_suggestion.dart';
 import '../../sync/full_sync.dart' show SyncPhase, SyncRun, SyncStep;
 import '../screens/quick_add.dart' show QuickAddSheet;
+import '../screens/week_strip.dart' show WeekStrip;
 import '../screens/detected_activities.dart';
 import '../activity/catalogue.dart';
 import '../activity/live.dart';
@@ -233,6 +234,14 @@ Map<String, Widget> componentCases() => {
       // swept: they are the two components a regression would be noticed in
       // last and cost the most.
       'rings': const RingTrio(d: _ringsMeasured),
+      'week_strip': WeekStrip(
+          day: '2026-11-03',
+          days: const [
+            '2026-11-03', '2026-11-02', '2026-11-01', '2026-10-31',
+            '2026-10-29', '2026-10-28', '2026-10-27',
+          ],
+          onDay: (_) {},
+          now: DateTime(2026, 11, 3, 15)),
       // The two states that decide whether the trio is honest, in one picture:
       // recovery still filling its baseline (progress, not a bad score), and a
       // real duration with no computed need to draw it against.

@@ -1,7 +1,6 @@
 // Home used to be fixed to today, with no way to look at yesterday's rings
-// without leaving the tab for a detail screen. This pins the switcher: it
-// reuses [DayNav] (the same day-stepper the Sleep/Strain/HRV detail screens
-// already wear) rather than a new control, and it steps through a PAST day
+// without leaving the tab for a detail screen. This pins the switcher — the
+// [WeekStrip] of dates under the greeting — and it steps through a PAST day
 // on the app's own live-repo path — not an injected `HomeData` — so a real
 // regression in the wiring between `HomeScreen` and `HomeData.loadForDay`
 // would actually fail this.
@@ -62,6 +61,9 @@ class _Repo extends LocalRepository {
       {'has_sleep': true, 'duration_min': 250};
 }
 
+/// A date in the strip under the greeting.
+Finder _cell(String day) => find.byKey(ValueKey('week-$day'));
+
 Future<void> _settle(WidgetTester t, {int n = 40}) async {
   for (var i = 0; i < n; i++) {
     await t.pump(const Duration(milliseconds: 20));
@@ -87,11 +89,10 @@ void main() {
     // Today's own readiness ring is showing (its number is real Text, not
     // canvas-painted), and so is the stepper.
     expect(find.text('70'), findsOneWidget);
-    expect(find.bySemanticsLabel('Previous day'), findsOneWidget);
-    // The newest day: forward is a dead arrow.
-    expect(find.bySemanticsLabel('Next day'), findsOneWidget);
+    expect(_cell(_yesterday), findsOneWidget);
+    expect(_cell(_today), findsOneWidget);
 
-    await t.tap(find.bySemanticsLabel('Previous day'));
+    await t.tap(_cell(_yesterday));
     await _settle(t);
 
     // Yesterday's readiness (42, off getDayOverview) replaced today's (70) —
@@ -101,7 +102,7 @@ void main() {
     expect(find.text('42'), findsOneWidget);
 
     // Stepping forward again returns to today's own number.
-    await t.tap(find.bySemanticsLabel('Next day'));
+    await t.tap(_cell(_today));
     await _settle(t);
     expect(find.text('70'), findsOneWidget);
   });
@@ -125,7 +126,7 @@ void main() {
       ),
     ));
     await _settle(t);
-    await t.tap(find.bySemanticsLabel('Previous day'));
+    await t.tap(_cell(_yesterday));
     await _settle(t);
 
     final row = find.text('Breakdown of your day');
@@ -160,9 +161,9 @@ void main() {
       ),
     ));
     await _settle(t);
-    await t.tap(find.bySemanticsLabel('Previous day'));
+    await t.tap(_cell(_yesterday));
     await _settle(t);
-    await t.tap(find.bySemanticsLabel('Next day'));
+    await t.tap(_cell(_today));
     await _settle(t);
 
     // Today, reached through the switcher, is still today: no explicit day,
@@ -187,7 +188,7 @@ void main() {
     ));
     await _settle(t);
 
-    await t.tap(find.bySemanticsLabel('Previous day'));
+    await t.tap(_cell(_yesterday));
     await _settle(t);
 
     expect(find.text('No data for this day'), findsOneWidget);

@@ -394,5 +394,9 @@
   "quickStartActivity": "Mulai aktivitas",
   "quickLogWorkout": "Catat latihan",
   "quickLogFood": "Catat makanan",
-  "quickJournal": "Tulis di jurnal"
+  "quickJournal": "Tulis di jurnal",
+  "homeGreetingStillUp": "Masih terjaga",
+  "homeGreetingMorning": "Selamat pagi",
+  "homeGreetingAfternoon": "Selamat siang",
+  "homeGreetingEvening": "Selamat malam"
 }
