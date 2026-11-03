@@ -584,7 +584,7 @@ class LiveShellState extends State<LiveShell> {
                     child: Column(
                       children: [
                         Text(
-                          a.displayName(c).toUpperCase(),
+                          a.displayName(c),
                           style: F.over.copyWith(color: p.on(a.color)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -1819,7 +1819,7 @@ class _LiveStrengthState extends State<LiveStrength> {
               Icon(LucideIcons.trophy, size: 12, color: p.on(C.yellow)),
               const SizedBox(width: S.x1),
             ],
-            Text(label.toUpperCase(),
+            Text(label,
                 style: F.over
                     .copyWith(color: gold ? p.on(C.yellow) : p.ink3)),
           ]),
@@ -1915,8 +1915,8 @@ class _LiveSwimState extends State<LiveSwim> {
     return LiveShell(
       widget.a,
       subtitle: l?.activityLivePoolSubtitle(
-              poolLen, _strokeLabel(c, strokes[stroke]).toUpperCase()) ??
-          '${poolLen}M POOL · ${strokes[stroke].toUpperCase()}',
+              poolLen, _strokeLabel(c, strokes[stroke])) ??
+          '${poolLen}m pool · ${strokes[stroke]}',
       private: widget.private,
       weightKg: widget.weightKg,
       onFinish: widget.onFinish,
@@ -2541,9 +2541,8 @@ class _LiveIntervalState extends State<LiveInterval> {
           Text(
               (work
                       ? (l?.activityLiveWorkWord ?? 'Work')
-                      : (l?.activityLiveRestWord ?? 'Rest'))
-                  .toUpperCase(),
-              style: F.t2.copyWith(color: p.on(col), letterSpacing: 3)),
+                      : (l?.activityLiveRestWord ?? 'Rest')),
+              style: F.t2.copyWith(color: p.on(col))),
           const SizedBox(height: S.x5),
           ClipRRect(
             borderRadius: R.rPill,

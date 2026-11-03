@@ -6,7 +6,7 @@ publish_to: 'none'
 # Watch App" targets in ios/Runner.xcodeproj/project.pbxproj — they aren't wired
 # to FLUTTER_BUILD_NAME/FLUTTER_BUILD_NUMBER. See guides/IOS_INSTALLATION.md
 # "Version Numbers".
-version: 0.20.0+90
+version: 0.21.0+91
 
 environment:
   sdk: ^3.11.4
@@ -263,8 +263,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/images/2.0x/
-    - assets/images/3.0x/
     # The three community brand marks the one-icon-family rule (see
     # lucide_icons_flutter below) deliberately doesn't cover — a generic
     # Lucide glyph can't stand in for GitHub/Discord/Reddit's own logos.

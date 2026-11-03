@@ -348,7 +348,7 @@ class _Quick extends StatelessWidget {
             width: 38,
             height: 38,
             decoration:
-                BoxDecoration(color: p.wash(a.color), borderRadius: R.rMd),
+                BoxDecoration(color: p.wash(a.color, strength: 1.4), shape: BoxShape.circle),
             child: Icon(a.icon, size: 18, color: p.on(a.color)),
           ),
             const SizedBox(height: S.x2),

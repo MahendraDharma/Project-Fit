@@ -2143,17 +2143,23 @@ Widget detailLinkRow(BuildContext c, IconData icon, String title, String sub,
   return Pressable(
     onTap: onTap,
     semanticLabel: '$title: $sub',
+    // A soft card with the icon in a disc (redesign B), not a grey slab.
     child: Container(
-      padding: const EdgeInsets.all(S.x4),
-      decoration: BoxDecoration(color: p.card2, borderRadius: R.rMd),
+      padding: const EdgeInsets.fromLTRB(S.x3, S.x3, S.x4, S.x3),
+      decoration: BoxDecoration(color: p.card, borderRadius: R.rXl, boxShadow: p.el(1)),
       child: Row(children: [
-        Icon(icon, size: 17, color: p.ink3),
+        Container(
+          width: S.x10,
+          height: S.x10,
+          decoration: BoxDecoration(color: p.card2, shape: BoxShape.circle),
+          child: Icon(icon, size: 18, color: p.ink2),
+        ),
         const SizedBox(width: S.x3),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title,
                 style: F.body.copyWith(color: p.ink, fontWeight: FontWeight.w600)),
-            Text(sub, style: F.over.copyWith(color: p.ink3)),
+            Text(sub, style: F.cap.copyWith(color: p.ink3)),
           ]),
         ),
         Icon(LucideIcons.chevronRight, size: 18, color: p.ink3),

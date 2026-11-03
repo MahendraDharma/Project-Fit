@@ -945,7 +945,7 @@ class ActionCard extends StatelessWidget {
     // title, which is the right loser; above it, it takes its own line.
     final badge = Container(
       padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: S.x2),
-      decoration: BoxDecoration(color: p.fill(color), borderRadius: R.rSm),
+      decoration: BoxDecoration(color: p.fill(color), borderRadius: R.rPill),
       child: Text(
         cta,
         style: F.cap.copyWith(color: p.inkOnFill, fontWeight: FontWeight.w600),
@@ -957,7 +957,7 @@ class ActionCard extends StatelessWidget {
           width: S.tap,
           height: S.tap,
           alignment: Alignment.center,
-          decoration: BoxDecoration(color: p.wash(color), borderRadius: R.rMd),
+          decoration: BoxDecoration(color: p.wash(color, strength: 1.4), shape: BoxShape.circle),
           child: Icon(icon, size: 20, color: p.on(color)),
         ),
         const SizedBox(width: S.x3),
@@ -1938,6 +1938,9 @@ class SubTabs extends StatefulWidget {
   final List<String> items;
   final int index;
   final ValueChanged<int> onTap;
+
+  /// The tab's accent. The selected pill is a neutral dark capsule now
+  /// (redesign B), so this no longer paints; callers still name their tab.
   final Color color;
 
   /// Indices that are shown but not tappable — a device that physically cannot
@@ -2007,7 +2010,6 @@ class _SubTabsState extends State<SubTabs> {
     final items = widget.items;
     final index = widget.index;
     final disabled = widget.disabled;
-    final color = widget.color;
     return SizedBox(
       height: MediaQuery.textScalerOf(c).scale(S.tap),
       // The fifth tab is off the edge on every phone we ship to — at 360 pt
@@ -2053,17 +2055,18 @@ class _SubTabsState extends State<SubTabs> {
                           // the active pill and the empty ground of a live one, and
                           // `ink3` is solved for 4.5:1 ON `card2` (see theme.dart), so
                           // this cue costs no contrast the way dimming would.
+                  // Selected is a dark capsule, as on Home's date strip.
                   color: off
                       ? p.card2
                       : on
-                          ? p.wash(color)
+                          ? p.ink
                           : const Color(0x00000000),
                   borderRadius: R.rPill,
                 ),
                 child: Text(
                   items[i],
                   style: F.cap.copyWith(
-                    color: on ? p.on(color) : p.ink3,
+                    color: on ? p.bg : p.ink3,
                     fontWeight: on ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

@@ -299,26 +299,7 @@ class _WellnessScreenState extends State<WellnessScreen> with RevisionReload {
                     : (l?.wellnessLastMinutes(
                             (_reading(last['seconds']) ?? 0) ~/ 60) ??
                         'Last: ${(_reading(last['seconds']) ?? 0) ~/ 60} min'),
-                asset: 'mascot_wellness.png',
                 accent: C.domMind,
-                deep: C.teal,
-                // Sized so the CHARACTER matches Workout's, not the frame.
-                // Two corrections got us here: the asset carried ~30%
-                // transparent padding (cropped away), and what is left still
-                // has a soft halo above the head, so the figure is 87% of the
-                // frame height where the workout mascot is 100% of its own.
-                // 145 x 0.87 puts the character at ~126, the same as Workout.
-                // Not cropped tighter than this on purpose — the halo is nearly
-                // opaque, so trimming it slices a hard arc through the artwork.
-                // The 118 here was originally compensating for
-                // ~30% transparent padding baked into the asset, which made
-                // the art render a third smaller than the workout one at the
-                // same height. The asset is cropped to its own alpha bounds,
-                // so the height is the art's height and the two mascots read
-                // as the same size. Still slightly wider than tall (1.03 vs
-                // 0.93), and at 126 that is 130 px — narrower than the padded
-                // asset was, so the copy has more room than before, not less.
-                mascotHeight: 145,
                 onTap: () async {
                   await Navigator.of(c).push(
                     MaterialPageRoute<void>(
@@ -332,12 +313,9 @@ class _WellnessScreenState extends State<WellnessScreen> with RevisionReload {
             [_mind, _recovery, _habitsTab, _medication, _cycle][tab](c),
           ],
         ])
-          if (w is StartCard)
-            w
-          else
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: S.x4),
-                child: w),
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: S.x4),
+              child: w),
       ],
     )),
         ]),

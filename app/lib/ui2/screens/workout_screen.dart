@@ -118,12 +118,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
                 _ => _history(c, d),
               },
             ])
-              if (w is StartCard)
-                w
-              else
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: S.x4),
-                    child: w),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: S.x4),
+                  child: w),
           ],
         );
       },
@@ -151,9 +148,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
         label: loc?.workoutStartSessionLabel ?? 'Start a session',
         count: allActivities.length,
         noun: loc?.workoutActivitiesNoun ?? 'activities',
-        asset: 'mascot_workout.png',
         accent: C.purple,
-        deep: C.indigo,
         onTap: () => _openPicker(c, d),
       ),
       const SizedBox(height: S.x3),
@@ -1015,13 +1010,13 @@ class WorkoutQuickTile extends StatelessWidget {
           width: 40,
           height: 40,
           decoration:
-              BoxDecoration(color: p.wash(a.color), borderRadius: R.rMd),
+              BoxDecoration(color: p.wash(a.color, strength: 1.4), shape: BoxShape.circle),
           child: Icon(a.icon, size: 19, color: p.on(a.color)),
         ),
           const SizedBox(height: S.x2),
           Text(
             a.displayName(c),
-            style: F.over.copyWith(color: p.ink2),
+            style: F.cap.copyWith(color: p.ink, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1075,7 +1070,7 @@ class _HistoryRow extends StatelessWidget {
             width: 40,
             height: 40,
             decoration:
-                BoxDecoration(color: p.wash(a.color), borderRadius: R.rMd),
+                BoxDecoration(color: p.wash(a.color, strength: 1.4), shape: BoxShape.circle),
             child: Icon(a.icon, size: 19, color: p.on(a.color)),
           ),
               const SizedBox(width: S.x3),

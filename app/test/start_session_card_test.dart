@@ -37,9 +37,7 @@ void main() {
                 label: 'START A SESSION',
                 count: 71,
                 noun: 'activities',
-                asset: 'mascot_workout.png',
                 accent: C.purple,
-                deep: C.indigo,
               ),
             ),
           );
@@ -70,10 +68,10 @@ void main() {
     expect(w, 390);
   });
 
-  testWidgets('the copy is not squeezed by the mascot', (t) async {
+  testWidgets('the copy is not squeezed by the play button', (t) async {
     await pump(t);
-    // The defect this pins is "71 activit…" — the mascot taking so much width
-    // that the headline ellipsised. Finding the exact string is the check;
+    // The defect this pins is "71 activit…": artwork beside the copy taking so
+    // much width that the headline ellipsised. Finding the exact string is the check;
     // an ellipsised RenderParagraph would not match it.
     expect(find.text('71 activities'), findsOneWidget);
     expect(find.text('Pick one and go'), findsOneWidget);
@@ -96,10 +94,7 @@ void main() {
           label: 'START A SITTING',
           count: 3,
           noun: 'exercises',
-          asset: 'mascot_wellness.png',
           accent: C.domMind,
-          deep: C.teal,
-          mascotHeight: 118,
         ),
       ),
     ));
