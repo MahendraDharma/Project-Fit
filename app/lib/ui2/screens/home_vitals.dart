@@ -227,7 +227,7 @@ class _CardHead extends StatelessWidget {
   Widget build(BuildContext c) {
     final p = P.of(c);
     return Row(children: [
-      Expanded(child: Text(title.toUpperCase(), style: F.label.copyWith(color: p.ink))),
+      Expanded(child: Text(title, style: F.label.copyWith(color: p.ink))),
       if (chevron) Icon(LucideIcons.chevronRight, size: 18, color: p.ink3),
     ]);
   }
@@ -267,7 +267,7 @@ Widget _stat(BuildContext c, String value, String label, {Color? color}) {
     FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
-      child: Text(label.toUpperCase(), style: F.labelSm.copyWith(color: p.ink3)),
+      child: Text(label, style: F.labelSm.copyWith(color: p.ink3)),
     ),
   ]);
 }
@@ -303,7 +303,7 @@ class VitalChips extends StatelessWidget {
             const SizedBox(height: S.x2),
             Text(value, style: F.n24.copyWith(color: p.ink), maxLines: 1),
             const SizedBox(height: 2),
-            Text(unit.toUpperCase(),
+            Text(unit,
                 style: F.labelSm.copyWith(color: p.ink3), maxLines: 1, overflow: TextOverflow.ellipsis),
           ]),
         ),
@@ -389,7 +389,7 @@ class DayHeartCard extends StatelessWidget {
             runSpacing: S.x1,
             children: [
               Text('${v.hrAvg}', style: F.n34.copyWith(color: p.ink)),
-              Text((l?.homeHeartAvg ?? 'bpm average').toUpperCase(),
+              Text(l?.homeHeartAvg ?? 'bpm average',
                   style: F.labelSm.copyWith(color: p.ink3)),
               if (v.hrMin != null && v.hrMax != null)
                 Text('${v.hrMin}–${v.hrMax}', style: F.n17.copyWith(color: p.ink2)),
@@ -421,7 +421,7 @@ class DayHeartCard extends StatelessWidget {
         ]),
         if (v.zoneMin.length == 5 && v.zoneMin.any((m) => m > 0)) ...[
           const SizedBox(height: S.x5),
-          Text((l?.homeHeartZones ?? 'Heart rate zones').toUpperCase(),
+          Text(l?.homeHeartZones ?? 'Heart rate zones',
               style: F.labelSm.copyWith(color: p.ink3)),
           const SizedBox(height: S.x3),
           _zones(c, v),
@@ -538,7 +538,7 @@ class NightCard extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(st.label(l).toUpperCase(),
+                        child: Text(st.label(l),
                             style: F.labelSm.copyWith(color: p.ink3), maxLines: 1),
                       ),
                     ),
@@ -623,7 +623,7 @@ class HealthMonitorCard extends StatelessWidget {
               Column(children: [
                 Icon(icon, size: 22, color: p.ink),
                 const SizedBox(height: S.x2),
-                Text(name.toUpperCase(),
+                Text(name,
                     style: F.labelSm.copyWith(color: p.ink), maxLines: 1, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: S.x2),
                 Text(value ?? '—', style: F.n17.copyWith(color: value == null ? p.ink3 : p.ink)),
@@ -743,7 +743,7 @@ class DashboardRows extends StatelessWidget {
               Icon(_icons[key], size: 22, color: p.ink3),
               const SizedBox(width: S.x3),
               Expanded(
-                child: Text(_name(l, key).toUpperCase(),
+                child: Text(_name(l, key),
                     style: F.label.copyWith(color: p.ink), maxLines: 2, overflow: TextOverflow.ellipsis),
               ),
             ]),
@@ -814,7 +814,7 @@ class RecoveryCalibrationCard extends StatelessWidget {
         const SizedBox(height: S.x3),
         Row(children: [
           Flexible(
-            child: Text((l?.homeRecoveryCalLink ?? 'See HRV').toUpperCase(),
+            child: Text(l?.homeRecoveryCalLink ?? 'See HRV',
                 style: F.label.copyWith(color: p.on(C.green))),
           ),
           const SizedBox(width: S.x2),
@@ -833,7 +833,7 @@ class RecoveryCalibrationCard extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               Text('$nights', style: F.n24.copyWith(color: p.ink)),
-              Text((l?.homeRecoveryCalNights ?? 'nights').toUpperCase(),
+              Text(l?.homeRecoveryCalNights ?? 'nights',
                   style: F.labelSm.copyWith(color: p.ink3)),
             ]),
           ),
@@ -890,7 +890,7 @@ class MyDayCard extends StatelessWidget {
               Icon(icon, size: 18, color: p.ink),
               const SizedBox(width: S.x2),
               Flexible(
-                child: Text(label.toUpperCase(),
+                child: Text(label,
                     style: F.label.copyWith(color: p.ink), maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
             ]),
@@ -922,7 +922,7 @@ class MyDayCard extends StatelessWidget {
                     ),
                   ]),
                 ),
-                Text((l?.homeActivitySleep ?? 'Sleep').toUpperCase(),
+                Text(l?.homeActivitySleep ?? 'Sleep',
                     style: F.label.copyWith(color: p.ink), maxLines: 1, overflow: TextOverflow.ellipsis),
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text(clock(v.onsetTs), style: F.cap.copyWith(color: p.ink3)),
@@ -969,7 +969,7 @@ class TonightCard extends StatelessWidget {
             ]),
           ),
           const SizedBox(height: S.x2),
-          Text(label.toUpperCase(), textAlign: TextAlign.center, style: F.labelSm.copyWith(color: p.ink3)),
+          Text(label, textAlign: TextAlign.center, style: F.labelSm.copyWith(color: p.ink3)),
         ]);
     return Surface(
       onTap: onTap,

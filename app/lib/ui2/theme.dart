@@ -326,15 +326,16 @@ class F {
       fontWeight: FontWeight.w600,
       letterSpacing: .5);
 
-  /// The dashboard voice for card headings and labels: tracked capitals. Set
-  /// on the caller's string with `toUpperCase()`; the tracking is here.
+  /// Card headings: sentence case, bold, untracked — the soft style the
+  /// owner picked (mockup B). The tracked capitals this used to set were the
+  /// look of the app this one was forked from.
   static const label = TextStyle(
       fontFamily: _f,
       fontFamilyFallback: _fb,
-      fontSize: 13,
-      height: 18 / 13,
-      fontWeight: FontWeight.w800,
-      letterSpacing: 1.8);
+      fontSize: 15,
+      height: 20 / 15,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -.1);
   /// The app's name at the top of Home: thin, widely tracked capitals.
   static const wordmark = TextStyle(
       fontFamily: _f,
@@ -346,10 +347,9 @@ class F {
   static const labelSm = TextStyle(
       fontFamily: _f,
       fontFamilyFallback: _fb,
-      fontSize: 10,
-      height: 14 / 10,
-      fontWeight: FontWeight.w800,
-      letterSpacing: 1.2);
+      fontSize: 12,
+      height: 16 / 12,
+      fontWeight: FontWeight.w600);
 
   // Numerals — a parallel display ramp. Tabular, so a live value never jitters
   // its own layout as digits change.

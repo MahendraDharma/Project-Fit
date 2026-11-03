@@ -210,7 +210,7 @@ class StreakScreen extends StatelessWidget {
                 child: Column(children: [
                   FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text(dayNames[i].toUpperCase(), style: F.labelSm.copyWith(color: p.ink3)),
+                    child: Text(dayNames[i], style: F.labelSm.copyWith(color: p.ink3)),
                   ),
                   const SizedBox(height: S.x2),
                   flame(i < s.week.length ? s.week[i] : null, 26),
