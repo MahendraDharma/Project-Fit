@@ -330,6 +330,24 @@ class _DataScreenState extends State<DataScreen> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
               children: [
+                // What the last action did, at the TOP: a row near the bottom
+                // used to report its result below every group, off-screen, so
+                // a failed folder pick looked like nothing happened.
+                if (_busy) ...[
+                  const SizedBox(height: S.x3),
+                  Center(child: CircularProgressIndicator(color: p.on(C.blue))),
+                ],
+                if (_note != null && _note!.isNotEmpty) ...[
+                  const SizedBox(height: S.x3),
+                  StatusCard(
+                      _noteFailed
+                          ? (l?.dataThatDidNotWork ?? 'That did not work')
+                          : (l?.actionDone ?? 'Done'),
+                      _note!,
+                      icon: _noteFailed
+                          ? LucideIcons.triangleAlert
+                          : LucideIcons.check),
+                ],
                 // Home shows this too, on the launch it happened. It belongs
                 // here as well because this is the screen someone opens when
                 // they notice their food log is empty, and it is the only
@@ -449,21 +467,6 @@ class _DataScreenState extends State<DataScreen> {
                           ? null
                           : () => _run(() => _reanalyze(app))),
                 ]),
-                if (_busy) ...[
-                  const SizedBox(height: S.x6),
-                  Center(child: CircularProgressIndicator(color: p.on(C.blue))),
-                ],
-                if (_note != null && _note!.isNotEmpty) ...[
-                  const SizedBox(height: S.x5),
-                  StatusCard(
-                      _noteFailed
-                          ? (l?.dataThatDidNotWork ?? 'That did not work')
-                          : (l?.actionDone ?? 'Done'),
-                      _note!,
-                      icon: _noteFailed
-                          ? LucideIcons.triangleAlert
-                          : LucideIcons.check),
-                ],
                 if (app.importRollupError != null) ...[
                   const SizedBox(height: S.x5),
                   StatusCard(
