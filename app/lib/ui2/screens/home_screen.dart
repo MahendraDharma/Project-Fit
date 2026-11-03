@@ -2020,13 +2020,9 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
         ),
         const SizedBox(height: S.x3),
       ],
-      // The sync pill — "Sync", "Syncing… 42%", "Sync complete".
-      if (widget.data == null) ...[
-        const Center(child: SyncPill()),
-        const SizedBox(height: S.x2),
-      ],
-      Center(child: syncedThroughLine(c, d.dayId, l)),
-      const SizedBox(height: S.x3),
+      // No sync button or status line here: pulling Home down syncs, and the
+      // pop-up over the screen ([SyncToast]) says how far it is.
+      const SizedBox(height: S.x2),
 
       if (bare) ...[
         const DetectedActivitiesCard(),
@@ -2325,8 +2321,12 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
   /// asks the band for its backlog (today only, and only with a band), shows
   /// the same connecting / syncing / analysing card the Sync button does, and
   /// re-reads when the sync returns. A past day just re-reads.
-  Widget _refreshable(Widget list) =>
-      RefreshIndicator(onRefresh: _pullToSync, child: list);
+  Widget _refreshable(Widget list) => Stack(children: [
+        RefreshIndicator(onRefresh: _pullToSync, child: list),
+        if (widget.data == null)
+          const Positioned(
+              top: S.x2, left: 0, right: 0, child: Center(child: SyncToast())),
+      ]);
 
   Future<void> _pullToSync() async {
     AppState? app;

@@ -1,8 +1,8 @@
-// The sync pill at the top of Home: "Sync" at rest, "Syncing… 42%" while a
-// full sync runs (band, derive, Garmin watch, Health — see
-// `sync/full_sync.dart`), "Sync complete" with a tick for a few seconds
-// after. The owner's reference was Bevel's: one place that says whether a
-// sync is happening, how far it is, and that it ended.
+// The sync pop-up over Home: nothing at rest; "Syncing… 42%" slides in while
+// a full sync runs (band, derive, Garmin watch, Health — see
+// `sync/full_sync.dart`), turns to "Sync complete" with a tick, and slides
+// away when the run returns to idle a few seconds later. Pulling Home down
+// starts the sync (owner, November 2026: no permanent sync button).
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
@@ -12,15 +12,15 @@ import '../../state/app_state.dart';
 import '../../sync/full_sync.dart';
 import '../ui2.dart';
 
-class SyncPill extends StatelessWidget {
+class SyncToast extends StatelessWidget {
   /// A fixed state, for the gallery. Null follows the app's own sync.
   final SyncRun? run;
-  const SyncPill({super.key, this.run});
+  const SyncToast({super.key, this.run});
 
   @override
   Widget build(BuildContext c) {
     final fixed = run;
-    if (fixed != null) return _Pill(fixed, null);
+    if (fixed != null) return _Toast(fixed);
     final FullSync sync;
     try {
       sync = c.read<AppState>().fullSync;
@@ -29,15 +29,39 @@ class SyncPill extends StatelessWidget {
     }
     return ValueListenableBuilder<SyncRun>(
       valueListenable: sync,
-      builder: (c, r, _) => _Pill(r, sync.run),
+      builder: (c, r, _) => _Toast(r),
+    );
+  }
+}
+
+class _Toast extends StatelessWidget {
+  final SyncRun r;
+  const _Toast(this.r);
+
+  @override
+  Widget build(BuildContext c) {
+    final p = P.of(c);
+    final show = r.phase != SyncPhase.idle;
+    return IgnorePointer(
+      child: AnimatedSlide(
+        duration: motion(c, Motion.base),
+        offset: show ? Offset.zero : const Offset(0, -1.6),
+        child: AnimatedOpacity(
+          duration: motion(c, Motion.base),
+          opacity: show ? 1 : 0,
+          child: DecoratedBox(
+            decoration: BoxDecoration(borderRadius: R.rPill, boxShadow: p.el(3)),
+            child: _Pill(r),
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _Pill extends StatelessWidget {
   final SyncRun r;
-  final VoidCallback? onTap;
-  const _Pill(this.r, this.onTap);
+  const _Pill(this.r);
 
   @override
   Widget build(BuildContext c) {
@@ -94,11 +118,6 @@ class _Pill extends StatelessWidget {
         ]),
       ),
     );
-    return Semantics(
-      liveRegion: r.phase != SyncPhase.idle,
-      child: r.running || onTap == null
-          ? body
-          : Pressable(onTap: onTap!, semanticLabel: text, child: body),
-    );
+    return Semantics(liveRegion: r.phase != SyncPhase.idle, child: body);
   }
 }

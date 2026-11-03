@@ -284,9 +284,8 @@ Map<String, Widget> componentCases() => {
               listed: 3,
               read: 3,
               lines: ['connecting to Forerunner 265 (AA:BB).', 'garmin: 3 health file(s) to read.'])),
-      'sync_pill_idle': const SyncPill(run: SyncRun.idle),
-      'sync_pill_running': const SyncPill(run: SyncRun(SyncPhase.running, pct: .42, step: SyncStep.garmin)),
-      'sync_pill_done': const SyncPill(run: SyncRun(SyncPhase.done, pct: 1)),
+      'sync_toast_running': const SyncToast(run: SyncRun(SyncPhase.running, pct: .42, step: SyncStep.garmin)),
+      'sync_toast_done': const SyncToast(run: SyncRun(SyncPhase.done, pct: 1)),
       'streak_chip': StreakChip(
           streak: WearStreak.from({'2026-10-23': 600, '2026-10-24': 500}, DateTime(2026, 10, 24))),
       'fitness_overview': FitnessOverview(
