@@ -1,6 +1,7 @@
 // The mochi's message on Home: one fixed priority over facts, nothing when
 // there is nothing worth saying, and a closed message stays closed today.
 import 'package:flutter_test/flutter_test.dart';
+import 'package:projectfit/platform/install_expiry.dart';
 import 'package:projectfit/ui2/screens/home_nudge.dart';
 import 'package:projectfit/ui2/ui2.dart';
 
@@ -55,5 +56,29 @@ void main() {
         nudgeText(null, (kind: NudgeKind.recoveryHigh, mood: MochiMood.happy),
             readiness: 86),
         contains('86%'));
+  });
+
+  test('an install about to stop opening outranks everything', () {
+    final n = pickNudge(hour: 21, batteryPct: 5, charging: false, installHoursLeft: 20);
+    expect(n?.kind, NudgeKind.redeploy);
+    expect(n?.mood, MochiMood.alert);
+  });
+
+  test('the warning starts 48 hours ahead and stops once it has lapsed', () {
+    final now = DateTime(2026, 11, 3, 9);
+    expect(InstallExpiry.hoursLeftToWarn(null, now), isNull);
+    expect(InstallExpiry.hoursLeftToWarn(now.add(const Duration(days: 5)), now), isNull);
+    expect(InstallExpiry.hoursLeftToWarn(now.add(const Duration(hours: 30)), now), 30);
+    expect(InstallExpiry.hoursLeftToWarn(now.subtract(const Duration(hours: 1)), now),
+        isNull);
+  });
+
+  test('the redeploy words name the day and the time', () {
+    final ends = installEndsText(null, DateTime(2026, 11, 5, 14, 5));
+    expect(ends, contains('Thursday'));
+    expect(
+        nudgeText(null, (kind: NudgeKind.redeploy, mood: MochiMood.alert),
+            installEnds: ends),
+        allOf(contains('Thursday'), contains('Mac')));
   });
 }

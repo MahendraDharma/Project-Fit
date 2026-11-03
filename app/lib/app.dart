@@ -57,6 +57,8 @@ class _ProjectFitAppState extends State<ProjectFitApp> with WidgetsBindingObserv
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<AppState>().attachCoachConfig(context.read<CoachConfig>());
+      // When this iPhone install stops opening, and the warnings before it.
+      unawaited(context.read<AppState>().armInstallExpiryWarnings());
 
       final app = context.read<AppState>();
       if (app.isPaired) app.openSession();

@@ -73,6 +73,7 @@ import '../stress/breath_phases.dart';
 import '../data/auto_backup.dart' as backup
     show runBackupIfDue, selectedBackupFolder, saveBackupFolder, deleteAutomaticBackups;
 import 'alarm_ringer.dart';
+import '../platform/install_expiry.dart';
 import 'alarm_schedule.dart';
 import 'derive_coordinator.dart';
 import 'gesture_controller.dart';
@@ -114,6 +115,8 @@ import '../data/models.dart';
 import '../notify/device_alerts.dart';
 import '../notify/notification_relay.dart';
 import '../notify/notification_service.dart';
+import '../l10n/app_localizations.dart';
+import 'locale_controller.dart';
 import '../notify/tap_router.dart';
 import '../notify/water_buzzer.dart';
 import '../sync/background_sync.dart' show checkSyncStaleness;
@@ -2209,6 +2212,31 @@ class AppState extends ChangeNotifier {
   /// once by the app widget so briefings/reminders can check `hasKey` and call
   /// the shared plumbing. A key change re-asserts the notification schedule.
   CoachConfig? coachConfig;
+  /// Read when this iPhone install stops opening and arm the two warnings
+  /// before it ([InstallExpiry]). Every launch re-arms them: the same ids
+  /// replace, and a fresh install from the Mac moves the date.
+  Future<void> armInstallExpiryWarnings() async {
+    final at = await InstallExpiry.load();
+    if (at == null || _disposed) return;
+    notifyListeners(); // Home's nudge reads it
+    final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
+    final body = l.nudgeRedeploy(installEndsText(l, at));
+    for (final (id, ahead) in [
+      (NotificationService.idRedeployDay, const Duration(hours: 24)),
+      (NotificationService.idRedeploySoon, const Duration(hours: 3)),
+    ]) {
+      final when = at.subtract(ahead);
+      if (!when.isAfter(DateTime.now())) continue;
+      await NotificationService.instance.scheduleOnce(
+        id: id,
+        category: NotifCategory.reminders,
+        title: l.redeployTitle,
+        body: body,
+        at: when,
+      );
+    }
+  }
+
   void attachCoachConfig(CoachConfig c) {
     if (identical(coachConfig, c)) return;
     coachConfig = c;
@@ -2709,14 +2737,36 @@ class AppState extends ChangeNotifier {
     log: _log,
     onEnd: (why) {
       if (why == RingEnd.doubleTap) _ringTapEndedAt = DateTime.now();
+      unawaited(NotificationService.instance.cancelAlarmSound());
       if (!_disposed) notifyListeners();
     },
+    onBuzz: _playAlarmSound,
   );
   DateTime? _ringTapEndedAt;
 
   /// Whether a wake alarm keeps buzzing until the band is double-tapped (the
   /// user's setting, on unless they turned it off).
   bool get alarmUntilDoubleTap => Prefs.getBool(_kAlarmUntilTap, true);
+
+  static const _kAlarmPhoneSound = 'alarm_phone_sound';
+
+  /// Whether the phone plays a tone while the band buzzes (opt-in).
+  bool get alarmPhoneSound => Prefs.getBool(_kAlarmPhoneSound, false);
+
+  Future<void> setAlarmPhoneSound(bool on) async {
+    await Prefs.setBoolAcked(_kAlarmPhoneSound, on);
+    if (!on) unawaited(NotificationService.instance.cancelAlarmSound());
+    notifyListeners();
+  }
+
+  void _playAlarmSound() {
+    if (!alarmPhoneSound) return;
+    final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
+    unawaited(NotificationService.instance.presentAlarmSound(
+      title: l.alarmSoundTitle,
+      body: alarmUntilDoubleTap ? l.alarmRingingBody : l.alarmSoundBody,
+    ));
+  }
 
   Future<void> setAlarmUntilDoubleTap(bool on) async {
     await Prefs.setBoolAcked(_kAlarmUntilTap, on);
@@ -2732,7 +2782,14 @@ class AppState extends ChangeNotifier {
 
   void _startRinging({int? tsSec}) {
     _ringer.enabled = alarmUntilDoubleTap;
+    final wasRinging = _ringer.ringing;
     _ringer.onFired(tsSec: tsSec);
+    // The first buzz is the band's own; the phone joins it. With "until
+    // double-tap" off it still sounds this once, for a live fire only.
+    final live = tsSec == null ||
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000) - tsSec <=
+            AlarmRinger.liveFireSlackSec;
+    if (!wasRinging && live) _playAlarmSound();
     notifyListeners();
   }
 

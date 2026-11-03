@@ -187,6 +187,15 @@ minutes end it. An unknown cause (WHOOP 5 body not decoded) counts as dismissed,
 buzz as before. Starts on the band's EXECUTED (57) when live, and after a smart-wake early buzz.
 Needs the phone connected at wake time. Setting `alarm_until_double_tap` (default on). The tap
 that stops it does not run the double-tap shortcut. Not yet verified on a real band.
+Phone sound (opt-in, `alarm_phone_sound`): each buzz posts notification 2010 on its own channel
+`alarm_sound` (alarm audio usage) with the bundled 28 s `alarm_tone.wav` (synthesized in-session,
+`res/raw` + `ios/Runner`, registered in the pbxproj); the ring's end cancels it. iOS: silent in
+silent mode; time-sensitive level for Focus.
+
+## Install expiry warning (owner, 2026-11-03)
+`lib/platform/install_expiry.dart` reads the embedded provisioning profile's ExpirationDate through
+`ConfigBridge.profileExpiry` (AppDelegate.swift). Inside 48 h Home shows the `redeploy` nudge (top
+priority) and notifications 2011/2012 fire 24 h and 3 h before. App Store builds never warn.
 
 ## Open work, in order
 1. Restyle the detail screens to match the v3 Home.

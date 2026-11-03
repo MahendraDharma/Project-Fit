@@ -28,6 +28,7 @@ class AlarmRinger {
     required this.rebuzz,
     this.log,
     this.onEnd,
+    this.onBuzz,
     DateTime Function()? now,
     this.maxRing = const Duration(minutes: 20),
   }) : _now = now ?? DateTime.now;
@@ -38,6 +39,10 @@ class AlarmRinger {
 
   /// Called once when a ring ends, for whatever reason.
   final void Function(RingEnd why)? onEnd;
+
+  /// Called each time the alarm buzzes again (not for the band's first buzz,
+  /// which the caller already knows about) — the phone's sound follows it.
+  final void Function()? onBuzz;
 
   /// The longest a ring keeps going without a double tap — the band is not on
   /// a wrist, or the wearer is away. Battery matters more than one more buzz.
@@ -94,6 +99,7 @@ class AlarmRinger {
         '(#$_rebuzzes)');
     try {
       await rebuzz();
+      onBuzz?.call();
     } catch (e) {
       // A dropped link: nothing more the phone can do. The band keeps its
       // own armed alarm state either way.

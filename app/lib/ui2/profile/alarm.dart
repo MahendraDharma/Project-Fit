@@ -207,6 +207,8 @@ class AlarmScreen extends StatelessWidget {
       onCancel: app.disableAlarm,
       untilDoubleTap: app.alarmUntilDoubleTap,
       onUntilDoubleTap: app.setAlarmUntilDoubleTap,
+      phoneSound: app.alarmPhoneSound,
+      onPhoneSound: app.setAlarmPhoneSound,
       ringing: app.alarmRinging,
       onStopRinging: app.stopAlarmRinging,
     );
@@ -244,6 +246,10 @@ class AlarmScreenView extends StatelessWidget {
   final bool untilDoubleTap;
   final Future<void> Function(bool on)? onUntilDoubleTap;
 
+  /// Also play a tone on the phone while the band buzzes (opt-in).
+  final bool phoneSound;
+  final Future<void> Function(bool on)? onPhoneSound;
+
   /// The alarm is going right now and waiting for its double tap.
   final bool ringing;
   final VoidCallback? onStopRinging;
@@ -264,6 +270,8 @@ class AlarmScreenView extends StatelessWidget {
     this.onCancel,
     this.untilDoubleTap = true,
     this.onUntilDoubleTap,
+    this.phoneSound = false,
+    this.onPhoneSound,
     this.ringing = false,
     this.onStopRinging,
   });
@@ -418,6 +426,21 @@ class AlarmScreenView extends StatelessWidget {
                       onChanged: onUntilDoubleTap == null
                           ? null
                           : (v) => onUntilDoubleTap!(v),
+                    ),
+                  ),
+                  SetRow(
+                    LucideIcons.volume2,
+                    C.orange,
+                    l?.alarmPhoneSoundTitle ?? 'Ring on the phone too',
+                    sub: l?.alarmPhoneSoundSub ??
+                        'A tone plays on the phone for as long as the band buzzes. '
+                            'On iPhone it is silent while the phone is on silent.',
+                    chevron: false,
+                    onTap: () => onPhoneSound?.call(!phoneSound),
+                    trailing: Switch(
+                      value: phoneSound,
+                      onChanged:
+                          onPhoneSound == null ? null : (v) => onPhoneSound!(v),
                     ),
                   ),
                 ]),

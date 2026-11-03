@@ -15,16 +15,19 @@ void main() {
   late DateTime now;
   late int buzzes;
   late List<RingEnd> ends;
+  late int sounds;
   AlarmRinger ringer({Future<void> Function()? rebuzz}) => AlarmRinger(
         rebuzz: rebuzz ?? () async => buzzes++,
         now: () => now,
         onEnd: ends.add,
+        onBuzz: () => sounds++,
       );
 
   setUp(() {
     now = DateTime(2026, 11, 4, 6, 30);
     buzzes = 0;
     ends = [];
+    sounds = 0;
   });
 
   int sec(DateTime d) => d.millisecondsSinceEpoch ~/ 1000;
@@ -35,6 +38,8 @@ void main() {
     await r.onHapticsEnded('expired');
     await r.onHapticsEnded('expired');
     expect(buzzes, 2);
+    // The phone's tone follows every re-buzz.
+    expect(sounds, 2);
     expect(r.ringing, isTrue);
     await r.onHapticsEnded('user_double_tap');
     expect(r.ringing, isFalse);
@@ -106,6 +111,10 @@ void main() {
       final app = AppState.forTesting();
       addTearDown(app.dispose);
       expect(app.alarmUntilDoubleTap, isTrue);
+      // The phone stays quiet unless asked.
+      expect(app.alarmPhoneSound, isFalse);
+      await app.setAlarmPhoneSound(true);
+      expect(app.alarmPhoneSound, isTrue);
 
       app.debugHandleAlarmEvent(57);
       expect(app.alarmRinging, isTrue);

@@ -7,16 +7,19 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/clock_format.dart';
 import '../../state/prefs.dart';
+export '../../platform/install_expiry.dart' show installEndsText;
 import '../ui2.dart';
 
-enum NudgeKind { battery, alarm, stale, bedtime, recoveryHigh, recoveryMid, recoveryLow }
+enum NudgeKind { redeploy, battery, alarm, stale, bedtime, recoveryHigh, recoveryMid, recoveryLow }
 
 typedef Nudge = ({NudgeKind kind, MochiMood mood});
 
 /// Highest priority first. [hour] is the local hour; [batteryPct] and
 /// [charging] are the band's; [staleHours] is how old the newest band record
 /// is; [bedtimeMin] tonight's recommended bedtime (minute of day); [readiness]
-/// today's recovery 0–100. Null inputs simply cannot fire their nudge.
+/// today's recovery 0–100; [installHoursLeft] how long until this iPhone
+/// install stops opening, when that is close ([InstallExpiry]). Null inputs
+/// simply cannot fire their nudge.
 Nudge? pickNudge({
   required int hour,
   double? batteryPct,
@@ -25,11 +28,14 @@ Nudge? pickNudge({
   double? staleHours,
   double? bedtimeMin,
   double? readiness,
+  double? installHoursLeft,
   Set<NudgeKind> dismissed = const {},
 }) {
   Nudge? pick(NudgeKind k, MochiMood m) => dismissed.contains(k) ? null : (kind: k, mood: m);
   final evening = hour >= 17;
   return [
+    // First: once it lapses the app does not open at all, alarm included.
+    if (installHoursLeft != null) pick(NudgeKind.redeploy, MochiMood.alert),
     if (batteryPct != null && charging == false && batteryPct < 20)
       pick(NudgeKind.battery, MochiMood.alert),
     if (evening && !alarmArmed) pick(NudgeKind.alarm, MochiMood.alert),
@@ -64,11 +70,14 @@ const _key = 'home_nudge_dismissed';
 
 /// The words for [n]. Figures the message quotes come in as arguments.
 String nudgeText(AppLocalizations? l, Nudge n,
-    {double? batteryPct, double? bedtimeMin, double? readiness}) {
+    {double? batteryPct, double? bedtimeMin, double? readiness, String installEnds = ''}) {
   final pct = '${(batteryPct ?? 0).round()}';
   final bed = bedtimeMin == null ? '' : formatClockMinute(bedtimeMin.round());
   final r = '${(readiness ?? 0).round()}';
   return switch (n.kind) {
+    NudgeKind.redeploy => l?.nudgeRedeploy(installEnds) ??
+        'This install stops opening $installEnds. Connect the iPhone to your Mac and '
+            'run the app again from there to renew it.',
     NudgeKind.battery =>
       l?.nudgeBattery(pct) ?? 'Your band is at $pct%. Charge it before bed.',
     NudgeKind.alarm => l?.nudgeAlarm ?? 'Your alarm for tomorrow morning is not on.',
@@ -148,3 +157,4 @@ class NudgeBubble extends StatelessWidget {
     );
   }
 }
+

@@ -8006,5 +8006,14 @@
   "alarmRingingStop": "Выключить с телефона",
   "alarmWhenItRings": "Когда звонит",
   "alarmUntilTapTitle": "Вибрировать, пока не коснусь дважды",
-  "alarmUntilTapSub": "Вибрация начинается снова каждый раз, когда останавливается, пока вы дважды не коснётесь браслета (не дольше 20 минут). Телефон должен быть рядом."
+  "alarmUntilTapSub": "Вибрация начинается снова каждый раз, когда останавливается, пока вы дважды не коснётесь браслета (не дольше 20 минут). Телефон должен быть рядом.",
+  "alarmPhoneSoundTitle": "Звонить и на телефоне",
+  "alarmPhoneSoundSub": "Пока браслет вибрирует, на телефоне играет мелодия. На iPhone в беззвучном режиме её не слышно.",
+  "alarmSoundTitle": "Пора вставать",
+  "alarmSoundBody": "Звонит будильник браслета.",
+  "nudgeRedeploy": "Эта установка перестанет открываться {when}. Подключите iPhone к Mac и запустите приложение оттуда снова, чтобы продлить её.",
+  "@nudgeRedeploy": {"placeholders": {"when": {"type": "String"}}},
+  "installEndsAt": "в {day} в {time}",
+  "@installEndsAt": {"placeholders": {"day": {"type": "String"}, "time": {"type": "String"}}},
+  "redeployTitle": "Переустановите ProjectFit с Mac"
 }

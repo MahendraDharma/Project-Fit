@@ -94,6 +94,7 @@ import 'day_timeline.dart' show DayTimelineScreen;
 import 'metric_detail.dart';
 import 'readiness_detail.dart';
 import 'sleep_detail.dart';
+import '../../platform/install_expiry.dart';
 
 // ═══════════════════ shared plumbing ═══════════════════
 
@@ -2011,7 +2012,8 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
           text: nudgeText(l, nudge,
               batteryPct: deviceBatteryOf(c)?.$1,
               bedtimeMin: _v?.bedtimeMin,
-              readiness: d.readiness.value?.toDouble()),
+              readiness: d.readiness.value?.toDouble(),
+              installEnds: installEndsText(l, InstallExpiry.value)),
           action: nudge.kind == NudgeKind.alarm ? (l?.nudgeAlarmAction ?? 'Turn it on') : null,
           onAction: nudge.kind == NudgeKind.alarm
               ? () => Navigator.of(c).push(MaterialPageRoute<void>(builder: (_) => const AlarmScreen()))
@@ -2275,6 +2277,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
       staleHours: last == null ? null : now.difference(last).inMinutes / 60,
       bedtimeMin: _v?.bedtimeMin,
       readiness: d.readiness.value?.toDouble(),
+      installHoursLeft: InstallExpiry.hoursLeftToWarn(InstallExpiry.value, now),
       dismissed: dismissedNudges(todayLabel(now)),
     );
   }

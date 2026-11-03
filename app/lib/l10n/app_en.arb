@@ -16288,5 +16288,14 @@
   "alarmRingingStop": "Stop from the phone",
   "alarmWhenItRings": "When it goes off",
   "alarmUntilTapTitle": "Keep buzzing until I double-tap",
-  "alarmUntilTapSub": "The buzz starts again each time it stops, until you double-tap the band (at most 20 minutes). Needs the phone nearby."
+  "alarmUntilTapSub": "The buzz starts again each time it stops, until you double-tap the band (at most 20 minutes). Needs the phone nearby.",
+  "alarmPhoneSoundTitle": "Ring on the phone too",
+  "alarmPhoneSoundSub": "A tone plays on the phone for as long as the band buzzes. On iPhone it is silent while the phone is on silent.",
+  "alarmSoundTitle": "Wake up",
+  "alarmSoundBody": "Your band alarm is going.",
+  "nudgeRedeploy": "This install stops opening {when}. Connect the iPhone to your Mac and run the app again from there to renew it.",
+  "@nudgeRedeploy": {"placeholders": {"when": {"type": "String"}}},
+  "installEndsAt": "on {day} at {time}",
+  "@installEndsAt": {"placeholders": {"day": {"type": "String"}, "time": {"type": "String"}}},
+  "redeployTitle": "Re-install ProjectFit from your Mac"
 }

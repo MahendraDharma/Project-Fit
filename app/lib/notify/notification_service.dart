@@ -33,6 +33,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'notification_event.dart';
 import 'notification_ids.dart';
+import 'tap_router.dart' show kRouteAlarm;
 
 /// The next wall-clock instant at [hour]:[minute] — optionally the next
 /// [weekday] — strictly after [now], in [now]'s own timezone.
@@ -117,6 +118,25 @@ class NotificationService {
     importance: Importance.defaultImportance,
   );
 
+  /// The wake alarm's sound on the phone (opt-in, Alarm screen). Its own
+  /// channel because a channel's sound is fixed at creation on Android, and it
+  /// plays with ALARM audio usage so it is not the quiet notification stream.
+  static const AndroidNotificationChannel _alarmChannel =
+      AndroidNotificationChannel(
+    'alarm_sound',
+    'Alarm sound',
+    description: 'Plays while the band\'s wake alarm is buzzing',
+    importance: Importance.max,
+    sound: RawResourceAndroidNotificationSound('alarm_tone'),
+    audioAttributesUsage: AudioAttributesUsage.alarm,
+  );
+
+  /// One fixed id: each buzz REPLACES the card and plays the tone again.
+  static const int idAlarmSound = 2010;
+
+  /// The bundled tone, under 30 s (iOS refuses longer notification sounds).
+  static const String alarmToneIos = 'alarm_tone.wav';
+
   // ── Fixed ids: device alerts + scheduled reminders (disjoint low band) ───────
   static const int idLowBattery = 1001;
   static const int idCharging = 1002;
@@ -127,6 +147,10 @@ class NotificationService {
   static const int idEveningBrief = 2006; // scheduled daily (AI evening recap)
   static const int idAlarmLatchFailed = 2007; // immediate ("alarm not confirmed")
   static const int idAlarmNightCheck = 2008; // scheduled daily, one-shot 19:00
+  // One-shots before this iPhone install stops opening (owner's request): a
+  // day ahead and three hours ahead of the provisioning profile's expiry.
+  static const int idRedeployDay = 2011;
+  static const int idRedeploySoon = 2012;
   static const int idStillness = 2200; // provisional one-shot ("time to move", issue #123)
   static const int idCheckIn = 2201; // daily ("how was today?" → the journal)
 
@@ -199,6 +223,8 @@ class NotificationService {
     idStillness,
     idCheckIn,
     idAlarmNightCheck,
+    idRedeployDay,
+    idRedeploySoon,
   };
 
   /// Whether [id] is one of the hydration slots. A band rather than a set
@@ -273,6 +299,7 @@ class NotificationService {
     await androidImpl?.createNotificationChannel(_healthChannel);
     await androidImpl?.createNotificationChannel(_recoveryChannel);
     await androidImpl?.createNotificationChannel(_remindersChannel);
+    await androidImpl?.createNotificationChannel(_alarmChannel);
     _inited = true;
   }
 
@@ -451,6 +478,47 @@ class NotificationService {
       return false; /* best-effort */
     }
   }
+
+  /// Play the alarm tone on the phone, once (about 28 s). Called on every
+  /// buzz while the alarm rings, so the phone sounds as long as the band does.
+  /// Never prompts for permission (the alarm fires with the app in the
+  /// background) and never throws.
+  Future<bool> presentAlarmSound({required String title, required String body}) async {
+    try {
+      if (!await ensurePermission(allowPrompt: false)) return false;
+      await _plugin.show(
+        idAlarmSound,
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _alarmChannel.id,
+            _alarmChannel.name,
+            channelDescription: _alarmChannel.description,
+            importance: Importance.max,
+            priority: Priority.max,
+            category: AndroidNotificationCategory.alarm,
+            sound: _alarmChannel.sound,
+            audioAttributesUsage: AudioAttributesUsage.alarm,
+            icon: '@mipmap/launcher_icon',
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentSound: true,
+            presentAlert: true,
+            sound: alarmToneIos,
+            interruptionLevel: InterruptionLevel.timeSensitive,
+          ),
+        ),
+        payload: kRouteAlarm,
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Stop the tone: removing the card silences it.
+  Future<void> cancelAlarmSound() => cancel(idAlarmSound);
 
   // ── Scheduling (wall-clock, OS-fired with no Dart running) ──────────────────
 

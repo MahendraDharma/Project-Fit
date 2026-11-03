@@ -145,12 +145,37 @@ import ProjectFitConnectIQ
 enum ConfigBridge {
   private static let channelName = "projectfit/ios_config"
 
+  /// Seconds since 1970 of the embedded profile's ExpirationDate, or nil.
+  /// The file is a CMS envelope around an XML plist; the plist is read out of
+  /// it as text rather than verifying the signature, which iOS already did.
+  static func profileExpiry() -> Double? {
+    guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+          let data = try? Data(contentsOf: url),
+          let text = String(data: data, encoding: .isoLatin1),
+          let start = text.range(of: "<?xml"),
+          let end = text.range(of: "</plist>", range: start.lowerBound..<text.endIndex)
+    else { return nil }
+    let xml = String(text[start.lowerBound..<end.upperBound])
+    guard let plistData = xml.data(using: .isoLatin1),
+          let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil)
+            as? [String: Any],
+          let expiry = plist["ExpirationDate"] as? Date
+    else { return nil }
+    return expiry.timeIntervalSince1970
+  }
+
   static func register(messenger: FlutterBinaryMessenger) {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
     channel.setMethodCallHandler { call, result in
       switch call.method {
       case "appGroupIdentifier":
         result(Bundle.main.object(forInfoDictionaryKey: "ProjectFitAppGroupIdentifier") as? String ?? "")
+      case "profileExpiry":
+        // When this install stops launching: the ExpirationDate of the
+        // provisioning profile Xcode (or AltStore) embedded at install time.
+        // Seven days on a free Apple ID. Nil for an App Store / TestFlight
+        // build, which carries no embedded profile.
+        result(ConfigBridge.profileExpiry())
       case "syncWatch":
         // Dart calls this right after writing the widget snapshot; mirror it to
         // the paired Apple Watch. Best-effort, never fails the Dart caller.
