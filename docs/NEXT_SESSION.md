@@ -16,8 +16,8 @@ State at the end of the last session, and what to pick up.
 
 ## State
 - CI (`test.yml`) is green on `main`. Superseded runs are cancelled only on PRs.
-- Tests: protocol 672, analytics 824, app 6171 (`flutter test`, Flutter 3.41.6), all green on
-  2026-11-03 before v0.17.0.
+- Tests: protocol 672, analytics 824, app 6178 (`flutter test`, Flutter 3.41.6), all green on
+  2026-11-03 before v0.21.0.
 - DB schema v59, `kAlgoVersion` 113. Parity status is in `docs/WHOOP_PARITY.md`.
 - WHOOP 4.0 v25 records are decoded (`parseV25Waveform`). They carry one optical channel, so
   they do not unlock SpO₂ or skin temperature.
@@ -26,9 +26,11 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.17.0** (2026-11-03: redesign B steps 1–2 — DM Sans, neutral dark look,
-  icon pill tab bar with a quick-add +, Home greeting, date strip and ring tiles) with
-  `ProjectFit.ipa`, `ProjectFit.apk` (release key, checked) and `apps.json`.
+- Latest release: **v0.21.0** (2026-11-03): redesign B through Activity and Health, the mochi
+  on Home, the sync as a pull-down pop-up. Each release carries `ProjectFit.ipa`,
+  `ProjectFit.apk` (release key, checked) and `apps.json`. v0.18.0 Home sentence case; v0.19.0
+  Sleep hero + all-caps strings to sentence case; v0.20.0 mochi + nudges; v0.21.0 Activity,
+  Health, sync pop-up.
   - Fixed download link: `releases/latest/download/ProjectFit.ipa`.
   - SideStore/AltStore source: `releases/latest/download/apps.json`.
 - To cut a release, run **Actions → ios-sideload → Run workflow** with `release_tag`, either
@@ -154,10 +156,24 @@ assets). Done in v0.17.0:
    in the middle opening `QuickAddSheet` (`screens/quick_add.dart`).
 4. Home: date + greeting header, `WeekStrip` (`screens/week_strip.dart`, cells keyed
    `week-<day>`) instead of `DayNav`, each ring in its own tile with plain-case labels.
-Next steps, one release each: Home body below the rings (energy card + quick-log chips like
-mockup B), then Sleep (hero ring on a tinted header, stage lanes, 2×2 tiles), Activity, Health,
-detail screens (`detailScaffold`), Profile/onboarding; shorter copy throughout. Re-render the
-website's card images (`site/img/`) once the cards change.
+Done since: v0.18.0 F.label/labelSm sentence case; v0.19.0 flat tinted detail hero, inverted
+coaching card, 119 all-caps ARB keys sentence-cased (German left as written, acronyms kept) by a
+script; v0.21.0 StartCard dark round card (mascot PNGs deleted), SubTabs dark selected capsule,
+icon discs, `detailLinkRow` soft card, Home sync button/line removed for `SyncToast` (pull to
+sync). Next: Profile/settings and onboarding in the same style, detail-screen bodies, the
+website's card images (`site/img/`).
+
+## Mascot and coach (owner, 2026-11-03)
+The owner picked the faced **mochi** (canvas <https://claude.ai/artifact/NQRCVuBXBgEcE3YCmYcurn>,
+round 9). `lib/ui2/mochi.dart` paints it (six moods, one 2.2 s cycle on appear/mood change/tap,
+never loops, nothing under reduced motion; colours in `MochiInk`). `screens/home_nudge.dart`:
+`pickNudge` (tested) picks at most one message by fixed priority (battery < 20 %, no alarm after
+17:00, no sync for 24 h, tonight's bedtime, morning recovery); closed kinds stay closed for the
+day (`Prefs` key `home_nudge_dismissed`). No AI.
+Coach plan the owner accepted: rule-based answers first (done as nudges; next: tappable
+questions in the coach screen), then on-device models (Apple Foundation Models on iPhone 15 Pro+,
+Gemini Nano on Android), then a downloadable offline model (owner's iPhone 15 non-Pro needs this),
+then BYOK (exists; add Gemini/Groq presets). Never embed an API key in the app.
 
 ## Open work, in order
 1. Restyle the detail screens to match the v3 Home.
