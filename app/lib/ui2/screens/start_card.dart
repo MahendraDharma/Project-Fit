@@ -55,7 +55,7 @@ class StartCard extends StatelessWidget {
       semanticLabel: label,
       child: Container(
         constraints: const BoxConstraints(minHeight: 132),
-        padding: const EdgeInsets.all(S.x5),
+        padding: const EdgeInsets.all(S.x4),
         decoration: BoxDecoration(color: bg, borderRadius: R.rXl, boxShadow: p.el(2)),
         child: Row(children: [
           Expanded(
@@ -63,11 +63,23 @@ class StartCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(label, style: F.cap.copyWith(color: ink.withValues(alpha: .7))),
+                  // At large text the headline shrinks to one line and the
+                  // two small lines stop at two, so the card keeps its height.
+                  Text(label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: F.cap.copyWith(color: ink.withValues(alpha: .7))),
                   const SizedBox(height: S.x2),
-                  Text('$count $noun', style: F.t2.copyWith(color: ink)),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text('$count $noun', maxLines: 1, style: F.t2.copyWith(color: ink)),
+                  ),
                   const SizedBox(height: S.x1),
-                  Text(subText, style: F.cap.copyWith(color: ink.withValues(alpha: .75))),
+                  Text(subText,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: F.cap.copyWith(color: ink.withValues(alpha: .75))),
                 ]),
           ),
           const SizedBox(width: S.x3),
