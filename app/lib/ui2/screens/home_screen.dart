@@ -77,10 +77,11 @@ import 'wear_streak.dart' show StreakChip;
 import 'home_vitals.dart';
 import 'log_workout.dart' show LogWorkout;
 import 'week_strip.dart' show WeekStrip;
+import 'home_nudge.dart';
 import 'workout_screen.dart' show activityHost;
 import '../activity/picker.dart' show ActivityPicker;
 import '../profile/alarm.dart'
-    show AlarmArmState, alarmArmOf, alarmDoor, alarmGlanceCard;
+    show AlarmArmState, AlarmScreen, alarmArmOf, alarmDoor, alarmGlanceCard;
 import '../profile/devices.dart' show formatDayTime;
 import '../profile/profile.dart';
 import '../profile/wearable_numbers.dart'
@@ -1956,6 +1957,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
         (_days.length <= readinessCompositeMinBaseline ||
             recoveryNightsLeft != null);
 
+    final nudge = isToday && widget.data == null ? _nudge(c, d) : null;
     final stale = staleInsightsCard(d.insightsStale, syncOf(c), l);
     // Above the greeting, not below it: if the app had to rebuild the database
     // to start, that outranks anything else this screen has to say today.
@@ -1993,9 +1995,31 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
           ),
           if (widget.data == null) ...[const StreakChip(), const SizedBox(width: S.x2)],
           if (batteryLine(c) case final b?) ...[b, const SizedBox(width: S.x2)],
+          // The mochi: the coach's face, and its door.
+          Pressable(
+            semanticLabel: l?.mochiOpenCoach ?? 'Open the coach',
+            onTap: () => go(c, coachReady(c) ? const CoachScreen() : const CoachSetup()),
+            child: Mochi(mood: nudge?.mood ?? MochiMood.idle, size: 44),
+          ),
+          const SizedBox(width: S.x1),
           const ProfileAvatar(accent: C.domHome),
         ]),
       ),
+      // The one thing worth saying today, if there is one.
+      if (nudge != null) ...[
+        NudgeBubble(
+          text: nudgeText(l, nudge,
+              batteryPct: deviceBatteryOf(c)?.$1,
+              bedtimeMin: _v?.bedtimeMin,
+              readiness: d.readiness.value?.toDouble()),
+          action: nudge.kind == NudgeKind.alarm ? (l?.nudgeAlarmAction ?? 'Turn it on') : null,
+          onAction: nudge.kind == NudgeKind.alarm
+              ? () => Navigator.of(c).push(MaterialPageRoute<void>(builder: (_) => const AlarmScreen()))
+              : null,
+          onClose: () => setState(() => dismissNudge(todayLabel(widget.now), nudge.kind)),
+        ),
+        const SizedBox(height: S.x3),
+      ],
       // The sync pill — "Sync", "Syncing… 42%", "Sync complete".
       if (widget.data == null) ...[
         const Center(child: SyncPill()),
@@ -2241,6 +2265,24 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
   /// [today] is the WALL-CLOCK day at build time, not the loaded payload's: a
   /// payload loaded yesterday and rebuilt today with no new sync has aged a
   /// day all the same.
+  /// What the mochi says today, from figures already on this screen.
+  Nudge? _nudge(BuildContext c, HomeData d) {
+    final now = widget.now ?? DateTime.now();
+    final battery = deviceBatteryOf(c);
+    final alarm = alarmArmOfContext(c);
+    final last = lastDataAtOf(c);
+    return pickNudge(
+      hour: widget.hour ?? now.hour,
+      batteryPct: battery?.$1,
+      charging: battery?.$2,
+      alarmArmed: alarm == null || alarm.$2 != AlarmArmState.none,
+      staleHours: last == null ? null : now.difference(last).inMinutes / 60,
+      bedtimeMin: _v?.bedtimeMin,
+      readiness: d.readiness.value?.toDouble(),
+      dismissed: dismissedNudges(todayLabel(now)),
+    );
+  }
+
   static List<Widget>? _bodyWatch(BuildContext c, HomeData d, String today) {
     final state = d.illnessState;
     if (state == null || state == 'green') return null;

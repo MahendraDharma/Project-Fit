@@ -398,5 +398,20 @@
   "homeGreetingStillUp": "Masih terjaga",
   "homeGreetingMorning": "Selamat pagi",
   "homeGreetingAfternoon": "Selamat siang",
-  "homeGreetingEvening": "Selamat malam"
+  "homeGreetingEvening": "Selamat malam",
+  "nudgeBattery": "Baterai band tinggal {pct}%. Isi dayanya sebelum tidur ya.",
+  "@nudgeBattery": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeAlarm": "Alarm-mu untuk besok pagi belum menyala.",
+  "nudgeAlarmAction": "Nyalakan",
+  "nudgeStale": "Band belum tersinkron sejak kemarin. Dekatkan ke HP supaya datanya masuk.",
+  "nudgeBedtime": "Supaya tidurmu cukup, berbaring sebelum {time} malam ini ya.",
+  "@nudgeBedtime": {"placeholders": {"time": {"type": "String"}}},
+  "nudgeRecoveryHigh": "Recovery {pct}%! Badanmu siap untuk hari yang lebih berat.",
+  "@nudgeRecoveryHigh": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryMid": "Recovery {pct}%. Hari dengan aktivitas sedang paling pas.",
+  "@nudgeRecoveryMid": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryLow": "Recovery {pct}%. Santai dulu hari ini, istirahat juga bagian dari latihan.",
+  "@nudgeRecoveryLow": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeClose": "Tutup",
+  "mochiOpenCoach": "Buka coach"
 }

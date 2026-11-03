@@ -126,6 +126,24 @@ class C {
   ];
 }
 
+/// The mochi's own pigment (see `mochi.dart`): a lit body, its ink and its
+/// sheen. Drawn on an illustration, never used as text, so they sit outside
+/// [C.all] and the contrast sweep.
+class MochiInk {
+  static const green = [Color(0xFFE4FBEC), Color(0xFF4FCB86), Color(0xFF17804A)];
+  static const blue = [Color(0xFFE6EBFF), Color(0xFF7189F0), Color(0xFF3142A6)];
+  static const orange = [Color(0xFFFFF0DE), Color(0xFFF79A48), Color(0xFFB0520F)];
+  static const inkGreen = Color(0xFF06140C);
+  static const inkBlue = Color(0xFF0A1034);
+  static const inkOrange = Color(0xFF1E0D02);
+  static const shadow = Color(0x3317181C);
+  static const sheen = Color(0x8CFFFFFF);
+  static const shade = Color(0x1A000000);
+  static const glint = Color(0xD9FFFFFF);
+  static const cheek = Color(0x73FF9DB0);
+  static const tongue = Color(0xFFF07C8C);
+}
+
 /// ── SURFACES + LEGIBLE INK ────────────────────────────────────────────────
 ///
 /// Brightness-resolved. `P.of(context)` in every build method.
@@ -462,6 +480,9 @@ class Motion {
   /// the screen (see `BreathRing.t`); this is only how long a cycle lasts, and
   /// the screen must not start it at all when [enabled] is false.
   static const breath = Duration(seconds: 5);
+
+  /// One mochi cycle (blink, hop, melt); it plays once, never loops.
+  static const mochi = Duration(milliseconds: 2200);
 
   /// One pulse of the ECG capture screen's contact rings. Phase is owned by
   /// the screen (like [breath]); nothing runs when [enabled] is false.

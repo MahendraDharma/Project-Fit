@@ -16198,5 +16198,20 @@
   "quickStartActivity": "Start an activity",
   "quickLogWorkout": "Log a workout",
   "quickLogFood": "Log food",
-  "quickJournal": "Write in your journal"
+  "quickJournal": "Write in your journal",
+  "nudgeBattery": "Your band is at {pct}%. Charge it before bed.",
+  "@nudgeBattery": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeAlarm": "Your alarm for tomorrow morning is not on.",
+  "nudgeAlarmAction": "Turn it on",
+  "nudgeStale": "Your band has not synced for a day. Keep it near your phone to catch up.",
+  "nudgeBedtime": "To get the sleep you need, be in bed by {time} tonight.",
+  "@nudgeBedtime": {"placeholders": {"time": {"type": "String"}}},
+  "nudgeRecoveryHigh": "Recovery {pct}%. Your body is ready for a harder day.",
+  "@nudgeRecoveryHigh": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryMid": "Recovery {pct}%. A steady, moderate day suits you.",
+  "@nudgeRecoveryMid": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryLow": "Recovery {pct}%. Take it easy today; rest counts too.",
+  "@nudgeRecoveryLow": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeClose": "Close",
+  "mochiOpenCoach": "Open the coach"
 }

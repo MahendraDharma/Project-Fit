@@ -7916,5 +7916,20 @@
   "quickStartActivity": "Начать активность",
   "quickLogWorkout": "Записать тренировку",
   "quickLogFood": "Записать еду",
-  "quickJournal": "Запись в дневник"
+  "quickJournal": "Запись в дневник",
+  "nudgeBattery": "Браслет заряжен на {pct}%. Зарядите его перед сном.",
+  "@nudgeBattery": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeAlarm": "Будильник на завтрашнее утро не включён.",
+  "nudgeAlarmAction": "Включить",
+  "nudgeStale": "Браслет не синхронизировался сутки. Держите его рядом с телефоном.",
+  "nudgeBedtime": "Чтобы выспаться, ложитесь сегодня до {time}.",
+  "@nudgeBedtime": {"placeholders": {"time": {"type": "String"}}},
+  "nudgeRecoveryHigh": "Восстановление {pct}%. Тело готово к нагрузке.",
+  "@nudgeRecoveryHigh": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryMid": "Восстановление {pct}%. Подойдёт спокойный, умеренный день.",
+  "@nudgeRecoveryMid": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeRecoveryLow": "Восстановление {pct}%. Сегодня полегче: отдых тоже важен.",
+  "@nudgeRecoveryLow": {"placeholders": {"pct": {"type": "String"}}},
+  "nudgeClose": "Закрыть",
+  "mochiOpenCoach": "Открыть тренера"
 }

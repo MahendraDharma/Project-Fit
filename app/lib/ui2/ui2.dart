@@ -11,6 +11,7 @@ export 'charts.dart';
 export 'community_links.dart';
 export 'grammar.dart';
 export 'live_hr.dart';
+export 'mochi.dart';
 export 'ecg_widgets.dart';
 export 'paint_activity.dart';
 export 'ranges.dart';
