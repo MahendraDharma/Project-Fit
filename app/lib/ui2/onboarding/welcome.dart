@@ -581,8 +581,9 @@ class WelcomeView extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(S.x4, S.x8, S.x4, S.x8),
           children: [
-            Icon(LucideIcons.activity, size: 40, color: p.on(C.green)),
-            const SizedBox(height: S.x5),
+            // The mochi says hello first (owner's mascot, November 2026).
+            const Center(child: Mochi(mood: MochiMood.happy, size: 120)),
+            const SizedBox(height: S.x6),
             Text(l?.welcomeHeadline ?? 'Your band, decoded here',
                 style: F.display.copyWith(color: p.ink)),
             const SizedBox(height: S.x3),

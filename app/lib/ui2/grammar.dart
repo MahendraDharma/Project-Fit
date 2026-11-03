@@ -2183,7 +2183,7 @@ class BigButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: soft ? p.wash(color) : p.fill(color),
-          borderRadius: R.rMd,
+          borderRadius: R.rPill,
           boxShadow: soft ? null : p.el(2),
         ),
         child: Row(
@@ -2795,7 +2795,14 @@ class NavBar extends StatelessWidget {
           Pressable(
             onTap: onBack ?? () => Navigator.maybePop(c),
             semanticLabel: AppLocalizations.of(c)?.supplementNavBack ?? 'Back',
-            child: Icon(LucideIcons.chevronLeft, size: 24, color: p.ink),
+            // A round card, as in mockup B, rather than a bare chevron.
+            child: Container(
+              width: S.x10,
+              height: S.x10,
+              decoration: BoxDecoration(
+                  color: p.card, shape: BoxShape.circle, boxShadow: p.el(1)),
+              child: Icon(LucideIcons.chevronLeft, size: 22, color: p.ink),
+            ),
           ),
           Expanded(
             child: Column(

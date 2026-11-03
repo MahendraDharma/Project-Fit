@@ -202,13 +202,23 @@ class PairingView extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(S.x4, S.x8, S.x4, S.x8),
           children: [
-            Icon(
-                blocked == null
-                    ? LucideIcons.bluetooth
-                    : LucideIcons.bluetoothOff,
-                size: 36,
-                color: p.on(C.blue)),
+            // The mochi looks for the band with you: thinking while it
+            // searches, alarmed when something is in the way, happy once
+            // paired.
+            Center(
+              child: Mochi(
+                size: 112,
+                mood: switch (phase) {
+                  PairPhase.scanning => MochiMood.think,
+                  PairPhase.paired => MochiMood.happy,
+                  PairPhase.idle || PairPhase.cancelled => MochiMood.idle,
+                  _ => MochiMood.alert,
+                },
+              ),
+            ),
             const SizedBox(height: S.x5),
+            if (blocked != null)
+              Center(child: Icon(LucideIcons.bluetoothOff, size: 24, color: p.on(C.blue))),
             Text(_title(c, phase, blocker), style: F.t1.copyWith(color: p.ink)),
             const SizedBox(height: S.x3),
             Text(_body(c, phase, blocker), style: F.body.copyWith(color: p.ink2)),

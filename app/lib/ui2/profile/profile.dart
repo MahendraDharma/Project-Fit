@@ -75,11 +75,11 @@ class SetRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: S.x3),
         child: Row(children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 36,
+            height: 36,
             alignment: Alignment.center,
-            decoration:
-                BoxDecoration(color: p.wash(accent), borderRadius: R.rSm),
+            decoration: BoxDecoration(
+                color: p.wash(accent, strength: 1.4), shape: BoxShape.circle),
             child: glyph != null
                 ? glyph!(p.on(accent))
                 : Icon(icon, size: 16, color: p.on(accent)),
@@ -95,7 +95,7 @@ class SetRow extends StatelessWidget {
                     style: F.cap.copyWith(
                         color: p.ink3, fontWeight: FontWeight.w600)),
               if (sub.isNotEmpty)
-                Text(sub, style: F.over.copyWith(color: p.ink3)),
+                Text(sub, style: F.cap.copyWith(color: p.ink3)),
             ]),
           ),
           // THE ROW RULE (see MetricRow): the title is the only flexible part,
