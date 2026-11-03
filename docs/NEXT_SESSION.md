@@ -17,7 +17,7 @@ State at the end of the last session, and what to pick up.
 ## State
 - CI (`test.yml`) is green on `main`. Superseded runs are cancelled only on PRs.
 - Tests: protocol 672, analytics 824, app 6171 (`flutter test`, Flutter 3.41.6), all green on
-  2026-11-03 before v0.16.2.
+  2026-11-03 before v0.17.0.
 - DB schema v59, `kAlgoVersion` 113. Parity status is in `docs/WHOOP_PARITY.md`.
 - WHOOP 4.0 v25 records are decoded (`parseV25Waveform`). They carry one optical channel, so
   they do not unlock SpO₂ or skin temperature.
@@ -26,10 +26,9 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.16.2** (2026-11-03: Home "Stress & energy" is a stress summary with a
-  ticked gauge plus a Body Battery bar, each opening its full card; band estimate first, Garmin
-  watch as fallback) with `ProjectFit.ipa`, `ProjectFit.apk` (release key, checked) and
-  `apps.json`.
+- Latest release: **v0.17.0** (2026-11-03: redesign B steps 1–2 — DM Sans, neutral dark look,
+  icon pill tab bar with a quick-add +, Home greeting, date strip and ring tiles) with
+  `ProjectFit.ipa`, `ProjectFit.apk` (release key, checked) and `apps.json`.
   - Fixed download link: `releases/latest/download/ProjectFit.ipa`.
   - SideStore/AltStore source: `releases/latest/download/apps.json`.
 - To cut a release, run **Actions → ios-sideload → Run workflow** with `release_tag`, either
@@ -144,14 +143,21 @@ redo it:
   (Re-upload after the 2026-11-01 logo change: the "P." mark replaced the pulse logo.)
 
 ## Full redesign away from OpenStrap (owner, 2026-11-03)
-The owner feels the app still reads like OpenStrap: the skin changed, the skeleton (4 tabs,
-`ui2` components, screen patterns, long footnotes) did not. Three directions were mocked up
-(Apple- and Bevel-inspired, style only) on a Design canvas artifact
-<https://claude.ai/artifact/85u26bPqsGW5aUBhd6BS5C>: A "Jernih" (Apple Health-like grouped list,
-tabs Ringkasan/Telusuri/Pelatih), B "Lembut" (Bevel-like rings, week strip, floating pill nav with
-+), C "Instrumen" (dark widget grid). Waiting for the owner's pick; then plan: new design system,
-new navigation, rebuild screens one by one (analytics/data/BLE stay), shorter copy, release per
-phase.
+The owner felt the app still read like OpenStrap and picked **direction B, Bevel-style** from
+three mockups on <https://claude.ai/artifact/85u26bPqsGW5aUBhd6BS5C> (style only, no Bevel
+assets). Done in v0.17.0:
+1. DM Sans bundled (`assets/fonts/DMSans`, OFL, static cuts at opsz 14 and 32 made with
+   fontTools from google/fonts' variable font); Manrope is the fallback for Cyrillic etc. Tests
+   that load real fonts register Manrope under `DMSans`/`DMSansDisplay` too.
+2. Dark look is near-black neutral; cards `R.rXl` on both looks; nav pill tokens `navBg` etc.
+3. Tab bar (`app_shell.dart`): dark floating pill, icons only (names via semantics), green +
+   in the middle opening `QuickAddSheet` (`screens/quick_add.dart`).
+4. Home: date + greeting header, `WeekStrip` (`screens/week_strip.dart`, cells keyed
+   `week-<day>`) instead of `DayNav`, each ring in its own tile with plain-case labels.
+Next steps, one release each: Home body below the rings (energy card + quick-log chips like
+mockup B), then Sleep (hero ring on a tinted header, stage lanes, 2×2 tiles), Activity, Health,
+detail screens (`detailScaffold`), Profile/onboarding; shorter copy throughout. Re-render the
+website's card images (`site/img/`) once the cards change.
 
 ## Open work, in order
 1. Restyle the detail screens to match the v3 Home.
