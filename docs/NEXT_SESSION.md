@@ -173,10 +173,20 @@ never loops, nothing under reduced motion; colours in `MochiInk`). `screens/home
 `pickNudge` (tested) picks at most one message by fixed priority (battery < 20 %, no alarm after
 17:00, no sync for 24 h, tonight's bedtime, morning recovery); closed kinds stay closed for the
 day (`Prefs` key `home_nudge_dismissed`). No AI.
-Coach plan the owner accepted: rule-based answers first (done as nudges; next: tappable
-questions in the coach screen), then on-device models (Apple Foundation Models on iPhone 15 Pro+,
+Coach plan the owner accepted: rule-based answers first (done: nudges, and since v0.23.0 six
+quick answers in the coach screen, `screens/coach_quick.dart`, pure and tested, no model; the
+coach screen works with no setup and the Home mochi always opens it), then on-device models (Apple Foundation Models on iPhone 15 Pro+,
 Gemini Nano on Android), then a downloadable offline model (owner's iPhone 15 non-Pro needs this),
 then BYOK (exists; add Gemini/Groq presets). Never embed an API key in the app.
+
+## Alarm until double-tap (owner, 2026-11-03, v0.23.0)
+The + sheet has "Set an alarm" (opens `AlarmScreen`). `state/alarm_ringer.dart` keeps a wake buzz
+going: while ringing, each HAPTICS_TERMINATED (event 100) with cause `expired`/`error` sends
+RUN_ALARM again; `user_double_tap`, a double-tap gesture event (14), "Stop from the phone" or 20
+minutes end it. An unknown cause (WHOOP 5 body not decoded) counts as dismissed, so gen5 gets one
+buzz as before. Starts on the band's EXECUTED (57) when live, and after a smart-wake early buzz.
+Needs the phone connected at wake time. Setting `alarm_until_double_tap` (default on). The tap
+that stops it does not run the double-tap shortcut. Not yet verified on a real band.
 
 ## Open work, in order
 1. Restyle the detail screens to match the v3 Home.
