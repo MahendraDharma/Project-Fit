@@ -16280,5 +16280,13 @@
   "quickUnitBpm": "bpm",
   "quickFreeChatTitle": "Want to ask anything?",
   "quickFreeChatBody": "Connect an AI model to chat freely about your data. The quick answers keep working without one.",
-  "quickFreeChatFix": "Set up AI chat"
+  "quickFreeChatFix": "Set up AI chat",
+  "quickSetAlarm": "Set an alarm",
+  "quickSetAlarmSub": "Wakes you on the band. Double-tap it to turn it off.",
+  "alarmRingingTitle": "Your alarm is going",
+  "alarmRingingBody": "Double-tap the band to turn it off. It keeps buzzing until you do.",
+  "alarmRingingStop": "Stop from the phone",
+  "alarmWhenItRings": "When it goes off",
+  "alarmUntilTapTitle": "Keep buzzing until I double-tap",
+  "alarmUntilTapSub": "The buzz starts again each time it stops, until you double-tap the band (at most 20 minutes). Needs the phone nearby."
 }

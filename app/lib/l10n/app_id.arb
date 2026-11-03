@@ -480,5 +480,13 @@
   "quickUnitBpm": "bpm",
   "quickFreeChatTitle": "Mau tanya hal lain?",
   "quickFreeChatBody": "Hubungkan model AI untuk ngobrol bebas soal datamu. Jawaban cepat tetap jalan tanpa AI.",
-  "quickFreeChatFix": "Atur chat AI"
+  "quickFreeChatFix": "Atur chat AI",
+  "quickSetAlarm": "Pasang alarm",
+  "quickSetAlarmSub": "Membangunkanmu lewat getaran band. Double-tap band untuk mematikannya.",
+  "alarmRingingTitle": "Alarm sedang berbunyi",
+  "alarmRingingBody": "Double-tap band untuk mematikannya. Band terus bergetar sampai kamu melakukannya.",
+  "alarmRingingStop": "Matikan dari HP",
+  "alarmWhenItRings": "Saat alarm berbunyi",
+  "alarmUntilTapTitle": "Terus bergetar sampai aku double-tap",
+  "alarmUntilTapSub": "Getaran diulang setiap kali berhenti, sampai kamu double-tap band (paling lama 20 menit). HP harus di dekatmu."
 }

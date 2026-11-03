@@ -12,6 +12,7 @@ import 'home_screen.dart' show go;
 import 'journal_compose.dart' show JournalCompose;
 import 'log_food.dart' show LogFoodSheet;
 import 'log_workout.dart' show LogWorkout;
+import '../profile/alarm.dart' show AlarmScreen;
 import 'workout_screen.dart' show activityHost;
 
 /// Opens [QuickAddSheet] wired to the real screens.
@@ -38,20 +39,22 @@ Future<void> showQuickAdd(BuildContext c) {
       onWorkout: () => then(s, () => go(c, const LogWorkout())),
       onFood: () => then(s, () => LogFoodSheet.show(c)),
       onJournal: () => then(s, () => go(c, const JournalCompose())),
+      onAlarm: () => then(s, () => go(c, const AlarmScreen())),
     ),
   );
 }
 
-/// Four soft tiles: start an activity, log a workout, log food, write in the
-/// journal.
+/// Soft tiles: start an activity, log a workout, log food, write in the
+/// journal, and a full-width one for the wake alarm.
 class QuickAddSheet extends StatelessWidget {
-  final VoidCallback onStart, onWorkout, onFood, onJournal;
+  final VoidCallback onStart, onWorkout, onFood, onJournal, onAlarm;
   const QuickAddSheet({
     super.key,
     required this.onStart,
     required this.onWorkout,
     required this.onFood,
     required this.onJournal,
+    required this.onAlarm,
   });
 
   @override
@@ -122,6 +125,40 @@ class QuickAddSheet extends StatelessWidget {
                 ),
               ),
             ],
+            const SizedBox(height: S.x3),
+            Pressable(
+              onTap: onAlarm,
+              semanticLabel: l?.quickSetAlarm ?? 'Set an alarm',
+              child: Container(
+                padding: const EdgeInsets.all(S.x4),
+                decoration: BoxDecoration(color: p.card, borderRadius: R.rXl),
+                child: Row(children: [
+                  Container(
+                    width: S.x10,
+                    height: S.x10,
+                    decoration: BoxDecoration(
+                        color: p.wash(C.blue, strength: 1.6),
+                        shape: BoxShape.circle),
+                    child: Icon(LucideIcons.alarmClock, size: 20, color: p.on(C.blue)),
+                  ),
+                  const SizedBox(width: S.x3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l?.quickSetAlarm ?? 'Set an alarm',
+                            style: F.head.copyWith(color: p.ink)),
+                        Text(
+                          l?.quickSetAlarmSub ??
+                              'Wakes you on the band. Double-tap it to turn it off.',
+                          style: F.cap.copyWith(color: p.ink2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+              ),
+            ),
           ],
         ),
       ),

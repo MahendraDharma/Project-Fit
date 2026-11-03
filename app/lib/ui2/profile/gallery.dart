@@ -322,7 +322,7 @@ Map<String, Widget> componentCases() => {
           onAction: () {},
           onClose: () {}),
       'quick_add': QuickAddSheet(
-          onStart: () {}, onWorkout: () {}, onFood: () {}, onJournal: () {}),
+          onStart: () {}, onWorkout: () {}, onFood: () {}, onJournal: () {}, onAlarm: () {}),
       'stress_energy': const StressEnergyRow(
           stress: 12, battery: 73, highest: 82, lowest: 0, average: 11),
       'detail_hero': const DetailHero(

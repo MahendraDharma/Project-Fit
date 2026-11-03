@@ -2219,6 +2219,11 @@ class BleEngine {
   /// only way to learn the WEARER dismissed an alarm rather than letting it
   /// time out. Recorded and logged; the alarm flow is unchanged.
   String? _lastHapticsTermination;
+
+  /// The cause of the newest HAPTICS_TERMINATED, or null when the band did not
+  /// say (a WHOOP 5 body is not decoded). Read right after event 100 arrives:
+  /// the engine records it before the event reaches [onEvent].
+  String? get lastHapticsTermination => _lastHapticsTermination;
   int? _lastHapticsTerminationTs;
 
   // ── reconnect/offload policy ────────────────────────────────────────────────

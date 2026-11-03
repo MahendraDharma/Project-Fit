@@ -205,6 +205,10 @@ class AlarmScreen extends StatelessWidget {
           app.setScheduleDay(weekday: weekday, sleepGoal: on),
       onTest: app.testAlarmBuzz,
       onCancel: app.disableAlarm,
+      untilDoubleTap: app.alarmUntilDoubleTap,
+      onUntilDoubleTap: app.setAlarmUntilDoubleTap,
+      ringing: app.alarmRinging,
+      onStopRinging: app.stopAlarmRinging,
     );
   }
 }
@@ -236,6 +240,14 @@ class AlarmScreenView extends StatelessWidget {
   final Future<void> Function(int weekday, bool on)? onSetSleepGoal;
   final Future<void> Function()? onTest, onCancel;
 
+  /// Keep buzzing until the band is double-tapped (a phone setting).
+  final bool untilDoubleTap;
+  final Future<void> Function(bool on)? onUntilDoubleTap;
+
+  /// The alarm is going right now and waiting for its double tap.
+  final bool ringing;
+  final VoidCallback? onStopRinging;
+
   const AlarmScreenView({
     super.key,
     this.armedAt,
@@ -250,6 +262,10 @@ class AlarmScreenView extends StatelessWidget {
     this.onSetSleepGoal,
     this.onTest,
     this.onCancel,
+    this.untilDoubleTap = true,
+    this.onUntilDoubleTap,
+    this.ringing = false,
+    this.onStopRinging,
   });
 
   @override
@@ -272,6 +288,17 @@ class AlarmScreenView extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(S.x4, 0, S.x4, S.x10),
               children: [
+                if (ringing) ...[
+                  StatusCard(
+                    l?.alarmRingingTitle ?? 'Your alarm is going',
+                    l?.alarmRingingBody ??
+                        'Double-tap the band to turn it off. It keeps buzzing until you do.',
+                    fix: l?.alarmRingingStop ?? 'Stop from the phone',
+                    icon: LucideIcons.alarmClock,
+                    onFix: onStopRinging,
+                  ),
+                  const SizedBox(height: S.x3),
+                ],
                 if (fired != null &&
                     calendarDaysBetween(fired, now ?? DateTime.now()) == 0) ...[
                   Align(
@@ -375,6 +402,25 @@ class AlarmScreenView extends StatelessWidget {
                         onTap: () => _run(
                             c, onCancel, l?.alarmCancelled ?? 'Alarm cancelled')),
                 ],
+                const SizedBox(height: S.x4),
+                settingsGroup(c, l?.alarmWhenItRings ?? 'When it goes off', [
+                  SetRow(
+                    LucideIcons.hand,
+                    C.green,
+                    l?.alarmUntilTapTitle ?? 'Keep buzzing until I double-tap',
+                    sub: l?.alarmUntilTapSub ??
+                        'The buzz starts again each time it stops, until you double-tap '
+                            'the band (at most 20 minutes). Needs the phone nearby.',
+                    chevron: false,
+                    onTap: () => onUntilDoubleTap?.call(!untilDoubleTap),
+                    trailing: Switch(
+                      value: untilDoubleTap,
+                      onChanged: onUntilDoubleTap == null
+                          ? null
+                          : (v) => onUntilDoubleTap!(v),
+                    ),
+                  ),
+                ]),
               ],
             ),
           ),

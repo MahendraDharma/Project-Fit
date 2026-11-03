@@ -72,6 +72,7 @@ import '../stress/breath_phases.dart';
 // scheduler is imported under an alias rather than shadowed by it.
 import '../data/auto_backup.dart' as backup
     show runBackupIfDue, selectedBackupFolder, saveBackupFolder, deleteAutomaticBackups;
+import 'alarm_ringer.dart';
 import 'alarm_schedule.dart';
 import 'derive_coordinator.dart';
 import 'gesture_controller.dart';
@@ -2690,8 +2691,62 @@ class AppState extends ChangeNotifier {
     // device-scoped in M3's scope, and a double-tap on either band should
     // still log water.
     _handleAlarmEvent(id, ts);
+    if (id == proto.EventId.hapticsTerminated) {
+      unawaited(_ringer.onHapticsEnded(engine.lastHapticsTermination));
+    }
+    // A double tap that stops a ringing alarm is spent on the alarm, not on
+    // the double-tap shortcut — waking up must not also log a glass of water.
+    if (id == proto.EventId.doubleTap && _alarmTapSpent()) return;
     _gestureController.onEvent(id, ts, hex);
   }
+
+  // ── alarm: keep buzzing until a double tap ──────────────────────────────────
+
+  static const _kAlarmUntilTap = 'alarm_until_double_tap';
+
+  late final AlarmRinger _ringer = AlarmRinger(
+    rebuzz: () => engine.runAlarm(),
+    log: _log,
+    onEnd: (why) {
+      if (why == RingEnd.doubleTap) _ringTapEndedAt = DateTime.now();
+      if (!_disposed) notifyListeners();
+    },
+  );
+  DateTime? _ringTapEndedAt;
+
+  /// Whether a wake alarm keeps buzzing until the band is double-tapped (the
+  /// user's setting, on unless they turned it off).
+  bool get alarmUntilDoubleTap => Prefs.getBool(_kAlarmUntilTap, true);
+
+  Future<void> setAlarmUntilDoubleTap(bool on) async {
+    await Prefs.setBoolAcked(_kAlarmUntilTap, on);
+    if (!on) _ringer.stop();
+    notifyListeners();
+  }
+
+  /// True while the alarm is going and waiting for its double tap.
+  bool get alarmRinging => _ringer.ringing;
+
+  /// Stop a ringing alarm from the phone.
+  void stopAlarmRinging() => _ringer.stop();
+
+  void _startRinging({int? tsSec}) {
+    _ringer.enabled = alarmUntilDoubleTap;
+    _ringer.onFired(tsSec: tsSec);
+    notifyListeners();
+  }
+
+  /// Whether a double-tap gesture event belongs to the alarm: it stopped the
+  /// ring, or the band already stopped it on that same tap (its own
+  /// HAPTICS_TERMINATED can arrive first).
+  bool _alarmTapSpent() {
+    if (_ringer.onDoubleTap()) return true;
+    final at = _ringTapEndedAt;
+    return at != null && DateTime.now().difference(at) < const Duration(seconds: 5);
+  }
+
+  @visibleForTesting
+  AlarmRinger get debugRinger => _ringer;
 
   /// Why start-up failed, or null if it did not. Drives [AppRoute.failed].
   ///
@@ -4594,6 +4649,7 @@ class AppState extends ChangeNotifier {
         if (!sleepGoalReached(restSec: restSec, needSec: needSec)) return;
         _smartWakeFiredForEpoch = epoch; // set BEFORE the write, as below
         await engine.runAlarm();
+        _startRinging();
         _log('[smart-wake] sleep goal reached (${restSec! ~/ 60} of '
             '${needSec ~/ 60} min) inside the window — early buzz.');
         return;
@@ -4620,6 +4676,7 @@ class AppState extends ChangeNotifier {
       // would just be repeated buzzing), and the untouched fallback arm
       // still covers a write that genuinely failed.
       await engine.runAlarm();
+      _startRinging();
       _log('[smart-wake] light sleep detected inside the window — early buzz.');
     } catch (e) {
       _log('[smart-wake] check failed (fallback alarm is unaffected): $e');
@@ -4929,6 +4986,7 @@ class AppState extends ChangeNotifier {
           return false;
         }));
         unawaited(_notifyAlarmFired());
+        _startRinging(tsSec: ts + (engine.clockRef?.driftSec ?? 0));
         // A one-shot alarm is SPENT the moment it fires. This used to only log
         // + notify, so `alarmEpoch` kept returning the past epoch across
         // relaunches (_init reloads `alarm_epoch`) and Profile's "Smart alarm"
