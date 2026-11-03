@@ -34,7 +34,8 @@ import '../../state/app_state.dart';
 import '../ui2.dart';
 import 'ai_briefing.dart';
 import 'coach_figures.dart';
-import 'home_screen.dart' show go, pad, repoOf;
+import 'coach_quick.dart';
+import 'home_screen.dart' show denseDays, envValue, go, pad, pointsOf, repoOf;
 import 'journal_compose.dart' show OsTextField;
 
 /// The coach's accent. Not a domain colour: the coach reads across all five.
@@ -117,6 +118,12 @@ class _CoachScreenState extends State<CoachScreen> {
   final _scroll = ScrollController();
   bool _busy = false;
   String? _status;
+
+  /// The mochi's face beside each quick answer, by its index in [_items].
+  /// Quick answers live only on this screen: they are worked out again from
+  /// the data on every ask, so there is nothing to keep.
+  final Map<int, MochiMood> _moods = {};
+  bool _quickBusy = false;
 
   static List<String> _starters(BuildContext c) {
     final l = AppLocalizations.of(c);
@@ -241,6 +248,73 @@ class _CoachScreenState extends State<CoachScreen> {
     }
   }
 
+  /// Answers [a] from the data on this phone: no model, no network.
+  Future<void> _ask(QuickAsk a) async {
+    final repo = repoOf(context);
+    if (repo == null || _quickBusy || _busy) return;
+    final l = AppLocalizations.of(context);
+    final locale = l?.localeName ?? 'en';
+    final today = DateTime.now();
+    setState(() {
+      _quickBusy = true;
+      _items.add(CoachItem.user(quickQuestion(l, a)));
+    });
+    _scrollDown();
+    List<double?> dense(Object? chart, int n) => denseDays(pointsOf(chart), n);
+    QuickReply reply;
+    try {
+      switch (a) {
+        case QuickAsk.recovery:
+          reply = quickRecovery(l, dense(await repo.getChart('recovery'), 30),
+              today: today, locale: locale);
+        case QuickAsk.sleep:
+          final need = _needMin(await repo.getInsights());
+          reply = quickSleep(l, dense(await repo.getChart('sleep'), 14),
+              today: today, needMin: need, locale: locale);
+        case QuickAsk.bedtime:
+          final ins = await repo.getInsights();
+          final coach = ins['sleep_coach'];
+          final bed = envValue(coach is Map ? coach['bedtime'] : null);
+          reply = quickBedtime(l,
+              bedtimeMin: (bed?['bedtime_min_of_day'] as num?)?.toDouble(),
+              needMin: _needMin(ins));
+        case QuickAsk.hrv:
+          reply = quickHrv(l, dense(await repo.getChart('hrv'), 30),
+              today: today, locale: locale);
+        case QuickAsk.restingHr:
+          reply = quickRestingHr(l, dense(await repo.getChart('resting_hr'), 30),
+              today: today, locale: locale);
+        case QuickAsk.steps:
+          final goal = ((await repo.getProfile())['step_goal'] as num?)?.toInt();
+          reply = quickSteps(l, dense(await repo.getChart('steps'), 7),
+              today: today, goal: goal, locale: locale);
+      }
+    } catch (_) {
+      reply = (
+        text: l?.quickNoData ??
+            'There is not enough data for this yet. Wear the band for a few more '
+                'days and nights, then ask again.',
+        chart: null,
+        mood: MochiMood.think,
+      );
+    }
+    if (!mounted) return;
+    setState(() {
+      _quickBusy = false;
+      _moods[_items.length] = reply.mood;
+      _items.add(CoachItem.assistant(reply.text));
+      if (reply.chart case final chart?) _items.add(CoachItem.chart(chart));
+    });
+    _scrollDown();
+  }
+
+  /// The computed sleep need in minutes, from a `getInsights` result.
+  static double? _needMin(Map<String, dynamic> insights) {
+    final coach = insights['sleep_coach'];
+    final sec = envValue(coach is Map ? coach['need'] : null)?['need_sec'] as num?;
+    return sec == null ? null : sec / 60;
+  }
+
   /// THE write gate. Every action tool routes through here, and the dialog
   /// carries the tool's own summary rather than a generic "the AI wants to do
   /// something" — a confirmation that does not say what it confirms is a tap
@@ -298,13 +372,17 @@ class _CoachScreenState extends State<CoachScreen> {
 
   void _newChat() {
     _engine?.newSession();
-    setState(_items.clear);
+    setState(() {
+      _items.clear();
+      _moods.clear();
+    });
   }
 
   Future<void> _openSession(String id) async {
     await _engine?.openSession(id);
     if (!mounted) return;
     setState(() {
+      _moods.clear();
       _items
         ..clear()
         ..addAll(_engine?.transcript ?? const []);
@@ -402,7 +480,12 @@ class _CoachScreenState extends State<CoachScreen> {
                               final wasOpen = s.id == engine.sessionId;
                               await engine.deleteSession(s.id);
                               setSheet(() {});
-                              if (wasOpen && mounted) setState(_items.clear);
+                              if (wasOpen && mounted) {
+                                setState(() {
+                                  _items.clear();
+                                  _moods.clear();
+                                });
+                              }
                             },
                           ),
                       ],
@@ -431,7 +514,7 @@ class _CoachScreenState extends State<CoachScreen> {
               padding: const EdgeInsets.symmetric(horizontal: S.x4),
               child: NavBar(
                 l?.coachNavTitle ?? 'Coach',
-                sub: cfg.configured ? cfg.model : (l?.coachNotSetUp ?? 'Not set up'),
+                sub: cfg.configured ? cfg.model : (l?.quickTitle ?? 'Quick answers'),
                 trailing: Pressable(
                   semanticLabel: l?.coachMenuSemantic ?? 'Chats and AI settings',
                   onTap: _menu,
@@ -466,6 +549,7 @@ class _CoachScreenState extends State<CoachScreen> {
                   ],
                 ),
               ),
+            if (_items.isNotEmpty && repoOf(c) != null) _quickRow(c, p),
             if (cfg.configured && _engine != null) _composer(c, p),
           ],
         ),
@@ -498,23 +582,31 @@ class _CoachScreenState extends State<CoachScreen> {
         ],
       );
     }
-    if (!cfg.configured) {
+    // Not set up is not a dead end any more: the quick answers need no model.
+    if (!cfg.configured && _items.isEmpty) {
       return ListView(
         padding: pad,
         children: [
+          const SizedBox(height: S.x2),
+          _quickIntro(c, p),
+          if (repoOf(c) != null) ...[
+            const SizedBox(height: S.x3),
+            _quickList(c, p),
+          ],
           const SizedBox(height: S.x4),
           StatusCard(
-            l?.coachNotSetUpTitle ?? 'The coach is not set up',
-            l?.coachNotSetUpBody ??
-                'Pick a model on your own computer, or any OpenAI-compatible provider with your own key. Nothing goes through ProjectFit either way.',
-            fix: l?.coachChooseModelFix ?? 'Choose a model',
+            l?.quickFreeChatTitle ?? 'Want to ask anything?',
+            l?.quickFreeChatBody ??
+                'Connect an AI model to chat freely about your data. The quick '
+                    'answers keep working without one.',
+            fix: l?.quickFreeChatFix ?? 'Set up AI chat',
             icon: LucideIcons.sparkles,
             onFix: () => go(c, const CoachSetup()),
           ),
         ],
       );
     }
-    if (_engine == null) {
+    if (cfg.configured && _engine == null) {
       return ListView(
         padding: pad,
         children: [
@@ -564,6 +656,7 @@ class _CoachScreenState extends State<CoachScreen> {
               ],
             ),
           ),
+          Section(l?.quickTitle ?? 'Quick answers', _quickList(c, p)),
           Section(
             l?.coachTryAsking ?? 'Try asking',
             Surface(
@@ -606,9 +699,126 @@ class _CoachScreenState extends State<CoachScreen> {
       controller: _scroll,
       padding: const EdgeInsets.fromLTRB(S.x4, S.x2, S.x4, S.x4),
       itemCount: _items.length,
-      itemBuilder: (_, i) => _Bubble(item: _items[i]),
+      itemBuilder: (_, i) => _Bubble(item: _items[i], mood: _moods[i]),
     );
   }
+
+  /// The mochi saying what the quick answers are.
+  Widget _quickIntro(BuildContext c, P p) {
+    final l = AppLocalizations.of(c);
+    return Surface(
+      child: Row(
+        children: [
+          const Mochi(mood: MochiMood.happy, size: 64),
+          const SizedBox(width: S.x4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l?.quickTitle ?? 'Quick answers',
+                    style: F.head.copyWith(color: p.ink)),
+                const SizedBox(height: S.x1),
+                Text(
+                  l?.quickIntro ??
+                      'Worked out on this phone from your own numbers. No AI and '
+                          'nothing to set up.',
+                  style: F.cap.copyWith(color: p.ink2),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Every quick question, one row each.
+  Widget _quickList(BuildContext c, P p) {
+    final l = AppLocalizations.of(c);
+    return Surface(
+      pad: const EdgeInsets.symmetric(vertical: S.x1),
+      child: Column(
+        children: [
+          for (final a in QuickAsk.values)
+            Pressable(
+              onTap: () => _ask(a),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: S.x4, vertical: S.x3),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: p.wash(_quickTint(a)),
+                        ),
+                        child: Icon(_quickIcon(a), size: 16, color: p.on(_quickTint(a))),
+                      ),
+                      const SizedBox(width: S.x3),
+                      Expanded(
+                        child: Text(quickQuestion(l, a),
+                            style: F.body.copyWith(color: p.ink)),
+                      ),
+                      Icon(LucideIcons.chevronRight, size: 16, color: p.ink3),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// The quick questions again under a conversation, as a row of pills.
+  Widget _quickRow(BuildContext c, P p) {
+    final l = AppLocalizations.of(c);
+    return SizedBox(
+      height: 44 + S.x2,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(S.x4, S.x2, S.x4, 0),
+        itemCount: QuickAsk.values.length,
+        separatorBuilder: (_, _) => const SizedBox(width: S.x2),
+        itemBuilder: (_, i) {
+          final a = QuickAsk.values[i];
+          return Pressable(
+            onTap: _quickBusy ? null : () => _ask(a),
+            child: Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: S.x4),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: p.card, borderRadius: R.rPill),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(_quickIcon(a), size: 15, color: p.on(_quickTint(a))),
+                const SizedBox(width: S.x2),
+                Text(quickQuestion(l, a), style: F.cap.copyWith(color: p.ink)),
+              ]),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  static IconData _quickIcon(QuickAsk a) => switch (a) {
+        QuickAsk.recovery => LucideIcons.batteryCharging,
+        QuickAsk.sleep => LucideIcons.moon,
+        QuickAsk.bedtime => LucideIcons.bedDouble,
+        QuickAsk.hrv => LucideIcons.activity,
+        QuickAsk.restingHr => LucideIcons.heart,
+        QuickAsk.steps => LucideIcons.footprints,
+      };
+
+  static Color _quickTint(QuickAsk a) => switch (a) {
+        QuickAsk.recovery => C.green,
+        QuickAsk.sleep || QuickAsk.bedtime => C.blue,
+        QuickAsk.hrv || QuickAsk.restingHr => C.red,
+        QuickAsk.steps => C.orange,
+      };
 
   Widget _composer(BuildContext c, P p) {
     final l = AppLocalizations.of(c);
@@ -684,7 +894,10 @@ class _CoachScreenState extends State<CoachScreen> {
 /// feed); figures keep their own frame.
 class _Bubble extends StatelessWidget {
   final CoachItem item;
-  const _Bubble({required this.item});
+
+  /// Set for a quick answer: the mochi says it, with this face.
+  final MochiMood? mood;
+  const _Bubble({required this.item, this.mood});
 
   @override
   Widget build(BuildContext c) {
@@ -710,12 +923,19 @@ class _Bubble extends StatelessWidget {
           ),
         );
       case CoachItemKind.assistant:
+        final body = GptMarkdown(
+          item.text ?? '',
+          style: F.body.copyWith(color: p.ink, height: 1.5),
+        );
         return Padding(
           padding: const EdgeInsets.only(bottom: S.x4),
-          child: GptMarkdown(
-            item.text ?? '',
-            style: F.body.copyWith(color: p.ink, height: 1.5),
-          ),
+          child: mood == null
+              ? body
+              : Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Mochi(mood: mood!, size: 36),
+                  const SizedBox(width: S.x3),
+                  Expanded(child: body),
+                ]),
         );
       case CoachItemKind.chart:
         return Padding(

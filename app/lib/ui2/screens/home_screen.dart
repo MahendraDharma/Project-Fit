@@ -1998,7 +1998,7 @@ class _HomeScreenState extends State<HomeScreen> with RevisionReload {
           // The mochi: the coach's face, and its door.
           Pressable(
             semanticLabel: l?.mochiOpenCoach ?? 'Open the coach',
-            onTap: () => go(c, coachReady(c) ? const CoachScreen() : const CoachSetup()),
+            onTap: () => go(c, const CoachScreen()),
             child: Mochi(mood: nudge?.mood ?? MochiMood.idle, size: 44),
           ),
           const SizedBox(width: S.x1),
