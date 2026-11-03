@@ -26,7 +26,9 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.22.0** (2026-11-03): redesign B through Activity, Health, Profile,
+- Latest release: **v0.23.0** (2026-11-03): coach quick answers (no setup), alarm from the +
+  sheet that buzzes until a double tap, optional phone tone, install-expiry warning.
+  v0.22.0: redesign B through Activity, Health, Profile,
   settings and onboarding (mochi greets and pairs with you), the mochi on Home, the sync as a
   pull-down pop-up. Each release carries `ProjectFit.ipa`,
   `ProjectFit.apk` (release key, checked) and `apps.json`. v0.18.0 Home sentence case; v0.19.0
