@@ -12,17 +12,33 @@
 //   per five-minute slot (level clamped to [bodyBatteryMin, bodyBatteryMax]):
 //     asleep        +bbSleepCharge × (1 − s/100)   s = that night's stress
 //                                                   (unknown → bbSleepUnknownS)
-//     awake, still  s ≤ 25: +bbRestCharge × (25 − s)/25
-//                   s > 25: −bbStressDrain × (s − 25)/75
+//     awake, still  −bbAwakeDrain + bbRestCharge × (25 − s)/25   (s ≤ 25)
+//                   −bbAwakeDrain − bbStressDrain × (s − 25)/75 (s > 25)
 //     active        −(bbAwakeDrain + bbActiveDrain × x²),
 //                   x = (hrr − 0.3)/0.7 clamped 0–1, hrr = heart-rate reserve
 //     awake, other  −bbAwakeDrain (worn, but neither still nor active)
 //     not worn      no change; the slot is a gap in the line
+//   and every awake slot more than bbLateAfterHours after the last sleep
+//   costs bbLateDrain more.
 //
-// With these: a good 7.5 h night (stress 25) charges ~68; sixteen waking
-// hours of neither rest nor exercise drain ~29; an hour at 75 % of heart-rate
-// reserve drains ~14. Those are the shapes Garmin users report, which is the only target the
-// constants were set against.
+// With these: a good 7.5 h night (stress 25) charges ~68; a typical sixteen-
+// hour day (mostly sitting, some of it relaxed, an hour of light activity)
+// drains ~60, so a 95 morning ends near 35 at bedtime; an hour at 75 % of
+// heart-rate reserve drains ~17; still being up at midnight keeps falling
+// faster. Those are the shapes Garmin users report, which is the only target
+// the constants were set against.
+//
+// REVISED 2026-11-04 (owner: "not slept, past midnight, 94 %"). The first
+// constants let a still, relaxed waking slot CHARGE up to 3/h and made being
+// up cost only 1.8/h, so a quiet day barely moved the gauge. Firstbeat's own
+// description puts recovery mainly in sleep, with waking rest at most slowing
+// the drain; resting awake now at best slows it to 1.4/h, and being up costs
+// 3.6/h.
+// The late-hours term follows the homeostatic sleep-pressure picture (Process
+// S, Borbély 1982, Hum Neurobiol 1:195–204) and the performance cost of long
+// wakefulness: 17 h awake impairs like a 0.05 % blood alcohol (Dawson & Reid
+// 1997, Nature 388:235). Both are qualitative support for "later costs more",
+// not sources for the number, which is ours.
 //
 // THE START LEVEL IS UNKNOWN, and the model says so: the caller runs it over
 // several days ([bodyBatteryBurnInDays]) starting from bodyBatteryStart, and
@@ -44,9 +60,11 @@ const int bodyBatterySlotSec = 300;
 
 const double bbSleepCharge = 1.0; // per slot at stress 0 → 12/h
 const double bbSleepUnknownS = 25; // a night whose stress was not measured
-const double bbRestCharge = 0.25; // still and relaxed → up to 3/h
-const double bbStressDrain = 0.6; // still and stressed → up to 7.2/h
-const double bbAwakeDrain = 0.15; // the cost of being up → 1.8/h
+const double bbRestCharge = 0.18; // still and relaxed: offsets up to 2.2/h of being up
+const double bbStressDrain = 0.6; // still and stressed → up to 7.2/h more
+const double bbAwakeDrain = 0.3; // the cost of being up → 3.6/h
+const double bbLateDrain = 0.25; // up past bbLateAfterHours → 3/h more
+const double bbLateAfterHours = 16;
 const double bbActiveDrain = 2.5; // + up to 30/h at maximum effort
 const double bbActiveHrrFloor = 0.3; // below this, movement costs nothing extra
 
@@ -65,8 +83,17 @@ class BatterySlot {
   const BatterySlot(this.tSec, this.state, {this.stress, this.hrr});
 }
 
-/// The change one slot makes, before clamping.
-double batteryDelta(BatterySlot s) {
+/// The change one slot makes, before clamping. [hoursAwake] is the time since
+/// the last sleep ended (0 when unknown).
+double batteryDelta(BatterySlot s, {double hoursAwake = 0}) {
+  final late = hoursAwake > bbLateAfterHours ? bbLateDrain : 0.0;
+  return switch (s.state) {
+    BatteryState.asleep || BatteryState.notWorn => _baseDelta(s),
+    _ => _baseDelta(s) - late,
+  };
+}
+
+double _baseDelta(BatterySlot s) {
   switch (s.state) {
     case BatteryState.asleep:
       final st = (s.stress ?? bbSleepUnknownS).clamp(0.0, 100.0);
@@ -75,8 +102,8 @@ double batteryDelta(BatterySlot s) {
       final st = s.stress;
       if (st == null) return -bbAwakeDrain;
       return st <= 25
-          ? bbRestCharge * (25 - st) / 25
-          : -bbStressDrain * (st - 25) / 75;
+          ? -bbAwakeDrain + bbRestCharge * (25 - st) / 25
+          : -bbAwakeDrain - bbStressDrain * (st - 25) / 75;
     case BatteryState.active:
       final x = (((s.hrr ?? bbActiveHrrFloor) - bbActiveHrrFloor) /
               (1 - bbActiveHrrFloor))
@@ -150,9 +177,12 @@ Metric<BodyBattery> bodyBattery(
   final pts = <BatteryPoint>[];
   var charged = 0.0, drained = 0.0;
   var worn = 0;
+  int? lastSleepEnd; // when the most recent sleep slot ended
   for (final s in xs) {
     final before = level;
-    level = (level + batteryDelta(s))
+    if (s.state == BatteryState.asleep) lastSleepEnd = s.tSec + bodyBatterySlotSec;
+    final awakeH = lastSleepEnd == null ? 0.0 : (s.tSec - lastSleepEnd) / 3600;
+    level = (level + batteryDelta(s, hoursAwake: awakeH))
         .clamp(bodyBatteryMin, bodyBatteryMax)
         .toDouble();
     if (s.tSec < showFromSec || s.state == BatteryState.notWorn) continue;

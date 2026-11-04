@@ -72,9 +72,14 @@ void main() {
           closeTo(-(bbAwakeDrain + bbActiveDrain), 1e-12));
       expect(
           batteryDelta(const BatterySlot(0, BatteryState.still, stress: 100)),
-          closeTo(-bbStressDrain, 1e-12));
+          closeTo(-bbAwakeDrain - bbStressDrain, 1e-12));
       expect(batteryDelta(const BatterySlot(0, BatteryState.still, stress: 0)),
-          closeTo(bbRestCharge, 1e-12));
+          closeTo(-bbAwakeDrain + bbRestCharge, 1e-12));
+      // Resting awake slows the drain; only sleep really charges.
+      expect(batteryDelta(const BatterySlot(0, BatteryState.still, stress: 0)),
+          lessThan(0));
+      expect(batteryDelta(const BatterySlot(0, BatteryState.still, stress: 25)),
+          lessThan(0));
       expect(batteryDelta(const BatterySlot(0, BatteryState.notWorn)), 0);
     });
 
@@ -87,6 +92,36 @@ void main() {
       final b = bodyBattery(slots, showFromSec: 3000).value!;
       expect(b.lowest, bodyBatteryMin);
       expect(b.timeline, hasLength(200));
+    });
+
+    // The owner's case: a full night, then a calm, mostly seated day, and
+    // still up past midnight. The gauge must have come well down, not 94.
+    test('a calm day drains it, and staying up late drains it faster', () {
+      const wake = 27000; // 7.5 h of sleep from t = 0
+      final day = <BatterySlot>[];
+      for (var i = 0; i < 204; i++) { // 07:30 → 00:30, 17 h
+        final t = wake + i * 300;
+        day.add(switch (i % 20) {
+          0 => BatterySlot(t, BatteryState.active, hrr: 0.55),
+          < 9 => BatterySlot(t, BatteryState.still, stress: 35),
+          < 13 => BatterySlot(t, BatteryState.still, stress: 15),
+          _ => BatterySlot(t, BatteryState.awake),
+        });
+      }
+      final b = bodyBattery([...span(0, 90, BatteryState.asleep, stress: 25), ...day],
+          showFromSec: wake).value!;
+      final at = {for (final p in b.timeline) p.tSec: p.level};
+      final bedtime = at[wake + 192 * 300]!; // sixteen hours up
+      expect(b.highest, greaterThan(90));
+      expect(bedtime, inInclusiveRange(20, 50));
+      expect(b.current, lessThan(bedtime - 4),
+          reason: 'the hour past sixteen awake costs extra');
+      // Even an entirely calm, seated day does not hold the gauge up.
+      final calm = bodyBattery([
+        ...span(0, 90, BatteryState.asleep, stress: 25),
+        ...span(wake, 204, BatteryState.still, stress: 10),
+      ], showFromSec: wake).value!;
+      expect(calm.current, lessThan(70));
     });
 
     test('abstains when no night has set the level yet', () {
