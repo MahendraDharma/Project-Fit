@@ -5,6 +5,11 @@ import AVFoundation
 import BackgroundTasks
 import CoreMotion
 import ProjectFitConnectIQ
+import SwiftUI
+#if canImport(AlarmKit)
+import ActivityKit
+import AlarmKit
+#endif
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -108,6 +113,11 @@ import ProjectFitConnectIQ
     // Build-time iOS configuration exposed to Dart without requiring --dart-define.
     if let registrar = registry.registrar(forPlugin: "ConfigBridge") {
       ConfigBridge.register(messenger: registrar.messenger())
+    }
+    // The wake alarm as a system alarm (AlarmKit, iOS 26+). See
+    // lib/platform/phone_alarm.dart.
+    if let registrar = registry.registrar(forPlugin: "PhoneAlarmBridge") {
+      PhoneAlarmBridge.register(messenger: registrar.messenger())
     }
     // The phone's OWN step count (CMPedometer), not HealthKit's multi-writer
     // aggregate. See lib/health/phone_pedometer.dart.
@@ -386,3 +396,128 @@ enum AppIconBridge {
     }
   }
 }
+
+
+// ═══════════════════ wake alarm (AlarmKit) ═══════════════════
+
+/// The phone's own wake alarm. On iOS 26+ it is an AlarmKit alarm: full screen
+/// on the lock screen, through silent mode and Focus, ringing until stopped.
+/// Two slots ("scheduled" = the next wake time, "now" = a ring the band started),
+/// each a stable UUID, so one never cancels the other. Anything else answers
+/// false and Dart falls back to a run of notifications.
+enum PhoneAlarmBridge {
+  private static let channelName = "projectfit/phone_alarm"
+  static var channel: FlutterMethodChannel?
+
+  static func register(messenger: FlutterBinaryMessenger) {
+    let ch = FlutterMethodChannel(name: channelName, binaryMessenger: messenger)
+    channel = ch
+    ch.setMethodCallHandler { call, result in
+      #if canImport(AlarmKit)
+      if #available(iOS 26.0, *) {
+        Task { await PhoneAlarmKit.handle(call, result) }
+        return
+      }
+      #endif
+      result(false)
+    }
+    #if canImport(AlarmKit)
+    if #available(iOS 26.0, *) { PhoneAlarmKit.observe() }
+    #endif
+  }
+
+  /// The person pressed Stop on the system alarm.
+  static func stopped() {
+    DispatchQueue.main.async { channel?.invokeMethod("stopped", arguments: nil) }
+  }
+}
+
+#if canImport(AlarmKit)
+@available(iOS 26.0, *)
+struct ProjectFitAlarmMetadata: AlarmMetadata {}
+
+@available(iOS 26.0, *)
+enum PhoneAlarmKit {
+  static func id(for slot: String) -> UUID {
+    let key = "phone_alarm_uuid_\(slot)"
+    if let s = UserDefaults.standard.string(forKey: key), let u = UUID(uuidString: s) {
+      return u
+    }
+    let u = UUID()
+    UserDefaults.standard.set(u.uuidString, forKey: key)
+    return u
+  }
+
+  static func authorized() async -> Bool {
+    let m = AlarmManager.shared
+    switch m.authorizationState {
+    case .authorized: return true
+    case .denied: return false
+    case .notDetermined:
+      return (try? await m.requestAuthorization()) == .authorized
+    @unknown default: return false
+    }
+  }
+
+  static func handle(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) async {
+    let args = call.arguments as? [String: Any] ?? [:]
+    let slot = args["slot"] as? String ?? "scheduled"
+    var answer: Any? = false
+    switch call.method {
+    case "requestAuth":
+      answer = await authorized()
+    case "schedule":
+      guard await authorized(),
+            let ms = args["at"] as? NSNumber else { break }
+      let uuid = id(for: slot)
+      try? AlarmManager.shared.cancel(id: uuid)
+      let at = Date(timeIntervalSince1970: ms.doubleValue / 1000)
+      let date = max(at, Date().addingTimeInterval(2))
+      let title = args["title"] as? String ?? "Wake up"
+      let stop = args["stop"] as? String ?? "Stop"
+      let loud = args["loud"] as? Bool ?? false
+      let stopButton = AlarmButton(
+        text: LocalizedStringResource(stringLiteral: stop),
+        textColor: .white,
+        systemImageName: "stop.circle")
+      let alert = AlarmPresentation.Alert(
+        title: LocalizedStringResource(stringLiteral: title),
+        stopButton: stopButton)
+      let attributes = AlarmAttributes<ProjectFitAlarmMetadata>(
+        presentation: AlarmPresentation(alert: alert),
+        tintColor: .green)
+      let config = AlarmManager.AlarmConfiguration<ProjectFitAlarmMetadata>(
+        schedule: .fixed(date),
+        attributes: attributes,
+        sound: .named(loud ? "alarm_tone_loud.wav" : "alarm_tone.wav"))
+      do {
+        _ = try await AlarmManager.shared.schedule(id: uuid, configuration: config)
+        answer = true
+      } catch {
+        NSLog("[alarm] AlarmKit schedule failed: \(error)")
+      }
+    case "cancel":
+      let uuid = id(for: slot)
+      try? AlarmManager.shared.stop(id: uuid)
+      try? AlarmManager.shared.cancel(id: uuid)
+      answer = true
+    default:
+      answer = FlutterMethodNotImplemented
+    }
+    let out = answer
+    await MainActor.run { result(out) }
+  }
+
+  /// Tell Dart when a ringing alarm of ours stops (the person pressed Stop).
+  static func observe() {
+    Task {
+      var alerting = Set<UUID>()
+      for await alarms in AlarmManager.shared.alarmUpdates {
+        let now = Set(alarms.filter { $0.state == .alerting }.map { $0.id })
+        if !alerting.subtracting(now).isEmpty { PhoneAlarmBridge.stopped() }
+        alerting = now
+      }
+    }
+  }
+}
+#endif

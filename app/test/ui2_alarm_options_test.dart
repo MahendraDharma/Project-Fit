@@ -18,7 +18,10 @@ void main() {
     await t.pumpWidget(_host(AlarmScreenView(
       connected: true,
       phoneSound: true,
-      onTest: () async => tried++,
+      onTest: () async {
+        tried++;
+        return true;
+      },
       onVibrationStrong: (v) async => strong = v,
       onSoundLoud: (v) async => loud = v,
       onPreviewSound: () => previews++,

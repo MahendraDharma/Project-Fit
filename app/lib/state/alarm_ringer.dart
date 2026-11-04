@@ -5,15 +5,15 @@
 // through it. The band says WHY a buzz stopped (HAPTICS_TERMINATED, event
 // 100): it ran its course (`expired`), the firmware aborted it (`error`), or
 // the wearer double-tapped (`user_double_tap`). While ringing, every stop that
-// was not a double tap starts the buzz again — until the double tap, the user
-// stops it in the app, or [maxRing] passes.
+// was not a double tap starts the buzz again — until the double tap or the
+// user stops it on the phone. Nothing else ends it (owner, 2026-11-04: "it
+// must not stop until the band is double-tapped or it is stopped on the
+// phone"); [maxRing] exists only for a caller that wants a cap.
 //
-// Two rules keep it from ever buzzing someone who already turned it off:
-//   • An unknown cause counts as a dismissal. A band that does not report the
-//     cause (WHOOP 5's event body is not decoded) gets the old behaviour, one
-//     buzz, rather than a buzz that cannot be stopped.
-//   • It only starts for a fire that is happening NOW, not one replayed from
-//     the band's history after a reconnect.
+// A stop whose cause the band did not name (WHOOP 5's event body is not
+// decoded) is NOT taken as the wearer: the double-tap gesture event, or the
+// phone, still ends it. It only starts for a fire that is happening NOW, not
+// one replayed from the band's history after a reconnect.
 //
 // It needs the phone connected when the alarm goes off: the re-buzz is a
 // command the phone sends. Without a connection the band's own buzz still runs.
@@ -23,7 +23,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
 /// Why ringing stopped, for the log and the screen.
-enum RingEnd { doubleTap, app, timeout, unknownCause }
+enum RingEnd { doubleTap, app, timeout }
 
 class AlarmRinger {
   AlarmRinger({
@@ -32,8 +32,9 @@ class AlarmRinger {
     this.onEnd,
     this.onBuzz,
     DateTime Function()? now,
-    this.maxRing = const Duration(minutes: 20),
+    this.maxRing,
     this.strongEvery = const Duration(seconds: 10),
+    this.retryEvery = const Duration(seconds: 10),
   }) : _now = now ?? DateTime.now;
 
   /// "Super strong": the buzz is started again on this cadence, without
@@ -45,7 +46,11 @@ class AlarmRinger {
   bool strong = false;
 
   Timer? _timer;
+  Timer? _retry;
   DateTime? _lastBuzzAt;
+
+  /// After a buzz that could not be sent, how soon to try again.
+  final Duration retryEvery;
 
   /// Starts the band's wake buzz again.
   final Future<void> Function() rebuzz;
@@ -58,9 +63,8 @@ class AlarmRinger {
   /// which the caller already knows about) — the phone's sound follows it.
   final void Function()? onBuzz;
 
-  /// The longest a ring keeps going without a double tap — the band is not on
-  /// a wrist, or the wearer is away. Battery matters more than one more buzz.
-  final Duration maxRing;
+  /// An optional cap on a ring; null (the default) rings until stopped.
+  final Duration? maxRing;
 
   final DateTime Function() _now;
 
@@ -98,7 +102,8 @@ class AlarmRinger {
   }
 
   Future<void> _again(String why) async {
-    if (_now().difference(_startedAt!) >= maxRing) {
+    final cap = maxRing;
+    if (cap != null && _now().difference(_startedAt!) >= cap) {
       _end(RingEnd.timeout);
       return;
     }
@@ -109,10 +114,13 @@ class AlarmRinger {
       await rebuzz();
       onBuzz?.call();
     } catch (e) {
-      // A dropped link: nothing more the phone can do. The band keeps its
-      // own armed alarm state either way.
-      log?.call('[alarm] re-buzz failed: $e');
-      _end(RingEnd.app);
+      // A dropped link. Still not a stop: try again shortly, for as long as
+      // the ring lasts (the phone's own alarm sounds meanwhile).
+      log?.call('[alarm] re-buzz failed: $e — retrying in ${retryEvery.inSeconds}s');
+      _retry?.cancel();
+      _retry = Timer(retryEvery, () {
+        if (ringing) unawaited(_again('retry after a failed buzz'));
+      });
     }
   }
 
@@ -132,12 +140,10 @@ class AlarmRinger {
       case 'user_double_tap':
         _end(RingEnd.doubleTap);
         return;
-      case 'expired':
-      case 'error':
-        break;
       default:
-        _end(RingEnd.unknownCause);
-        return;
+        // Ran its course, aborted, or a cause the band did not name: none of
+        // those is the wearer saying stop.
+        break;
     }
     // Strong mode restarts on its own cadence; an ended buzz just waits for
     // the next beat.
@@ -162,6 +168,8 @@ class AlarmRinger {
     _startedAt = null;
     _timer?.cancel();
     _timer = null;
+    _retry?.cancel();
+    _retry = null;
     log?.call('[alarm] ringing stopped: ${why.name}');
     onEnd?.call(why);
   }

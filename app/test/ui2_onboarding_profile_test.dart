@@ -111,7 +111,7 @@ Map<String, Widget> _cases() => {
           state: AlarmArmState.confirmed,
           connected: true,
           schedule: _alarmSchedule,
-          onTest: () async {},
+          onTest: () async => true,
           onCancel: () async {}),
       'alarm_unconfirmed': AlarmScreenView(
           armedAt: _alarmAt,
@@ -119,7 +119,7 @@ Map<String, Widget> _cases() => {
           state: AlarmArmState.unknown,
           connected: true,
           schedule: _alarmSchedule,
-          onTest: () async {},
+          onTest: () async => true,
           onCancel: () async {}),
       'alarm_disconnected': AlarmScreenView(
           armedAt: _alarmAt,

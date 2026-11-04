@@ -16288,9 +16288,9 @@
   "alarmRingingStop": "Stop from the phone",
   "alarmWhenItRings": "When it goes off",
   "alarmUntilTapTitle": "Keep buzzing until I double-tap",
-  "alarmUntilTapSub": "The buzz starts again each time it stops, until you double-tap the band (at most 20 minutes). Needs the phone nearby.",
+  "alarmUntilTapSub": "The buzz starts again each time it stops, until you double-tap the band or stop it on the phone. Needs the phone nearby.",
   "alarmPhoneSoundTitle": "Ring on the phone too",
-  "alarmPhoneSoundSub": "A tone plays on the phone for as long as the band buzzes. On iPhone it is silent while the phone is on silent.",
+  "alarmPhoneSoundSub": "The phone rings full screen on the lock screen at the wake time, until you double-tap the band or stop it here.",
   "alarmSoundTitle": "Wake up",
   "alarmSoundBody": "Your band alarm is going.",
   "nudgeRedeploy": "This install stops opening {when}. Connect the iPhone to your Mac and run the app again from there to renew it.",
@@ -16308,7 +16308,9 @@
   "alarmLevelLoud": "Super loud",
   "alarmSoundLevelTitle": "Phone sound",
   "alarmSoundNormalSub": "A chime that grows louder.",
-  "alarmSoundLoudSub": "A sharp, full-volume beep for heavy sleepers.",
+  "alarmSoundLoudSub": "A 520 Hz square-wave beep in threes, the signal that wakes deep sleepers best in sleep studies.",
   "alarmPreviewSound": "Hear the sound",
-  "alarmPreviewSoundSub": "Plays the tone now. Turn the volume up: the phone's volume sets how loud it is."
+  "alarmPreviewSoundSub": "Plays the tone now. Turn the volume up: the phone's volume sets how loud it is.",
+  "alarmTryPhoneOnly": "The band is not connected, so only the phone is ringing. Stop it here.",
+  "alarmTryNeedsBand": "The band is not connected. Connect it, or turn on \"Ring on the phone too\" to try the phone alone."
 }

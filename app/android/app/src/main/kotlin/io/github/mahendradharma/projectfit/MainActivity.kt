@@ -2,7 +2,9 @@ package io.github.mahendradharma.projectfit
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 
 /**
@@ -41,9 +43,35 @@ class MainActivity : FlutterFragmentActivity() {
         clearPendingHeadlessBoot()
         super.onCreate(savedInstanceState)
         CompanionBridge.currentActivity = this
+        applyAlarmLock(intent)
         // Re-arm CDM device-presence observation for an already-associated band
         // (idempotent; no-op below API 31 or when nothing is associated).
         CompanionBridge.ensureObserving(applicationContext)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        applyAlarmLock(intent)
+    }
+
+    /**
+     * Over the lock screen, and turning the screen on, ONLY when the wake
+     * alarm's full-screen notification opened us (its payload is the alarm
+     * route). Set for the whole activity it would put every screen of health
+     * data above the lock screen; it is cleared again in [onStop].
+     */
+    private fun applyAlarmLock(intent: Intent?) {
+        val alarm = intent?.getStringExtra("payload") == "/alarm"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(alarm)
+            setTurnScreenOn(alarm)
+        } else {
+            @Suppress("DEPRECATION")
+            val flags = WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+            if (alarm) window.addFlags(flags) else window.clearFlags(flags)
+        }
     }
 
     override fun onStart() {
@@ -54,6 +82,7 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun onStop() {
         activityAttached = false
+        applyAlarmLock(null)
         super.onStop()
     }
 

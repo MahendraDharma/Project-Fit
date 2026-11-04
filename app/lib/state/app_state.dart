@@ -74,6 +74,7 @@ import '../data/auto_backup.dart' as backup
     show runBackupIfDue, selectedBackupFolder, saveBackupFolder, deleteAutomaticBackups;
 import 'alarm_ringer.dart';
 import '../platform/install_expiry.dart';
+import '../platform/phone_alarm.dart';
 import 'alarm_schedule.dart';
 import 'derive_coordinator.dart';
 import 'gesture_controller.dart';
@@ -2733,17 +2734,40 @@ class AppState extends ChangeNotifier {
   static const _kAlarmUntilTap = 'alarm_until_double_tap';
 
   late final AlarmRinger _ringer = AlarmRinger(
-    rebuzz: () => engine.runAlarm(),
+    // A write that did not reach the band is a failed buzz: the ringer tries
+    // again rather than taking it as sent.
+    rebuzz: () async {
+      if (!await engine.runAlarm()) throw Exception('the band did not take the buzz');
+    },
     log: _log,
     onEnd: (why) {
       if (why == RingEnd.doubleTap) _ringTapEndedAt = DateTime.now();
-      _alarmSoundAt = null;
-      unawaited(NotificationService.instance.cancelAlarmSound());
+      // Stopped early (smart wake, before the wake time): the wake time's own
+      // alarm stays quiet on the phone, and its fire does not ring again.
+      final epoch = alarmEpoch;
+      final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      if (epoch != null && epoch > nowSec && epoch - nowSec <= 3600) {
+        _dismissedEpoch = epoch;
+      }
+      unawaited(_stopPhoneRinging());
       if (!_disposed) notifyListeners();
     },
-    onBuzz: _playAlarmSound,
   );
   DateTime? _ringTapEndedAt;
+
+  /// The phone's own alarm (AlarmKit / full-screen notification); tests swap it.
+  PhoneAlarmApi get phoneAlarm => _phoneAlarm ??= PhoneAlarm()..onStoppedOnPhone = stopAlarmRinging;
+  set phoneAlarm(PhoneAlarmApi a) => _phoneAlarm = a..onStoppedOnPhone = stopAlarmRinging;
+  PhoneAlarmApi? _phoneAlarm;
+
+  /// The wake time the phone's scheduled alarm holds, or null.
+  int? _phoneAlarmEpoch;
+
+  /// The phone is ringing a ring the band started (smart wake, "try it now").
+  DateTime? _phoneRingingSince;
+
+  /// A wake time whose ring was already stopped early.
+  int? _dismissedEpoch;
 
   /// Whether a wake alarm keeps buzzing until the band is double-tapped (the
   /// user's setting, on unless they turned it off).
@@ -2751,12 +2775,20 @@ class AppState extends ChangeNotifier {
 
   static const _kAlarmPhoneSound = 'alarm_phone_sound';
 
-  /// Whether the phone plays a tone while the band buzzes (opt-in).
+  /// Whether the phone rings too (opt-in): a system alarm at the wake time,
+  /// full screen on the lock screen, until the double tap or Stop.
   bool get alarmPhoneSound => Prefs.getBool(_kAlarmPhoneSound, false);
 
   Future<void> setAlarmPhoneSound(bool on) async {
     await Prefs.setBoolAcked(_kAlarmPhoneSound, on);
-    if (!on) unawaited(NotificationService.instance.cancelAlarmSound());
+    if (on) {
+      await phoneAlarm.requestPermission();
+    } else {
+      await _stopPhoneRinging(resync: false);
+      await phoneAlarm.cancel(PhoneAlarmSlot.scheduled);
+      _phoneAlarmEpoch = null;
+    }
+    await _syncPhoneAlarm(force: true);
     notifyListeners();
   }
 
@@ -2767,6 +2799,7 @@ class AppState extends ChangeNotifier {
   bool get alarmSoundLoud => Prefs.getBool(_kAlarmSoundLoud, false);
   Future<void> setAlarmSoundLoud(bool on) async {
     await Prefs.setBoolAcked(_kAlarmSoundLoud, on);
+    await _syncPhoneAlarm(force: true);
     notifyListeners();
   }
 
@@ -2777,38 +2810,104 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  DateTime? _alarmSoundAt;
-
-  /// The tone is ~28 s; a strong ring buzzes every 10 s, and restarting the
-  /// tone on every beat would only stutter it.
-  static const _alarmSoundEvery = Duration(seconds: 25);
-
-  void _playAlarmSound({bool force = false}) {
-    if (!force && !alarmPhoneSound) return;
-    final now = DateTime.now();
-    final last = _alarmSoundAt;
-    if (!force && last != null && now.difference(last) < _alarmSoundEvery) return;
-    _alarmSoundAt = now;
+  ({String title, String body, String stop}) _alarmWords() {
     final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
-    unawaited(NotificationService.instance.presentAlarmSound(
+    return (
       title: l.alarmSoundTitle,
       body: alarmUntilDoubleTap ? l.alarmRingingBody : l.alarmSoundBody,
-      loud: alarmSoundLoud,
-    ));
+      stop: l.alarmRingingStop,
+    );
   }
 
-  /// Play the phone's alarm tone now, at the chosen loudness — no band needed.
-  void previewAlarmSound() => _playAlarmSound(force: true);
+  /// Keep the phone's scheduled alarm on the band's next wake time. Never
+  /// while one is ringing: tomorrow's would replace the ring in progress, so
+  /// the ring's end re-syncs. [force] re-registers it (a new tone).
+  Future<void> _syncPhoneAlarm({bool force = false}) async {
+    if (alarmRinging) return;
+    final epoch = alarmEpoch;
+    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final want = alarmPhoneSound &&
+        epoch != null &&
+        epoch > nowSec &&
+        epoch != _dismissedEpoch;
+    try {
+      if (!want) {
+        if (_phoneAlarmEpoch != null) {
+          await phoneAlarm.cancel(PhoneAlarmSlot.scheduled);
+          _phoneAlarmEpoch = null;
+        }
+        return;
+      }
+      if (!force && _phoneAlarmEpoch == epoch) return;
+      final w = _alarmWords();
+      await phoneAlarm.schedule(PhoneAlarmSlot.scheduled,
+          at: DateTime.fromMillisecondsSinceEpoch(epoch * 1000),
+          loud: alarmSoundLoud,
+          title: w.title,
+          body: w.body,
+          stopLabel: w.stop);
+      _phoneAlarmEpoch = epoch;
+    } catch (e) {
+      _log('[alarm] phone alarm sync failed: $e');
+    }
+  }
 
-  /// Run the whole alarm now, exactly as a real wake would: the band buzzes,
-  /// it keeps going until a double tap (if that is on), and the phone rings
-  /// (if that is on). Stop it the same way as a real one.
-  Future<void> tryAlarmNow() async {
-    if (!isConnected) throw Exception('Connect to your strap first');
+  /// Silence the phone: the ring the band started, and the wake time's own
+  /// alarm once it has gone off (never a later one).
+  Future<void> _stopPhoneRinging({bool resync = true}) async {
+    _phoneRingingSince = null;
+    try {
+      await phoneAlarm.cancel(PhoneAlarmSlot.now);
+      final s = _phoneAlarmEpoch;
+      final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      if (s != null && (s <= nowSec || s == _dismissedEpoch)) {
+        await phoneAlarm.cancel(PhoneAlarmSlot.scheduled);
+        _phoneAlarmEpoch = null;
+      }
+      await NotificationService.instance.cancelAlarmSound();
+    } catch (e) {
+      _log('[alarm] stopping the phone alarm failed: $e');
+    }
+    if (resync) await _syncPhoneAlarm();
+    if (!_disposed) notifyListeners();
+  }
+
+  /// Play the phone's alarm tone once, at the chosen loudness — no band needed.
+  void previewAlarmSound() {
+    final w = _alarmWords();
+    unawaited(NotificationService.instance.presentAlarmSound(
+        title: w.title, body: w.body, loud: alarmSoundLoud));
+  }
+
+  /// Run the whole alarm now, exactly as a real wake would: the band buzzes
+  /// and keeps going until a double tap (if that is on), and the phone rings
+  /// (if that is on). Without the band the phone rings alone. True when the
+  /// band took the buzz.
+  Future<bool> tryAlarmNow() async {
+    final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
     _ringer.stop();
-    _alarmSoundAt = null;
-    await engine.runAlarm();
-    _startRinging();
+    await _stopPhoneRinging(resync: false);
+    _dismissedEpoch = null;
+    final band = isConnected && await engine.runAlarm();
+    if (band) {
+      _startRinging();
+      return true;
+    }
+    if (!alarmPhoneSound) throw Exception(l.alarmTryNeedsBand);
+    _ringPhoneNow();
+    notifyListeners();
+    return false;
+  }
+
+  void _ringPhoneNow() {
+    final w = _alarmWords();
+    _phoneRingingSince = DateTime.now();
+    unawaited(phoneAlarm.schedule(PhoneAlarmSlot.now,
+        at: DateTime.now(),
+        loud: alarmSoundLoud,
+        title: w.title,
+        body: w.body,
+        stopLabel: w.stop));
   }
 
   Future<void> setAlarmUntilDoubleTap(bool on) async {
@@ -2817,23 +2916,42 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// True while the alarm is going and waiting for its double tap.
-  bool get alarmRinging => _ringer.ringing;
+  /// True while the alarm is going: the band waiting for its double tap, or
+  /// the phone ringing (a ring the band started, or the wake time's own
+  /// alarm, up to two hours after it went off).
+  bool get alarmRinging => _ringer.ringing || _phoneRinging;
 
-  /// Stop a ringing alarm from the phone.
-  void stopAlarmRinging() => _ringer.stop();
+  bool get _phoneRinging {
+    if (_phoneRingingSince != null) return true;
+    final s = _phoneAlarmEpoch;
+    if (s == null) return false;
+    final since = DateTime.now().millisecondsSinceEpoch ~/ 1000 - s;
+    return since >= 0 && since < 7200;
+  }
+
+  /// Stop a ringing alarm from the phone: the band and the phone both.
+  void stopAlarmRinging() {
+    if (_ringer.ringing) {
+      _ringer.stop(); // its end silences the phone too
+    } else {
+      unawaited(_stopPhoneRinging());
+    }
+    notifyListeners();
+  }
 
   void _startRinging({int? tsSec}) {
     _ringer.enabled = alarmUntilDoubleTap;
     _ringer.strong = alarmVibrationStrong;
     final wasRinging = _ringer.ringing;
     _ringer.onFired(tsSec: tsSec);
-    // The first buzz is the band's own; the phone joins it. With "until
-    // double-tap" off it still sounds this once, for a live fire only.
-    final live = tsSec == null ||
-        (DateTime.now().millisecondsSinceEpoch ~/ 1000) - tsSec <=
-            AlarmRinger.liveFireSlackSec;
-    if (!wasRinging && live) _playAlarmSound();
+    // The phone joins a live fire. At the wake time its own scheduled alarm is
+    // already going off, so a second one is not started on top of it.
+    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final live = tsSec == null || nowSec - tsSec <= AlarmRinger.liveFireSlackSec;
+    final sched = _phoneAlarmEpoch;
+    final phoneAlready =
+        _phoneRingingSince != null || (sched != null && (nowSec - sched).abs() <= 180);
+    if (!wasRinging && live && alarmPhoneSound && !phoneAlready) _ringPhoneNow();
     notifyListeners();
   }
 
@@ -2954,6 +3072,8 @@ class AppState extends ChangeNotifier {
     // wrongly read it as unconfirmed, nor trust an arm that never confirmed.
     if (_savedAlarm != null) {
       _seedAlarmFromPrefs(_savedAlarm!, alarmPrefs);
+      // The phone's own alarm for that wake time (re-registered each launch).
+      unawaited(_syncPhoneAlarm());
       // Resume the not-confirmed alert a killed process was still holding.
       final saved = _savedAlarm!;
       final resume = alarmLatchAlertResumeDelay(
@@ -4893,6 +5013,7 @@ class AppState extends ChangeNotifier {
     // Nudge the UI once the grace window elapses so an unconfirmed alarm flips to
     // its soft warning even if no event ever arrives.
     _armAlarmGraceTimer(when);
+    unawaited(_syncPhoneAlarm());
     notifyListeners();
   }
 
@@ -5038,6 +5159,7 @@ class AppState extends ChangeNotifier {
     await prefs.remove('alarm_epoch_confirmed');
     await LocalDb.clearAlarmSchedule();
     _schedule = fillDefaultAlarmSchedule(const []);
+    await _syncPhoneAlarm();
     notifyListeners();
   }
 
@@ -5087,7 +5209,11 @@ class AppState extends ChangeNotifier {
           return false;
         }));
         unawaited(_notifyAlarmFired());
-        _startRinging(tsSec: ts + (engine.clockRef?.driftSec ?? 0));
+        // Not for a wake time whose ring was already stopped early.
+        final firing = _savedAlarm ?? device.alarmEpoch;
+        if (_dismissedEpoch == null || firing != _dismissedEpoch) {
+          _startRinging(tsSec: ts + (engine.clockRef?.driftSec ?? 0));
+        }
         // A one-shot alarm is SPENT the moment it fires. This used to only log
         // + notify, so `alarmEpoch` kept returning the past epoch across
         // relaunches (_init reloads `alarm_epoch`) and Profile's "Smart alarm"

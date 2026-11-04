@@ -209,6 +209,31 @@ selection lacks (chin-up, dips, push-up variants, bodyweight squat, lunges, core
 sumo/trap-bar deadlift, good morning, farmer's walk), named in de/es/fr/id and ru (the
 `exerciseCatalogueName` select). Not in the picker's short list; search ranks name hits first.
 
+## Alarm rework (owner, 2026-11-04, ships with v0.25.0)
+- A ring ends ONLY on the double tap (HAPTICS_TERMINATED `user_double_tap`, or gesture event
+  14) or Stop on the phone: no 20-min cap (`maxRing` null), an unnamed cause keeps ringing, a
+  failed buzz retries every 10 s. `engine.runAlarm()` now returns whether the write landed.
+- The phone's alarm is registered with the OS at the wake time (`lib/platform/phone_alarm.dart`):
+  iOS 26+ AlarmKit (`PhoneAlarmBridge`/`PhoneAlarmKit` in AppDelegate.swift, NSAlarmKitUsage-
+  Description; full screen, through silent mode; Stop on it stops the band via `stopped`);
+  otherwise 30 notifications 30 s apart (ids 2420–2479). Android: one insistent full-screen
+  notification on `AndroidScheduleMode.alarmClock` (ids 2410/2412), USE_EXACT_ALARM +
+  USE_FULL_SCREEN_INTENT, MainActivity shows over the lock screen only when the alarm opened it.
+  Two slots (scheduled / now); tomorrow's is registered only after a ring ends.
+- The manifest lacked flutter_local_notifications' ScheduledNotificationReceiver (required
+  since plugin 16): no scheduled notification ever showed on Android. Added.
+- Tones: super loud = 520 Hz square wave, ISO 8201 temporal-three (Bruck, Ball, Thomas &
+  Rouillard 2009, J Sleep Res 18:196–203: 400/520 Hz square waves had the lowest arousal
+  thresholds in deep sleep; Bruck & Thomas 2008, Fire Technology, via abstract only — the
+  repository hosts vuir.vu.edu.au and core.ac.uk are blocked here). Normal = the chime over a
+  520 Hz bed, compressed (RMS ×2.2).
+- AlarmKit and the Android full-screen path compile only on CI and need checking on a phone.
+
+## Body Battery recalibration (owner, 2026-11-04)
+Waking rest no longer charges (it slows the 3.6/h cost of being up to 1.4/h at best); past 16 h
+since the last sleep costs 3/h more. A typical day runs ~95 → ~31 at bedtime (test in
+garmin_parity_test.dart).
+
 ## Install expiry warning (owner, 2026-11-03)
 `lib/platform/install_expiry.dart` reads the embedded provisioning profile's ExpirationDate through
 `ConfigBridge.profileExpiry` (AppDelegate.swift). Inside 48 h Home shows the `redeploy` nudge (top

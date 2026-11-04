@@ -31,6 +31,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- The wake alarm on the phone (lib/platform/phone_alarm.dart): exact at the
+         wake time, and full screen over the lock screen. USE_EXACT_ALARM is the
+         alarm-clock grant on Android 13+; SCHEDULE_EXACT_ALARM covers 12. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <!-- Band-gesture "ring my phone" haptic. Normal permission, no runtime prompt. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- The phone's OWN step counter (Sensor.TYPE_STEP_COUNTER), which is the app's
@@ -216,6 +222,19 @@
                 <action android:name="android.companion.CompanionDeviceService" />
             </intent-filter>
         </service>
+
+        <!-- flutter_local_notifications 16+ no longer declares these itself:
+             without them a SCHEDULED notification (the wake alarm, every
+             reminder) is never shown on Android, and none survive a reboot. -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
 
         <!-- Boot receiver: restarts EdgeTrackingService + headless auto-connect after reboot.
              Handles BOOT_COMPLETED + QUICKBOOT_POWERON. -->

@@ -104,6 +104,8 @@
 	<array>
 		<string>Bluetooth</string>
 	</array>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>ProjectFit rings your wake alarm on the phone too, full screen on the lock screen, until you double-tap the band or stop it here.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>ProjectFit connects to your WHOOP band over Bluetooth to sync your health data.</string>
 	<!-- GENERATED (see above): service UUID -> ASK picker row label. Cosmetic

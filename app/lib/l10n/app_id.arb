@@ -488,9 +488,9 @@
   "alarmRingingStop": "Matikan dari HP",
   "alarmWhenItRings": "Saat alarm berbunyi",
   "alarmUntilTapTitle": "Terus bergetar sampai aku double-tap",
-  "alarmUntilTapSub": "Getaran diulang setiap kali berhenti, sampai kamu double-tap band (paling lama 20 menit). HP harus di dekatmu.",
+  "alarmUntilTapSub": "Getaran diulang setiap kali berhenti, sampai kamu double-tap band atau mematikannya dari HP. HP harus di dekatmu.",
   "alarmPhoneSoundTitle": "Bunyikan juga dari HP",
-  "alarmPhoneSoundSub": "Nada alarm diputar di HP selama band bergetar. Di iPhone, suaranya tidak keluar kalau HP dalam mode senyap.",
+  "alarmPhoneSoundSub": "HP berbunyi layar penuh di lock screen pada jam bangun, sampai kamu double-tap band atau mematikannya di sini.",
   "alarmSoundTitle": "Waktunya bangun",
   "alarmSoundBody": "Alarm band-mu sedang berbunyi.",
   "nudgeRedeploy": "Aplikasi ini berhenti bisa dibuka {when}. Sambungkan iPhone ke Mac dan jalankan ulang aplikasinya dari sana untuk memperpanjang.",
@@ -508,7 +508,7 @@
   "alarmLevelLoud": "Super keras",
   "alarmSoundLevelTitle": "Suara HP",
   "alarmSoundNormalSub": "Denting yang makin lama makin keras.",
-  "alarmSoundLoudSub": "Bunyi bip tajam dengan volume penuh, untuk yang susah bangun.",
+  "alarmSoundLoudSub": "Bunyi bip gelombang kotak 520 Hz, tiga kali berturut-turut. Dalam riset tidur, bunyi ini paling ampuh membangunkan orang yang tidur nyenyak.",
   "alarmPreviewSound": "Dengar nada",
   "alarmPreviewSoundSub": "Memutar nada sekarang. Besarkan volume HP, karena volume HP yang menentukan kerasnya.",
   "alarmNavTitle": "Alarm",
@@ -546,5 +546,7 @@
   "alarmHeadlineNone": "Belum ada alarm",
   "alarmDetailConfirmed": "Band melaporkan alarm sudah tersimpan.",
   "alarmDetailPending": "Perintah sudah sampai ke band. Konfirmasinya biasanya datang dalam beberapa detik.",
-  "alarmDetailUnknown": "Ini jam yang terakhir dikirim aplikasi, tetapi band tidak pernah mengonfirmasinya. Pasang lagi saat tersambung kalau ingin yakin."
+  "alarmDetailUnknown": "Ini jam yang terakhir dikirim aplikasi, tetapi band tidak pernah mengonfirmasinya. Pasang lagi saat tersambung kalau ingin yakin.",
+  "alarmTryPhoneOnly": "Band belum tersambung, jadi hanya HP yang berbunyi. Matikan di sini.",
+  "alarmTryNeedsBand": "Band belum tersambung. Sambungkan dulu, atau nyalakan \"Bunyikan juga dari HP\" untuk mencoba HP saja."
 }

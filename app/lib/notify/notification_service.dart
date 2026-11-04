@@ -163,6 +163,15 @@ class NotificationService {
   // One-shots before this iPhone install stops opening (owner's request): a
   // day ahead and three hours ahead of the provisioning profile's expiry.
   static const int idRedeployDay = 2011;
+  // The phone's own wake alarm (lib/platform/phone_alarm.dart): Android's one
+  // insistent full-screen notification per slot, and iOS's fallback run of 30
+  // notifications per slot when AlarmKit is not available.
+  static const int idPhoneAlarm = 2410;
+  static const int idPhoneAlarmNow = 2412;
+  static const int idAlarmSeries = 2420; // .. 2449
+  static const int idAlarmSeriesNow = 2450; // .. 2479
+  static const int alarmSeriesLength = 30;
+  static const Duration alarmSeriesEvery = Duration(seconds: 30);
   static const int idRedeploySoon = 2012;
   static const int idStillness = 2200; // provisional one-shot ("time to move", issue #123)
   static const int idCheckIn = 2201; // daily ("how was today?" → the journal)
@@ -254,7 +263,16 @@ class NotificationService {
   /// [NotificationCenter.scheduleAiReminders] filters its plan through it
   /// rather than arming a slot and having it refused one line later.
   static bool maySchedule(int id) =>
-      schedulableIds.contains(id) || isWaterSlot(id) || isMedSlot(id);
+      schedulableIds.contains(id) ||
+      isWaterSlot(id) ||
+      isMedSlot(id) ||
+      isPhoneAlarmId(id);
+
+  /// The wake alarm's own band, asked for by name on the Alarm screen.
+  static bool isPhoneAlarmId(int id) =>
+      id == idPhoneAlarm ||
+      id == idPhoneAlarmNow ||
+      (id >= idAlarmSeries && id < idAlarmSeriesNow + alarmSeriesLength);
 
   AndroidNotificationChannel _channelFor(NotifCategory c) => switch (c) {
         NotifCategory.health => _healthChannel,
@@ -528,6 +546,117 @@ class NotificationService {
         payload: kRouteAlarm,
       );
       return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// The wake alarm on Android: full screen over the lock screen, the screen
+  /// turned on, and the tone repeating (FLAG_INSISTENT) until the card is
+  /// cancelled — by a double tap on the band, or Stop in the app.
+  NotificationDetails _alarmDetails(bool loud) {
+    final ch = loud ? _alarmLoudChannel : _alarmChannel;
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        ch.id,
+        ch.name,
+        channelDescription: ch.description,
+        importance: Importance.max,
+        priority: Priority.max,
+        category: AndroidNotificationCategory.alarm,
+        fullScreenIntent: true,
+        ongoing: true,
+        autoCancel: false,
+        visibility: NotificationVisibility.public,
+        sound: ch.sound,
+        audioAttributesUsage: AudioAttributesUsage.alarm,
+        additionalFlags: Int32List.fromList(<int>[4]), // FLAG_INSISTENT
+        icon: '@mipmap/launcher_icon',
+      ),
+      iOS: DarwinNotificationDetails(
+        presentSound: true,
+        presentAlert: true,
+        presentBanner: true,
+        presentList: true,
+        sound: loud ? alarmToneLoudIos : alarmToneIos,
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      ),
+    );
+  }
+
+  /// Android: the wake alarm at [at] (or right away with [now]).
+  Future<void> scheduleAlarmAndroid(int id,
+      {required DateTime at,
+      required bool loud,
+      required String title,
+      required String body,
+      bool now = false}) async {
+    try {
+      if (!await ensurePermission(allowPrompt: false)) return;
+      if (now || !at.isAfter(DateTime.now())) {
+        await _plugin.show(id, title, body, _alarmDetails(loud), payload: kRouteAlarm);
+        return;
+      }
+      await _plugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(at, tz.local),
+        _alarmDetails(loud),
+        // setAlarmClock: exact, allowed in Doze, and shown as the next alarm.
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: kRouteAlarm,
+      );
+    } catch (_) {}
+  }
+
+  /// iOS without AlarmKit: [alarmSeriesLength] notifications from [from],
+  /// [alarmSeriesEvery] apart, each playing the tone, so the phone keeps
+  /// ringing while the app is asleep. Ids [base] … base + length − 1.
+  Future<void> scheduleAlarmSeries(int base,
+      {required DateTime from,
+      required bool loud,
+      required String title,
+      required String body}) async {
+    try {
+      if (!await ensurePermission(allowPrompt: false)) return;
+      final start = from.isAfter(DateTime.now())
+          ? from
+          : DateTime.now().add(const Duration(seconds: 1));
+      for (var i = 0; i < alarmSeriesLength; i++) {
+        await _plugin.zonedSchedule(
+          base + i,
+          title,
+          body,
+          tz.TZDateTime.from(start.add(alarmSeriesEvery * i), tz.local),
+          _alarmDetails(loud),
+          androidScheduleMode: AndroidScheduleMode.alarmClock,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          payload: kRouteAlarm,
+        );
+      }
+    } catch (_) {}
+  }
+
+  Future<void> cancelAlarmSeries(int base) async {
+    for (var i = 0; i < alarmSeriesLength; i++) {
+      await cancel(base + i);
+    }
+  }
+
+  /// Android: notifications, full-screen intents (Android 14 asks) and exact
+  /// alarms, for the wake alarm. True when notifications may show.
+  Future<bool> requestAlarmPermissions() async {
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      final ok = await android?.requestNotificationsPermission() ?? true;
+      await android?.requestFullScreenIntentPermission();
+      await android?.requestExactAlarmsPermission();
+      return ok;
     } catch (_) {
       return false;
     }

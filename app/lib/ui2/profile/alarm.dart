@@ -245,7 +245,11 @@ class AlarmScreenView extends StatelessWidget {
       onSetDayTime;
   final Future<void> Function(int weekday, int minutes)? onSetSmartWindow;
   final Future<void> Function(int weekday, bool on)? onSetSleepGoal;
-  final Future<void> Function()? onTest, onCancel;
+  final Future<void> Function()? onCancel;
+
+  /// "Try the alarm now": true when the band took the buzz, false when only
+  /// the phone rings.
+  final Future<bool> Function()? onTest;
 
   /// Keep buzzing until the band is double-tapped (a phone setting).
   final bool untilDoubleTap;
@@ -411,16 +415,6 @@ class AlarmScreenView extends StatelessWidget {
                     ],
                   ]),
                   const SizedBox(height: S.x3),
-                  // The whole alarm, now: buzz, keep going until the double
-                  // tap, ring the phone — so it is trusted before a real wake.
-                  BigButton(l?.alarmTryNow ?? 'Try the alarm now',
-                      icon: LucideIcons.alarmClock,
-                      color: C.blue,
-                      soft: true,
-                      onTap: () => _run(c, onTest,
-                          l?.alarmTryNowStarted ??
-                              'The alarm is going. Double-tap the band to stop it.')),
-                  const SizedBox(height: S.x3),
                   if (at != null || anyDayEnabled)
                     BigButton(l?.alarmCancelTheAlarm ?? 'Cancel the alarm',
                         icon: LucideIcons.bellOff,
@@ -430,6 +424,15 @@ class AlarmScreenView extends StatelessWidget {
                             c, onCancel, l?.alarmCancelled ?? 'Alarm cancelled')),
                 ],
                 const SizedBox(height: S.x4),
+                // The whole alarm, now: buzz, keep going until the double tap,
+                // ring the phone — so it is trusted before a real wake. Shown
+                // without the band too: then the phone rings alone.
+                BigButton(l?.alarmTryNow ?? 'Try the alarm now',
+                    icon: LucideIcons.alarmClock,
+                    color: C.blue,
+                    soft: true,
+                    onTap: () => _try(c)),
+                const SizedBox(height: S.x4),
                 settingsGroup(c, l?.alarmWhenItRings ?? 'When it goes off', [
                   SetRow(
                     LucideIcons.hand,
@@ -437,7 +440,7 @@ class AlarmScreenView extends StatelessWidget {
                     l?.alarmUntilTapTitle ?? 'Keep buzzing until I double-tap',
                     sub: l?.alarmUntilTapSub ??
                         'The buzz starts again each time it stops, until you double-tap '
-                            'the band (at most 20 minutes). Needs the phone nearby.',
+                            'the band or stop it on the phone. Needs the phone nearby.',
                     chevron: false,
                     onTap: () => onUntilDoubleTap?.call(!untilDoubleTap),
                     trailing: Switch(
@@ -452,8 +455,8 @@ class AlarmScreenView extends StatelessWidget {
                     C.orange,
                     l?.alarmPhoneSoundTitle ?? 'Ring on the phone too',
                     sub: l?.alarmPhoneSoundSub ??
-                        'A tone plays on the phone for as long as the band buzzes. '
-                            'On iPhone it is silent while the phone is on silent.',
+                        'The phone rings full screen on the lock screen at the wake '
+                            'time, until you double-tap the band or stop it here.',
                     chevron: false,
                     onTap: () => onPhoneSound?.call(!phoneSound),
                     trailing: Switch(
@@ -488,7 +491,7 @@ class AlarmScreenView extends StatelessWidget {
                       l?.alarmSoundLevelTitle ?? 'Phone sound',
                       sub: soundLoud
                           ? (l?.alarmSoundLoudSub ??
-                              'A sharp, full-volume beep for heavy sleepers.')
+                              'A 520 Hz square-wave beep in threes, the signal that wakes deep sleepers best in sleep studies.')
                           : (l?.alarmSoundNormalSub ?? 'A chime that grows louder.'),
                       value: soundLoud
                           ? (l?.alarmLevelLoud ?? 'Super loud')
@@ -599,6 +602,24 @@ class AlarmScreenView extends StatelessWidget {
 
   /// Run a band/schedule write and report what happened. Every one of these
   /// throws when the band is not connected, and silence would read as success.
+  Future<void> _try(BuildContext c) async {
+    final test = onTest;
+    if (test == null) return;
+    final l = AppLocalizations.of(c);
+    try {
+      final band = await test();
+      if (c.mounted) {
+        _say(c, band
+            ? (l?.alarmTryNowStarted ??
+                'The alarm is going. Double-tap the band to stop it.')
+            : (l?.alarmTryPhoneOnly ??
+                'The band is not connected, so only the phone is ringing. Stop it here.'));
+      }
+    } catch (e) {
+      if (c.mounted) _say(c, '$e'.replaceFirst('Exception: ', ''));
+    }
+  }
+
   static Future<void> _run(
       BuildContext c, Future<void> Function()? action, String ok) async {
     if (action == null) return;

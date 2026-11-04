@@ -8558,15 +8558,16 @@ class BleEngine {
   /// WHOOP 5: RUN_ALARM does not buzz on hardware we tested; use the same
   /// Maverick `0x13` short pulse as Find-band. Do NOT STOP_HAPTICS first —
   /// on gen5 that can race and swallow the buzz.
-  Future<void> runAlarm() async {
+  ///
+  /// True when the write reached the band.
+  Future<bool> runAlarm() async {
     if (_session?.band.isGen5 ?? false) {
-      await _send(
+      return _send(
         Cmd.runHapticPatternMaverick,
         AlarmPayloads.gen5MaverickBuzz(),
       );
-      return;
     }
-    await _send(Cmd.runAlarm, AlarmPayloads.runNow);
+    return _send(Cmd.runAlarm, AlarmPayloads.runNow);
   }
 
   /// Cancel the on-device alarm (DISABLE_ALARM = 0x45). gen4 body `[0x01]`
