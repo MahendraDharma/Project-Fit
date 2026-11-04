@@ -26,7 +26,9 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.23.0** (2026-11-03): coach quick answers (no setup), alarm from the +
+- Latest release: **v0.24.0** (2026-11-04): alarm "try it now", phone tone Normal/Super loud,
+  band Normal/Super strong (iOS build needed three attempts: GitHub macOS capacity).
+  v0.23.0 (2026-11-03): coach quick answers (no setup), alarm from the +
   sheet that buzzes until a double tap, optional phone tone, install-expiry warning.
   v0.22.0: redesign B through Activity, Health, Profile,
   settings and onboarding (mochi greets and pairs with you), the mochi on Home, the sync as a
