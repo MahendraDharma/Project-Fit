@@ -246,7 +246,8 @@ void main() {
             e.sourceId: e.label},
           wgerWeightliftingSelection,
           reason: 'only explicitly reviewed lifting additions may ship');
-      expect(exerciseLibrary, hasLength(coreExerciseCount + wgerExerciseCount));
+      expect(exerciseLibrary,
+          hasLength(coreExerciseCount + extraExerciseCount + wgerExerciseCount));
       expect(exerciseLibrary.map((e) => e.key).toSet(),
           hasLength(exerciseLibrary.length),
           reason: 'a duplicate key would merge two exercises in history');
@@ -281,6 +282,24 @@ void main() {
                       allowedLicenses[credit.licenseName] ==
                       credit.licenseUrl)),
           isTrue);
+    });
+
+    test('everyday moves are there: chin-ups, dips, bodyweight and core work',
+        () {
+      for (final key in ['chin_up', 'dip', 'bodyweight_squat', 'crunch',
+          'burpee', 'sumo_deadlift', 'pistol_squat', 'side_plank']) {
+        final e = exerciseByKey(key);
+        expect(e, isNotNull, reason: '$key is missing');
+        for (final code in ['de', 'es', 'fr', 'id']) {
+          expect(e!.localizedLabels[code], isNotEmpty, reason: '$key has no $code name');
+        }
+        expect(e!.labelFor('ru'), isNot(e.label), reason: '$key has no Russian name');
+      }
+      final chin = exerciseByKey('chin_up')!;
+      expect(chin.bodyweight, isTrue);
+      expect(chin.matches('chin up', 'id'), isTrue);
+      expect(chin.matches('chinup', 'en'), isTrue);
+      expect(exerciseLibrary.where((e) => e.matches('chin-up', 'en')).first.key, 'chin_up');
     });
 
     test('the core lifts are named and searchable in the shipped languages',
@@ -1508,6 +1527,28 @@ void main() {
           find.bySemanticsLabel(
               'View source and credits for Arnold Shoulder Press'),
           findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a name hit comes before an equipment hit ("chin" → Chin-up)',
+        (tester) async {
+      tester.view.physicalSize = const Size(390 * 3, 2400 * 3);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      addTearDown(LiveDraft.clear);
+      final a = activityByName('weight_training')!;
+      LiveDraft.begin(a, weightKg: 72.4);
+      await tester.pumpWidget(
+          _frame(liveFor(a, weightKg: 72.4), Brightness.light, 1));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(BigButton, 'Choose exercise'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'chin');
+      await tester.pumpAndSettle();
+      final chin = tester.getTopLeft(find.text('Chin-up'));
+      // "Machine" holds "chin" too, mid-word: it ranks after the name hit.
+      final machine = tester.getTopLeft(find.text('Biceps Curl Machine'));
+      expect(chin.dy, lessThan(machine.dy));
       expect(tester.takeException(), isNull);
     });
 

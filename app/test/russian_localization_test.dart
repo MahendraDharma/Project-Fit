@@ -183,7 +183,7 @@ void main() {
   );
 
   test('exercise names and search localize without changing source keys', () {
-    expect(exerciseLibrary, hasLength(214));
+    expect(exerciseLibrary, hasLength(250));
     for (final exercise in exerciseLibrary) {
       final russian = exercise.labelFor('ru');
       expect(russian, matches(RegExp('[А-Яа-яЁё]')), reason: exercise.key);

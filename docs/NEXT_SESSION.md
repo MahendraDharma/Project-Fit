@@ -203,6 +203,12 @@ termination within 2 s of its own restart is ignored; the motor's strength canno
 `alarm_sound_loud` (`alarm_tone_loud.wav`, harsh full-scale beeps, channel `alarm_sound_loud`).
 Phone tone re-posts at most every 25 s.
 
+## Exercise catalogue (owner, 2026-11-04, v0.25.0)
+`_extraExerciseLibrary` in `ui2/activity/catalogue.dart`: 36 everyday moves the lifting-only wger
+selection lacks (chin-up, dips, push-up variants, bodyweight squat, lunges, core work, burpee,
+sumo/trap-bar deadlift, good morning, farmer's walk), named in de/es/fr/id and ru (the
+`exerciseCatalogueName` select). Not in the picker's short list; search ranks name hits first.
+
 ## Install expiry warning (owner, 2026-11-03)
 `lib/platform/install_expiry.dart` reads the embedded provisioning profile's ExpirationDate through
 `ConfigBridge.profileExpiry` (AppDelegate.swift). Inside 48 h Home shows the `redeploy` nudge (top

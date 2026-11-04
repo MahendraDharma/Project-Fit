@@ -83,12 +83,30 @@ class _ExercisePickerState extends State<_ExercisePicker> {
     final category = filter == _common || filter == _all ? null : filter;
     // a highlighted category chip keeps narrowing the search
     if (needle.isNotEmpty || category != null) {
-      return [
+      final found = [
         for (final exercise in exerciseLibrary)
           if ((category == null || exercise.category == category) &&
               hit(exercise))
             exercise,
       ];
+      if (q.isEmpty) return found;
+      // Name hits first: "chin" is Chin-up before every "Cable machine" row,
+      // and a word that starts with the query before one that only holds it.
+      int rank(ExerciseDef e) {
+        final names = [
+          e.labelFor(languageCode),
+          e.label,
+          ...e.localizedLabels.values,
+          ...e.aliases,
+        ].map((n) => n.toLowerCase());
+        if (names.any((n) => RegExp('(^|[^a-z0-9])${RegExp.escape(q)}').hasMatch(n))) {
+          return 0;
+        }
+        return names.any((n) => n.contains(q)) ? 1 : 2;
+      }
+      final ranked = [for (var i = 0; i < found.length; i++) (i, rank(found[i]))]
+        ..sort((a, b) => a.$2 != b.$2 ? a.$2 - b.$2 : a.$1 - b.$1);
+      return [for (final r in ranked) found[r.$1]];
     }
     if (filter == _all) return exerciseLibrary;
 
