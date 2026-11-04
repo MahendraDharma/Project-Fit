@@ -26,7 +26,9 @@ State at the end of the last session, and what to pick up.
   a troubleshooting table keyed by error message.
 
 ## iPhone release
-- Latest release: **v0.24.0** (2026-11-04): alarm "try it now", phone tone Normal/Super loud,
+- Latest release: **v0.25.0** (2026-11-04): 36 more exercises, Body Battery recalibrated, alarm
+  rings until the double tap (AlarmKit / Android full-screen, 520 Hz tone), fit program.
+  v0.24.0 (2026-11-04): alarm "try it now", phone tone Normal/Super loud,
   band Normal/Super strong (iOS build needed three attempts: GitHub macOS capacity).
   v0.23.0 (2026-11-03): coach quick answers (no setup), alarm from the +
   sheet that buzzes until a double tap, optional phone tone, install-expiry warning.
