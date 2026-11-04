@@ -85,6 +85,8 @@ import '../../garmin/connectiq_link.dart' show CiqDevice, CiqSyncReport;
 import '../../ble/garmin_link.dart' show GarminSyncReport;
 import 'profile.dart';
 import 'wearable_numbers.dart';
+import '../program/fit_plan.dart';
+import '../program/fit_plan_screen.dart' show FitPlanCard;
 
 /// A deterministic series — a gallery cannot depend on random data.
 final _series =
@@ -321,6 +323,20 @@ Map<String, Widget> componentCases() => {
           action: 'Turn it on',
           onAction: () {},
           onClose: () {}),
+      'fit_plan_card': FitPlanCard(
+          config: FitPlanConfig(
+              days: 30,
+              goal: FitGoal.general,
+              style: FitStyle.calisthenics,
+              level: FitLevel.beginner,
+              daysPerWeek: 4,
+              equipment: const {Equip.pullUpBar},
+              start: DateTime(2026, 11, 2)),
+          done: const {0, 1, 3},
+          today: DateTime(2026, 11, 9),
+          onTap: () {}),
+      'fit_plan_card_none':
+          FitPlanCard(config: null, today: DateTime(2026, 11, 9), onTap: () {}),
       'quick_add': QuickAddSheet(
           onStart: () {}, onWorkout: () {}, onFood: () {}, onJournal: () {}, onAlarm: () {}),
       'stress_energy': const StressEnergyRow(

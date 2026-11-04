@@ -304,6 +304,9 @@ const _notComponents = {
   // 120 s network call and the keychain. `CoachFigure` — the part a gallery can
   // actually hold — IS in it.
   'CoachScreen', 'CoachSetup', 'AiBriefingScreen',
+  // The fit program: setup and schedule are screens; the entry reads the
+  // store (its card, FitPlanCard, is in the gallery).
+  'FitPlanSetup', 'FitPlanScreen', 'FitPlanEntry',
   // The two day-scoped Scaffold routes: each resolves a day, then reads the
   // bundle plus three or four stores to fill it. Their BODIES are what a
   // gallery can hold and both are in it as cases — `timeline_day`,

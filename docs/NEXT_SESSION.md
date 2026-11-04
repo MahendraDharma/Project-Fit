@@ -209,6 +209,18 @@ selection lacks (chin-up, dips, push-up variants, bodyweight squat, lunges, core
 sumo/trap-bar deadlift, good morning, farmer's walk), named in de/es/fr/id and ru (the
 `exerciseCatalogueName` select). Not in the picker's short list; search ranks name hits first.
 
+## Fit program (owner, 2026-11-04, v0.25.0)
+`lib/ui2/program/fit_plan.dart` (pure, tested in fit_plan_test.dart) builds an N-day plan from
+the person's choices: 14/30/60/90 days, goal (general / strength / fat loss), calisthenics or
+gym, level, 3–6 days a week, equipment. Strength days are full body A/B (≤3 a week) or
+upper/lower (≥4); each slot picks the first exercise the equipment and level allow; doses
+from ACSM (Garber 2011) with +2 reps a week for bodyweight moves, a set added in week 3 and a
+deload every 4th week. Cardio is planned against WHO 2020's 150 min/week (225 for fat loss,
+Donnelly 2009), beginners ramping from 60 %; the remainder is a finisher after lifting.
+`fit_plan_screen.dart`: card on the Activity tab, setup, schedule (weeks, day sheets, Mark
+done); Start opens `ActivitySetup(plan: …)`, which seeds the live strength screen's
+`exercise_plan`. Stored as choices (`fit_plan_config`) and ticks (`fit_plan_done`).
+
 ## Alarm rework (owner, 2026-11-04, ships with v0.25.0)
 - A ring ends ONLY on the double tap (HAPTICS_TERMINATED `user_double_tap`, or gesture event
   14) or Stop on the phone: no 20-min cap (`maxRing` null), an unnamed cause keeps ringing, a

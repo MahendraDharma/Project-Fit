@@ -35,11 +35,16 @@ class ActivitySetup extends StatefulWidget {
   /// real connection state and the user's own lifting history.
   final ActivityHost host;
 
+  /// Exercise keys to open a strength session with, in order (a fit-program
+  /// day). Empty: the person picks as usual.
+  final List<String> plan;
+
   const ActivitySetup(
     this.a, {
     super.key,
     this.weightKg,
     this.host = ActivityHost.none,
+    this.plan = const [],
   });
 
   @override
@@ -85,6 +90,11 @@ class _ActivitySetupState extends State<ActivitySetup> {
           workSec: interval ? _workSec : null,
           restSec: interval ? _restSec : null,
           rounds: interval ? _rounds : null);
+      // The live strength screen restores its exercise list from the draft.
+      if (widget.plan.isNotEmpty) {
+        LiveDraft.current?.put('exercise_plan', List<String>.of(widget.plan));
+        LiveDraft.current?.put('exercise_index', 0);
+      }
     }
     await Navigator.of(context).pushReplacement(MaterialPageRoute(
       // Passed straight through too, not just via the draft above: a caller

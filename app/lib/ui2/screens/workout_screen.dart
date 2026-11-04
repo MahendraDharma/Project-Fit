@@ -39,6 +39,7 @@ import '../activity/live.dart';
 import '../activity/muscle_sets.dart';
 import '../activity/picker.dart';
 import '../activity/poster.dart' show PosterStatRow;
+import '../program/fit_plan_screen.dart' show FitPlanEntry;
 import '../activity/setup.dart';
 import '../activity/summary.dart';
 import '../charts.dart';
@@ -167,6 +168,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> with RevisionReload {
           ],
         ],
       ),
+      // A day-by-day program, when there is one, or the offer to make one.
+      const SizedBox(height: S.x3),
+      FitPlanEntry(host: _host(d), weightKg: d.weightKg),
       // Steps and food, which used to be a Home tile and a tab of their own.
       // Doors, not cards: the numbers live one tap down.
       Section(
