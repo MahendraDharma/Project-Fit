@@ -20,11 +20,14 @@ void main() {
       phoneSound: true,
       onTest: () async {
         tried++;
-        return true;
+        return (band: true, phone: true);
       },
       onVibrationStrong: (v) async => strong = v,
       onSoundLoud: (v) async => loud = v,
-      onPreviewSound: () => previews++,
+      onPreviewSound: () async {
+        previews++;
+        return true;
+      },
     )));
 
     // No alarm armed yet, and it can still be tried.

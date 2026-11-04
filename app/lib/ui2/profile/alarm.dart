@@ -247,9 +247,9 @@ class AlarmScreenView extends StatelessWidget {
   final Future<void> Function(int weekday, bool on)? onSetSleepGoal;
   final Future<void> Function()? onCancel;
 
-  /// "Try the alarm now": true when the band took the buzz, false when only
-  /// the phone rings.
-  final Future<bool> Function()? onTest;
+  /// "Try the alarm now": whether the band took the buzz, and whether the
+  /// phone is ringing too.
+  final Future<({bool band, bool phone})> Function()? onTest;
 
   /// Keep buzzing until the band is double-tapped (a phone setting).
   final bool untilDoubleTap;
@@ -268,8 +268,8 @@ class AlarmScreenView extends StatelessWidget {
   final bool soundLoud, vibrationStrong;
   final Future<void> Function(bool on)? onSoundLoud, onVibrationStrong;
 
-  /// Play the phone's tone now, no band needed.
-  final VoidCallback? onPreviewSound;
+  /// Play the phone's tone now, no band needed; false when it may not ring.
+  final Future<bool> Function()? onPreviewSound;
 
   const AlarmScreenView({
     super.key,
@@ -509,7 +509,15 @@ class AlarmScreenView extends StatelessWidget {
                       sub: l?.alarmPreviewSoundSub ??
                           'Plays the tone now. Turn the volume up: the phone\'s volume sets how loud it is.',
                       chevron: false,
-                      onTap: onPreviewSound,
+                      onTap: onPreviewSound == null
+                          ? null
+                          : () async {
+                              final ok = await onPreviewSound!();
+                              if (!ok && c.mounted) {
+                                _say(c, l?.alarmPhoneBlocked ??
+                                    'The phone may not ring: allow notifications and alarms for ProjectFit in Settings.');
+                              }
+                            },
                     ),
                   ],
                 ]),
@@ -607,13 +615,18 @@ class AlarmScreenView extends StatelessWidget {
     if (test == null) return;
     final l = AppLocalizations.of(c);
     try {
-      final band = await test();
+      final r = await test();
       if (c.mounted) {
-        _say(c, band
-            ? (l?.alarmTryNowStarted ??
-                'The alarm is going. Double-tap the band to stop it.')
-            : (l?.alarmTryPhoneOnly ??
-                'The band is not connected, so only the phone is ringing. Stop it here.'));
+        _say(
+            c,
+            !r.band
+                ? (l?.alarmTryPhoneOnly ??
+                    'The band is not connected, so only the phone is ringing. Stop it here.')
+                : (phoneSound && !r.phone)
+                    ? (l?.alarmPhoneBlocked ??
+                        'The phone may not ring: allow notifications and alarms for ProjectFit in Settings.')
+                    : (l?.alarmTryNowStarted ??
+                        'The alarm is going. Double-tap the band to stop it.'));
       }
     } catch (e) {
       if (c.mounted) _say(c, '$e'.replaceFirst('Exception: ', ''));

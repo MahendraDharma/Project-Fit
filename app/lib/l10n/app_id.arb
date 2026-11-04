@@ -548,5 +548,6 @@
   "alarmDetailPending": "Perintah sudah sampai ke band. Konfirmasinya biasanya datang dalam beberapa detik.",
   "alarmDetailUnknown": "Ini jam yang terakhir dikirim aplikasi, tetapi band tidak pernah mengonfirmasinya. Pasang lagi saat tersambung kalau ingin yakin.",
   "alarmTryPhoneOnly": "Band belum tersambung, jadi hanya HP yang berbunyi. Matikan di sini.",
-  "alarmTryNeedsBand": "Band belum tersambung. Sambungkan dulu, atau nyalakan \"Bunyikan juga dari HP\" untuk mencoba HP saja."
+  "alarmTryNeedsBand": "Band belum tersambung. Sambungkan dulu, atau nyalakan \"Bunyikan juga dari HP\" untuk mencoba HP saja.",
+  "alarmPhoneBlocked": "HP belum diizinkan berbunyi: izinkan notifikasi dan alarm untuk ProjectFit di Pengaturan."
 }

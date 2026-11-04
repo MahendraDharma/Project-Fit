@@ -2873,30 +2873,40 @@ class AppState extends ChangeNotifier {
   }
 
   /// Play the phone's alarm tone once, at the chosen loudness — no band needed.
-  void previewAlarmSound() {
+  /// Asks for the permission first (a phone that never granted it played
+  /// nothing, with no word why); false when the phone may not ring.
+  Future<bool> previewAlarmSound() async {
+    if (!await NotificationService.instance.ensurePermission()) return false;
     final w = _alarmWords();
-    unawaited(NotificationService.instance.presentAlarmSound(
-        title: w.title, body: w.body, loud: alarmSoundLoud));
+    return NotificationService.instance
+        .presentAlarmSound(title: w.title, body: w.body, loud: alarmSoundLoud);
   }
 
   /// Run the whole alarm now, exactly as a real wake would: the band buzzes
   /// and keeps going until a double tap (if that is on), and the phone rings
-  /// (if that is on). Without the band the phone rings alone. True when the
-  /// band took the buzz.
-  Future<bool> tryAlarmNow() async {
+  /// (if that is on). Without the band the phone rings alone.
+  ///
+  /// The phone's permission is asked HERE, in the foreground: turning the
+  /// setting on in v0.24 never asked, so a phone that had not granted it rang
+  /// nothing while the band buzzed. [phone] is false when the setting is on
+  /// but the phone may not ring — the screen says so.
+  Future<({bool band, bool phone})> tryAlarmNow() async {
     final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
     _ringer.stop();
     await _stopPhoneRinging(resync: false);
     _dismissedEpoch = null;
+    final phone = alarmPhoneSound && await phoneAlarm.requestPermission();
     final band = isConnected && await engine.runAlarm();
     if (band) {
       _startRinging();
-      return true;
+      return (band: true, phone: phone);
     }
-    if (!alarmPhoneSound) throw Exception(l.alarmTryNeedsBand);
+    if (!phone) {
+      throw Exception(alarmPhoneSound ? l.alarmPhoneBlocked : l.alarmTryNeedsBand);
+    }
     _ringPhoneNow();
     notifyListeners();
-    return false;
+    return (band: false, phone: true);
   }
 
   void _ringPhoneNow() {

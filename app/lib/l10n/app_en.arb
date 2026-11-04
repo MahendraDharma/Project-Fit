@@ -16312,5 +16312,6 @@
   "alarmPreviewSound": "Hear the sound",
   "alarmPreviewSoundSub": "Plays the tone now. Turn the volume up: the phone's volume sets how loud it is.",
   "alarmTryPhoneOnly": "The band is not connected, so only the phone is ringing. Stop it here.",
-  "alarmTryNeedsBand": "The band is not connected. Connect it, or turn on \"Ring on the phone too\" to try the phone alone."
+  "alarmTryNeedsBand": "The band is not connected. Connect it, or turn on \"Ring on the phone too\" to try the phone alone.",
+  "alarmPhoneBlocked": "The phone may not ring: allow notifications and alarms for ProjectFit in Settings."
 }

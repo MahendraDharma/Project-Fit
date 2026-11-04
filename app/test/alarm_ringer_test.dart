@@ -229,7 +229,7 @@ void main() {
           reason: 'no band and no phone sound: nothing could ring');
       expect(app.alarmRinging, isFalse);
       await app.setAlarmPhoneSound(true);
-      expect(await app.tryAlarmNow(), isFalse);
+      expect(await app.tryAlarmNow(), (band: false, phone: true));
       expect(app.alarmRinging, isTrue);
       expect(phone.live.keys, contains(PhoneAlarmSlot.now));
       app.stopAlarmRinging();
