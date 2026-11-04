@@ -131,6 +131,19 @@ class NotificationService {
     audioAttributesUsage: AudioAttributesUsage.alarm,
   );
 
+  /// "Super loud": a harsh full-scale beep tone, its own channel because an
+  /// Android channel's sound cannot change after it is created.
+  static const AndroidNotificationChannel _alarmLoudChannel =
+      AndroidNotificationChannel(
+    'alarm_sound_loud',
+    'Alarm sound (super loud)',
+    description: 'The loud tone, for heavy sleepers',
+    importance: Importance.max,
+    sound: RawResourceAndroidNotificationSound('alarm_tone_loud'),
+    audioAttributesUsage: AudioAttributesUsage.alarm,
+  );
+  static const String alarmToneLoudIos = 'alarm_tone_loud.wav';
+
   /// One fixed id: each buzz REPLACES the card and plays the tone again.
   static const int idAlarmSound = 2010;
 
@@ -300,6 +313,7 @@ class NotificationService {
     await androidImpl?.createNotificationChannel(_recoveryChannel);
     await androidImpl?.createNotificationChannel(_remindersChannel);
     await androidImpl?.createNotificationChannel(_alarmChannel);
+    await androidImpl?.createNotificationChannel(_alarmLoudChannel);
     _inited = true;
   }
 
@@ -483,29 +497,31 @@ class NotificationService {
   /// buzz while the alarm rings, so the phone sounds as long as the band does.
   /// Never prompts for permission (the alarm fires with the app in the
   /// background) and never throws.
-  Future<bool> presentAlarmSound({required String title, required String body}) async {
+  Future<bool> presentAlarmSound(
+      {required String title, required String body, bool loud = false}) async {
     try {
       if (!await ensurePermission(allowPrompt: false)) return false;
+      final ch = loud ? _alarmLoudChannel : _alarmChannel;
       await _plugin.show(
         idAlarmSound,
         title,
         body,
         NotificationDetails(
           android: AndroidNotificationDetails(
-            _alarmChannel.id,
-            _alarmChannel.name,
-            channelDescription: _alarmChannel.description,
+            ch.id,
+            ch.name,
+            channelDescription: ch.description,
             importance: Importance.max,
             priority: Priority.max,
             category: AndroidNotificationCategory.alarm,
-            sound: _alarmChannel.sound,
+            sound: ch.sound,
             audioAttributesUsage: AudioAttributesUsage.alarm,
             icon: '@mipmap/launcher_icon',
           ),
-          iOS: const DarwinNotificationDetails(
+          iOS: DarwinNotificationDetails(
             presentSound: true,
             presentAlert: true,
-            sound: alarmToneIos,
+            sound: loud ? alarmToneLoudIos : alarmToneIos,
             interruptionLevel: InterruptionLevel.timeSensitive,
           ),
         ),

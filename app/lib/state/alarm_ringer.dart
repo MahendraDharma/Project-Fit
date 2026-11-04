@@ -18,6 +18,8 @@
 // It needs the phone connected when the alarm goes off: the re-buzz is a
 // command the phone sends. Without a connection the band's own buzz still runs.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
 /// Why ringing stopped, for the log and the screen.
@@ -31,7 +33,19 @@ class AlarmRinger {
     this.onBuzz,
     DateTime Function()? now,
     this.maxRing = const Duration(minutes: 20),
+    this.strongEvery = const Duration(seconds: 10),
   }) : _now = now ?? DateTime.now;
+
+  /// "Super strong": the buzz is started again on this cadence, without
+  /// waiting for the band to say it ended, so it never pauses. The band's
+  /// motor has one strength; what can change is how much of the time it runs.
+  final Duration strongEvery;
+
+  /// The user's band-vibration choice (normal: restart when it ends).
+  bool strong = false;
+
+  Timer? _timer;
+  DateTime? _lastBuzzAt;
 
   /// Starts the band's wake buzz again.
   final Future<void> Function() rebuzz;
@@ -73,12 +87,47 @@ class AlarmRinger {
     }
     _startedAt = _now();
     _rebuzzes = 0;
-    log?.call('[alarm] ringing until a double tap');
+    log?.call('[alarm] ringing until a double tap${strong ? ' (strong)' : ''}');
+    if (strong) _timer = Timer.periodic(strongEvery, (_) => tick());
+  }
+
+  /// One beat of the strong cadence (the timer's callback; tests call it).
+  Future<void> tick() async {
+    if (!ringing) return;
+    await _again('strong cadence');
+  }
+
+  Future<void> _again(String why) async {
+    if (_now().difference(_startedAt!) >= maxRing) {
+      _end(RingEnd.timeout);
+      return;
+    }
+    _rebuzzes++;
+    log?.call('[alarm] $why without a double tap — buzzing again (#$_rebuzzes)');
+    try {
+      _lastBuzzAt = _now();
+      await rebuzz();
+      onBuzz?.call();
+    } catch (e) {
+      // A dropped link: nothing more the phone can do. The band keeps its
+      // own armed alarm state either way.
+      log?.call('[alarm] re-buzz failed: $e');
+      _end(RingEnd.app);
+    }
   }
 
   /// The band's buzz stopped; [cause] is its HAPTICS_TERMINATED reason.
   Future<void> onHapticsEnded(String? cause) async {
     if (!ringing) return;
+    // Strong mode starts a buzz over the last one, and the band may report
+    // the one it cut short. That is our own restart, not the wearer.
+    final last = _lastBuzzAt;
+    if (strong &&
+        cause != 'user_double_tap' &&
+        last != null &&
+        _now().difference(last) < const Duration(seconds: 2)) {
+      return;
+    }
     switch (cause) {
       case 'user_double_tap':
         _end(RingEnd.doubleTap);
@@ -90,22 +139,10 @@ class AlarmRinger {
         _end(RingEnd.unknownCause);
         return;
     }
-    if (_now().difference(_startedAt!) >= maxRing) {
-      _end(RingEnd.timeout);
-      return;
-    }
-    _rebuzzes++;
-    log?.call('[alarm] buzz ended ($cause) without a double tap — buzzing again '
-        '(#$_rebuzzes)');
-    try {
-      await rebuzz();
-      onBuzz?.call();
-    } catch (e) {
-      // A dropped link: nothing more the phone can do. The band keeps its
-      // own armed alarm state either way.
-      log?.call('[alarm] re-buzz failed: $e');
-      _end(RingEnd.app);
-    }
+    // Strong mode restarts on its own cadence; an ended buzz just waits for
+    // the next beat.
+    if (strong) return;
+    await _again('buzz ended ($cause)');
   }
 
   /// A double tap arrived as a gesture event. True when it was spent on the
@@ -123,6 +160,8 @@ class AlarmRinger {
 
   void _end(RingEnd why) {
     _startedAt = null;
+    _timer?.cancel();
+    _timer = null;
     log?.call('[alarm] ringing stopped: ${why.name}');
     onEnd?.call(why);
   }

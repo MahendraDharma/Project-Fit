@@ -98,6 +98,39 @@ void main() {
     expect(ends, [RingEnd.app]);
   });
 
+  test('super strong restarts on its own beat and ignores its own cut-offs',
+      () async {
+    final r = ringer()
+      ..strong = true
+      ..onFired();
+    // A buzz that ends on its own waits for the next beat instead.
+    await r.onHapticsEnded('expired');
+    expect(buzzes, 0);
+    await r.tick();
+    await r.tick();
+    expect(buzzes, 2);
+    expect(sounds, 2);
+    // The buzz it just cut short reports in: not the wearer, keep going.
+    await r.onHapticsEnded('code_7');
+    expect(r.ringing, isTrue);
+    // The double tap still ends it, and the beat stops with it.
+    await r.onHapticsEnded('user_double_tap');
+    expect(r.ringing, isFalse);
+    await r.tick();
+    expect(buzzes, 2);
+    r.stop();
+  });
+
+  test('super strong still gives up after 20 minutes', () async {
+    final r = ringer()
+      ..strong = true
+      ..onFired();
+    now = now.add(const Duration(minutes: 20));
+    await r.tick();
+    expect(buzzes, 0);
+    expect(ends, [RingEnd.timeout]);
+  });
+
   group('in the app', () {
     final originalSink = NotificationCenter.instance.presentSink;
     tearDown(() => NotificationCenter.instance.presentSink = originalSink);
@@ -115,6 +148,16 @@ void main() {
       expect(app.alarmPhoneSound, isFalse);
       await app.setAlarmPhoneSound(true);
       expect(app.alarmPhoneSound, isTrue);
+      // Both levels start at normal, and each choice sticks.
+      expect(app.alarmSoundLoud, isFalse);
+      expect(app.alarmVibrationStrong, isFalse);
+      await app.setAlarmSoundLoud(true);
+      await app.setAlarmVibrationStrong(true);
+      expect(app.alarmSoundLoud, isTrue);
+      expect(app.alarmVibrationStrong, isTrue);
+      // Trying the alarm needs the band.
+      await expectLater(app.tryAlarmNow(), throwsException);
+      expect(app.alarmRinging, isFalse);
 
       app.debugHandleAlarmEvent(57);
       expect(app.alarmRinging, isTrue);

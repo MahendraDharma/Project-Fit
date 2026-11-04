@@ -16297,5 +16297,18 @@
   "@nudgeRedeploy": {"placeholders": {"when": {"type": "String"}}},
   "installEndsAt": "on {day} at {time}",
   "@installEndsAt": {"placeholders": {"day": {"type": "String"}, "time": {"type": "String"}}},
-  "redeployTitle": "Re-install ProjectFit from your Mac"
+  "redeployTitle": "Re-install ProjectFit from your Mac",
+  "alarmTryNow": "Try the alarm now",
+  "alarmTryNowStarted": "The alarm is going. Double-tap the band to stop it.",
+  "alarmVibrationTitle": "Band vibration",
+  "alarmVibrationNormalSub": "The band's own wake buzz, started again when it ends.",
+  "alarmVibrationStrongSub": "Started again every 10 seconds, so it never pauses.",
+  "alarmLevelNormal": "Normal",
+  "alarmLevelStrong": "Super strong",
+  "alarmLevelLoud": "Super loud",
+  "alarmSoundLevelTitle": "Phone sound",
+  "alarmSoundNormalSub": "A chime that grows louder.",
+  "alarmSoundLoudSub": "A sharp, full-volume beep for heavy sleepers.",
+  "alarmPreviewSound": "Hear the sound",
+  "alarmPreviewSoundSub": "Plays the tone now. Turn the volume up: the phone's volume sets how loud it is."
 }

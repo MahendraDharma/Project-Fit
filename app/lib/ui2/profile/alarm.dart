@@ -203,7 +203,7 @@ class AlarmScreen extends StatelessWidget {
           app.setScheduleDay(weekday: weekday, smartWindowMinutes: minutes),
       onSetSleepGoal: (weekday, on) =>
           app.setScheduleDay(weekday: weekday, sleepGoal: on),
-      onTest: app.testAlarmBuzz,
+      onTest: app.tryAlarmNow,
       onCancel: app.disableAlarm,
       untilDoubleTap: app.alarmUntilDoubleTap,
       onUntilDoubleTap: app.setAlarmUntilDoubleTap,
@@ -211,6 +211,11 @@ class AlarmScreen extends StatelessWidget {
       onPhoneSound: app.setAlarmPhoneSound,
       ringing: app.alarmRinging,
       onStopRinging: app.stopAlarmRinging,
+      soundLoud: app.alarmSoundLoud,
+      onSoundLoud: app.setAlarmSoundLoud,
+      vibrationStrong: app.alarmVibrationStrong,
+      onVibrationStrong: app.setAlarmVibrationStrong,
+      onPreviewSound: app.previewAlarmSound,
     );
   }
 }
@@ -254,6 +259,14 @@ class AlarmScreenView extends StatelessWidget {
   final bool ringing;
   final VoidCallback? onStopRinging;
 
+  /// The phone tone: normal or "super loud"; the band: normal or "super
+  /// strong" (restarted every 10 s, never pausing).
+  final bool soundLoud, vibrationStrong;
+  final Future<void> Function(bool on)? onSoundLoud, onVibrationStrong;
+
+  /// Play the phone's tone now, no band needed.
+  final VoidCallback? onPreviewSound;
+
   const AlarmScreenView({
     super.key,
     this.armedAt,
@@ -274,6 +287,11 @@ class AlarmScreenView extends StatelessWidget {
     this.onPhoneSound,
     this.ringing = false,
     this.onStopRinging,
+    this.soundLoud = false,
+    this.onSoundLoud,
+    this.vibrationStrong = false,
+    this.onVibrationStrong,
+    this.onPreviewSound,
   });
 
   @override
@@ -393,15 +411,16 @@ class AlarmScreenView extends StatelessWidget {
                     ],
                   ]),
                   const SizedBox(height: S.x3),
-                  if (at != null) ...[
-                    BigButton(l?.alarmTestTheBuzz ?? 'Test the buzz',
-                        icon: LucideIcons.vibrate,
-                        color: C.blue,
-                        soft: true,
-                        onTap: () => _run(
-                            c, onTest, l?.alarmBuzzingTheBand ?? 'Buzzing the band')),
-                    const SizedBox(height: S.x3),
-                  ],
+                  // The whole alarm, now: buzz, keep going until the double
+                  // tap, ring the phone — so it is trusted before a real wake.
+                  BigButton(l?.alarmTryNow ?? 'Try the alarm now',
+                      icon: LucideIcons.alarmClock,
+                      color: C.blue,
+                      soft: true,
+                      onTap: () => _run(c, onTest,
+                          l?.alarmTryNowStarted ??
+                              'The alarm is going. Double-tap the band to stop it.')),
+                  const SizedBox(height: S.x3),
                   if (at != null || anyDayEnabled)
                     BigButton(l?.alarmCancelTheAlarm ?? 'Cancel the alarm',
                         icon: LucideIcons.bellOff,
@@ -443,6 +462,53 @@ class AlarmScreenView extends StatelessWidget {
                           onPhoneSound == null ? null : (v) => onPhoneSound!(v),
                     ),
                   ),
+                  SetRow(
+                    LucideIcons.vibrate,
+                    C.purple,
+                    l?.alarmVibrationTitle ?? 'Band vibration',
+                    sub: vibrationStrong
+                        ? (l?.alarmVibrationStrongSub ??
+                            'Started again every 10 seconds, so it never pauses.')
+                        : (l?.alarmVibrationNormalSub ??
+                            'The band\'s own wake buzz, started again when it ends.'),
+                    value: vibrationStrong
+                        ? (l?.alarmLevelStrong ?? 'Super strong')
+                        : (l?.alarmLevelNormal ?? 'Normal'),
+                    chevron: false,
+                    onTap: onVibrationStrong == null
+                        ? null
+                        : () => _pickLevel(c, l?.alarmVibrationTitle ?? 'Band vibration',
+                            l?.alarmLevelStrong ?? 'Super strong', vibrationStrong,
+                            onVibrationStrong!),
+                  ),
+                  if (phoneSound) ...[
+                    SetRow(
+                      LucideIcons.volume2,
+                      C.red,
+                      l?.alarmSoundLevelTitle ?? 'Phone sound',
+                      sub: soundLoud
+                          ? (l?.alarmSoundLoudSub ??
+                              'A sharp, full-volume beep for heavy sleepers.')
+                          : (l?.alarmSoundNormalSub ?? 'A chime that grows louder.'),
+                      value: soundLoud
+                          ? (l?.alarmLevelLoud ?? 'Super loud')
+                          : (l?.alarmLevelNormal ?? 'Normal'),
+                      chevron: false,
+                      onTap: onSoundLoud == null
+                          ? null
+                          : () => _pickLevel(c, l?.alarmSoundLevelTitle ?? 'Phone sound',
+                              l?.alarmLevelLoud ?? 'Super loud', soundLoud, onSoundLoud!),
+                    ),
+                    SetRow(
+                      LucideIcons.play,
+                      C.green,
+                      l?.alarmPreviewSound ?? 'Hear the sound',
+                      sub: l?.alarmPreviewSoundSub ??
+                          'Plays the tone now. Turn the volume up: the phone\'s volume sets how loud it is.',
+                      chevron: false,
+                      onTap: onPreviewSound,
+                    ),
+                  ],
                 ]),
               ],
             ),
@@ -450,6 +516,33 @@ class AlarmScreenView extends StatelessWidget {
         ]),
       ),
     );
+  }
+
+  /// Normal or the strong choice ([strongLabel]), for the band or the phone.
+  Future<void> _pickLevel(BuildContext c, String title, String strongLabel,
+      bool current, Future<void> Function(bool on) set) async {
+    final l = AppLocalizations.of(c);
+    final picked = await showDialog<bool>(
+      context: c,
+      builder: (ctx) => SimpleDialog(
+        title: Text(title),
+        children: [
+          for (final (strong, label) in [
+            (false, l?.alarmLevelNormal ?? 'Normal'),
+            (true, strongLabel),
+          ])
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(ctx, strong),
+              child: Row(children: [
+                Expanded(child: Text(label)),
+                if (strong == current) const Icon(LucideIcons.check, size: 18),
+              ]),
+            ),
+        ],
+      ),
+    );
+    if (picked == null || picked == current) return;
+    await set(picked);
   }
 
   Future<void> _pickDayTime(BuildContext c, AlarmScheduleEntry day) async {

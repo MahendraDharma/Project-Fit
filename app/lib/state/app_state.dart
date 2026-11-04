@@ -2737,6 +2737,7 @@ class AppState extends ChangeNotifier {
     log: _log,
     onEnd: (why) {
       if (why == RingEnd.doubleTap) _ringTapEndedAt = DateTime.now();
+      _alarmSoundAt = null;
       unawaited(NotificationService.instance.cancelAlarmSound());
       if (!_disposed) notifyListeners();
     },
@@ -2759,13 +2760,55 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _playAlarmSound() {
-    if (!alarmPhoneSound) return;
+  static const _kAlarmSoundLoud = 'alarm_sound_loud';
+  static const _kAlarmVibrationStrong = 'alarm_vibration_strong';
+
+  /// "Super loud" phone tone for heavy sleepers (normal otherwise).
+  bool get alarmSoundLoud => Prefs.getBool(_kAlarmSoundLoud, false);
+  Future<void> setAlarmSoundLoud(bool on) async {
+    await Prefs.setBoolAcked(_kAlarmSoundLoud, on);
+    notifyListeners();
+  }
+
+  /// "Super strong" band vibration: restarted every 10 s, never pausing.
+  bool get alarmVibrationStrong => Prefs.getBool(_kAlarmVibrationStrong, false);
+  Future<void> setAlarmVibrationStrong(bool on) async {
+    await Prefs.setBoolAcked(_kAlarmVibrationStrong, on);
+    notifyListeners();
+  }
+
+  DateTime? _alarmSoundAt;
+
+  /// The tone is ~28 s; a strong ring buzzes every 10 s, and restarting the
+  /// tone on every beat would only stutter it.
+  static const _alarmSoundEvery = Duration(seconds: 25);
+
+  void _playAlarmSound({bool force = false}) {
+    if (!force && !alarmPhoneSound) return;
+    final now = DateTime.now();
+    final last = _alarmSoundAt;
+    if (!force && last != null && now.difference(last) < _alarmSoundEvery) return;
+    _alarmSoundAt = now;
     final l = lookupAppLocalizations(Locale(LocaleController.displayLanguageCode));
     unawaited(NotificationService.instance.presentAlarmSound(
       title: l.alarmSoundTitle,
       body: alarmUntilDoubleTap ? l.alarmRingingBody : l.alarmSoundBody,
+      loud: alarmSoundLoud,
     ));
+  }
+
+  /// Play the phone's alarm tone now, at the chosen loudness — no band needed.
+  void previewAlarmSound() => _playAlarmSound(force: true);
+
+  /// Run the whole alarm now, exactly as a real wake would: the band buzzes,
+  /// it keeps going until a double tap (if that is on), and the phone rings
+  /// (if that is on). Stop it the same way as a real one.
+  Future<void> tryAlarmNow() async {
+    if (!isConnected) throw Exception('Connect to your strap first');
+    _ringer.stop();
+    _alarmSoundAt = null;
+    await engine.runAlarm();
+    _startRinging();
   }
 
   Future<void> setAlarmUntilDoubleTap(bool on) async {
@@ -2782,6 +2825,7 @@ class AppState extends ChangeNotifier {
 
   void _startRinging({int? tsSec}) {
     _ringer.enabled = alarmUntilDoubleTap;
+    _ringer.strong = alarmVibrationStrong;
     final wasRinging = _ringer.ringing;
     _ringer.onFired(tsSec: tsSec);
     // The first buzz is the band's own; the phone joins it. With "until

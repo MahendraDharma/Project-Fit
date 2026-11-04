@@ -194,6 +194,13 @@ Phone sound (opt-in, `alarm_phone_sound`): each buzz posts notification 2010 on 
 `res/raw` + `ios/Runner`, registered in the pbxproj); the ring's end cancels it. iOS: silent in
 silent mode; time-sensitive level for Focus.
 
+v0.24.0 (owner, 2026-11-04): "Try the alarm now" runs the real flow (RUN_ALARM, ring until the
+double tap, phone tone) with no alarm armed; "Hear the sound" previews the tone. Levels:
+`alarm_vibration_strong` (ring restarts every 10 s on a timer instead of on `expired`, and a
+termination within 2 s of its own restart is ignored; the motor's strength cannot change) and
+`alarm_sound_loud` (`alarm_tone_loud.wav`, harsh full-scale beeps, channel `alarm_sound_loud`).
+Phone tone re-posts at most every 25 s.
+
 ## Install expiry warning (owner, 2026-11-03)
 `lib/platform/install_expiry.dart` reads the embedded provisioning profile's ExpirationDate through
 `ConfigBridge.profileExpiry` (AppDelegate.swift). Inside 48 h Home shows the `redeploy` nudge (top

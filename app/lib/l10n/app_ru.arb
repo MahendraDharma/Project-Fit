@@ -8015,5 +8015,18 @@
   "@nudgeRedeploy": {"placeholders": {"when": {"type": "String"}}},
   "installEndsAt": "в {day} в {time}",
   "@installEndsAt": {"placeholders": {"day": {"type": "String"}, "time": {"type": "String"}}},
-  "redeployTitle": "Переустановите ProjectFit с Mac"
+  "redeployTitle": "Переустановите ProjectFit с Mac",
+  "alarmTryNow": "Проверить будильник сейчас",
+  "alarmTryNowStarted": "Будильник звонит. Дважды коснитесь браслета, чтобы выключить.",
+  "alarmVibrationTitle": "Вибрация браслета",
+  "alarmVibrationNormalSub": "Обычная вибрация браслета, снова запускается, когда заканчивается.",
+  "alarmVibrationStrongSub": "Запускается каждые 10 секунд, без пауз.",
+  "alarmLevelNormal": "Обычный",
+  "alarmLevelStrong": "Очень сильная",
+  "alarmLevelLoud": "Очень громкий",
+  "alarmSoundLevelTitle": "Звук телефона",
+  "alarmSoundNormalSub": "Мелодия, которая становится громче.",
+  "alarmSoundLoudSub": "Резкий сигнал на полной громкости для тех, кто крепко спит.",
+  "alarmPreviewSound": "Прослушать",
+  "alarmPreviewSoundSub": "Проиграет мелодию сейчас. Громкость задаётся громкостью телефона."
 }
