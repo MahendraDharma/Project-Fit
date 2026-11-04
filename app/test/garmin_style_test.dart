@@ -3,6 +3,7 @@
 // fitness-age inputs.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:projectfit_analytics/onehz.dart' as ana;
 import 'package:projectfit/data/day_label.dart';
 import 'package:projectfit/data/local_repository.dart';
 import 'package:projectfit/ui2/screens/garmin_style.dart';
@@ -68,11 +69,12 @@ void main() {
     final b = g.battery.value!;
     double at(int h) => b.timeline.lastWhere((p) => p.tSec <= _at(1, h)).level;
     expect(at(7), greaterThan(at(1)));
-    // Still at stress 50: a small drain (0.2 a slot).
-    expect(at(10) - at(11), closeTo(12 * 0.2, 1e-9));
+    // Still at stress 50: being up plus the stress share of the drain.
+    expect(at(10) - at(11),
+        closeTo(12 * (ana.bbAwakeDrain + ana.bbStressDrain * 25 / 75), 1e-9));
     // Hard hour vs an easy one.
     expect(at(12) - at(13), greaterThan(10));
-    expect(at(14) - at(15), closeTo(12 * 0.15, 1e-9));
+    expect(at(14) - at(15), closeTo(12 * ana.bbAwakeDrain, 1e-9));
     // Not worn after 15:00 (no HR, no windows): the line stops there.
     expect(b.timeline.last.tSec, lessThanOrEqualTo(_at(1, 15)));
 
