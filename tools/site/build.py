@@ -265,7 +265,7 @@ def page(code):
       <p class="note">{h("note")}</p>
     </div>
     <figure class="device" aria-label="{h("h1")}">
-      <div class="device-frame"><img src="{hero_img}" alt="" width="390" height="430" fetchpriority="high"></div>
+      <div class="device-frame"><div class="shot"><img src="{hero_img}" alt="" width="390" height="430" fetchpriority="high"><span class="mochi" aria-hidden="true"><img src="{root}img/mochi_happy.webp" alt="" width="1320" height="44"></span></div></div>
     </figure>
   </header>
 
@@ -293,9 +293,9 @@ def page(code):
     <p class="sub">{e("s_privacy")}</p>
     <div class="flow" data-reveal>
       <div class="node">{BAND}<b>{h("n_band")}</b><span>{h("n_band_s")}</span></div>
-      <div class="wire" aria-hidden="true"></div>
+      <div class="wire" aria-hidden="true"><i></i></div>
       <div class="node here">{PHONE}<b>{h("n_phone")}</b><span>{h("n_phone_s")}</span></div>
-      <div class="wire cut" aria-hidden="true"></div>
+      <div class="wire cut" aria-hidden="true"><i></i></div>
       <div class="node off">{CLOUD}<b>{h("n_cloud")}</b><span>{h("n_cloud_s")}</span></div>
     </div>
     <div class="points">

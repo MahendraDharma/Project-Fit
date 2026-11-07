@@ -23,6 +23,36 @@
     reveal.observe(el);
   });
 
+  // The tour's text rises in as each step reaches the screen.
+  var seen = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('seen');
+        seen.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -15% 0px' });
+  document.querySelectorAll('.step').forEach(function (el) { seen.observe(el); });
+
+  // The mochi hops once as the hero settles, and again on a tap or hover of
+  // the phone, as it does when tapped in the app.
+  var mochi = document.querySelector('.mochi');
+  var device = document.querySelector('.device');
+  function hop() {
+    if (!mochi) return;
+    mochi.classList.remove('play');
+    void mochi.offsetWidth; // restart the animation
+    mochi.classList.add('play');
+  }
+  if (mochi) {
+    setTimeout(hop, 700);
+    mochi.addEventListener('animationend', function () { mochi.classList.remove('play'); }, true);
+    if (device) {
+      device.addEventListener('mouseenter', hop);
+      device.addEventListener('click', hop);
+    }
+  }
+
   // The tour phone follows the step in the middle of the viewport.
   var shots = document.querySelectorAll('.screen img');
   var steps = document.querySelectorAll('.step');
